@@ -6,10 +6,13 @@ import {
   NODE_CATEGORY,
   RARITY_POINT_COST,
   RARITY_ORDER,
-  MAX_NODE_LEVEL,
   acceptsSoul,
 } from './tree';
 import { nodeFinalValue } from './formula';
+
+// No fixed per-node cap: the real limit is the fusion points budget. This high
+// value only guards the "no budget" case from looping forever.
+const SAFETY_LEVEL_CAP = 999;
 
 export interface Goal {
   id: string;
@@ -53,7 +56,7 @@ interface Candidate {
   rarity: Rarity;
   soulLevel: 1 | 2 | 3;
   stats: WStat[]; // only stats the goal cares about
-  weightBase: number; // Σ weight*base at node level 1 — used to rank souls
+  weightBase: number; // Σ weight*base at node level 1 — the value of just placing it
 }
 
 interface NodeAssignment {
@@ -83,15 +86,13 @@ function scoreAt(stats: WStat[], rarity: Rarity, level: number): number {
 /**
  * Build the best possible build for a goal using only owned souls.
  *
- * Each node has a FIXED rarity (multiplier, cost-per-level and max level).
- * Strategy:
- *  1. Assignment — place the strongest souls (by Σ weight x base, so a
- *     two-attribute soul counts BOTH stats) onto the cheapest acceptable free
- *     node, respecting category + rarity rules and the point budget. Every
- *     placed node starts at level 1.
- *  2. Point allocation — repeatedly spend a point where it buys the most score
- *     (highest extra-score / extra-cost), respecting per-rarity max levels,
- *     until the budget is exhausted.
+ * Each node has a FIXED rarity (multiplier, cost-per-level). We spend the fusion
+ * points budget with ONE unified greedy: at every step the next point either
+ *   - PLACES an unused soul on the cheapest acceptable free node (gain = its
+ *     base value, so two-attribute souls count both stats), or
+ *   - LEVELS an already-placed node (gain = the marginal value of +1 level),
+ * whichever buys the most score per point. This fills the rarer nodes instead of
+ * over-levelling a single common node, and never exceeds the budget.
  */
 export function optimize(goal: Goal, inv: Inventory, opt: OptimizeOptions): OptimizeResult {
   const budget = opt.budget ?? Infinity;
@@ -112,80 +113,69 @@ export function optimize(goal: Goal, inv: Inventory, opt: OptimizeOptions): Opti
       weightBase += w * base;
     }
     if (stats.length === 0) continue;
-    candidates.push({
-      soulId: soul.id,
-      category: soul.category,
-      rarity: soul.rarity,
-      soulLevel: owned,
-      stats,
-      weightBase,
-    });
+    candidates.push({ soulId: soul.id, category: soul.category, rarity: soul.rarity, soulLevel: owned, stats, weightBase });
   }
-  // Strongest souls first.
   candidates.sort((a, b) => b.weightBase - a.weightBase);
 
   const slots = emptySlots();
-  const assignments: NodeAssignment[] = [];
   const freeNodes = new Set(TREE_NODES.map((n) => n.id));
+  const placed: NodeAssignment[] = [];
   let spent = 0;
 
-  // 1) Assignment: cheapest acceptable free node per soul, within budget.
-  for (const c of candidates) {
+  // Highest-rarity acceptable free node for a soul (tie-break to the cheaper one).
+  const bestNodeFor = (c: Candidate): string | null => {
     let bestId: string | null = null;
+    let bestOrder = -1;
     let bestCost = Infinity;
     for (const id of freeNodes) {
       const n = TREE_NODE_BY_ID[id];
       if (!acceptsSoul(NODE_CATEGORY[n.type], n.rarity, c.category, c.rarity)) continue;
+      const ord = RARITY_ORDER[n.rarity];
       const cost = RARITY_POINT_COST[n.rarity];
-      if (spent + cost > budget) continue;
-      // cheapest node; tie-break to the lower-rarity node (saves rarer nodes).
-      if (cost < bestCost || (cost === bestCost && (bestId === null || RARITY_ORDER[n.rarity] < RARITY_ORDER[TREE_NODE_BY_ID[bestId].rarity]))) {
+      if (ord > bestOrder || (ord === bestOrder && cost < bestCost)) {
         bestId = id;
+        bestOrder = ord;
         bestCost = cost;
       }
     }
-    if (bestId === null) continue;
-    const n = TREE_NODE_BY_ID[bestId];
-    spent += bestCost;
-    freeNodes.delete(bestId);
-    assignments.push({
-      slotId: bestId,
-      soulId: c.soulId,
-      soulLevel: c.soulLevel,
-      rarity: n.rarity,
-      stats: c.stats,
-      level: 1,
-    });
+    return bestId;
+  };
+
+  // Phase 1 — FILL: place souls (strongest first) on the highest-rarity node they
+  // qualify for, so the rare/legendary nodes actually get used. Level 1 each.
+  for (const c of candidates) {
+    const nodeId = bestNodeFor(c);
+    if (nodeId === null) continue;
+    const n = TREE_NODE_BY_ID[nodeId];
+    const cost = RARITY_POINT_COST[n.rarity];
+    if (spent + cost > budget) continue;
+    freeNodes.delete(nodeId);
+    placed.push({ slotId: nodeId, soulId: c.soulId, soulLevel: c.soulLevel, rarity: n.rarity, stats: c.stats, level: 1 });
+    spent += cost;
   }
 
-  // 2) Point allocation by marginal score-per-point.
-  let remaining = budget === Infinity ? Infinity : budget - spent;
+  // Phase 2 — LEVEL: spend the rest where each extra point buys the most score.
   for (;;) {
     let best: NodeAssignment | null = null;
     let bestEff = 0;
     let bestCost = 0;
-    for (const a of assignments) {
-      if (a.level >= MAX_NODE_LEVEL[a.rarity]) continue;
-      const dCost = RARITY_POINT_COST[a.rarity];
-      if (dCost > remaining) continue;
+    for (const a of placed) {
+      if (a.level >= SAFETY_LEVEL_CAP) continue;
+      const cost = RARITY_POINT_COST[a.rarity];
+      if (cost > budget - spent) continue;
       const gain = scoreAt(a.stats, a.rarity, a.level + 1) - scoreAt(a.stats, a.rarity, a.level);
-      const eff = gain / dCost;
-      if (eff > bestEff) {
-        bestEff = eff;
-        best = a;
-        bestCost = dCost;
-      }
+      const eff = gain / cost;
+      if (eff > bestEff) { bestEff = eff; best = a; bestCost = cost; }
     }
     if (!best) break;
     best.level += 1;
-    remaining -= bestCost;
     spent += bestCost;
   }
 
   // Materialize result.
   const used: PlacedNode[] = [];
   let totalScore = 0;
-  for (const a of assignments) {
+  for (const a of placed) {
     const score = scoreAt(a.stats, a.rarity, a.level);
     const points = RARITY_POINT_COST[a.rarity] * a.level;
     slots[a.slotId] = { soulId: a.soulId, soulLevel: a.soulLevel, nodeLevel: a.level };
