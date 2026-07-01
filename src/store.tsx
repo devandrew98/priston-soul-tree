@@ -1,8 +1,9 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { Build, Inventory, SlotState } from './lib/types';
 import { TREE_NODES } from './lib/tree';
 import { decodeBuild } from './lib/share';
 import { openByCode, rememberOpened } from './lib/cloud';
+import { getPlayerCode, setPlayerCode, createPlayer, savePlayer, loadPlayer } from './lib/player';
 
 const LS_KEY = 'priston-soul-tree-v2';
 const DEFAULT_FUSION_LEVEL = 198;
@@ -27,26 +28,31 @@ function newBuild(name: string): Build {
   return { id: 'b-' + now + '-' + Math.random().toString(36).slice(2, 7), name, slots: emptySlots(), createdAt: now, updatedAt: now };
 }
 
+/** Ensure a loaded state has all slots, an inventory and at least one build. */
+function normalize(p: PersistShape): PersistShape {
+  if (!p || typeof p !== 'object') p = {} as PersistShape;
+  if (!p.inventory || typeof p.inventory !== 'object') p.inventory = {};
+  if (typeof p.fusionLevel !== 'number') p.fusionLevel = DEFAULT_FUSION_LEVEL;
+  if (!Array.isArray(p.builds) || !p.builds.length) {
+    const b = newBuild('Minha Build');
+    p.builds = [b];
+    p.activeBuildId = b.id;
+  }
+  for (const b of p.builds) b.slots = { ...emptySlots(), ...b.slots };
+  if (!p.activeBuildId || !p.builds.some((b) => b.id === p.activeBuildId)) {
+    p.activeBuildId = p.builds[0].id;
+  }
+  return p;
+}
+
 function load(): PersistShape {
   try {
     const raw = localStorage.getItem(LS_KEY);
-    if (raw) {
-      const p = JSON.parse(raw) as PersistShape;
-      if (p.builds?.length) {
-        // ensure every build has all slots
-        for (const b of p.builds) {
-          const base = emptySlots();
-          b.slots = { ...base, ...b.slots };
-        }
-        if (typeof p.fusionLevel !== 'number') p.fusionLevel = DEFAULT_FUSION_LEVEL;
-        return p;
-      }
-    }
+    if (raw) return normalize(JSON.parse(raw) as PersistShape);
   } catch (e) {
     console.warn('failed to load state', e);
   }
-  const b = newBuild('Minha Build');
-  return { inventory: {}, builds: [b], activeBuildId: b.id, fusionLevel: DEFAULT_FUSION_LEVEL };
+  return normalize({} as PersistShape);
 }
 
 /** Total fusion points available: 16 (levels 1-80) + 1 per fusion level. */
@@ -72,16 +78,54 @@ interface Store {
   renameBuild: (name: string) => void;
   deleteBuild: () => void;
   importBuild: (name: string, slots: Record<string, SlotState>) => string;
+  // cloud player sync (optional, via a short code)
+  playerCode: string | null;
+  syncStatus: string;
+  startSync: () => void;
+  syncWithCode: (code: string) => void;
+  stopSync: () => void;
 }
 
 const Ctx = createContext<Store | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<PersistShape>(load);
+  const [playerCode, setPlayerCodeState] = useState<string | null>(getPlayerCode());
+  const [syncStatus, setSyncStatus] = useState('');
+  const hydrated = useRef(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     localStorage.setItem(LS_KEY, JSON.stringify(state));
   }, [state]);
+
+  // Load this player's cloud data on mount (if a code is remembered).
+  useEffect(() => {
+    const code = getPlayerCode();
+    if (!code) { hydrated.current = true; return; }
+    loadPlayer(code)
+      .then((data) => {
+        if (data && typeof data === 'object') {
+          setState(normalize(data as PersistShape));
+          setSyncStatus('carregado da nuvem');
+        }
+      })
+      .catch(() => setSyncStatus('offline — usando dados locais'))
+      .finally(() => { hydrated.current = true; });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-save to the cloud (debounced) whenever the state changes.
+  useEffect(() => {
+    if (!playerCode || !hydrated.current) return;
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      savePlayer(playerCode, state)
+        .then(() => setSyncStatus('salvo na nuvem ✓'))
+        .catch(() => setSyncStatus('falha ao salvar'));
+    }, 1200);
+    return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
+  }, [state, playerCode]);
 
   const activeBuild = useMemo(
     () => state.builds.find((b) => b.id === state.activeBuildId) ?? state.builds[0],
@@ -156,6 +200,33 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setState((s) => ({ ...s, builds: [...s.builds, b], activeBuildId: b.id }));
       return b.id;
     },
+    playerCode,
+    syncStatus,
+    startSync: () => {
+      setSyncStatus('criando código...');
+      createPlayer(state)
+        .then((code) => { setPlayerCodeState(code); hydrated.current = true; setSyncStatus('salvo na nuvem ✓'); })
+        .catch((e) => setSyncStatus(e.message || 'falha'));
+    },
+    syncWithCode: (code) => {
+      const c = code.toUpperCase().trim();
+      if (!c) return;
+      setSyncStatus('carregando...');
+      loadPlayer(c)
+        .then((data) => {
+          if (data && typeof data === 'object') {
+            setState(normalize(data as PersistShape));
+            setPlayerCode(c);
+            setPlayerCodeState(c);
+            hydrated.current = true;
+            setSyncStatus('carregado da nuvem ✓');
+          } else {
+            setSyncStatus('código sem dados');
+          }
+        })
+        .catch((e) => setSyncStatus(e.message || 'falha'));
+    },
+    stopSync: () => { setPlayerCode(null); setPlayerCodeState(null); setSyncStatus('sync desligado'); },
   };
 
   // Import a build shared via URL hash, then strip it from the URL.

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BuildBar } from './components/BuildBar';
+import { CloudSync } from './components/CloudSync';
 import { Planner } from './components/Planner';
 import { TotalsPanel } from './components/TotalsPanel';
 import { Inventory } from './components/Inventory';
@@ -17,7 +18,10 @@ export default function App() {
           Priston Tale EU — Soul Tree
           <span>Fusion Tier · planejador de builds & gerador inteligente</span>
         </div>
-        <BuildBar />
+        <div className="header-right">
+          <BuildBar />
+          <CloudSync />
+        </div>
       </div>
 
       <div className="tabs">
