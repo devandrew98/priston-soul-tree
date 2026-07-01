@@ -2,14 +2,14 @@ import { useState } from 'react';
 import type { NodeType } from '../lib/tree';
 import { NODE_CATEGORY, RARITY_POINT_COST, TREE_NODE_BY_ID } from '../lib/tree';
 import { SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
-import { slotStatValues, nodePointCost } from '../lib/calc';
+import { slotStatValues, nodePointCost, pointsSpent } from '../lib/calc';
 import { fmt, RARITY_LABEL } from '../lib/formula';
-import { useStore } from '../store';
+import { useStore, totalFusionPoints } from '../store';
 import { SoulPicker } from './SoulPicker';
 import { SoulIcon } from './SoulIcon';
 
 export function NodeEditor({ nodeId, type, onClose }: { nodeId: string; type: NodeType; onClose: () => void }) {
-  const { activeBuild, setSlot, clearSlot } = useStore();
+  const { activeBuild, setSlot, clearSlot, fusionLevel } = useStore();
   const [picking, setPicking] = useState(false);
 
   const node = TREE_NODE_BY_ID[nodeId];
@@ -19,6 +19,10 @@ export function NodeEditor({ nodeId, type, onClose }: { nodeId: string; type: No
   const accepts = NODE_CATEGORY[type];
   const svs = slotStatValues(slot, rarity);
   const cost = nodePointCost(slot, rarity);
+  // Node level is capped only by your total fusion points (rare ×2, legendary ×3).
+  const budget = totalFusionPoints(fusionLevel);
+  const spentElsewhere = pointsSpent(activeBuild) - cost;
+  const maxNodeLevel = Math.max(1, Math.floor((budget - spentElsewhere) / RARITY_POINT_COST[rarity]));
 
   return (
     <div className="modal-bg" onClick={onClose}>
@@ -70,13 +74,14 @@ export function NodeEditor({ nodeId, type, onClose }: { nodeId: string; type: No
           </div>
 
           <div className="ne-ctrl">
-            <label>Nível do node (ilimitado)</label>
+            <label>Nível do node (máx {maxNodeLevel} · limitado pelos pontos)</label>
             <input
               className="input"
               type="number"
               min={1}
+              max={maxNodeLevel}
               value={slot.nodeLevel}
-              onChange={(e) => setSlot(nodeId, { nodeLevel: Math.max(1, Math.floor(Number(e.target.value) || 1)) })}
+              onChange={(e) => setSlot(nodeId, { nodeLevel: Math.min(maxNodeLevel, Math.max(1, Math.floor(Number(e.target.value) || 1))) })}
               style={{ width: 110 }}
             />
           </div>

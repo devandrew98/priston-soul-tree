@@ -244,20 +244,27 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .tnode.filled .tnode-frame { filter: drop-shadow(0 0 5px var(--rarity, var(--gold))); }
 .tnode-lvl { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); z-index: 4; background: #0c0803; border: 1px solid var(--gold); border-radius: 4px; font-size: 11px; font-weight: 800; color: var(--gold-bright); padding: 0 6px; line-height: 1.5; min-width: 20px; text-align: center; box-shadow: 0 1px 3px #000; }
 
-/* Soul-level pips (pink dots) — 1/2/3 conforme o nível da soul, como no jogo */
-.tnode-pips { position: absolute; top: 0; left: -5px; display: flex; flex-direction: column; gap: 2px; z-index: 5; pointer-events: none; }
-.tnode-pips .pip { width: 7px; height: 7px; border-radius: 50%; background: #241c2e; border: 1px solid #3f3350; }
-.tnode-pips .pip.on { background: radial-gradient(circle at 40% 35%, #ff85d2 0%, #d81f92 70%); border-color: #ff9ee1; box-shadow: 0 0 5px #e83fae, 0 0 2px #ff9ee1; }
+/* Soul-level pips (pink dots) — preenchem os soquetes da moldura conforme o nível (1/2/3) */
+.tnode-pips { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+.tnode-pips .pip { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: transparent; }
+.tnode-pips .pip:nth-child(1) { left: 7px; top: 9px; }
+.tnode-pips .pip:nth-child(2) { left: 4px; top: 20px; }
+.tnode-pips .pip:nth-child(3) { left: 7px; top: 31px; }
+.tnode-pips .pip.on { background: radial-gradient(circle at 40% 35%, #ff9ae0 0%, #e0269c 72%); box-shadow: 0 0 6px #ff3fb5, 0 0 2px #ffd0ef; }
 
-/* Hover tooltip no node (estilo jogo) */
-.node-tip { position: absolute; top: -6px; z-index: 30; width: 210px; background: linear-gradient(180deg, #1c1610, #0c0906); border: 1px solid var(--gold); border-radius: 8px; padding: 8px 10px; box-shadow: 0 8px 24px #000; display: none; pointer-events: none; text-align: left; }
+/* Hover tooltip no node (estilo jogo) — moldura colorida por raridade */
+.node-tip { position: absolute; top: -6px; z-index: 30; width: 214px; background: linear-gradient(180deg, #221a12, #0a0805); border: 2px solid var(--gold); border-radius: 10px; padding: 0; box-shadow: 0 8px 24px #000; display: none; pointer-events: none; text-align: center; overflow: hidden; }
 .node-tip.right { left: calc(100% + 10px); }
 .node-tip.left { right: calc(100% + 10px); }
+.node-tip.r-common { border-color: #9a9a9a; box-shadow: 0 0 12px rgba(154,154,154,0.40), 0 8px 24px #000; }
+.node-tip.r-rare { border-color: #4a90d9; box-shadow: 0 0 12px rgba(74,144,217,0.55), 0 8px 24px #000; }
+.node-tip.r-legendary { border-color: #e0a93b; box-shadow: 0 0 14px rgba(224,169,59,0.55), 0 8px 24px #000; }
 .tnode:hover .node-tip { display: block; }
-.node-tip-head { display: flex; align-items: center; gap: 8px; color: var(--gold-bright); font-weight: 800; font-size: 14px; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 6px; }
-.node-tip-sub { color: var(--accent); font-size: 12px; font-weight: 700; margin-bottom: 6px; }
-.node-tip-stat + .node-tip-stat { margin-top: 5px; border-top: 1px dashed #3a2f1c; padding-top: 5px; }
-.node-tip-line { color: #cdbb8a; font-size: 12px; line-height: 1.55; }
+.node-tip-head { display: flex; align-items: center; justify-content: center; gap: 8px; color: #f3e7c8; font-weight: 800; font-size: 14px; padding: 8px 10px; background: linear-gradient(180deg, rgba(255,255,255,0.07), transparent); border-bottom: 1px solid rgba(0,0,0,0.55); }
+.node-tip-body { padding: 8px 12px 10px; }
+.node-tip-sub { color: #9c9079; font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+.node-tip-stat + .node-tip-stat { margin-top: 6px; border-top: 1px dashed #3a2f1c; padding-top: 6px; }
+.node-tip-line { color: #e6c65a; font-size: 12.5px; line-height: 1.6; }
 
 /* Node editor controls */
 .ne-soul { display: flex; align-items: center; gap: 10px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }

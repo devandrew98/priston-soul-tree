@@ -12,7 +12,7 @@ import {
   type NodeType,
 } from '../lib/tree';
 import { SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
-import { fmt, RARITY_LABEL } from '../lib/formula';
+import { fmt } from '../lib/formula';
 import { useStore } from '../store';
 import { SoulIcon } from './SoulIcon';
 import { NodeEditor } from './NodeEditor';
@@ -41,6 +41,13 @@ const SOUL_CAT_LABEL: Record<string, string> = {
   defense: 'Defense',
   support: 'Utility',
   pvp: 'PvP',
+};
+
+// Rarity in Portuguese, like the in-game tooltip ("Lendário / Raro / Comum").
+const RARITY_PT: Record<string, string> = {
+  common: 'Comum',
+  rare: 'Raro',
+  legendary: 'Lendário',
 };
 
 export function Planner() {
@@ -134,16 +141,18 @@ export function Planner() {
                 </div>
                 {soul && <span className="tnode-lvl">{slot.nodeLevel}</span>}
                 {soul && (
-                  <div className={`node-tip ${n.col >= 4 ? 'left' : 'right'}`}>
-                    <div className="node-tip-head"><SoulIcon soul={soul} size={26} /><span>{soul.name}</span></div>
-                    <div className="node-tip-sub">{RARITY_LABEL[soul.rarity]} {SOUL_CAT_LABEL[soul.category]} Soul</div>
-                    {soul.stats.map((st) => (
-                      <div key={st.stat} className="node-tip-stat">
-                        {[1, 2, 3].map((lv) => (
-                          <div key={lv} className="node-tip-line">Level {lv} - {st.statLabel} + {fmt(st.ranks[lv - 1], st.unit)}</div>
-                        ))}
-                      </div>
-                    ))}
+                  <div className={`node-tip r-${soul.rarity} ${n.col >= 4 ? 'left' : 'right'}`}>
+                    <div className="node-tip-head"><SoulIcon soul={soul} size={24} /><span>{soul.name}</span></div>
+                    <div className="node-tip-body">
+                      <div className="node-tip-sub">{RARITY_PT[soul.rarity]} {SOUL_CAT_LABEL[soul.category]} Soul</div>
+                      {soul.stats.map((st) => (
+                        <div key={st.stat} className="node-tip-stat">
+                          {[1, 2, 3].map((lv) => (
+                            <div key={lv} className="node-tip-line">Level {lv} - {st.statLabel} + {fmt(st.ranks[lv - 1], st.unit)}</div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
