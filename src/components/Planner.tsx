@@ -121,7 +121,7 @@ export function Planner() {
                     <img className="tnode-type" src={NODE_TYPE_ICON[n.type]} alt={TYPE_LABEL[n.type]} />
                   )}
                 </div>
-                {soul && <span className="tnode-lvl">{n.rarity[0].toUpperCase()}{slot.nodeLevel}</span>}
+                {soul && <span className="tnode-lvl">{slot.nodeLevel}</span>}
               </div>
             );
           })}

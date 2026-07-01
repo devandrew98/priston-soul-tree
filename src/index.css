@@ -152,6 +152,25 @@ button {
 .total-sub { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin: 12px 0 4px; }
 .fill-meter { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; }
 
+/* SOULS STATS panel — reproduz o painel lateral do jogo */
+.souls-stats {
+  background: linear-gradient(180deg, rgba(24,19,11,0.96), rgba(10,8,5,0.96));
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.ss-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--gold); padding-bottom: 6px; margin-bottom: 6px; }
+.ss-title { color: var(--gold-bright); font-weight: 800; letter-spacing: 1px; font-size: 15px; text-shadow: 0 1px 2px #000; }
+.ss-cols { color: var(--gold); font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
+.ss-row { display: grid; grid-template-columns: 1fr auto 8px auto; align-items: center; gap: 6px; padding: 3px 0; font-size: 13px; }
+.ss-lbl { color: var(--text-dim); }
+.ss-sep { color: #6a5f47; text-align: center; }
+.ss-val { color: #b9a877; font-weight: 700; text-align: right; min-width: 52px; font-variant-numeric: tabular-nums; }
+.ss-val.pvp { color: #8a7f66; }
+.ss-row.on .ss-lbl { color: var(--text); }
+.ss-row.on .ss-val { color: var(--gold-bright); }
+.ss-row.on .ss-val.pvp { color: #c9a94a; }
+
 /* Inventory */
 .inv-controls { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
 .inv-table { width: 100%; border-collapse: collapse; }
@@ -223,7 +242,7 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .tnode-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; }
 .tnode-type { width: 50%; height: 50%; object-fit: contain; opacity: 0.5; }
 .tnode.filled .tnode-frame { filter: drop-shadow(0 0 5px var(--rarity, var(--gold))); }
-.tnode-lvl { position: absolute; bottom: -4px; right: -4px; z-index: 4; background: var(--bg); border: 1px solid var(--gold); border-radius: 4px; font-size: 10px; font-weight: 700; color: var(--gold-bright); padding: 0 3px; line-height: 1.4; }
+.tnode-lvl { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); z-index: 4; background: #0c0803; border: 1px solid var(--gold); border-radius: 4px; font-size: 11px; font-weight: 800; color: var(--gold-bright); padding: 0 6px; line-height: 1.5; min-width: 20px; text-align: center; box-shadow: 0 1px 3px #000; }
 
 /* Node editor controls */
 .ne-soul { display: flex; align-items: center; gap: 10px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
