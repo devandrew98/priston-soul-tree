@@ -1,0 +1,2025 @@
+[
+  {
+    "name": "Doral",
+    "mapLevel": 5,
+    "category": "attack",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      1,
+      2,
+      4
+    ],
+    "img": "/fusion/DoralSoul.png",
+    "id": "doral-attackPower",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Mutant Plant",
+    "mapLevel": 5,
+    "category": "attack",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      1,
+      2,
+      4
+    ],
+    "img": "/fusion/MutantPlantSoul.png",
+    "id": "mutant-plant-attackPower",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Armored Beetle",
+    "mapLevel": 30,
+    "category": "attack",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      1,
+      2,
+      4
+    ],
+    "img": "/fusion/ArmoredBeetleSoul.png",
+    "id": "armored-beetle-attackPower",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Headcutter",
+    "mapLevel": 35,
+    "category": "attack",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      8,
+      15,
+      30
+    ],
+    "img": "/fusion/HeadcutterSoul.png",
+    "id": "headcutter-attackPower",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Mighty Goblin",
+    "mapLevel": 35,
+    "category": "attack",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      2,
+      4,
+      8
+    ],
+    "img": "/fusion/MightyGoblinSoul.png",
+    "id": "mighty-goblin-attackPower",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Slaughter",
+    "mapLevel": 45,
+    "category": "attack",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      4,
+      8,
+      15
+    ],
+    "img": "/fusion/SlaughterSoul.png",
+    "id": "slaughter-attackPower",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Reptile Warlord",
+    "mapLevel": 65,
+    "category": "attack",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      4,
+      8,
+      15
+    ],
+    "img": "/fusion/ReptileWarlordSoul.png",
+    "id": "reptile-warlord-attackPower",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Iron Fist",
+    "mapLevel": 85,
+    "category": "attack",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      3,
+      7,
+      15
+    ],
+    "img": "/fusion/IronFistSoul.png",
+    "id": "iron-fist-attackPower",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Frost",
+    "mapLevel": 89,
+    "category": "attack",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      5,
+      10,
+      20
+    ],
+    "img": "/fusion/FrostSoul.png",
+    "id": "frost-attackPower",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Gorgoniac",
+    "mapLevel": 100,
+    "category": "attack",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      15,
+      30,
+      60
+    ],
+    "img": "/fusion/GorgoniacSoul.png",
+    "id": "gorgoniac-attackPower",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Gorgon",
+    "mapLevel": 100,
+    "category": "attack",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      6,
+      12,
+      25
+    ],
+    "img": "/fusion/GorgonSoul.png",
+    "id": "gorgon-attackPower",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Ghost",
+    "mapLevel": 5,
+    "category": "attack",
+    "stat": "attackRating",
+    "statLabel": "Attack Rating",
+    "unit": "flat",
+    "ranks": [
+      5,
+      11,
+      22
+    ],
+    "img": "/fusion/GhostSoul.png",
+    "id": "ghost-attackRating",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "BeeDog",
+    "mapLevel": 10,
+    "category": "attack",
+    "stat": "attackRating",
+    "statLabel": "Attack Rating",
+    "unit": "flat",
+    "ranks": [
+      11,
+      22,
+      33
+    ],
+    "img": "/fusion/BeeDogSoul.png",
+    "id": "beedog-attackRating",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Mutant Tree",
+    "mapLevel": 15,
+    "category": "attack",
+    "stat": "attackRating",
+    "statLabel": "Attack Rating",
+    "unit": "flat",
+    "ranks": [
+      5,
+      11,
+      22
+    ],
+    "img": "/fusion/MutantTreeSoul.png",
+    "id": "mutant-tree-attackRating",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Red Scorpion",
+    "mapLevel": 20,
+    "category": "attack",
+    "stat": "attackRating",
+    "statLabel": "Attack Rating",
+    "unit": "flat",
+    "ranks": [
+      17,
+      33,
+      65
+    ],
+    "img": "/fusion/RedScorpionSoul.png",
+    "id": "red-scorpion-attackRating",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Figon",
+    "mapLevel": 50,
+    "category": "attack",
+    "stat": "attackRating",
+    "statLabel": "Attack Rating",
+    "unit": "flat",
+    "ranks": [
+      17,
+      33,
+      65
+    ],
+    "img": "/fusion/FigonSoul.png",
+    "id": "figon-attackRating",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Reptile Warlord",
+    "mapLevel": 65,
+    "category": "attack",
+    "stat": "attackRating",
+    "statLabel": "Attack Rating",
+    "unit": "flat",
+    "ranks": [
+      32,
+      65,
+      130
+    ],
+    "img": "/fusion/ReptileWarlordSoul.png",
+    "id": "reptile-warlord-attackRating",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Devil Bird",
+    "mapLevel": 92,
+    "category": "attack",
+    "stat": "attackRating",
+    "statLabel": "Attack Rating",
+    "unit": "flat",
+    "ranks": [
+      30,
+      60,
+      125
+    ],
+    "img": "/fusion/DevilBirdSoul.png",
+    "id": "devil-bird-attackRating",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Gorgon",
+    "mapLevel": 100,
+    "category": "attack",
+    "stat": "attackRating",
+    "statLabel": "Attack Rating",
+    "unit": "flat",
+    "ranks": [
+      30,
+      60,
+      125
+    ],
+    "img": "/fusion/GorgonSoul.png",
+    "id": "gorgon-attackRating",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Tulla",
+    "mapLevel": 105,
+    "category": "attack",
+    "stat": "attackRating",
+    "statLabel": "Attack Rating",
+    "unit": "flat",
+    "ranks": [
+      65,
+      130,
+      260
+    ],
+    "img": "/fusion/TullaSoul.png",
+    "id": "tulla-attackRating",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Mutant Rabie",
+    "mapLevel": 5,
+    "category": "attack",
+    "stat": "critRate",
+    "statLabel": "Critical Rate",
+    "unit": "pct",
+    "ranks": [
+      0.2,
+      0.3,
+      0.5
+    ],
+    "img": "/fusion/MutantRabieSoul.png",
+    "id": "mutant-rabie-critRate",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Ratoo",
+    "mapLevel": 75,
+    "category": "attack",
+    "stat": "critRate",
+    "statLabel": "Critical Rate",
+    "unit": "pct",
+    "ranks": [
+      0.2,
+      0.3,
+      0.5
+    ],
+    "img": "/fusion/RatooSoul.png",
+    "id": "ratoo-critRate",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Hyper Machine",
+    "mapLevel": 80,
+    "category": "attack",
+    "stat": "critRate",
+    "statLabel": "Critical Rate",
+    "unit": "pct",
+    "ranks": [
+      0.1,
+      0.2,
+      0.4
+    ],
+    "img": "/fusion/HyperMachineSoul.png",
+    "id": "hyper-machine-critRate",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Babel",
+    "mapLevel": 85,
+    "category": "attack",
+    "stat": "critRate",
+    "statLabel": "Critical Rate",
+    "unit": "pct",
+    "ranks": [
+      0.5,
+      1,
+      1.5
+    ],
+    "img": "/fusion/BabelSoul.png",
+    "id": "babel-critRate",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Acero",
+    "mapLevel": 110,
+    "category": "attack",
+    "stat": "critRate",
+    "statLabel": "Critical Rate",
+    "unit": "pct",
+    "ranks": [
+      0.1,
+      0.2,
+      0.4
+    ],
+    "img": "/fusion/AceroSoul.png",
+    "id": "acero-critRate",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Chalybs",
+    "mapLevel": 110,
+    "category": "attack",
+    "stat": "critRate",
+    "statLabel": "Critical Rate",
+    "unit": "pct",
+    "ranks": [
+      0.25,
+      0.3,
+      0.5
+    ],
+    "img": "/fusion/ChalybsSoul.png",
+    "id": "chalybs-critRate",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Xetan",
+    "mapLevel": 80,
+    "category": "attack",
+    "stat": "exp",
+    "statLabel": "EXP",
+    "unit": "pct",
+    "ranks": [
+      1.5,
+      3,
+      6
+    ],
+    "img": "/fusion/XetanSoul.png",
+    "id": "xetan-exp",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Hobgoblin",
+    "mapLevel": 1,
+    "category": "attack",
+    "stat": "mana",
+    "statLabel": "Mana",
+    "unit": "flat",
+    "ranks": [
+      6,
+      12,
+      25
+    ],
+    "img": "/fusion/HobgoblinSoul.png",
+    "id": "hobgoblin-mana",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Leech",
+    "mapLevel": 25,
+    "category": "attack",
+    "stat": "mana",
+    "statLabel": "Mana",
+    "unit": "flat",
+    "ranks": [
+      25,
+      50,
+      100
+    ],
+    "img": "/fusion/LeechSoul.png",
+    "id": "leech-mana",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Witch",
+    "mapLevel": 55,
+    "category": "attack",
+    "stat": "mana",
+    "statLabel": "Mana",
+    "unit": "flat",
+    "ranks": [
+      12,
+      25,
+      50
+    ],
+    "img": "/fusion/WitchSoul.png",
+    "id": "witch-mana",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Xetan",
+    "mapLevel": 80,
+    "category": "attack",
+    "stat": "mana",
+    "statLabel": "Mana",
+    "unit": "flat",
+    "ranks": [
+      25,
+      50,
+      100
+    ],
+    "img": "/fusion/XetanSoul.png",
+    "id": "xetan-mana",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Cold Eye",
+    "mapLevel": 89,
+    "category": "attack",
+    "stat": "mana",
+    "statLabel": "Mana",
+    "unit": "flat",
+    "ranks": [
+      20,
+      40,
+      80
+    ],
+    "img": "/fusion/ColdEyeSoul.png",
+    "id": "cold-eye-mana",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Devil Bird",
+    "mapLevel": 92,
+    "category": "attack",
+    "stat": "mana",
+    "statLabel": "Mana",
+    "unit": "flat",
+    "ranks": [
+      12,
+      25,
+      50
+    ],
+    "img": "/fusion/DevilBirdSoul.png",
+    "id": "devil-bird-mana",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Valento",
+    "mapLevel": 92,
+    "category": "attack",
+    "stat": "mana",
+    "statLabel": "Mana",
+    "unit": "flat",
+    "ranks": [
+      25,
+      50,
+      100
+    ],
+    "img": "/fusion/ValentoSoul.png",
+    "id": "valento-mana",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Dark Mage",
+    "mapLevel": 95,
+    "category": "attack",
+    "stat": "mana",
+    "statLabel": "Mana",
+    "unit": "flat",
+    "ranks": [
+      12,
+      25,
+      50
+    ],
+    "img": "/fusion/DarkMageSoul.png",
+    "id": "dark-mage-mana",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Chalybs",
+    "mapLevel": 110,
+    "category": "attack",
+    "stat": "mana",
+    "statLabel": "Mana",
+    "unit": "flat",
+    "ranks": [
+      12,
+      25,
+      50
+    ],
+    "img": "/fusion/ChalybsSoul.png",
+    "id": "chalybs-mana",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Scorpion",
+    "mapLevel": 10,
+    "category": "attack",
+    "stat": "moveSpeed",
+    "statLabel": "Movement Speed",
+    "unit": "flat",
+    "ranks": [
+      1,
+      2,
+      3
+    ],
+    "img": "/fusion/ScorpionSoul.png",
+    "id": "scorpion-moveSpeed",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Avelisk-S",
+    "mapLevel": 50,
+    "category": "attack",
+    "stat": "moveSpeed",
+    "statLabel": "Movement Speed",
+    "unit": "flat",
+    "ranks": [
+      1,
+      1.5,
+      2
+    ],
+    "img": "/fusion/AveliskSSoul.png",
+    "id": "avelisk-s-moveSpeed",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Undead Greven",
+    "mapLevel": 50,
+    "category": "attack",
+    "stat": "moveSpeed",
+    "statLabel": "Movement Speed",
+    "unit": "flat",
+    "ranks": [
+      3,
+      4,
+      5
+    ],
+    "img": "/fusion/UndeadGrevenSoul.png",
+    "id": "undead-greven-moveSpeed",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Invader Assassin",
+    "mapLevel": 108,
+    "category": "attack",
+    "stat": "moveSpeed",
+    "statLabel": "Movement Speed",
+    "unit": "flat",
+    "ranks": [
+      2,
+      3,
+      4
+    ],
+    "img": "/fusion/InvaderAssassinSoul.png",
+    "id": "invader-assassin-moveSpeed",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Omicron",
+    "mapLevel": 75,
+    "category": "attack",
+    "stat": "stamina",
+    "statLabel": "Stamina",
+    "unit": "flat",
+    "ranks": [
+      25,
+      50,
+      100
+    ],
+    "img": "/fusion/OmicronSoul.png",
+    "id": "omicron-stamina",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Rampage",
+    "mapLevel": 80,
+    "category": "attack",
+    "stat": "stamina",
+    "statLabel": "Stamina",
+    "unit": "flat",
+    "ranks": [
+      12,
+      25,
+      50
+    ],
+    "img": "/fusion/RampageSoul.png",
+    "id": "rampage-stamina",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Iron Fist",
+    "mapLevel": 85,
+    "category": "attack",
+    "stat": "stamina",
+    "statLabel": "Stamina",
+    "unit": "flat",
+    "ranks": [
+      12,
+      25,
+      50
+    ],
+    "img": "/fusion/IronFistSoul.png",
+    "id": "iron-fist-stamina",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Valento",
+    "mapLevel": 92,
+    "category": "attack",
+    "stat": "stamina",
+    "statLabel": "Stamina",
+    "unit": "flat",
+    "ranks": [
+      25,
+      50,
+      100
+    ],
+    "img": "/fusion/ValentoSoul.png",
+    "id": "valento-stamina",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Dark Mage",
+    "mapLevel": 95,
+    "category": "attack",
+    "stat": "stamina",
+    "statLabel": "Stamina",
+    "unit": "flat",
+    "ranks": [
+      12,
+      25,
+      50
+    ],
+    "img": "/fusion/DarkMageSoul.png",
+    "id": "dark-mage-stamina",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Wild Goblin",
+    "mapLevel": 10,
+    "category": "defense",
+    "stat": "absorb",
+    "statLabel": "Absorption",
+    "unit": "flat",
+    "ranks": [
+      1,
+      2,
+      5
+    ],
+    "img": "/fusion/WildGoblinSoul.png",
+    "id": "wild-goblin-absorb",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Bloody Buma",
+    "mapLevel": 40,
+    "category": "defense",
+    "stat": "absorb",
+    "statLabel": "Absorption",
+    "unit": "flat",
+    "ranks": [
+      2,
+      5,
+      10
+    ],
+    "img": "/fusion/BloodyBumaSoul.png",
+    "id": "bloody-buma-absorb",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Mummy",
+    "mapLevel": 45,
+    "category": "defense",
+    "stat": "absorb",
+    "statLabel": "Absorption",
+    "unit": "flat",
+    "ranks": [
+      1,
+      2,
+      5
+    ],
+    "img": "/fusion/MummySoul.png",
+    "id": "mummy-absorb",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Desert Golem",
+    "mapLevel": 50,
+    "category": "defense",
+    "stat": "absorb",
+    "statLabel": "Absorption",
+    "unit": "flat",
+    "ranks": [
+      5,
+      10,
+      20
+    ],
+    "img": "/fusion/DesertGolemSoul.png",
+    "id": "desert-golem-absorb",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Stone Golem",
+    "mapLevel": 60,
+    "category": "defense",
+    "stat": "absorb",
+    "statLabel": "Absorption",
+    "unit": "flat",
+    "ranks": [
+      2,
+      5,
+      10
+    ],
+    "img": "/fusion/StoneGolemSoul.png",
+    "id": "stone-golem-absorb",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Bloody Prince",
+    "mapLevel": 95,
+    "category": "defense",
+    "stat": "absorb",
+    "statLabel": "Absorption",
+    "unit": "flat",
+    "ranks": [
+      5,
+      10,
+      20
+    ],
+    "img": "/fusion/BloodyPrinceSoul.png",
+    "id": "bloody-prince-absorb",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Undead Maple",
+    "mapLevel": 102,
+    "category": "defense",
+    "stat": "absorb",
+    "statLabel": "Absorption",
+    "unit": "flat",
+    "ranks": [
+      5,
+      10,
+      20
+    ],
+    "img": "/fusion/UndeadMapleSoul.png",
+    "id": "undead-maple-absorb",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Draxos",
+    "mapLevel": 108,
+    "category": "defense",
+    "stat": "absorb",
+    "statLabel": "Absorption",
+    "unit": "flat",
+    "ranks": [
+      5,
+      10,
+      20
+    ],
+    "img": "/fusion/DraxosSoul.png",
+    "id": "draxos-absorb",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Arhdyra",
+    "mapLevel": 113,
+    "category": "defense",
+    "stat": "absorb",
+    "statLabel": "Absorption",
+    "unit": "flat",
+    "ranks": [
+      10,
+      20,
+      40
+    ],
+    "img": "/fusion/ArhdyraSoul.png",
+    "id": "arhdyra-absorb",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Cyclops Knight",
+    "mapLevel": 35,
+    "category": "defense",
+    "stat": "block",
+    "statLabel": "Block",
+    "unit": "pct",
+    "ranks": [
+      0.1,
+      0.2,
+      0.4
+    ],
+    "img": "/fusion/CyclopsKnightSoul.png",
+    "id": "cyclops-knight-block",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Dawlin",
+    "mapLevel": 70,
+    "category": "defense",
+    "stat": "block",
+    "statLabel": "Block",
+    "unit": "pct",
+    "ranks": [
+      0.2,
+      0.3,
+      0.5
+    ],
+    "img": "/fusion/DawlinSoul.png",
+    "id": "dawlin-block",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Undead King Hopy",
+    "mapLevel": 100,
+    "category": "defense",
+    "stat": "block",
+    "statLabel": "Block",
+    "unit": "pct",
+    "ranks": [
+      0.1,
+      0.2,
+      0.4
+    ],
+    "img": "/fusion/UndeadKingHopySoul.png",
+    "id": "undead-king-hopy-block",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Sathla",
+    "mapLevel": 113,
+    "category": "defense",
+    "stat": "block",
+    "statLabel": "Block",
+    "unit": "pct",
+    "ranks": [
+      0.1,
+      0.2,
+      0.4
+    ],
+    "img": "/fusion/SathlaSoul.png",
+    "id": "sathla-block",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Primal Golem",
+    "mapLevel": 115,
+    "category": "defense",
+    "stat": "block",
+    "statLabel": "Block",
+    "unit": "pct",
+    "ranks": [
+      0.5,
+      1,
+      1.5
+    ],
+    "img": "/fusion/PrimalGolemSoul.png",
+    "id": "primal-golem-block",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Tobie",
+    "mapLevel": 1,
+    "category": "defense",
+    "stat": "defense",
+    "statLabel": "Defense",
+    "unit": "flat",
+    "ranks": [
+      6,
+      12,
+      25
+    ],
+    "img": "/fusion/TobieSoul.png",
+    "id": "tobie-defense",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Haunting Plant",
+    "mapLevel": 5,
+    "category": "defense",
+    "stat": "defense",
+    "statLabel": "Defense",
+    "unit": "flat",
+    "ranks": [
+      12,
+      25,
+      50
+    ],
+    "img": "/fusion/HauntingPlantSoul.png",
+    "id": "haunting-plant-defense",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Bargon",
+    "mapLevel": 30,
+    "category": "defense",
+    "stat": "defense",
+    "statLabel": "Defense",
+    "unit": "flat",
+    "ranks": [
+      25,
+      50,
+      100
+    ],
+    "img": "/fusion/BargonSoul.png",
+    "id": "bargon-defense",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Bloody Buma",
+    "mapLevel": 40,
+    "category": "defense",
+    "stat": "defense",
+    "statLabel": "Defense",
+    "unit": "flat",
+    "ranks": [
+      12,
+      25,
+      50
+    ],
+    "img": "/fusion/BloodyBumaSoul.png",
+    "id": "bloody-buma-defense",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Doom Guard",
+    "mapLevel": 60,
+    "category": "defense",
+    "stat": "defense",
+    "statLabel": "Defense",
+    "unit": "flat",
+    "ranks": [
+      10,
+      20,
+      40
+    ],
+    "img": "/fusion/DoomGuardSoul.png",
+    "id": "doom-guard-defense",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Bloody Knight",
+    "mapLevel": 95,
+    "category": "defense",
+    "stat": "defense",
+    "statLabel": "Defense",
+    "unit": "flat",
+    "ranks": [
+      25,
+      50,
+      100
+    ],
+    "img": "/fusion/BloodyKnightSoul.png",
+    "id": "bloody-knight-defense",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Bloody Prince",
+    "mapLevel": 95,
+    "category": "defense",
+    "stat": "defense",
+    "statLabel": "Defense",
+    "unit": "flat",
+    "ranks": [
+      25,
+      50,
+      100
+    ],
+    "img": "/fusion/BloodyPrinceSoul.png",
+    "id": "bloody-prince-defense",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Mokova",
+    "mapLevel": 98,
+    "category": "defense",
+    "stat": "defense",
+    "statLabel": "Defense",
+    "unit": "flat",
+    "ranks": [
+      25,
+      50,
+      100
+    ],
+    "img": "/fusion/MokovaSoul.png",
+    "id": "mokova-defense",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Avelisk Explorer",
+    "mapLevel": 105,
+    "category": "defense",
+    "stat": "defense",
+    "statLabel": "Defense",
+    "unit": "flat",
+    "ranks": [
+      15,
+      30,
+      60
+    ],
+    "img": "/fusion/AveliskExplorerSoul.png",
+    "id": "avelisk-explorer-defense",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Elite Engineer",
+    "mapLevel": 108,
+    "category": "defense",
+    "stat": "defense",
+    "statLabel": "Defense",
+    "unit": "flat",
+    "ranks": [
+      20,
+      40,
+      80
+    ],
+    "img": "/fusion/EliteEngineerSoul.png",
+    "id": "elite-engineer-defense",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Illusion Knight",
+    "mapLevel": 45,
+    "category": "defense",
+    "stat": "evade",
+    "statLabel": "Evade",
+    "unit": "pct",
+    "ranks": [
+      0.1,
+      0.2,
+      0.4
+    ],
+    "img": "/fusion/IllusionKnightSoul.png",
+    "id": "illusion-knight-evade",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Shadow",
+    "mapLevel": 70,
+    "category": "defense",
+    "stat": "evade",
+    "statLabel": "Evade",
+    "unit": "pct",
+    "ranks": [
+      0.1,
+      0.2,
+      0.4
+    ],
+    "img": "/fusion/ShadowSoul.png",
+    "id": "shadow-evade",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Mokova",
+    "mapLevel": 98,
+    "category": "defense",
+    "stat": "evade",
+    "statLabel": "Evade",
+    "unit": "pct",
+    "ranks": [
+      0.5,
+      1,
+      1.5
+    ],
+    "img": "/fusion/MokovaSoul.png",
+    "id": "mokova-evade",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Seto",
+    "mapLevel": 98,
+    "category": "defense",
+    "stat": "evade",
+    "statLabel": "Evade",
+    "unit": "pct",
+    "ranks": [
+      0.1,
+      0.2,
+      0.4
+    ],
+    "img": "/fusion/SetoSoul.png",
+    "id": "seto-evade",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Ruca",
+    "mapLevel": 102,
+    "category": "defense",
+    "stat": "evade",
+    "statLabel": "Evade",
+    "unit": "pct",
+    "ranks": [
+      0.1,
+      0.2,
+      0.4
+    ],
+    "img": "/fusion/RucaSoul.png",
+    "id": "ruca-evade",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Draxos",
+    "mapLevel": 108,
+    "category": "defense",
+    "stat": "evade",
+    "statLabel": "Evade",
+    "unit": "pct",
+    "ranks": [
+      0.5,
+      1,
+      1.5
+    ],
+    "img": "/fusion/DraxosSoul.png",
+    "id": "draxos-evade",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Arma",
+    "mapLevel": 1,
+    "category": "defense",
+    "stat": "hp",
+    "statLabel": "HP",
+    "unit": "flat",
+    "ranks": [
+      2,
+      5,
+      10
+    ],
+    "img": "/fusion/ArmaSoul.png",
+    "id": "arma-hp",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Zombie",
+    "mapLevel": 15,
+    "category": "defense",
+    "stat": "hp",
+    "statLabel": "HP",
+    "unit": "flat",
+    "ranks": [
+      3,
+      7,
+      15
+    ],
+    "img": "/fusion/ZombieSoul.png",
+    "id": "zombie-hp",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Haunted Treant",
+    "mapLevel": 20,
+    "category": "defense",
+    "stat": "hp",
+    "statLabel": "HP",
+    "unit": "flat",
+    "ranks": [
+      15,
+      30,
+      60
+    ],
+    "img": "/fusion/HauntedTreantSoul.png",
+    "id": "haunted-treant-hp",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Buma",
+    "mapLevel": 30,
+    "category": "defense",
+    "stat": "hp",
+    "statLabel": "HP",
+    "unit": "flat",
+    "ranks": [
+      7,
+      15,
+      30
+    ],
+    "img": "/fusion/BumaSoul.png",
+    "id": "buma-hp",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Stone Golem",
+    "mapLevel": 60,
+    "category": "defense",
+    "stat": "hp",
+    "statLabel": "HP",
+    "unit": "flat",
+    "ranks": [
+      7,
+      15,
+      30
+    ],
+    "img": "/fusion/StoneGolemSoul.png",
+    "id": "stone-golem-hp",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Mountain",
+    "mapLevel": 85,
+    "category": "defense",
+    "stat": "hp",
+    "statLabel": "HP",
+    "unit": "flat",
+    "ranks": [
+      12,
+      25,
+      50
+    ],
+    "img": "/fusion/MountainSoul.png",
+    "id": "mountain-hp",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Blizzard Giant",
+    "mapLevel": 89,
+    "category": "defense",
+    "stat": "hp",
+    "statLabel": "HP",
+    "unit": "flat",
+    "ranks": [
+      15,
+      30,
+      60
+    ],
+    "img": "/fusion/BlizzardGiantSoul.png",
+    "id": "blizzard-giant-hp",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Egan",
+    "mapLevel": 1,
+    "category": "support",
+    "stat": "agingSuccess",
+    "statLabel": "Aging Success",
+    "unit": "pct",
+    "ranks": [
+      0.1,
+      0.2,
+      0.4
+    ],
+    "img": "/fusion/EganSoul.png",
+    "id": "egan-agingSuccess",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Lizard Chemist",
+    "mapLevel": 65,
+    "category": "support",
+    "stat": "agingSuccess",
+    "statLabel": "Aging Success",
+    "unit": "pct",
+    "ranks": [
+      0.1,
+      0.2,
+      0.4
+    ],
+    "img": "/fusion/LizardChemistSoul.png",
+    "id": "lizard-chemist-agingSuccess",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Stygian",
+    "mapLevel": 70,
+    "category": "support",
+    "stat": "agingSuccess",
+    "statLabel": "Aging Success",
+    "unit": "pct",
+    "ranks": [
+      0.2,
+      0.4,
+      0.5
+    ],
+    "img": "/fusion/StygianSoul.png",
+    "id": "stygian-agingSuccess",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Devil Shy",
+    "mapLevel": 102,
+    "category": "support",
+    "stat": "agingSuccess",
+    "statLabel": "Aging Success",
+    "unit": "pct",
+    "ranks": [
+      0.5,
+      1,
+      1.5
+    ],
+    "img": "/fusion/DevilShySoul.png",
+    "id": "devil-shy-agingSuccess",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Yagditha",
+    "mapLevel": 113,
+    "category": "support",
+    "stat": "agingSuccess",
+    "statLabel": "Aging Success",
+    "unit": "pct",
+    "ranks": [
+      0.5,
+      1,
+      1.5
+    ],
+    "img": "/fusion/YagdithaSoul.png",
+    "id": "yagditha-agingSuccess",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Hopy",
+    "mapLevel": 1,
+    "category": "support",
+    "stat": "exp",
+    "statLabel": "EXP",
+    "unit": "pct",
+    "ranks": [
+      1,
+      1.5,
+      3
+    ],
+    "img": "/fusion/HopySoul.png",
+    "id": "hopy-exp",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Rabie",
+    "mapLevel": 1,
+    "category": "support",
+    "stat": "exp",
+    "statLabel": "EXP",
+    "unit": "pct",
+    "ranks": [
+      1,
+      1.5,
+      3
+    ],
+    "img": "/fusion/RabieSoul.png",
+    "id": "rabie-exp",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Decoy",
+    "mapLevel": 20,
+    "category": "support",
+    "stat": "exp",
+    "statLabel": "EXP",
+    "unit": "pct",
+    "ranks": [
+      1,
+      2,
+      4
+    ],
+    "img": "/fusion/DecoySoul.png",
+    "id": "decoy-exp",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Grotesque",
+    "mapLevel": 80,
+    "category": "support",
+    "stat": "exp",
+    "statLabel": "EXP",
+    "unit": "pct",
+    "ranks": [
+      1.5,
+      3,
+      6
+    ],
+    "img": "/fusion/GrotesqueSoul.png",
+    "id": "grotesque-exp",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Minigue",
+    "mapLevel": 5,
+    "category": "support",
+    "stat": "ownItemType",
+    "statLabel": "Own Item Drop",
+    "unit": "pct",
+    "ranks": [
+      1,
+      3,
+      7
+    ],
+    "img": "/fusion/MinigueSoul.png",
+    "id": "minigue-ownItemType",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "King Hopy",
+    "mapLevel": 55,
+    "category": "support",
+    "stat": "ownItemType",
+    "statLabel": "Own Item Drop",
+    "unit": "pct",
+    "ranks": [
+      10,
+      13,
+      15
+    ],
+    "img": "/fusion/KingHopySoul.png",
+    "id": "king-hopy-ownItemType",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Lizard Elder",
+    "mapLevel": 65,
+    "category": "support",
+    "stat": "ownItemType",
+    "statLabel": "Own Item Drop",
+    "unit": "pct",
+    "ranks": [
+      1,
+      3,
+      7
+    ],
+    "img": "/fusion/LizardElderSoul.png",
+    "id": "lizard-elder-ownItemType",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Chaos Cara",
+    "mapLevel": 89,
+    "category": "support",
+    "stat": "ownItemType",
+    "statLabel": "Own Item Drop",
+    "unit": "pct",
+    "ranks": [
+      3,
+      7,
+      14
+    ],
+    "img": "/fusion/ChaosCaraSoul.png",
+    "id": "chaos-cara-ownItemType",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Greedy",
+    "mapLevel": 110,
+    "category": "support",
+    "stat": "ownItemType",
+    "statLabel": "Own Item Drop",
+    "unit": "pct",
+    "ranks": [
+      3,
+      7,
+      15
+    ],
+    "img": "/fusion/GreedySoul.png",
+    "id": "greedy-ownItemType",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Sen",
+    "mapLevel": 5,
+    "category": "support",
+    "stat": "ownSpecChance",
+    "statLabel": "Own Spec Drop",
+    "unit": "pct",
+    "ranks": [
+      1,
+      2,
+      3
+    ],
+    "img": "/fusion/SenSoul.png",
+    "id": "sen-ownSpecChance",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Mephit",
+    "mapLevel": 20,
+    "category": "support",
+    "stat": "ownSpecChance",
+    "statLabel": "Own Spec Drop",
+    "unit": "pct",
+    "ranks": [
+      1,
+      2,
+      3
+    ],
+    "img": "/fusion/MephitSoul.png",
+    "id": "mephit-ownSpecChance",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Crypt",
+    "mapLevel": 40,
+    "category": "support",
+    "stat": "ownSpecChance",
+    "statLabel": "Own Spec Drop",
+    "unit": "pct",
+    "ranks": [
+      3,
+      5,
+      7
+    ],
+    "img": "/fusion/CryptSoul.png",
+    "id": "crypt-ownSpecChance",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Hongky",
+    "mapLevel": 50,
+    "category": "support",
+    "stat": "ownSpecChance",
+    "statLabel": "Own Spec Drop",
+    "unit": "pct",
+    "ranks": [
+      10,
+      13,
+      15
+    ],
+    "img": "/fusion/HongkySoul.png",
+    "id": "hongky-ownSpecChance",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Lizard Scout",
+    "mapLevel": 65,
+    "category": "support",
+    "stat": "ownSpecChance",
+    "statLabel": "Own Spec Drop",
+    "unit": "pct",
+    "ranks": [
+      3,
+      5,
+      7
+    ],
+    "img": "/fusion/LizardScoutSoul.png",
+    "id": "lizard-scout-ownSpecChance",
+    "rarity": "rare",
+    "isPvp": false
+  },
+  {
+    "name": "Greedy",
+    "mapLevel": 110,
+    "category": "support",
+    "stat": "ownSpecChance",
+    "statLabel": "Own Spec Drop",
+    "unit": "pct",
+    "ranks": [
+      10,
+      13,
+      15
+    ],
+    "img": "/fusion/GreedySoul.png",
+    "id": "greedy-ownSpecChance",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Yagditha",
+    "mapLevel": 113,
+    "category": "support",
+    "stat": "ownSpecChance",
+    "statLabel": "Own Spec Drop",
+    "unit": "pct",
+    "ranks": [
+      7,
+      15,
+      30
+    ],
+    "img": "/fusion/YagdithaSoul.png",
+    "id": "yagditha-ownSpecChance",
+    "rarity": "legendary",
+    "isPvp": false
+  },
+  {
+    "name": "Vault Skeleton",
+    "mapLevel": 40,
+    "category": "pvp",
+    "stat": "critRate",
+    "statLabel": "Critical Rate",
+    "unit": "pct",
+    "ranks": [
+      0.2,
+      0.3,
+      0.5
+    ],
+    "img": "/fusion/VaultSkeletonSoul.png",
+    "id": "vault-skeleton-critRate",
+    "rarity": "common",
+    "isPvp": true
+  },
+  {
+    "name": "Skillmaster, Eadric",
+    "mapLevel": 70,
+    "category": "pvp",
+    "stat": "critRate",
+    "statLabel": "Critical Rate",
+    "unit": "pct",
+    "ranks": [
+      0.5,
+      1,
+      1.5
+    ],
+    "img": "/fusion/SkillmasterEadricSoul.png",
+    "id": "skillmaster-eadric-critRate",
+    "rarity": "legendary",
+    "isPvp": true
+  },
+  {
+    "name": "Vengefull Saint",
+    "mapLevel": 70,
+    "category": "pvp",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      15,
+      30,
+      60
+    ],
+    "img": "/fusion/VengefulSaintSoul.png",
+    "id": "vengefull-saint-attackPower",
+    "rarity": "legendary",
+    "isPvp": true
+  },
+  {
+    "name": "Vault Mummy",
+    "mapLevel": 90,
+    "category": "pvp",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      4,
+      8,
+      15
+    ],
+    "img": "/fusion/VaultMummySoul.png",
+    "id": "vault-mummy-attackPower",
+    "rarity": "common",
+    "isPvp": true
+  },
+  {
+    "name": "Vault Mage",
+    "mapLevel": 118,
+    "category": "pvp",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      8,
+      15,
+      30
+    ],
+    "img": "/fusion/VaultMageSoul.png",
+    "id": "vault-mage-attackPower",
+    "rarity": "rare",
+    "isPvp": true
+  },
+  {
+    "name": "Vault Nightmare",
+    "mapLevel": 118,
+    "category": "pvp",
+    "stat": "attackPower",
+    "statLabel": "Attack Power",
+    "unit": "flat",
+    "ranks": [
+      5,
+      10,
+      25
+    ],
+    "img": "/fusion/VaultNightmareSoul.png",
+    "id": "vault-nightmare-attackPower",
+    "rarity": "rare",
+    "isPvp": true
+  },
+  {
+    "name": "Vault Ranger",
+    "mapLevel": 90,
+    "category": "pvp",
+    "stat": "attackRating",
+    "statLabel": "Attack Rating",
+    "unit": "flat",
+    "ranks": [
+      17,
+      33,
+      65
+    ],
+    "img": "/fusion/VaultRangerSoul.png",
+    "id": "vault-ranger-attackRating",
+    "rarity": "common",
+    "isPvp": true
+  },
+  {
+    "name": "Vault Knight",
+    "mapLevel": 118,
+    "category": "pvp",
+    "stat": "attackRating",
+    "statLabel": "Attack Rating",
+    "unit": "flat",
+    "ranks": [
+      30,
+      60,
+      125
+    ],
+    "img": null,
+    "id": "vault-knight-attackRating",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Vault Nightmare",
+    "mapLevel": 118,
+    "category": "pvp",
+    "stat": "attackRating",
+    "statLabel": "Attack Rating",
+    "unit": "flat",
+    "ranks": [
+      20,
+      45,
+      100
+    ],
+    "img": "/fusion/VaultNightmareSoul.png",
+    "id": "vault-nightmare-attackRating",
+    "rarity": "rare",
+    "isPvp": true
+  },
+  {
+    "name": "Vault Ghost",
+    "mapLevel": 40,
+    "category": "pvp",
+    "stat": "evade",
+    "statLabel": "Evade",
+    "unit": "pct",
+    "ranks": [
+      0.1,
+      0.2,
+      0.4
+    ],
+    "img": "/fusion/VaultGhostSoul.png",
+    "id": "vault-ghost-evade",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Vault Ghoul",
+    "mapLevel": 40,
+    "category": "pvp",
+    "stat": "defense",
+    "statLabel": "Defense",
+    "unit": "flat",
+    "ranks": [
+      12,
+      25,
+      50
+    ],
+    "img": "/fusion/VaultGhoulSoul.png",
+    "id": "vault-ghoul-defense",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Vault Guard",
+    "mapLevel": 90,
+    "category": "pvp",
+    "stat": "defense",
+    "statLabel": "Defense",
+    "unit": "flat",
+    "ranks": [
+      12,
+      25,
+      50
+    ],
+    "img": "/fusion/VaultGuardSoul.png",
+    "id": "vault-guard-defense",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Vault Guard",
+    "mapLevel": 90,
+    "category": "pvp",
+    "stat": "absorb",
+    "statLabel": "Absorption",
+    "unit": "flat",
+    "ranks": [
+      2,
+      5,
+      10
+    ],
+    "img": "/fusion/VaultGuardSoul.png",
+    "id": "vault-guard-absorb",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Vault Stygian",
+    "mapLevel": 90,
+    "category": "pvp",
+    "stat": "absorb",
+    "statLabel": "Absorption",
+    "unit": "flat",
+    "ranks": [
+      1,
+      5,
+      10
+    ],
+    "img": "/fusion/VaultStygianSoul.png",
+    "id": "vault-stygian-absorb",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Vault Stygian",
+    "mapLevel": 90,
+    "category": "pvp",
+    "stat": "hp",
+    "statLabel": "HP",
+    "unit": "flat",
+    "ranks": [
+      10,
+      20,
+      30
+    ],
+    "img": "/fusion/VaultStygianSoul.png",
+    "id": "vault-stygian-hp",
+    "rarity": "common",
+    "isPvp": false
+  },
+  {
+    "name": "Vault Warrior",
+    "mapLevel": 90,
+    "category": "pvp",
+    "stat": "block",
+    "statLabel": "Block",
+    "unit": "pct",
+    "ranks": [
+      0.1,
+      0.2,
+      0.4
+    ],
+    "img": "/fusion/VaultWarriorSoul.png",
+    "id": "vault-warrior-block",
+    "rarity": "common",
+    "isPvp": false
+  }
+]

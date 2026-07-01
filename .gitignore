@@ -1,0 +1,21 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+*.tsbuildinfo
+
+# local env / secrets
+.env
+.env.local
+.env.*.local
+
+# raw ripped game assets (already copied into public/fusion).
+# Leading slash anchors to repo root so public/fusion/ is NOT ignored.
+/fusion/
+
+# local tooling / editor
+.claude/
+.vscode/
+.DS_Store
+Thumbs.db

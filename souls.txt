@@ -1,0 +1,1169 @@
+Fusion Tier & Souls | PristonTale EU Wiki Here’s a structured and optimized version of the content, formatted to match the PristonTale EU Wiki standards:
+
+¶ Souls System
+You've just started on the server and suddenly spot a strange drop on the ground: a Soul . You might wonder: What's that for? Let's break down the Souls system so you can make the most of it.
+
+¶ What Are Souls For?
+During your leveling journey, you'll encounter various Souls of different attributes and rarities. But what are they for?
+Souls are used to enhance your Soul Tree (accessed by pressing the Y key ). In the Soul Tree, you can organize your Souls according to your needs. Since the optimal distribution of Souls is highly personal, this guide won’t suggest a “best way” to set up your tree. Instead, it's meant to be customized according to your preferences and playstyle.
+
+¶ Unlocking and Using Soul Slots
+¶ Early Levels (Up to Level 80)
+At the start, introductory quests help you get familiar with the Souls system. Up to level 80 , you will unlock three initial slots:
+
+1 Attack Slot 
+1 Defense Slot 
+1 Wildcard Slot (any type of Soul)
+
+¶ Level 80 and Beyond
+From level 80 onwards , you will earn 3 Soul Points per level . You can use these points to:
+
+Open new Soul Slots 
+Upgrade the level of existing slots 
+
+¶ Types of Souls and Slots
+Souls are divided into four categories:
+
+Attack 
+Defense 
+Support 
+PvP 
+
+The Soul Tree can accommodate the following slots:
+
+12 Attack Slots 
+13 Defense Slots 
+4 Support Slots 
+4 PvP Slots 
+1 Wildcard Slot (any Soul type)
+
+Note: PvP Souls only affect your PvP status and do not influence PvE.
+
+¶ Soul Rarity and Slot Compatibility
+There are three types of nodes (slots) in the Soul Tree:
+
+Common : Accepts Common , Rare , and Legendary Souls 
+Rare : Accepts Rare and Legendary Souls 
+Legendary : Only accepts Legendary Souls 
+
+¶ Drop Locations and Rarity
+Currently, there are 101 Souls available from maps ranging from level 01 to map 113 (Abyss of the Sea) .
+
+Common Souls : Basic attributes, easier to obtain.
+Rare Souls : Enhanced attributes, harder to drop.
+Legendary Souls : Most powerful, rarest drops.
+
+¶ Upgrading Souls
+Souls can have levels ranging from 1 to 3 . To upgrade a Soul, you need multiple copies of the same Soul.
+For the bonus gained from the soul it only matters what level it is, not how many souls you used in the range of that level.
+
+
+Rarity | 
+Level 1 | 
+Level 2 | 
+Level 3 (Max) | 
+
+
+Common | 
+1-24 Souls | 
+25-49 Souls | 
+50 Souls | 
+
+Rare | 
+1-14 Souls | 
+15-29 Souls | 
+30 Souls | 
+
+Legendary | 
+1-4 Souls | 
+5-9 Souls | 
+10 Souls | 
+
+¶ Example
+To level up a Hopy Soul (Common) :
+
+Level 0 to 1: 1 Soul
+Level 1 to 2: 24 Souls
+Level 2 to 3: 25 Souls
+Total: 50 Souls
+
+¶ Modifying Your Fusion Tier
+Mistakes happen! You have various options if you’ve made a mistake:
+¶ 1. Reset a Specific Node
+
+Click on the node you want to reset.
+Press “Reset Node” at the bottom right.
+Requires Fusion Node Reset Stone .
+
+¶ How to Obtain:
+
+Boss rolls
+Fusionist NPC (Pillai/Ricarten) for 7,425,000 gold 
+Item Shop for 50 coins 
+
+¶ 2. Switch Between Pages
+
+Click “One of the pages” at the bottom right of the interface.
+Requires Fusion Tier Switch Stone .
+
+¶ How to Obtain:
+
+Item Shop for 150 coins 
+Have an active subscription Bronze/Silver/Gold for 2-4-8 weekly free switches .
+
+¶ 3. Reset the Entire Tree
+
+Click “Reset Tree” at the bottom right of the interface.
+Requires Fusion Tier Reset Stone .
+
+¶ How to Obtain:
+
+Item Shop for 250 coins 
+
+Tip: Make sure you’re using the correct stone!
+
+Node Reset Stone: Resets a single node
+Tier Switch Stone: Switches between pages
+Tier Reset Stone: Resets the entire tree
+
+--
+¶ Fusion Pages
+You want to have multi-setups? Not a problem this is possible through Fusion pages, 5 total are available.
+
+Purchase a Fusion Page from the coin shop (J) for 2000 coin.
+Switch to your desired page to utilize your favorite soul setup.
+Requires Fusion Tier Switch Stone or have an active subscription for weekly free switches .
+
+--
+¶ Soul System Bonus Table
+
+This tables lists all known Soul benefits by monster type, level, category, and upgrade ranks.
+Note that the Wildcard slot (+ icon) can be filled with any soul.
+
+¶ Attack Souls (Sword Icon)
+
+
+Soul | 
+Level | 
+Benefit | 
+Rank 1 | 
+Rank 2 | 
+Rank 3 | 
+
+
+Doral | 
+5 | 
+Attack Power | 
+1 | 
+2 | 
+4 | 
+
+Mutant Plant | 
+5 | 
+Attack Power | 
+1 | 
+2 | 
+4 | 
+
+Armored Beetle | 
+30 | 
+Attack Power | 
+1 | 
+2 | 
+4 | 
+
+Headcutter | 
+35 | 
+Attack Power | 
+8 | 
+15 | 
+30 | 
+
+Mighty Goblin | 
+35 | 
+Attack Power | 
+2 | 
+4 | 
+8 | 
+
+Slaughter | 
+45 | 
+Attack Power | 
+4 | 
+8 | 
+15 | 
+
+Reptile Warlord | 
+65 | 
+Attack Power | 
+4 | 
+8 | 
+15 | 
+
+Iron Fist | 
+85 | 
+Attack Power | 
+3 | 
+7 | 
+15 | 
+
+Frost | 
+89 | 
+Attack Power | 
+5 | 
+10 | 
+20 | 
+
+Gorgoniac | 
+100 | 
+Attack Power | 
+15 | 
+30 | 
+60 | 
+
+Gorgon | 
+100 | 
+Attack Power | 
+6 | 
+12 | 
+25 | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Ghost | 
+5 | 
+Attack Rating | 
+5 | 
+11 | 
+22 | 
+
+BeeDog | 
+10 | 
+Attack Rating | 
+11 | 
+22 | 
+33 | 
+
+Mutant Tree | 
+15 | 
+Attack Rating | 
+5 | 
+11 | 
+22 | 
+
+Red Scorpion | 
+20 | 
+Attack Rating | 
+17 | 
+33 | 
+65 | 
+
+Figon | 
+50 | 
+Attack Rating | 
+17 | 
+33 | 
+65 | 
+
+Reptile Warlord | 
+65 | 
+Attack Rating | 
+32 | 
+65 | 
+130 | 
+
+Devil Bird | 
+92 | 
+Attack Rating | 
+30 | 
+60 | 
+125 | 
+
+Gorgon | 
+100 | 
+Attack Rating | 
+30 | 
+60 | 
+125 | 
+
+Tulla | 
+105 | 
+Attack Rating | 
+65 | 
+130 | 
+260 | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Mutant Rabie | 
+5 | 
+Critical Rate | 
+0.2% | 
+0.3% | 
+0.5% | 
+
+Ratoo | 
+75 | 
+Critical Rate | 
+0.2% | 
+0.3% | 
+0.5% | 
+
+Hyper Machine | 
+80 | 
+Critical Rate | 
+0.1% | 
+0.2% | 
+0.4% | 
+
+Babel | 
+85 | 
+Critical Rate | 
+0.5% | 
+1% | 
+1.5% | 
+
+Acero | 
+110 | 
+Critical Rate | 
+0.1% | 
+0.2% | 
+0.4% | 
+
+Chalybs | 
+110 | 
+Critical Rate | 
+0.25 | 
+0.3% | 
+0.5% | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Xetan | 
+80 | 
+Exp | 
+1.5% | 
+3% | 
+6% | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Hobgoblin | 
+1 | 
+Mana | 
+6 | 
+12 | 
+25 | 
+
+Leech | 
+25 | 
+Mana | 
+25 | 
+50 | 
+100 | 
+
+Witch | 
+55 | 
+Mana | 
+12 | 
+25 | 
+50 | 
+
+Xetan | 
+80 | 
+Mana | 
+25 | 
+50 | 
+100 | 
+
+Cold Eye | 
+89 | 
+Mana | 
+20 | 
+40 | 
+80 | 
+
+Devil Bird | 
+92 | 
+Mana | 
+12 | 
+25 | 
+50 | 
+
+Valento | 
+92 | 
+Mana | 
+25 | 
+50 | 
+100 | 
+
+Dark Mage | 
+95 | 
+Mana | 
+12 | 
+25 | 
+50 | 
+
+Chalybs | 
+110 | 
+Mana | 
+12 | 
+25 | 
+50 | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Scorpion | 
+10 | 
+Movement Speed | 
+1 | 
+2 | 
+3 | 
+
+Avelisk-S | 
+50 | 
+Movement Speed | 
+1 | 
+1.5 | 
+2 | 
+
+Undead Greven | 
+50 | 
+Movement Speed | 
+3 | 
+4 | 
+5 | 
+
+Invader Assassin | 
+108 | 
+Movement Speed | 
+2 | 
+3 | 
+4 | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Omicron | 
+75 | 
+Stamina | 
+25 | 
+50 | 
+100 | 
+
+Rampage | 
+80 | 
+Stamina | 
+12 | 
+25 | 
+50 | 
+
+Iron Fist | 
+85 | 
+Stamina | 
+12 | 
+25 | 
+50 | 
+
+Valento | 
+92 | 
+Stamina | 
+25 | 
+50 | 
+100 | 
+
+Dark Mage | 
+95 | 
+Stamina | 
+12 | 
+25 | 
+50 | 
+
+
+¶ Defense Souls (Shield Icon)
+
+
+Soul | 
+Level | 
+Benefit | 
+Rank 1 | 
+Rank 2 | 
+Rank 3 | 
+
+
+Wild Goblin | 
+10 | 
+Absorb | 
+1 | 
+2 | 
+5 | 
+
+Bloody Buma | 
+40 | 
+Absorb | 
+2 | 
+5 | 
+10 | 
+
+Mummy | 
+45 | 
+Absorb | 
+1 | 
+2 | 
+5 | 
+
+Desert Golem | 
+50 | 
+Absorb | 
+5 | 
+10 | 
+20 | 
+
+Stone Golem | 
+60 | 
+Absorb | 
+2 | 
+5 | 
+10 | 
+
+Bloody Prince | 
+95 | 
+Absorb | 
+5 | 
+10 | 
+20 | 
+
+Undead Maple | 
+102 | 
+Absorb | 
+5 | 
+10 | 
+20 | 
+
+Draxos | 
+108 | 
+Absorb | 
+5 | 
+10 | 
+20 | 
+
+Arhdyra | 
+113 | 
+Absorb | 
+10 | 
+20 | 
+40 | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Cyclops Knight | 
+35 | 
+Block | 
+0.1% | 
+0.2% | 
+0.4% | 
+
+Dawlin | 
+70 | 
+Block | 
+0.2% | 
+0.3% | 
+0.5% | 
+
+Undead King Hopy | 
+100 | 
+Block | 
+0.1% | 
+0.2% | 
+0.4% | 
+
+Sathla | 
+113 | 
+Block | 
+0.1% | 
+0.2% | 
+0.4% | 
+
+Primal Golem | 
+115 | 
+Block | 
+0.5% | 
+1% | 
+1.5% | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Tobie | 
+1 | 
+Defense | 
+6 | 
+12 | 
+25 | 
+
+Haunting Plant | 
+5 | 
+Defense | 
+12 | 
+25 | 
+50 | 
+
+Bargon | 
+30 | 
+Defense | 
+25 | 
+50 | 
+100 | 
+
+Bloody Buma | 
+40 | 
+Defense | 
+12 | 
+25 | 
+50 | 
+
+Doom Guard | 
+60 | 
+Defense | 
+10 | 
+20 | 
+40 | 
+
+Bloody Knight | 
+95 | 
+Defense | 
+25 | 
+50 | 
+100 | 
+
+Bloody Prince | 
+95 | 
+Defense | 
+25 | 
+50 | 
+100 | 
+
+Mokova | 
+98 | 
+Defense | 
+25 | 
+50 | 
+100 | 
+
+Avelisk Explorer | 
+105 | 
+Defense | 
+15 | 
+30 | 
+60 | 
+
+Elite Engineer | 
+108 | 
+Defense | 
+20 | 
+40 | 
+80 | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Illusion Knight | 
+45 | 
+Evade | 
+0.1% | 
+0.2% | 
+0.4% | 
+
+Shadow | 
+70 | 
+Evade | 
+0.1% | 
+0.2% | 
+0.4% | 
+
+Mokova | 
+98 | 
+Evade | 
+0.5% | 
+1% | 
+1.5% | 
+
+Seto | 
+98 | 
+Evade | 
+0.1% | 
+0.2% | 
+0.4% | 
+
+Ruca | 
+102 | 
+Evade | 
+0.1% | 
+0.2% | 
+0.4% | 
+
+Draxos | 
+108 | 
+Evade | 
+0.5% | 
+1% | 
+1.5% | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Arma | 
+1 | 
+HP | 
+2 | 
+5 | 
+10 | 
+
+Zombie | 
+15 | 
+HP | 
+3 | 
+7 | 
+15 | 
+
+Haunted Treant | 
+20 | 
+HP | 
+15 | 
+30 | 
+60 | 
+
+Buma | 
+30 | 
+HP | 
+7 | 
+15 | 
+30 | 
+
+Stone Golem | 
+60 | 
+HP | 
+7 | 
+15 | 
+30 | 
+
+Mountain | 
+85 | 
+HP | 
+12 | 
+25 | 
+50 | 
+
+Blizzard Giant | 
+89 | 
+HP | 
+15 | 
+30 | 
+60 | 
+
+
+¶ Utility Souls (Tower Icon)
+
+
+Soul | 
+Level | 
+Benefit | 
+Rank 1 | 
+Rank 2 | 
+Rank 3 | 
+
+
+Egan | 
+1 | 
+Aging Success | 
+0.10% | 
+0.20% | 
+0.40% | 
+
+Lizard Chemist | 
+65 | 
+Aging Success | 
+0.10% | 
+0.20% | 
+0.40% | 
+
+Stygian | 
+70 | 
+Aging Success | 
+0.20% | 
+0.40% | 
+0.50% | 
+
+Devil Shy | 
+102 | 
+Aging Success | 
+0.50% | 
+1.00% | 
+1.50% | 
+
+Yagditha | 
+113 | 
+Aging Success | 
+0.50% | 
+1.00% | 
+1.50% | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Hopy | 
+1 | 
+Exp | 
+1.00% | 
+1.50% | 
+3.00% | 
+
+Rabie | 
+1 | 
+Exp | 
+1.00% | 
+1.50% | 
+3.00% | 
+
+Decoy | 
+20 | 
+Exp | 
+1.00% | 
+2.00% | 
+4.00% | 
+
+Grotesque | 
+80 | 
+Exp | 
+1.50% | 
+3.00% | 
+6.00% | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Minigue | 
+5 | 
+Own Item Type | 
+1.00% | 
+3.00% | 
+7.00% | 
+
+King Hopy | 
+55 | 
+Own Item Type | 
+10.00% | 
+13.00% | 
+15.00% | 
+
+Lizard Elder | 
+65 | 
+Own Item Type | 
+1.00% | 
+3.00% | 
+7.00% | 
+
+Chaos Cara | 
+89 | 
+Own Item Type | 
+3.00% | 
+7.00% | 
+14.00% | 
+
+Greedy | 
+110 | 
+Own Item Type | 
+3.00% | 
+7.00% | 
+15.00% | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Sen | 
+5 | 
+Own Spec Chance | 
+1.00% | 
+2.00% | 
+3.00% | 
+
+Mephit | 
+20 | 
+Own Spec Chance | 
+1.00% | 
+2.00% | 
+3.00% | 
+
+Crypt | 
+40 | 
+Own Spec Chance | 
+3.00% | 
+5.00% | 
+7.00% | 
+
+Hongky | 
+50 | 
+Own Spec Chance | 
+10.00% | 
+13.00% | 
+15.00% | 
+
+Lizard Scout | 
+65 | 
+Own Spec Chance | 
+3.00% | 
+5.00% | 
+7.00% | 
+
+Greedy | 
+110 | 
+Own Spec Chance | 
+10.00% | 
+13.00% | 
+15.00% | 
+
+Yagditha | 
+113 | 
+Own Spec Chance | 
+7.00% | 
+15.00% | 
+30.00% | 
+
+
+¶ PVP Attack Souls
+
+
+Soul | 
+Level | 
+Benefit | 
+Rank 1 | 
+Rank 2 | 
+Rank 3 | 
+
+
+Vault Skeleton | 
+40 | 
+Crit | 
+0.20% | 
+0.30% | 
+0.50% | 
+
+Skillmaster, Eadric | 
+70 | 
+Crit | 
+0.50% | 
+1.00% | 
+1.50% | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Vengefull Saint | 
+70 | 
+Attack Power | 
+15 | 
+30 | 
+60 | 
+
+Vault Mummy | 
+90 | 
+Attack Power | 
+4 | 
+8 | 
+15 | 
+
+Vault Mage | 
+118 | 
+Attack Power | 
+8 | 
+15 | 
+30 | 
+
+Vault Nightmare | 
+118 | 
+Attack Power | 
+5 | 
+10 | 
+25 | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Vault Ranger | 
+90 | 
+Attack Rating | 
+17 | 
+33 | 
+65 | 
+
+Vault Knight | 
+118 | 
+Attack Rating | 
+30 | 
+60 | 
+125 | 
+
+Vault Nightmare | 
+118 | 
+Attack Rating | 
+20 | 
+45 | 
+100 | 
+
+
+¶ PVP Defense Souls
+
+
+Soul | 
+Level | 
+Benefit | 
+Rank 1 | 
+Rank 2 | 
+Rank 3 | 
+
+
+Vault Ghost | 
+40 | 
+Evade | 
+0.10% | 
+0.20% | 
+0.40% | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Vault Ghoul | 
+40 | 
+Defense | 
+12 | 
+25 | 
+50 | 
+
+Vault Guard | 
+90 | 
+Defense | 
+12 | 
+25 | 
+50 | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Vault Guard | 
+90 | 
+Absorb | 
+2 | 
+5 | 
+10 | 
+
+Vault Stygian | 
+90 | 
+Absorb | 
+1 | 
+5 | 
+10 | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Vault Stygian | 
+90 | 
+HP | 
+10 | 
+20 | 
+30 | 
+
+| 
+| 
+| 
+| 
+| 
+| 
+
+Vault Warrior | 
+90 | 
+Block | 
+0.10% | 
+0.20% | 
+0.40% | 
+
+
+
