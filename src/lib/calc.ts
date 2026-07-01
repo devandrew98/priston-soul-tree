@@ -2,6 +2,7 @@ import type { Build, SlotState, Rarity, Unit } from './types';
 import { SOULS_BY_ID } from './souls';
 import { nodeFinalValue } from './formula';
 import { RARITY_POINT_COST, TREE_NODE_BY_ID } from './tree';
+import { unlockedFor } from './graph';
 
 export interface StatTotal {
   key: string;
@@ -74,10 +75,21 @@ export function nodePointCost(slot: SlotState, nodeRarity: Rarity): number {
   return RARITY_POINT_COST[nodeRarity] * Math.max(1, slot.nodeLevel);
 }
 
-/** Total fusion points spent by a build. */
+/**
+ * Total fusion points spent by a build. Every node must be OPENED to be used, and
+ * you can only open a node connected to the top — so this also counts the empty
+ * pass-through nodes needed to connect each soul back to the root (each at level 1).
+ */
 export function pointsSpent(build: Build): number {
-  return Object.entries(build.slots).reduce(
-    (sum, [slotId, s]) => sum + nodePointCost(s, slotRarity(slotId)),
-    0,
-  );
+  const souled = Object.entries(build.slots)
+    .filter(([, s]) => s.soulId)
+    .map(([id]) => id);
+  if (!souled.length) return 0;
+  let sum = 0;
+  for (const id of unlockedFor(souled)) {
+    const slot = build.slots[id];
+    const level = slot && slot.soulId ? Math.max(1, slot.nodeLevel) : 1;
+    sum += RARITY_POINT_COST[slotRarity(id)] * level;
+  }
+  return sum;
 }

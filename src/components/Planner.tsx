@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   TREE_NODES,
   TREE_EDGES,
@@ -13,6 +13,7 @@ import {
 } from '../lib/tree';
 import { SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
 import { fmt } from '../lib/formula';
+import { unlockedFor } from '../lib/graph';
 import { useStore } from '../store';
 import { SoulIcon } from './SoulIcon';
 import { NodeEditor } from './NodeEditor';
@@ -54,6 +55,12 @@ export function Planner() {
   const { activeBuild } = useStore();
   const [editing, setEditing] = useState<string | null>(null);
 
+  // Nodes that are OPEN: every soul plus the cheapest pass-through path back to the top.
+  const unlocked = useMemo(() => {
+    const souled = Object.entries(activeBuild.slots).filter(([, s]) => s.soulId).map(([id]) => id);
+    return unlockedFor(souled);
+  }, [activeBuild]);
+
   const canvasW = TREE_COLS * CELL;
   const canvasH = TREE_ROWS * CELL;
   const center = (col: number, row: number) => ({ x: col * CELL + CELL / 2, y: row * CELL + CELL / 2 });
@@ -84,7 +91,7 @@ export function Planner() {
             const ca = center(a.col, a.row);
             const cb = center(b.col, b.row);
             const horizontal = a.row === b.row;
-            const filled = !!activeBuild.slots[e.a]?.soulId && !!activeBuild.slots[e.b]?.soulId;
+            const filled = unlocked.has(e.a) && unlocked.has(e.b);
             const img = horizontal
               ? filled ? '/fusion/Pipe-Fill.png' : '/fusion/Pipe-Empty.png'
               : filled ? '/fusion/Pipe-Fill-ver.png' : '/fusion/Pipe-Empty-ver.png';
@@ -113,7 +120,7 @@ export function Planner() {
             return (
               <div
                 key={n.id}
-                className={`tnode ${soul ? 'filled' : ''}`}
+                className={`tnode ${soul ? 'filled' : ''} ${unlocked.has(n.id) ? '' : 'locked'}`}
                 style={{
                   left: c.x - NODE / 2,
                   top: c.y - NODE / 2,

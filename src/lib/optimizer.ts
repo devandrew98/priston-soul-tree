@@ -5,9 +5,9 @@ import {
   TREE_NODE_BY_ID,
   NODE_CATEGORY,
   RARITY_POINT_COST,
-  RARITY_ORDER,
   acceptsSoul,
 } from './tree';
+import { ROOT_NODE, reachAll, unlockCost } from './graph';
 import { nodeFinalValue } from './formula';
 
 // No fixed per-node cap: the real limit is the fusion points budget. This high
@@ -56,7 +56,7 @@ interface Candidate {
   rarity: Rarity;
   soulLevel: 1 | 2 | 3;
   stats: WStat[]; // only stats the goal cares about
-  weightBase: number; // Σ weight*base at node level 1 — the value of just placing it
+  weightBase: number; // Σ weight*base at node level 1 — value of just placing it
 }
 
 interface NodeAssignment {
@@ -84,20 +84,19 @@ function scoreAt(stats: WStat[], rarity: Rarity, level: number): number {
 }
 
 /**
- * Build the best possible build for a goal using only owned souls.
- *
- * Each node has a FIXED rarity (multiplier, cost-per-level). We spend the fusion
- * points budget with ONE unified greedy: at every step the next point either
- *   - PLACES an unused soul on the cheapest acceptable free node (gain = its
- *     base value, so two-attribute souls count both stats), or
- *   - LEVELS an already-placed node (gain = the marginal value of +1 level),
- * whichever buys the most score per point. This fills the rarer nodes instead of
- * over-levelling a single common node, and never exceeds the budget.
+ * Build the best possible build for a goal using only owned souls, respecting the
+ * game's UNLOCK rules: every used node must be opened, you can only open a node
+ * connected to the top, and opening any node (even empty pass-through ones) costs
+ * its rarity price. We spend the fusion points budget with one unified greedy:
+ * at each step the next points either
+ *   - REACH a free node from the top and place an unused soul there (paying the
+ *     unlock cost of every still-locked node on the cheapest path), or
+ *   - LEVEL an already-placed node (gain = the marginal value of +1 level),
+ * whichever buys the most score per point.
  */
 export function optimize(goal: Goal, inv: Inventory, opt: OptimizeOptions): OptimizeResult {
   const budget = opt.budget ?? Infinity;
 
-  // Candidate souls from inventory that contribute at least one targeted stat.
   const candidates: Candidate[] = [];
   for (const soul of SOULS) {
     const owned = inv[soul.id];
@@ -118,58 +117,73 @@ export function optimize(goal: Goal, inv: Inventory, opt: OptimizeOptions): Opti
   candidates.sort((a, b) => b.weightBase - a.weightBase);
 
   const slots = emptySlots();
-  const freeNodes = new Set(TREE_NODES.map((n) => n.id));
+  const unlocked = new Set<string>();
+  const souledNodes = new Set<string>();
+  const placedSouls = new Set<string>();
   const placed: NodeAssignment[] = [];
   let spent = 0;
 
-  // Highest-rarity acceptable free node for a soul (tie-break to the cheaper one).
-  const bestNodeFor = (c: Candidate): string | null => {
-    let bestId: string | null = null;
-    let bestOrder = -1;
-    let bestCost = Infinity;
-    for (const id of freeNodes) {
-      const n = TREE_NODE_BY_ID[id];
-      if (!acceptsSoul(NODE_CATEGORY[n.type], n.rarity, c.category, c.rarity)) continue;
-      const ord = RARITY_ORDER[n.rarity];
-      const cost = RARITY_POINT_COST[n.rarity];
-      if (ord > bestOrder || (ord === bestOrder && cost < bestCost)) {
-        bestId = id;
-        bestOrder = ord;
-        bestCost = cost;
-      }
-    }
-    return bestId;
-  };
-
-  // Phase 1 — FILL: place souls (strongest first) on the highest-rarity node they
-  // qualify for, so the rare/legendary nodes actually get used. Level 1 each.
-  for (const c of candidates) {
-    const nodeId = bestNodeFor(c);
-    if (nodeId === null) continue;
-    const n = TREE_NODE_BY_ID[nodeId];
-    const cost = RARITY_POINT_COST[n.rarity];
-    if (spent + cost > budget) continue;
-    freeNodes.delete(nodeId);
-    placed.push({ slotId: nodeId, soulId: c.soulId, soulLevel: c.soulLevel, rarity: n.rarity, stats: c.stats, level: 1 });
-    spent += cost;
+  // Open the top node first — nothing can be reached without it.
+  if (candidates.length) {
+    unlocked.add(ROOT_NODE);
+    spent += unlockCost(ROOT_NODE);
   }
 
-  // Phase 2 — LEVEL: spend the rest where each extra point buys the most score.
   for (;;) {
-    let best: NodeAssignment | null = null;
+    const rem = budget - spent;
+    if (rem <= 0) break;
+    const { dist, prev } = reachAll(unlocked);
+
     let bestEff = 0;
     let bestCost = 0;
+    let placeMove: { c: Candidate; nodeId: string } | null = null;
+    let levelMove: NodeAssignment | null = null;
+
+    // Option A: reach a free node from the top and place an unused soul there.
+    for (const c of candidates) {
+      if (placedSouls.has(c.soulId)) continue;
+      let bestNode: string | null = null;
+      let bestNodeCost = Infinity;
+      for (const n of TREE_NODES) {
+        if (souledNodes.has(n.id)) continue;
+        if (!acceptsSoul(NODE_CATEGORY[n.type], n.rarity, c.category, c.rarity)) continue;
+        const rc = dist[n.id];
+        if (rc === undefined) continue;
+        if (rc < bestNodeCost) { bestNodeCost = rc; bestNode = n.id; }
+      }
+      if (bestNode === null || bestNodeCost > rem) continue;
+      const eff = bestNodeCost === 0 ? Infinity : c.weightBase / bestNodeCost;
+      if (eff > bestEff) { bestEff = eff; bestCost = bestNodeCost; placeMove = { c, nodeId: bestNode }; levelMove = null; }
+    }
+    // Option B: level up an already-placed node.
     for (const a of placed) {
       if (a.level >= SAFETY_LEVEL_CAP) continue;
       const cost = RARITY_POINT_COST[a.rarity];
-      if (cost > budget - spent) continue;
+      if (cost > rem) continue;
       const gain = scoreAt(a.stats, a.rarity, a.level + 1) - scoreAt(a.stats, a.rarity, a.level);
       const eff = gain / cost;
-      if (eff > bestEff) { bestEff = eff; best = a; bestCost = cost; }
+      if (eff > bestEff) { bestEff = eff; bestCost = cost; levelMove = a; placeMove = null; }
     }
-    if (!best) break;
-    best.level += 1;
-    spent += bestCost;
+
+    if (placeMove) {
+      const target = placeMove.nodeId;
+      // open the cheapest path from the top; pass-through nodes stay empty (level 1)
+      let curId: string | null = target;
+      while (curId && !unlocked.has(curId)) {
+        unlocked.add(curId);
+        curId = prev[curId];
+      }
+      const n = TREE_NODE_BY_ID[target];
+      souledNodes.add(target);
+      placedSouls.add(placeMove.c.soulId);
+      placed.push({ slotId: target, soulId: placeMove.c.soulId, soulLevel: placeMove.c.soulLevel, rarity: n.rarity, stats: placeMove.c.stats, level: 1 });
+      spent += bestCost;
+    } else if (levelMove) {
+      levelMove.level += 1;
+      spent += bestCost;
+    } else {
+      break;
+    }
   }
 
   // Materialize result.
