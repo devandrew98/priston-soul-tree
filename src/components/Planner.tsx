@@ -125,13 +125,6 @@ export function Planner() {
                 onClick={() => setEditing(n.id)}
               >
                 <img className="tnode-frame" src={nodeFrameSrc(n.type, n.rarity)} alt="" />
-                {soul && (
-                  <div className="tnode-pips">
-                    {[1, 2, 3].map((i) => (
-                      <span key={i} className={`pip ${i <= slot.soulLevel ? 'on' : ''}`} />
-                    ))}
-                  </div>
-                )}
                 <div className="tnode-content">
                   {soul ? (
                     <SoulIcon soul={soul} size={NODE * 0.56} />
