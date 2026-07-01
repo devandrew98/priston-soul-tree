@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { NodeType } from '../lib/tree';
-import { NODE_CATEGORY, RARITY_POINT_COST, MAX_NODE_LEVEL, TREE_NODE_BY_ID } from '../lib/tree';
+import { NODE_CATEGORY, RARITY_POINT_COST, TREE_NODE_BY_ID } from '../lib/tree';
 import { SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
 import { slotStatValues, nodePointCost } from '../lib/calc';
 import { fmt, RARITY_LABEL } from '../lib/formula';
@@ -14,7 +14,6 @@ export function NodeEditor({ nodeId, type, onClose }: { nodeId: string; type: No
 
   const node = TREE_NODE_BY_ID[nodeId];
   const rarity = node.rarity;
-  const maxLevel = MAX_NODE_LEVEL[rarity];
   const slot = activeBuild.slots[nodeId];
   const soul = slot.soulId ? SOULS_BY_ID[slot.soulId] : null;
   const accepts = NODE_CATEGORY[type];
@@ -65,16 +64,21 @@ export function NodeEditor({ nodeId, type, onClose }: { nodeId: string; type: No
 
           <div className="ne-ctrl">
             <label>Raridade do node (fixa)</label>
-            <div className={`rarity-tag ${rarity}`} title={`${RARITY_POINT_COST[rarity]} pt por nível · máximo Node Lv ${maxLevel}`}>
+            <div className={`rarity-tag ${rarity}`} title={`${RARITY_POINT_COST[rarity]} pt por nível`}>
               {RARITY_LABEL[rarity]}
             </div>
           </div>
 
           <div className="ne-ctrl">
-            <label>Nível do node (máx {maxLevel})</label>
-            <select className="input" value={Math.min(slot.nodeLevel, maxLevel)} onChange={(e) => setSlot(nodeId, { nodeLevel: Number(e.target.value) })}>
-              {Array.from({ length: maxLevel }, (_, i) => i + 1).map((n) => <option key={n} value={n}>Node Lv {n}</option>)}
-            </select>
+            <label>Nível do node (ilimitado)</label>
+            <input
+              className="input"
+              type="number"
+              min={1}
+              value={slot.nodeLevel}
+              onChange={(e) => setSlot(nodeId, { nodeLevel: Math.max(1, Math.floor(Number(e.target.value) || 1)) })}
+              style={{ width: 110 }}
+            />
           </div>
 
           <div className="ne-cost">

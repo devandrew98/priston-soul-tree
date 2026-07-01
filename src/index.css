@@ -244,6 +244,11 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .tnode.filled .tnode-frame { filter: drop-shadow(0 0 5px var(--rarity, var(--gold))); }
 .tnode-lvl { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); z-index: 4; background: #0c0803; border: 1px solid var(--gold); border-radius: 4px; font-size: 11px; font-weight: 800; color: var(--gold-bright); padding: 0 6px; line-height: 1.5; min-width: 20px; text-align: center; box-shadow: 0 1px 3px #000; }
 
+/* Soul-level pips (pink dots) — 1/2/3 conforme o nível da soul, como no jogo */
+.tnode-pips { position: absolute; top: 0; left: -5px; display: flex; flex-direction: column; gap: 2px; z-index: 5; pointer-events: none; }
+.tnode-pips .pip { width: 7px; height: 7px; border-radius: 50%; background: #241c2e; border: 1px solid #3f3350; }
+.tnode-pips .pip.on { background: radial-gradient(circle at 40% 35%, #ff85d2 0%, #d81f92 70%); border-color: #ff9ee1; box-shadow: 0 0 5px #e83fae, 0 0 2px #ff9ee1; }
+
 /* Node editor controls */
 .ne-soul { display: flex; align-items: center; gap: 10px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
 .ne-ctrl { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
