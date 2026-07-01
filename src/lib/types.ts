@@ -2,15 +2,20 @@ export type Category = 'attack' | 'defense' | 'support' | 'pvp';
 export type Rarity = 'common' | 'rare' | 'legendary';
 export type Unit = 'flat' | 'pct';
 
+/** One attribute granted by a soul. A soul may grant more than one. */
+export interface SoulStat {
+  stat: string;
+  statLabel: string;
+  unit: Unit;
+  ranks: [number, number, number]; // soul level 1 / 2 / 3 base value
+}
+
 export interface Soul {
   id: string;
   name: string;
   mapLevel: number | null;
   category: Category;
-  stat: string;
-  statLabel: string;
-  unit: Unit;
-  ranks: [number, number, number]; // soul level 1 / 2 / 3 base value
+  stats: SoulStat[]; // one OR more attributes this soul grants
   img: string | null; // path to soul icon in /public
   rarity: Rarity; // soul's own rarity tier
   isPvp: boolean; // soul contributes a PvP-only stat

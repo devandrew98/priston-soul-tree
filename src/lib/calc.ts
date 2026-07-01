@@ -1,14 +1,21 @@
-import type { Build, SlotState, Rarity } from './types';
-import { SOULS_BY_ID, STAT_META } from './souls';
+import type { Build, SlotState, Rarity, Unit } from './types';
+import { SOULS_BY_ID } from './souls';
 import { nodeFinalValue } from './formula';
 import { RARITY_POINT_COST, TREE_NODE_BY_ID } from './tree';
 
 export interface StatTotal {
   key: string;
   label: string;
-  unit: 'flat' | 'pct';
+  unit: Unit;
   value: number;
   isPvp: boolean;
+}
+
+export interface SlotStatValue {
+  stat: string;
+  label: string;
+  unit: Unit;
+  value: number;
 }
 
 /** Rarity of the node a slot sits in (fixed by tree position). */
@@ -16,12 +23,22 @@ function slotRarity(slotId: string): Rarity {
   return TREE_NODE_BY_ID[slotId]?.rarity ?? 'common';
 }
 
-export function slotValue(slot: SlotState, nodeRarity: Rarity): number {
-  if (!slot.soulId) return 0;
+/** The value each of a slot's stats contributes (a soul may grant several). */
+export function slotStatValues(slot: SlotState, nodeRarity: Rarity): SlotStatValue[] {
+  if (!slot.soulId) return [];
   const soul = SOULS_BY_ID[slot.soulId];
-  if (!soul) return 0;
-  const base = soul.ranks[slot.soulLevel - 1];
-  return nodeFinalValue(base, nodeRarity, slot.nodeLevel);
+  if (!soul) return [];
+  return soul.stats.map((st) => ({
+    stat: st.stat,
+    label: st.statLabel,
+    unit: st.unit,
+    value: nodeFinalValue(st.ranks[slot.soulLevel - 1], nodeRarity, slot.nodeLevel),
+  }));
+}
+
+/** Combined magnitude of a slot (sum of its stat values) — used for coarse sorting. */
+export function slotValue(slot: SlotState, nodeRarity: Rarity): number {
+  return slotStatValues(slot, nodeRarity).reduce((s, sv) => s + sv.value, 0);
 }
 
 /** Aggregate all slots in a build into per-stat totals. */
@@ -31,21 +48,15 @@ export function computeTotals(build: Build): StatTotal[] {
     if (!slot.soulId) continue;
     const soul = SOULS_BY_ID[slot.soulId];
     if (!soul) continue;
-    const v = slotValue(slot, slotRarity(slotId));
-    if (v === 0) continue;
     const isPvp = soul.category === 'pvp';
-    const key = (isPvp ? 'pvp:' : '') + soul.stat;
-    if (!acc[key]) {
-      const meta = STAT_META[soul.stat];
-      acc[key] = {
-        key: soul.stat,
-        label: meta?.label ?? soul.statLabel,
-        unit: soul.unit,
-        value: 0,
-        isPvp,
-      };
+    for (const sv of slotStatValues(slot, slotRarity(slotId))) {
+      if (sv.value === 0) continue;
+      const key = (isPvp ? 'pvp:' : '') + sv.stat;
+      if (!acc[key]) {
+        acc[key] = { key: sv.stat, label: sv.label, unit: sv.unit, value: 0, isPvp };
+      }
+      acc[key].value += sv.value;
     }
-    acc[key].value += v;
   }
   return Object.values(acc).sort((a, b) => {
     if (a.isPvp !== b.isPvp) return a.isPvp ? 1 : -1;

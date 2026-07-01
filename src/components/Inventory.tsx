@@ -16,10 +16,10 @@ export function Inventory() {
 
   const list = useMemo(() => {
     return SOULS.filter((s) => (cat === 'all' ? true : s.category === cat))
-      .filter((s) => (stat === 'all' ? true : s.stat === stat))
+      .filter((s) => (stat === 'all' ? true : s.stats.some((st) => st.stat === stat)))
       .filter((s) => (onlyOwned ? !!inventory[s.id] : true))
-      .filter((s) => (q ? (s.name + ' ' + s.statLabel).toLowerCase().includes(q.toLowerCase()) : true))
-      .sort((a, b) => a.statLabel.localeCompare(b.statLabel) || (b.ranks[2] - a.ranks[2]));
+      .filter((s) => (q ? (s.name + ' ' + s.stats.map((st) => st.statLabel).join(' ')).toLowerCase().includes(q.toLowerCase()) : true))
+      .sort((a, b) => a.stats[0].statLabel.localeCompare(b.stats[0].statLabel) || (b.stats[0].ranks[2] - a.stats[0].ranks[2]));
   }, [cat, stat, q, onlyOwned, inventory]);
 
   const ownedCount = Object.keys(inventory).length;
@@ -66,8 +66,8 @@ export function Inventory() {
                     </span>
                   </td>
                   <td><span className={`chip ${s.category}`}>{CATEGORY_LABEL[s.category]}</span></td>
-                  <td>{s.statLabel}</td>
-                  <td className="muted">{fmt(s.ranks[0], s.unit)} / {fmt(s.ranks[1], s.unit)} / {fmt(s.ranks[2], s.unit)}</td>
+                  <td>{s.stats.map((st) => st.statLabel).join(' + ')}</td>
+                  <td className="muted">{s.stats.map((st) => `${fmt(st.ranks[0], st.unit)} / ${fmt(st.ranks[1], st.unit)} / ${fmt(st.ranks[2], st.unit)}`).join('  ·  ')}</td>
                   <td>
                     <div className="lvl-btns">
                       <button className={`lvl-btn off ${owned === 0 ? 'active' : ''}`} onClick={() => setOwned(s.id, 0)} title="Não tenho">—</button>

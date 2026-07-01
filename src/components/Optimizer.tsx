@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { optimize, PRESET_GOALS, type Goal } from '../lib/optimizer';
 import { RARITY_LABEL, fmt } from '../lib/formula';
-import { computeTotals } from '../lib/calc';
+import { computeTotals, slotStatValues } from '../lib/calc';
 import { TREE_NODE_BY_ID, NODE_CATEGORY } from '../lib/tree';
 import { SOULS_BY_ID, STAT_META, ALL_STATS, CATEGORY_LABEL } from '../lib/souls';
 import { useStore, totalFusionPoints } from '../store';
@@ -114,12 +114,13 @@ export function Optimizer() {
           {result.used.length === 0 && <p className="muted">Nenhuma soul compatível encontrada para este objetivo.</p>}
           {result.used
             .slice()
-            .sort((a, b) => b.value - a.value)
+            .sort((a, b) => b.score - a.score)
             .map((u) => {
               const s = SOULS_BY_ID[u.soulId];
               const node = TREE_NODE_BY_ID[u.slotId];
               const cat = NODE_CATEGORY[node.type];
               const nodeLabel = cat === 'wildcard' ? 'Wildcard' : CATEGORY_LABEL[cat];
+              const svs = slotStatValues(result.slots[u.slotId], u.nodeRarity);
               return (
                 <div className="total-row" key={u.slotId}>
                   <span className="lbl">
@@ -127,7 +128,7 @@ export function Optimizer() {
                     <span className={`rarity-tag ${u.nodeRarity}`}>{RARITY_LABEL[u.nodeRarity]}</span>{' '}
                     <span className="muted">Lv{u.nodeLevel} · {u.points} pts</span>
                   </span>
-                  <span className="val">+{fmt(u.value, s.unit)}</span>
+                  <span className="val">{svs.map((sv) => `+${fmt(sv.value, sv.unit)}`).join(' / ')}</span>
                 </div>
               );
             })}

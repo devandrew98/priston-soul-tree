@@ -21,8 +21,8 @@ export function SoulPicker({ accepts, nodeRarity, onPick, onClose }: Props) {
   const list = useMemo(() => {
     return SOULS.filter((s) => acceptsSoul(accepts, nodeRarity, s.category, s.rarity))
       .filter((s) => (onlyOwned ? !!inventory[s.id] : true))
-      .filter((s) => (q ? (s.name + ' ' + s.statLabel).toLowerCase().includes(q.toLowerCase()) : true))
-      .sort((a, b) => a.statLabel.localeCompare(b.statLabel) || a.name.localeCompare(b.name));
+      .filter((s) => (q ? (s.name + ' ' + s.stats.map((st) => st.statLabel).join(' ')).toLowerCase().includes(q.toLowerCase()) : true))
+      .sort((a, b) => a.stats[0].statLabel.localeCompare(b.stats[0].statLabel) || a.name.localeCompare(b.name));
   }, [accepts, nodeRarity, q, onlyOwned, inventory]);
 
   return (
@@ -52,7 +52,7 @@ export function SoulPicker({ accepts, nodeRarity, onPick, onClose }: Props) {
                   <div>
                     <div className="pick-name">{s.name} <span className={`chip ${s.category}`}>{CATEGORY_LABEL[s.category]}</span> <span className={`rarity-tag ${s.rarity}`}>{RARITY_LABEL[s.rarity]}</span></div>
                     <div className="pick-meta">
-                      {s.statLabel} · base {fmt(s.ranks[0], s.unit)} / {fmt(s.ranks[1], s.unit)} / {fmt(s.ranks[2], s.unit)}
+                      {s.stats.map((st) => `${st.statLabel} ${fmt(st.ranks[0], st.unit)}/${fmt(st.ranks[1], st.unit)}/${fmt(st.ranks[2], st.unit)}`).join('  ·  ')}
                       {s.mapLevel != null ? ` · map ${s.mapLevel}` : ''}
                       {owned ? ` · tenho Lv${owned}` : ''}
                     </div>
@@ -60,7 +60,7 @@ export function SoulPicker({ accepts, nodeRarity, onPick, onClose }: Props) {
                 </div>
                 <div className="lvl-btns">
                   {[1, 2, 3].map((lv) => (
-                    <button key={lv} className="lvl-btn" title={`Usar no nível ${lv} (base ${fmt(s.ranks[lv - 1], s.unit)})`} onClick={() => onPick(s.id, lv as 1 | 2 | 3)}>
+                    <button key={lv} className="lvl-btn" title={`Usar no nível ${lv}`} onClick={() => onPick(s.id, lv as 1 | 2 | 3)}>
                       {lv}
                     </button>
                   ))}

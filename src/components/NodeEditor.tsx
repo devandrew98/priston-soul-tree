@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { NodeType } from '../lib/tree';
 import { NODE_CATEGORY, RARITY_POINT_COST, MAX_NODE_LEVEL, TREE_NODE_BY_ID } from '../lib/tree';
 import { SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
-import { slotValue, nodePointCost } from '../lib/calc';
+import { slotStatValues, nodePointCost } from '../lib/calc';
 import { fmt, RARITY_LABEL } from '../lib/formula';
 import { useStore } from '../store';
 import { SoulPicker } from './SoulPicker';
@@ -18,7 +18,7 @@ export function NodeEditor({ nodeId, type, onClose }: { nodeId: string; type: No
   const slot = activeBuild.slots[nodeId];
   const soul = slot.soulId ? SOULS_BY_ID[slot.soulId] : null;
   const accepts = NODE_CATEGORY[type];
-  const val = slotValue(slot, rarity);
+  const svs = slotStatValues(slot, rarity);
   const cost = nodePointCost(slot, rarity);
 
   return (
@@ -39,9 +39,9 @@ export function NodeEditor({ nodeId, type, onClose }: { nodeId: string; type: No
                 <SoulIcon soul={soul} size={48} />
                 <div style={{ flex: 1 }}>
                   <div className="pick-name">{soul.name}</div>
-                  <div className="pick-meta">{soul.statLabel} · SL{slot.soulLevel} · base {fmt(soul.ranks[slot.soulLevel - 1], soul.unit)}</div>
+                  <div className="pick-meta">{soul.stats.map((st) => `${st.statLabel} (base ${fmt(st.ranks[slot.soulLevel - 1], st.unit)})`).join(' · ')} · SL{slot.soulLevel}</div>
                 </div>
-                <div className="soul-val">+{fmt(val, soul.unit)}</div>
+                <div className="soul-val">{svs.map((sv) => `+${fmt(sv.value, sv.unit)}`).join(' / ')}</div>
               </>
             ) : (
               <div className="muted" style={{ padding: '8px 0' }}>Nenhuma soul neste node.</div>

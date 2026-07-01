@@ -12,7 +12,7 @@ import {
   type NodeType,
 } from '../lib/tree';
 import { SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
-import { slotValue } from '../lib/calc';
+import { slotStatValues } from '../lib/calc';
 import { fmt } from '../lib/formula';
 import { useStore } from '../store';
 import { SoulIcon } from './SoulIcon';
@@ -95,9 +95,9 @@ export function Planner() {
             const c = center(n.col, n.row);
             const slot = activeBuild.slots[n.id];
             const soul = slot?.soulId ? SOULS_BY_ID[slot.soulId] : null;
-            const val = soul ? slotValue(slot, n.rarity) : 0;
+            const svs = soul ? slotStatValues(slot, n.rarity) : [];
             const title = soul
-              ? `${soul.name} — ${soul.statLabel} +${fmt(val, soul.unit)} (node ${n.rarity} Lv${slot.nodeLevel})`
+              ? `${soul.name} — ${svs.map((sv) => `${sv.label} +${fmt(sv.value, sv.unit)}`).join(', ')} (node ${n.rarity} Lv${slot.nodeLevel})`
               : `${TYPE_LABEL[n.type]} — node ${n.rarity} vazio`;
             return (
               <div

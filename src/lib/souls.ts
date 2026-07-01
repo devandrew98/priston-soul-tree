@@ -32,8 +32,10 @@ export interface StatMeta {
 export const STAT_META: Record<string, StatMeta> = (() => {
   const m: Record<string, StatMeta> = {};
   for (const s of SOULS) {
-    if (!m[s.stat]) {
-      m[s.stat] = { key: s.stat, label: s.statLabel, unit: s.unit, category: s.category };
+    for (const st of s.stats) {
+      if (!m[st.stat]) {
+        m[st.stat] = { key: st.stat, label: st.statLabel, unit: st.unit, category: s.category };
+      }
     }
   }
   return m;
@@ -46,5 +48,5 @@ export function soulsForCategory(cat: Category): Soul[] {
 }
 
 export function soulsForStat(stat: string): Soul[] {
-  return SOULS.filter((s) => s.stat === stat);
+  return SOULS.filter((s) => s.stats.some((st) => st.stat === stat));
 }
