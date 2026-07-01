@@ -247,9 +247,9 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 /* Soul-level pips (pink dots) — preenchem os soquetes da moldura conforme o nível (1/2/3) */
 .tnode-pips { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
 .tnode-pips .pip { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: transparent; }
-.tnode-pips .pip:nth-child(1) { left: 14px; top: 8px; }
-.tnode-pips .pip:nth-child(2) { left: 11px; top: 20px; }
-.tnode-pips .pip:nth-child(3) { left: 12px; top: 32px; }
+.tnode-pips .pip:nth-child(1) { left: 13px; top: 9px; }
+.tnode-pips .pip:nth-child(2) { left: 9px; top: 21px; }
+.tnode-pips .pip:nth-child(3) { left: 9px; top: 30px; }
 .tnode-pips .pip.on { background: radial-gradient(circle at 40% 35%, #ff9ae0 0%, #e0269c 72%); box-shadow: 0 0 6px #ff3fb5, 0 0 2px #ffd0ef; }
 
 /* Hover tooltip no node (estilo jogo) — moldura colorida por raridade */
