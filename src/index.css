@@ -257,6 +257,8 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .tnode:hover { transform: scale(1.08); z-index: 3; }
 .tnode.locked { opacity: 0.3; filter: grayscale(0.85); }
 .tnode.locked:hover { opacity: 0.6; }
+.tnode.selected { z-index: 3; }
+.tnode.selected .tnode-frame { filter: drop-shadow(0 0 6px #ffd15a) drop-shadow(0 0 2px #fff); }
 .tnode-frame { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 .tnode-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; }
 .tnode-type { width: 50%; height: 50%; object-fit: contain; opacity: 0.5; }

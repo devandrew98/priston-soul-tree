@@ -7,7 +7,7 @@ import { fmt, RARITY_LABEL } from '../lib/formula';
 import { useStore, totalFusionPoints } from '../store';
 import { SoulIcon } from './SoulIcon';
 
-export function NodeEditor({ nodeId, type, onClose }: { nodeId: string; type: NodeType; onClose: () => void }) {
+export function NodeEditor({ nodeId, type, onClose, onPlaced }: { nodeId: string; type: NodeType; onClose: () => void; onPlaced?: (nodeId: string) => void }) {
   const { activeBuild, inventory, setSlot, clearSlot, fusionLevel } = useStore();
   const [q, setQ] = useState('');
 
@@ -72,7 +72,7 @@ export function NodeEditor({ nodeId, type, onClose }: { nodeId: string; type: No
                   <button
                     key={s.id}
                     className={`ne-pick-item ${soul?.id === s.id ? 'active' : ''}`}
-                    onClick={() => setSlot(nodeId, { soulId: s.id, soulLevel: (owned || 1) as 1 | 2 | 3 })}
+                    onClick={() => { setSlot(nodeId, { soulId: s.id, soulLevel: (owned || 1) as 1 | 2 | 3 }); onPlaced?.(nodeId); }}
                   >
                     <SoulIcon soul={s} size={26} />
                     <span className="ne-pick-name">
@@ -119,6 +119,9 @@ export function NodeEditor({ nodeId, type, onClose }: { nodeId: string; type: No
               Remover soul
             </button>
           )}
+          <button className="btn primary" style={{ width: '100%', marginTop: 10 }} onClick={onClose}>
+            ✓ Finalizar
+          </button>
         </div>
       </div>
     </div>

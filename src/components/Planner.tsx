@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   TREE_NODES,
   TREE_EDGES,
@@ -8,7 +8,6 @@ import {
   nodeFrameSrc,
   NODE_TYPE_ICON,
   TYPE_COUNTS,
-  RARITY_COUNTS,
   type NodeType,
 } from '../lib/tree';
 import { SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
@@ -51,15 +50,44 @@ const RARITY_PT: Record<string, string> = {
   legendary: 'Lendário',
 };
 
+// Build order (top → bottom, left → right) used by the "rapid build" auto-advance.
+const NODE_ORDER: string[] = [...TREE_NODES].sort((a, b) => a.row - b.row || a.col - b.col).map((n) => n.id);
+
 export function Planner() {
-  const { activeBuild } = useStore();
+  const { activeBuild, clearSlot } = useStore();
   const [editing, setEditing] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [rapid, setRapid] = useState(false);
 
   // Nodes that are OPEN: every soul plus the cheapest pass-through path back to the top.
   const unlocked = useMemo(() => {
     const souled = Object.entries(activeBuild.slots).filter(([, s]) => s.soulId).map(([id]) => id);
     return unlockedFor(souled);
   }, [activeBuild]);
+
+  // Next still-empty node in build order (for rapid-build auto-advance).
+  const nextEmpty = (afterId: string): string | null => {
+    const i = NODE_ORDER.indexOf(afterId);
+    for (let j = i + 1; j < NODE_ORDER.length; j++) {
+      if (!activeBuild.slots[NODE_ORDER[j]]?.soulId) return NODE_ORDER[j];
+    }
+    return null;
+  };
+
+  // Backspace / Delete removes the soul from the selected node (when no editor is open).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (editing) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+      if ((e.key === 'Backspace' || e.key === 'Delete') && selected && activeBuild.slots[selected]?.soulId) {
+        clearSlot(selected);
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [editing, selected, activeBuild, clearSlot]);
 
   const canvasW = TREE_COLS * CELL;
   const canvasH = TREE_ROWS * CELL;
@@ -76,9 +104,10 @@ export function Planner() {
         <span className="chip support">⏳ {TYPE_COUNTS.uti} Support</span>
         <span className="chip pvp">★ {TYPE_COUNTS.pvp} PvP</span>
         <span className="chip" style={{ background: 'rgba(232,200,105,0.2)', color: 'var(--wildcard)' }}>✦ {TYPE_COUNTS.wild} Wildcard</span>
-        <span className="muted" style={{ marginLeft: 'auto', fontSize: 12 }}>
-          {RARITY_COUNTS.common} comuns · {RARITY_COUNTS.rare} raras · {RARITY_COUNTS.legendary} lendárias — clique num node
-        </span>
+        <label className="row" style={{ gap: 6, marginLeft: 'auto', fontSize: 12, cursor: 'pointer' }} title="Ao adicionar uma soul, abre o próximo node automaticamente. Clique em Finalizar pra parar.">
+          <input type="checkbox" checked={rapid} onChange={(e) => setRapid(e.target.checked)} /> 🔨 Montagem rápida
+        </label>
+        <span className="muted" style={{ fontSize: 12 }}>clique = selecionar · duplo clique = abrir · Backspace = remover</span>
       </div>
 
       <div className="tree-wrap">
@@ -120,7 +149,7 @@ export function Planner() {
             return (
               <div
                 key={n.id}
-                className={`tnode ${soul ? 'filled' : ''} ${unlocked.has(n.id) ? '' : 'locked'}`}
+                className={`tnode ${soul ? 'filled' : ''} ${selected === n.id ? 'selected' : ''} ${unlocked.has(n.id) ? '' : 'locked'}`}
                 style={{
                   left: c.x - NODE / 2,
                   top: c.y - NODE / 2,
@@ -129,7 +158,8 @@ export function Planner() {
                   ['--rarity' as string]: RARITY_GLOW[n.rarity],
                 }}
                 title={emptyTitle}
-                onClick={() => setEditing(n.id)}
+                onClick={() => setSelected(n.id)}
+                onDoubleClick={() => { setSelected(n.id); setEditing(n.id); }}
               >
                 <img className="tnode-frame" src={nodeFrameSrc(n.type, n.rarity)} alt="" />
                 <div className="tnode-content">
@@ -166,6 +196,12 @@ export function Planner() {
           nodeId={editingNode.id}
           type={editingNode.type}
           onClose={() => setEditing(null)}
+          onPlaced={(id) => {
+            if (!rapid) return;
+            const nx = nextEmpty(id);
+            setEditing(nx);
+            setSelected(nx);
+          }}
         />
       )}
 
