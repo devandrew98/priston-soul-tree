@@ -10,6 +10,7 @@ export function Optimizer() {
   const { inventory, applySlots, activeBuild, fusionLevel } = useStore();
   const [goalId, setGoalId] = useState<string>(PRESET_GOALS[0].id);
   const [useBudget, setUseBudget] = useState(true);
+  const [allSouls, setAllSouls] = useState(false);
   const [customWeights, setCustomWeights] = useState<Record<string, number>>({});
   const [customPvp, setCustomPvp] = useState(false);
 
@@ -26,8 +27,8 @@ export function Optimizer() {
   }, [goalId, customWeights, customPvp]);
 
   const result = useMemo(
-    () => optimize(goal, inventory, { budget: useBudget ? budget : undefined }),
-    [goal, inventory, useBudget, budget],
+    () => optimize(goal, inventory, { budget: useBudget ? budget : undefined, allSouls }),
+    [goal, inventory, useBudget, budget, allSouls],
   );
 
   const previewBuild = { ...activeBuild, slots: result.slots };
@@ -94,6 +95,9 @@ export function Optimizer() {
       <div className="row">
         <label className="row" style={{ gap: 6 }}>
           <input type="checkbox" checked={useBudget} onChange={(e) => setUseBudget(e.target.checked)} /> Respeitar limite de pontos ({budget} pts — Fusion Lv {fusionLevel})
+        </label>
+        <label className="row" style={{ gap: 6 }} title="Ignora seu inventário e monta a melhor build teórica — mostra souls que valeria a pena conseguir.">
+          <input type="checkbox" checked={allSouls} onChange={(e) => setAllSouls(e.target.checked)} /> Considerar todas as souls
         </label>
         <span className="spacer" />
         <button className="btn primary" disabled={result.used.length === 0} onClick={() => applySlots(result.slots)}>

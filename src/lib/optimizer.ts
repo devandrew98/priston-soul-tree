@@ -26,6 +26,7 @@ export interface Goal {
 
 export interface OptimizeOptions {
   budget?: number; // max fusion points to spend (optional)
+  allSouls?: boolean; // consider every soul (at level 3), not just the owned ones
 }
 
 export interface PlacedNode {
@@ -99,7 +100,7 @@ export function optimize(goal: Goal, inv: Inventory, opt: OptimizeOptions): Opti
 
   const candidates: Candidate[] = [];
   for (const soul of SOULS) {
-    const owned = inv[soul.id];
+    const owned = opt.allSouls ? 3 : inv[soul.id];
     if (!owned) continue;
     if (soul.category === 'pvp' && !goal.includePvp) continue;
     const stats: WStat[] = [];
@@ -204,7 +205,9 @@ export const PRESET_GOALS: Goal[] = [
   { id: 'attack-power', name: 'Full Attack Power', weights: { attackPower: 1 } },
   { id: 'attack-rating', name: 'Full Attack Rating', weights: { attackRating: 1 } },
   { id: 'crit', name: 'Critical Rate', weights: { critRate: 1 } },
-  { id: 'exp', name: 'EXP / Farm', weights: { exp: 1 } },
+  // Farm é holístico: EXP domina, mas sobrevivência/sustain (HP/MP/STM/Absorb/Run)
+  // também ajudam a farmar mais e potar menos, então entram com peso menor.
+  { id: 'exp', name: 'EXP / Farm', weights: { exp: 20, absorb: 0.12, hp: 0.03, mana: 0.03, stamina: 0.02, moveSpeed: 1, defense: 0.02 } },
   {
     id: 'sod',
     name: 'SoD (Attack focus)',

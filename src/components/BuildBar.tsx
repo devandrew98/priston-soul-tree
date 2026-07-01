@@ -3,7 +3,7 @@ import { useStore } from '../store';
 import { ShareModal } from './ShareModal';
 
 export function BuildBar() {
-  const { builds, activeBuild, selectBuild, createBuild, duplicateBuild, renameBuild, deleteBuild, clearBuild } = useStore();
+  const { builds, activeBuild, selectBuild, createBuild, duplicateBuild, renameBuild, deleteBuild, clearBuild, saveNow } = useStore();
   const [sharing, setSharing] = useState(false);
 
   return (
@@ -21,6 +21,7 @@ export function BuildBar() {
       <button className="btn sm" onClick={() => createBuild(prompt('Nome da nova build:', 'Nova Build') || 'Nova Build')}>+ Nova</button>
       <button className="btn sm" onClick={duplicateBuild}>⧉ Duplicar</button>
       <button className="btn sm" onClick={() => { if (confirm('Limpar todos os slots desta build?')) clearBuild(); }}>Limpar</button>
+      <button className="btn sm" onClick={saveNow} title="Salvar a árvore — fica no navegador ao sair/voltar; se a sincronização estiver ativa, salva na nuvem">💾 Salvar</button>
       <button className="btn sm" onClick={() => setSharing(true)} title="Compartilhar por código ou link">🔗 Compartilhar</button>
       <button className="btn sm danger" disabled={builds.length <= 1} onClick={() => { if (confirm('Excluir esta build?')) deleteBuild(); }}>Excluir</button>
 

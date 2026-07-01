@@ -299,7 +299,17 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .node-tip-line { color: #e6c65a; font-size: 12.5px; line-height: 1.62; }
 
 /* Node editor controls */
-.ne-soul { display: flex; align-items: center; gap: 10px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+.ne-soul { display: flex; align-items: center; gap: 10px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 4px; }
+
+/* Inline soul picker (dentro do NodeEditor) */
+.ne-picker { margin-top: 12px; }
+.ne-picker-label { display: block; color: var(--text-dim); font-size: 13px; margin-bottom: 6px; }
+.ne-picker-list { max-height: 230px; overflow-y: auto; margin-top: 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg2); }
+.ne-pick-item { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; background: transparent; border: none; border-bottom: 1px solid #00000030; padding: 6px 8px; color: var(--text); font-size: 13px; }
+.ne-pick-item:hover { background: var(--panel2); }
+.ne-pick-item.active { background: rgba(160,107,255,0.18); }
+.ne-pick-name { font-weight: 600; color: var(--gold-bright); flex: 1; }
+.ne-pick-meta { font-size: 11px; color: var(--text-dim); white-space: nowrap; }
 .ne-ctrl { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
 .ne-ctrl label { color: var(--text-dim); font-size: 13px; }
 .ne-cost { margin-top: 12px; font-size: 13px; color: var(--text); background: var(--bg2); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border); }

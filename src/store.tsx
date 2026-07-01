@@ -28,6 +28,17 @@ function newBuild(name: string): Build {
   return { id: 'b-' + now + '-' + Math.random().toString(36).slice(2, 7), name, slots: emptySlots(), createdAt: now, updatedAt: now };
 }
 
+/** Mark every soul placed in `slots` as owned (keeping the highest level seen). */
+function mergeOwned(inv: Inventory, slots: Record<string, SlotState>): Inventory {
+  const out: Inventory = { ...inv };
+  for (const s of Object.values(slots)) {
+    if (!s.soulId) continue;
+    const lvl = (s.soulLevel || 1) as 1 | 2 | 3;
+    if (!out[s.soulId] || out[s.soulId]! < lvl) out[s.soulId] = lvl;
+  }
+  return out;
+}
+
 /** Ensure a loaded state has all slots, an inventory and at least one build. */
 function normalize(p: PersistShape): PersistShape {
   if (!p || typeof p !== 'object') p = {} as PersistShape;
@@ -84,6 +95,7 @@ interface Store {
   startSync: () => void;
   syncWithCode: (code: string) => void;
   stopSync: () => void;
+  saveNow: () => void;
 }
 
 const Ctx = createContext<Store | null>(null);
@@ -166,14 +178,30 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         return { ...s, inventory: inv };
       }),
     setSlot: (slotId, patch) =>
-      updateActive((b) => ({ ...b, slots: { ...b.slots, [slotId]: { ...b.slots[slotId], ...patch } } })),
+      setState((s) => {
+        const active = s.builds.find((b) => b.id === s.activeBuildId) ?? s.builds[0];
+        const newSlot = { ...active.slots[slotId], ...patch };
+        return {
+          ...s,
+          inventory: newSlot.soulId ? mergeOwned(s.inventory, { n: newSlot }) : s.inventory,
+          builds: s.builds.map((b) => (b.id === active.id ? { ...b, slots: { ...b.slots, [slotId]: newSlot }, updatedAt: Date.now() } : b)),
+        };
+      }),
     clearSlot: (slotId) =>
       updateActive((b) => ({
         ...b,
         slots: { ...b.slots, [slotId]: { soulId: null, soulLevel: 1, nodeLevel: b.slots[slotId].nodeLevel } },
       })),
     clearBuild: () => updateActive((b) => ({ ...b, slots: emptySlots() })),
-    applySlots: (slots) => updateActive((b) => ({ ...b, slots: { ...emptySlots(), ...slots } })),
+    applySlots: (slots) =>
+      setState((s) => {
+        const active = s.builds.find((b) => b.id === s.activeBuildId) ?? s.builds[0];
+        return {
+          ...s,
+          inventory: mergeOwned(s.inventory, slots),
+          builds: s.builds.map((b) => (b.id === active.id ? { ...b, slots: { ...emptySlots(), ...slots }, updatedAt: Date.now() } : b)),
+        };
+      }),
     selectBuild: (id) => setState((s) => ({ ...s, activeBuildId: id })),
     createBuild: (name) =>
       setState((s) => {
@@ -197,7 +225,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     importBuild: (name, slots) => {
       const b = newBuild(name);
       b.slots = { ...emptySlots(), ...slots };
-      setState((s) => ({ ...s, builds: [...s.builds, b], activeBuildId: b.id }));
+      setState((s) => ({ ...s, inventory: mergeOwned(s.inventory, slots), builds: [...s.builds, b], activeBuildId: b.id }));
       return b.id;
     },
     playerCode,
@@ -227,6 +255,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         .catch((e) => setSyncStatus(e.message || 'falha'));
     },
     stopSync: () => { setPlayerCode(null); setPlayerCodeState(null); setSyncStatus('sync desligado'); },
+    saveNow: () => {
+      if (playerCode) {
+        setSyncStatus('salvando...');
+        savePlayer(playerCode, state).then(() => setSyncStatus('salvo na nuvem ✓')).catch(() => setSyncStatus('falha ao salvar'));
+      } else {
+        setSyncStatus('salvo neste navegador ✓');
+      }
+    },
   };
 
   // Import a build shared via URL hash, then strip it from the URL.
