@@ -249,6 +249,16 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .tnode-pips .pip { width: 7px; height: 7px; border-radius: 50%; background: #241c2e; border: 1px solid #3f3350; }
 .tnode-pips .pip.on { background: radial-gradient(circle at 40% 35%, #ff85d2 0%, #d81f92 70%); border-color: #ff9ee1; box-shadow: 0 0 5px #e83fae, 0 0 2px #ff9ee1; }
 
+/* Hover tooltip no node (estilo jogo) */
+.node-tip { position: absolute; top: -6px; z-index: 30; width: 210px; background: linear-gradient(180deg, #1c1610, #0c0906); border: 1px solid var(--gold); border-radius: 8px; padding: 8px 10px; box-shadow: 0 8px 24px #000; display: none; pointer-events: none; text-align: left; }
+.node-tip.right { left: calc(100% + 10px); }
+.node-tip.left { right: calc(100% + 10px); }
+.tnode:hover .node-tip { display: block; }
+.node-tip-head { display: flex; align-items: center; gap: 8px; color: var(--gold-bright); font-weight: 800; font-size: 14px; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 6px; }
+.node-tip-sub { color: var(--accent); font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+.node-tip-stat + .node-tip-stat { margin-top: 5px; border-top: 1px dashed #3a2f1c; padding-top: 5px; }
+.node-tip-line { color: #cdbb8a; font-size: 12px; line-height: 1.55; }
+
 /* Node editor controls */
 .ne-soul { display: flex; align-items: center; gap: 10px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
 .ne-ctrl { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }

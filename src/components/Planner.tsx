@@ -12,8 +12,7 @@ import {
   type NodeType,
 } from '../lib/tree';
 import { SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
-import { slotStatValues } from '../lib/calc';
-import { fmt } from '../lib/formula';
+import { fmt, RARITY_LABEL } from '../lib/formula';
 import { useStore } from '../store';
 import { SoulIcon } from './SoulIcon';
 import { NodeEditor } from './NodeEditor';
@@ -34,6 +33,14 @@ const TYPE_LABEL: Record<NodeType, string> = {
   uti: 'Support',
   pvp: 'PvP',
   wild: 'Wildcard',
+};
+
+// In-game soul category wording for the hover tooltip (support -> "Utility").
+const SOUL_CAT_LABEL: Record<string, string> = {
+  attack: 'Attack',
+  defense: 'Defense',
+  support: 'Utility',
+  pvp: 'PvP',
 };
 
 export function Planner() {
@@ -95,10 +102,7 @@ export function Planner() {
             const c = center(n.col, n.row);
             const slot = activeBuild.slots[n.id];
             const soul = slot?.soulId ? SOULS_BY_ID[slot.soulId] : null;
-            const svs = soul ? slotStatValues(slot, n.rarity) : [];
-            const title = soul
-              ? `${soul.name} — ${svs.map((sv) => `${sv.label} +${fmt(sv.value, sv.unit)}`).join(', ')} (node ${n.rarity} Lv${slot.nodeLevel})`
-              : `${TYPE_LABEL[n.type]} — node ${n.rarity} vazio`;
+            const emptyTitle = soul ? undefined : `${TYPE_LABEL[n.type]} — node ${n.rarity} vazio`;
             return (
               <div
                 key={n.id}
@@ -110,7 +114,7 @@ export function Planner() {
                   height: NODE,
                   ['--rarity' as string]: RARITY_GLOW[n.rarity],
                 }}
-                title={title}
+                title={emptyTitle}
                 onClick={() => setEditing(n.id)}
               >
                 <img className="tnode-frame" src={nodeFrameSrc(n.type, n.rarity)} alt="" />
@@ -129,6 +133,19 @@ export function Planner() {
                   )}
                 </div>
                 {soul && <span className="tnode-lvl">{slot.nodeLevel}</span>}
+                {soul && (
+                  <div className={`node-tip ${n.col >= 4 ? 'left' : 'right'}`}>
+                    <div className="node-tip-head"><SoulIcon soul={soul} size={26} /><span>{soul.name}</span></div>
+                    <div className="node-tip-sub">{RARITY_LABEL[soul.rarity]} {SOUL_CAT_LABEL[soul.category]} Soul</div>
+                    {soul.stats.map((st) => (
+                      <div key={st.stat} className="node-tip-stat">
+                        {[1, 2, 3].map((lv) => (
+                          <div key={lv} className="node-tip-line">Level {lv} - {st.statLabel} + {fmt(st.ranks[lv - 1], st.unit)}</div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })}
