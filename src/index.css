@@ -367,3 +367,15 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .weight-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
 .weight-item { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 12px; color: var(--text-dim); }
 .weight-item input { width: 64px; }
+
+/* Sliders de atributo do Gerador (%) + feedback da IA */
+.attr-sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 18px; margin-top: 4px; }
+@media (max-width: 760px) { .attr-sliders { grid-template-columns: 1fr; } }
+.attr-row { display: grid; grid-template-columns: 96px 1fr 50px auto; align-items: center; gap: 8px; padding: 3px 0; }
+.attr-label { font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+.attr-row.on .attr-label { color: var(--gold-bright); font-weight: 600; }
+.attr-range { width: 100%; accent-color: var(--accent); cursor: pointer; }
+.attr-num { width: 50px; padding: 3px 4px; text-align: center; font-size: 12px; }
+.attr-pct { font-size: 11px; color: var(--text-dim); }
+.ai-feedback { margin-top: 12px; background: rgba(160,107,255,0.08); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 12px; }
+.ai-note { margin: 5px 0; font-size: 13px; color: var(--text); line-height: 1.5; }
