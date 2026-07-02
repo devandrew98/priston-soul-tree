@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '../store';
+import { HelpTip } from './HelpTip';
 
 export function CloudSync() {
   const { playerCode, syncStatus, startSync, syncWithCode, stopSync } = useStore();
@@ -17,6 +18,7 @@ export function CloudSync() {
 
   return (
     <div className="cloudsync">
+      <HelpTip text="Sincronização: ative pra ganhar um código de jogador. Com ele, seu inventário e builds ficam salvos na nuvem e acessíveis em qualquer aparelho — é só usar 'Entrar com código' em outro navegador. Sem senha." />
       {playerCode ? (
         <>
           <span className="cs-code" title="Seu código de jogador — guarde para acessar seu inventário e builds em outro dispositivo">

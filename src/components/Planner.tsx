@@ -22,6 +22,7 @@ import { unlockedFor } from '../lib/graph';
 import { useStore, totalFusionPoints } from '../store';
 import { SoulIcon } from './SoulIcon';
 import { NodeEditor } from './NodeEditor';
+import { HelpTip } from './HelpTip';
 
 const CELL = 92; // grid cell size in px
 const NODE = 64; // node frame size in px
@@ -145,6 +146,7 @@ export function Planner() {
         <label className="row" style={{ gap: 6, marginLeft: 'auto', fontSize: 12, cursor: 'pointer' }} title="Ao adicionar uma soul, abre o próximo node automaticamente. Clique em Finalizar pra parar.">
           <input type="checkbox" checked={rapid} onChange={(e) => setRapid(e.target.checked)} /> 🔨 Montagem rápida
         </label>
+        <HelpTip text="Com isso ligado, ao adicionar uma soul num nó o próximo nó vazio abre sozinho — bom pra montar rápido. Clique em Finalizar (no editor) pra parar." />
         <span className="muted" style={{ fontSize: 12 }}>clique = selecionar · duplo clique = abrir · Backspace = remover</span>
       </div>
 

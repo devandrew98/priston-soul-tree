@@ -5,6 +5,7 @@ import { computeTotals, slotStatValues } from '../lib/calc';
 import { TREE_NODE_BY_ID, NODE_CATEGORY } from '../lib/tree';
 import { SOULS_BY_ID, STAT_META, ALL_STATS, CATEGORY_LABEL } from '../lib/souls';
 import { useStore, totalFusionPoints } from '../store';
+import { HelpTip } from './HelpTip';
 
 export function Optimizer() {
   const { inventory, applySlots, activeBuild, fusionLevel } = useStore();
@@ -99,6 +100,7 @@ export function Optimizer() {
         <label className="row" style={{ gap: 6 }} title="Ignora seu inventário e monta a melhor build teórica — mostra souls que valeria a pena conseguir.">
           <input type="checkbox" checked={allSouls} onChange={(e) => setAllSouls(e.target.checked)} /> Considerar todas as souls
         </label>
+        <HelpTip text="Ligado: a IA ignora seu inventário e monta a melhor build teórica com QUALQUER soul do jogo — ótimo pra descobrir souls que valeria a pena conseguir. Desligado: usa só as souls que você marcou como suas." />
         <span className="spacer" />
         <button className="btn primary" disabled={result.used.length === 0} onClick={() => applySlots(result.slots)}>
           ✓ Aplicar na build atual
