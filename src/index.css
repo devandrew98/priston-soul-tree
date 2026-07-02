@@ -310,6 +310,8 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .ne-pick-item { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; background: transparent; border: none; border-bottom: 1px solid #00000030; padding: 6px 8px; color: var(--text); font-size: 13px; }
 .ne-pick-item:hover { background: var(--panel2); }
 .ne-pick-item.active { background: rgba(160,107,255,0.18); }
+.ne-pick-item:disabled { opacity: 0.4; cursor: not-allowed; }
+.ne-pick-item:disabled:hover { background: transparent; }
 .ne-pick-name { font-weight: 600; color: var(--gold-bright); flex: 1; }
 .ne-pick-meta { font-size: 11px; color: var(--text-dim); white-space: nowrap; }
 .ne-ctrl { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }

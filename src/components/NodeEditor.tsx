@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { NodeType } from '../lib/tree';
 import { NODE_CATEGORY, RARITY_POINT_COST, TREE_NODE_BY_ID, acceptsSoul } from '../lib/tree';
 import { SOULS, SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
@@ -29,6 +29,22 @@ export function NodeEditor({ nodeId, type, onClose, onPlaced }: { nodeId: string
       .filter((s) => (q ? (s.name + ' ' + s.stats.map((st) => st.statLabel).join(' ')).toLowerCase().includes(q.toLowerCase()) : true))
       .sort((a, b) => a.stats[0].statLabel.localeCompare(b.stats[0].statLabel) || a.name.localeCompare(b.name));
   }, [accepts, rarity, q]);
+
+  // Souls já colocadas em OUTROS nodes — cada soul é única, não pode repetir.
+  const usedElsewhere = useMemo(() => {
+    const set = new Set<string>();
+    for (const [id, sl] of Object.entries(activeBuild.slots)) {
+      if (id !== nodeId && sl.soulId) set.add(sl.soulId);
+    }
+    return set;
+  }, [activeBuild, nodeId]);
+
+  // Esc fecha o editor.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
 
   return (
     <div className="modal-bg" onClick={onClose}>
@@ -68,16 +84,19 @@ export function NodeEditor({ nodeId, type, onClose, onPlaced }: { nodeId: string
               {list.length === 0 && <div className="muted" style={{ padding: 8 }}>Nenhuma soul compatível.</div>}
               {list.map((s) => {
                 const owned = inventory[s.id];
+                const used = usedElsewhere.has(s.id);
                 return (
                   <button
                     key={s.id}
                     className={`ne-pick-item ${soul?.id === s.id ? 'active' : ''}`}
+                    disabled={used}
+                    title={used ? 'Essa soul já está na árvore (é única)' : undefined}
                     onClick={() => { setSlot(nodeId, { soulId: s.id, soulLevel: (owned || 1) as 1 | 2 | 3 }); onPlaced?.(nodeId); }}
                   >
                     <SoulIcon soul={s} size={26} />
                     <span className="ne-pick-name">
                       {s.name} <span className={`rarity-tag ${s.rarity}`}>{RARITY_LABEL[s.rarity]}</span>
-                      {owned ? <span className="muted"> · tenho Lv{owned}</span> : null}
+                      {used ? <span className="muted"> · já na árvore</span> : owned ? <span className="muted"> · tenho Lv{owned}</span> : null}
                     </span>
                     <span className="ne-pick-meta">{s.stats.map((st) => st.statLabel).join(' + ')}</span>
                   </button>

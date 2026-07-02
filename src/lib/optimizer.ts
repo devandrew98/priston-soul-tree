@@ -21,6 +21,8 @@ export interface Goal {
   weights: Record<string, number>;
   /** include PvP souls/slots in the optimization */
   includePvp?: boolean;
+  /** use ONLY PvP souls (for pure-PvP builds) */
+  pvpOnly?: boolean;
   custom?: boolean;
 }
 
@@ -102,6 +104,7 @@ export function optimize(goal: Goal, inv: Inventory, opt: OptimizeOptions): Opti
   for (const soul of SOULS) {
     const owned = opt.allSouls ? 3 : inv[soul.id];
     if (!owned) continue;
+    if (goal.pvpOnly && soul.category !== 'pvp') continue;
     if (soul.category === 'pvp' && !goal.includePvp) continue;
     const stats: WStat[] = [];
     let weightBase = 0;
@@ -225,8 +228,23 @@ export const PRESET_GOALS: Goal[] = [
   },
   {
     id: '1v1',
-    name: '1v1 PvP',
+    name: '1v1 (híbrido)',
     weights: { attackPower: 1, attackRating: 0.5, defense: 1, absorb: 3, evade: 40, critRate: 30 },
     includePvp: true,
+  },
+  // PvP puro — usa SÓ as souls de PvP (Vault / Skillmaster / Vengeful Saint...).
+  {
+    id: 'pvp-atk',
+    name: 'PvP Ataque (só PvP)',
+    weights: { attackPower: 1, attackRating: 0.5, critRate: 30 },
+    includePvp: true,
+    pvpOnly: true,
+  },
+  {
+    id: 'pvp-def',
+    name: 'PvP Defesa (só PvP)',
+    weights: { defense: 1, absorb: 3, evade: 40, block: 40, hp: 0.5 },
+    includePvp: true,
+    pvpOnly: true,
   },
 ];

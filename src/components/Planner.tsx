@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { SlotState } from '../lib/types';
 import {
   TREE_NODES,
   TREE_EDGES,
@@ -54,10 +55,11 @@ const RARITY_PT: Record<string, string> = {
 const NODE_ORDER: string[] = [...TREE_NODES].sort((a, b) => a.row - b.row || a.col - b.col).map((n) => n.id);
 
 export function Planner() {
-  const { activeBuild, clearSlot } = useStore();
+  const { activeBuild, clearSlot, setSlot } = useStore();
   const [editing, setEditing] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [rapid, setRapid] = useState(false);
+  const undoStack = useRef<{ nodeId: string; slot: SlotState }[]>([]);
 
   // Nodes that are OPEN: every soul plus the cheapest pass-through path back to the top.
   const unlocked = useMemo(() => {
@@ -74,20 +76,27 @@ export function Planner() {
     return null;
   };
 
-  // Backspace / Delete removes the soul from the selected node (when no editor is open).
+  // Keyboard: Backspace/Delete removes the soul from the selected node; Ctrl+Z
+  // restores the last removed soul. (Ignored while typing in an input.)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (editing) return;
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        const last = undoStack.current.pop();
+        if (last) { setSlot(last.nodeId, last.slot); setSelected(last.nodeId); e.preventDefault(); }
+        return;
+      }
+      if (editing) return;
       if ((e.key === 'Backspace' || e.key === 'Delete') && selected && activeBuild.slots[selected]?.soulId) {
+        undoStack.current.push({ nodeId: selected, slot: { ...activeBuild.slots[selected] } });
         clearSlot(selected);
         e.preventDefault();
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [editing, selected, activeBuild, clearSlot]);
+  }, [editing, selected, activeBuild, clearSlot, setSlot]);
 
   const canvasW = TREE_COLS * CELL;
   const canvasH = TREE_ROWS * CELL;
