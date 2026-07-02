@@ -8,13 +8,18 @@ import {
   TREE_ROWS,
   nodeFrameSrc,
   NODE_TYPE_ICON,
+  NODE_CATEGORY,
+  RARITY_POINT_COST,
+  acceptsSoul,
   TYPE_COUNTS,
   type NodeType,
+  type TreeNode,
 } from '../lib/tree';
 import { SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
 import { fmt } from '../lib/formula';
+import { pointsSpent } from '../lib/calc';
 import { unlockedFor } from '../lib/graph';
-import { useStore } from '../store';
+import { useStore, totalFusionPoints } from '../store';
 import { SoulIcon } from './SoulIcon';
 import { NodeEditor } from './NodeEditor';
 
@@ -55,10 +60,12 @@ const RARITY_PT: Record<string, string> = {
 const NODE_ORDER: string[] = [...TREE_NODES].sort((a, b) => a.row - b.row || a.col - b.col).map((n) => n.id);
 
 export function Planner() {
-  const { activeBuild, clearSlot, setSlot } = useStore();
+  const { activeBuild, clearSlot, setSlot, moveSoul, fusionLevel } = useStore();
   const [editing, setEditing] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [rapid, setRapid] = useState(false);
+  const [dragFrom, setDragFrom] = useState<string | null>(null);
+  const [moving, setMoving] = useState<string | null>(null);
   const undoStack = useRef<{ nodeId: string; slot: SlotState }[]>([]);
 
   // Nodes that are OPEN: every soul plus the cheapest pass-through path back to the top.
@@ -66,6 +73,23 @@ export function Planner() {
     const souled = Object.entries(activeBuild.slots).filter(([, s]) => s.soulId).map(([id]) => id);
     return unlockedFor(souled);
   }, [activeBuild]);
+
+  const spent = useMemo(() => pointsSpent(activeBuild), [activeBuild]);
+  const budget = totalFusionPoints(fusionLevel);
+
+  // Can the soul on `fromId` be dropped/moved onto `target`? (category+rarity, allows a valid swap)
+  const canReceive = (target: TreeNode, fromId: string): boolean => {
+    if (fromId === target.id) return false;
+    const aId = activeBuild.slots[fromId]?.soulId;
+    const soulA = aId ? SOULS_BY_ID[aId] : null;
+    if (!soulA) return false;
+    if (!acceptsSoul(NODE_CATEGORY[target.type], target.rarity, soulA.category, soulA.rarity)) return false;
+    const bId = activeBuild.slots[target.id]?.soulId;
+    const soulB = bId ? SOULS_BY_ID[bId] : null;
+    if (!soulB) return true;
+    const fromNode = TREE_NODE_BY_ID[fromId];
+    return acceptsSoul(NODE_CATEGORY[fromNode.type], fromNode.rarity, soulB.category, soulB.rarity);
+  };
 
   // Next still-empty node in build order (for rapid-build auto-advance).
   const nextEmpty = (afterId: string): string | null => {
@@ -119,6 +143,9 @@ export function Planner() {
         <span className="muted" style={{ fontSize: 12 }}>clique = selecionar · duplo clique = abrir · Backspace = remover</span>
       </div>
 
+      {moving && (
+        <div className="move-hint">🔀 Movendo a soul — clique no node de destino (ou de novo no ⇄ pra cancelar).</div>
+      )}
       <div className="tree-wrap">
         <div className="tree-canvas" style={{ width: canvasW, height: canvasH }}>
           {/* Pipes / edges */}
@@ -158,7 +185,7 @@ export function Planner() {
             return (
               <div
                 key={n.id}
-                className={`tnode ${soul ? 'filled' : ''} ${selected === n.id ? 'selected' : ''} ${unlocked.has(n.id) ? '' : 'locked'}`}
+                className={`tnode ${soul ? 'filled' : ''} ${selected === n.id ? 'selected' : ''} ${moving === n.id ? 'moving' : ''} ${moving && canReceive(n, moving) ? 'drop-ok' : ''} ${unlocked.has(n.id) ? '' : 'locked'}`}
                 style={{
                   left: c.x - NODE / 2,
                   top: c.y - NODE / 2,
@@ -167,7 +194,19 @@ export function Planner() {
                   ['--rarity' as string]: RARITY_GLOW[n.rarity],
                 }}
                 title={emptyTitle}
-                onClick={() => setSelected(n.id)}
+                draggable={!!soul}
+                onDragStart={() => { setDragFrom(n.id); setMoving(null); }}
+                onDragOver={(e) => { if (dragFrom && canReceive(n, dragFrom)) e.preventDefault(); }}
+                onDrop={(e) => { e.preventDefault(); if (dragFrom && canReceive(n, dragFrom)) { moveSoul(dragFrom, n.id); setSelected(n.id); } setDragFrom(null); }}
+                onDragEnd={() => setDragFrom(null)}
+                onClick={() => {
+                  if (moving) {
+                    if (canReceive(n, moving)) { moveSoul(moving, n.id); setSelected(n.id); }
+                    setMoving(null);
+                  } else {
+                    setSelected(n.id);
+                  }
+                }}
                 onDoubleClick={() => { setSelected(n.id); setEditing(n.id); }}
               >
                 <img className="tnode-frame" src={nodeFrameSrc(n.type, n.rarity)} alt="" />
@@ -178,7 +217,16 @@ export function Planner() {
                     <img className="tnode-type" src={NODE_TYPE_ICON[n.type]} alt={TYPE_LABEL[n.type]} />
                   )}
                 </div>
-                {soul && <span className="tnode-lvl">{slot.nodeLevel}</span>}
+                {soul && (selected === n.id ? (
+                  <span className="tnode-lvl ctrl" onClick={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
+                    <button className={`lvl-adj mv ${moving === n.id ? 'on' : ''}`} title="Mover esta soul para outro node" onClick={(e) => { e.stopPropagation(); setMoving(moving === n.id ? null : n.id); }}>⇄</button>
+                    <button className="lvl-adj" title="Diminuir nível do node" disabled={slot.nodeLevel <= 1} onClick={(e) => { e.stopPropagation(); setSlot(n.id, { nodeLevel: Math.max(1, slot.nodeLevel - 1) }); }}>−</button>
+                    <span className="lvl-num">{slot.nodeLevel}</span>
+                    <button className="lvl-adj" title="Aumentar nível do node" disabled={spent + RARITY_POINT_COST[n.rarity] > budget} onClick={(e) => { e.stopPropagation(); setSlot(n.id, { nodeLevel: slot.nodeLevel + 1 }); }}>+</button>
+                  </span>
+                ) : (
+                  <span className="tnode-lvl">{slot.nodeLevel}</span>
+                ))}
                 {soul && (
                   <div className={`node-tip r-${soul.rarity} ${n.col >= 4 ? 'left' : 'right'}`}>
                     <div className="node-tip-head"><SoulIcon soul={soul} size={24} /><span>{soul.name}</span></div>

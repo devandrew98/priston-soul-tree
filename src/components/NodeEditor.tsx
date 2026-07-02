@@ -118,15 +118,19 @@ export function NodeEditor({ nodeId, type, onClose, onPlaced }: { nodeId: string
 
           <div className="ne-ctrl">
             <label>Nível do node (máx {maxNodeLevel} · limitado pelos pontos)</label>
-            <input
-              className="input"
-              type="number"
-              min={1}
-              max={maxNodeLevel}
-              value={slot.nodeLevel}
-              onChange={(e) => setSlot(nodeId, { nodeLevel: Math.min(maxNodeLevel, Math.max(1, Math.floor(Number(e.target.value) || 1))) })}
-              style={{ width: 110 }}
-            />
+            <div className="lvl-stepper">
+              <button className="btn sm" disabled={slot.nodeLevel <= 1} onClick={() => setSlot(nodeId, { nodeLevel: Math.max(1, slot.nodeLevel - 1) })}>−</button>
+              <input
+                className="input"
+                type="number"
+                min={1}
+                max={maxNodeLevel}
+                value={slot.nodeLevel}
+                onChange={(e) => setSlot(nodeId, { nodeLevel: Math.min(maxNodeLevel, Math.max(1, Math.floor(Number(e.target.value) || 1))) })}
+                style={{ width: 70, textAlign: 'center' }}
+              />
+              <button className="btn sm" disabled={slot.nodeLevel >= maxNodeLevel} onClick={() => setSlot(nodeId, { nodeLevel: Math.min(maxNodeLevel, slot.nodeLevel + 1) })}>+</button>
+            </div>
           </div>
 
           <div className="ne-cost">

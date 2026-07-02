@@ -96,6 +96,8 @@ interface Store {
   syncWithCode: (code: string) => void;
   stopSync: () => void;
   saveNow: () => void;
+  /** Move (or swap) the soul from one node to another, keeping each node's own level. */
+  moveSoul: (fromId: string, toId: string) => void;
 }
 
 const Ctx = createContext<Store | null>(null);
@@ -193,6 +195,21 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         slots: { ...b.slots, [slotId]: { soulId: null, soulLevel: 1, nodeLevel: b.slots[slotId].nodeLevel } },
       })),
     clearBuild: () => updateActive((b) => ({ ...b, slots: emptySlots() })),
+    moveSoul: (fromId, toId) =>
+      setState((s) => {
+        if (fromId === toId) return s;
+        const active = s.builds.find((b) => b.id === s.activeBuildId) ?? s.builds[0];
+        const from = active.slots[fromId];
+        const to = active.slots[toId];
+        if (!from?.soulId) return s;
+        // Swap the soul (id + its level) between the two nodes; node levels stay put.
+        const slots = {
+          ...active.slots,
+          [fromId]: { ...from, soulId: to?.soulId ?? null, soulLevel: to?.soulLevel ?? 1 },
+          [toId]: { ...to, soulId: from.soulId, soulLevel: from.soulLevel },
+        };
+        return { ...s, builds: s.builds.map((b) => (b.id === active.id ? { ...b, slots, updatedAt: Date.now() } : b)) };
+      }),
     applySlots: (slots) =>
       setState((s) => {
         const active = s.builds.find((b) => b.id === s.activeBuildId) ?? s.builds[0];
