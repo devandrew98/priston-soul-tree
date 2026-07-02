@@ -1,15 +1,23 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BuildBar } from './components/BuildBar';
 import { CloudSync } from './components/CloudSync';
 import { Planner } from './components/Planner';
 import { TotalsPanel } from './components/TotalsPanel';
 import { Inventory } from './components/Inventory';
 import { Optimizer } from './components/Optimizer';
+import { Tour } from './components/Tour';
 
 type Tab = 'planner' | 'inventory' | 'optimizer';
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('planner');
+  const [showTour, setShowTour] = useState(false);
+
+  useEffect(() => {
+    if (!localStorage.getItem('priston-tour-done')) setShowTour(true);
+  }, []);
+
+  const closeTour = () => { setShowTour(false); localStorage.setItem('priston-tour-done', '1'); };
 
   return (
     <div className="app">
@@ -33,6 +41,8 @@ export default function App() {
         <button className={`tab ${tab === 'planner' ? 'active' : ''}`} onClick={() => setTab('planner')}>🌳 Árvore</button>
         <button className={`tab ${tab === 'inventory' ? 'active' : ''}`} onClick={() => setTab('inventory')}>🎒 Inventário</button>
         <button className={`tab ${tab === 'optimizer' ? 'active' : ''}`} onClick={() => setTab('optimizer')}>🤖 Gerador (IA)</button>
+        <span className="spacer" />
+        <button className="btn sm" onClick={() => setShowTour(true)} title="Abrir o tutorial guiado">❓ Tutorial</button>
       </div>
 
       {tab === 'planner' && (
@@ -57,6 +67,8 @@ export default function App() {
           <TotalsPanel />
         </div>
       )}
+
+      {showTour && <Tour setTab={setTab} onClose={closeTour} />}
     </div>
   );
 }

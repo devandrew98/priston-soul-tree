@@ -274,6 +274,20 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .tnode.moving .tnode-frame { filter: drop-shadow(0 0 6px #a06bff) drop-shadow(0 0 2px #fff); }
 .tnode.drop-ok .tnode-frame { filter: drop-shadow(0 0 7px #5cff9a); }
 .move-hint { background: rgba(160,107,255,0.15); border: 1px solid var(--accent); color: var(--gold-bright); border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; font-size: 13px; }
+
+/* Tutorial / tour guiado */
+.tour { position: fixed; inset: 0; z-index: 100; }
+.tour-backdrop { position: fixed; inset: 0; pointer-events: auto; }
+.tour-spot { position: fixed; border-radius: 10px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.78); border: 2px solid var(--gold-bright); transition: left .25s, top .25s, width .25s, height .25s; pointer-events: none; }
+.tour-spot.full { inset: 0; width: auto; height: auto; border: none; border-radius: 0; box-shadow: inset 0 0 0 9999px rgba(0,0,0,0.8); }
+.tour-card { position: fixed; left: 50%; transform: translateX(-50%); width: min(460px, 92vw); background: linear-gradient(180deg, var(--panel), var(--bg2)); border: 1px solid var(--gold); border-radius: 12px; padding: 16px 18px; box-shadow: 0 12px 44px #000; pointer-events: auto; z-index: 2; }
+.tour-card.bottom { bottom: 28px; }
+.tour-card.top { top: 28px; }
+.tour-card.center { top: 50%; transform: translate(-50%, -50%); }
+.tour-card h3 { margin: 4px 0 8px; color: var(--gold-bright); font-size: 17px; }
+.tour-card p { margin: 0 0 14px; color: var(--text); line-height: 1.55; font-size: 14px; }
+.tour-step-n { font-size: 11px; color: var(--accent); font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+.tour-nav { display: flex; gap: 8px; align-items: center; }
 .lvl-stepper { display: flex; align-items: center; gap: 6px; }
 .lvl-stepper .btn.sm { width: 30px; font-size: 16px; }
 
