@@ -14,7 +14,12 @@ export default function App() {
   return (
     <div className="app">
       <div className="header">
-        <div className="title">
+        <div
+          className="title"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          style={{ cursor: 'pointer' }}
+          title="Voltar ao topo da página"
+        >
           Priston Tale EU — Soul Tree
           <span>Fusion Tier · planejador de builds & gerador inteligente</span>
         </div>

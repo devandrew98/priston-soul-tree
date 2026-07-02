@@ -49,7 +49,10 @@ function normalize(p: PersistShape): PersistShape {
     p.builds = [b];
     p.activeBuildId = b.id;
   }
-  for (const b of p.builds) b.slots = { ...emptySlots(), ...b.slots };
+  for (const b of p.builds) {
+    b.slots = { ...emptySlots(), ...b.slots };
+    if (!Array.isArray(b.opened)) b.opened = [];
+  }
   if (!p.activeBuildId || !p.builds.some((b) => b.id === p.activeBuildId)) {
     p.activeBuildId = p.builds[0].id;
   }
@@ -98,6 +101,8 @@ interface Store {
   saveNow: () => void;
   /** Move (or swap) the soul from one node to another, keeping each node's own level. */
   moveSoul: (fromId: string, toId: string) => void;
+  /** Open/close an empty node manually (unlock without placing a soul). */
+  toggleOpen: (nodeId: string) => void;
 }
 
 const Ctx = createContext<Store | null>(null);
@@ -195,6 +200,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         slots: { ...b.slots, [slotId]: { soulId: null, soulLevel: 1, nodeLevel: b.slots[slotId].nodeLevel } },
       })),
     clearBuild: () => updateActive((b) => ({ ...b, slots: emptySlots() })),
+    toggleOpen: (nodeId) =>
+      setState((s) => {
+        const active = s.builds.find((b) => b.id === s.activeBuildId) ?? s.builds[0];
+        if (active.slots[nodeId]?.soulId) return s; // souled nodes are managed via the soul
+        const opened = new Set(active.opened ?? []);
+        if (opened.has(nodeId)) opened.delete(nodeId);
+        else opened.add(nodeId);
+        return { ...s, builds: s.builds.map((b) => (b.id === active.id ? { ...b, opened: [...opened], updatedAt: Date.now() } : b)) };
+      }),
     moveSoul: (fromId, toId) =>
       setState((s) => {
         if (fromId === toId) return s;

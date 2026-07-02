@@ -36,6 +36,7 @@ export interface Build {
   id: string;
   name: string;
   slots: Record<string, SlotState>; // keyed by slot id
+  opened?: string[]; // empty nodes the player opened manually (no soul yet)
   createdAt: number;
   updatedAt: number;
 }

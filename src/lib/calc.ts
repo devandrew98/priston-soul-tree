@@ -84,9 +84,10 @@ export function pointsSpent(build: Build): number {
   const souled = Object.entries(build.slots)
     .filter(([, s]) => s.soulId)
     .map(([id]) => id);
-  if (!souled.length) return 0;
+  const terminals = [...new Set([...souled, ...(build.opened ?? [])])];
+  if (!terminals.length) return 0;
   let sum = 0;
-  for (const id of unlockedFor(souled)) {
+  for (const id of unlockedFor(terminals)) {
     const slot = build.slots[id];
     const level = slot && slot.soulId ? Math.max(1, slot.nodeLevel) : 1;
     sum += RARITY_POINT_COST[slotRarity(id)] * level;

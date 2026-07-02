@@ -270,6 +270,7 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .lvl-adj:disabled { opacity: 0.3; cursor: not-allowed; }
 .lvl-adj.mv.on { background: var(--accent); color: #fff; border-color: var(--accent); }
 .lvl-num { min-width: 16px; text-align: center; }
+.lvl-adj.wide { width: auto; padding: 0 8px; font-size: 11px; }
 .tnode.moving .tnode-frame { filter: drop-shadow(0 0 6px #a06bff) drop-shadow(0 0 2px #fff); }
 .tnode.drop-ok .tnode-frame { filter: drop-shadow(0 0 7px #5cff9a); }
 .move-hint { background: rgba(160,107,255,0.15); border: 1px solid var(--accent); color: var(--gold-bright); border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; font-size: 13px; }

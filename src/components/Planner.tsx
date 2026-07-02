@@ -60,7 +60,7 @@ const RARITY_PT: Record<string, string> = {
 const NODE_ORDER: string[] = [...TREE_NODES].sort((a, b) => a.row - b.row || a.col - b.col).map((n) => n.id);
 
 export function Planner() {
-  const { activeBuild, clearSlot, setSlot, moveSoul, fusionLevel } = useStore();
+  const { activeBuild, clearSlot, setSlot, moveSoul, toggleOpen, fusionLevel } = useStore();
   const [editing, setEditing] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [rapid, setRapid] = useState(false);
@@ -71,7 +71,7 @@ export function Planner() {
   // Nodes that are OPEN: every soul plus the cheapest pass-through path back to the top.
   const unlocked = useMemo(() => {
     const souled = Object.entries(activeBuild.slots).filter(([, s]) => s.soulId).map(([id]) => id);
-    return unlockedFor(souled);
+    return unlockedFor([...souled, ...(activeBuild.opened ?? [])]);
   }, [activeBuild]);
 
   const spent = useMemo(() => pointsSpent(activeBuild), [activeBuild]);
@@ -112,15 +112,20 @@ export function Planner() {
         return;
       }
       if (editing) return;
-      if ((e.key === 'Backspace' || e.key === 'Delete') && selected && activeBuild.slots[selected]?.soulId) {
-        undoStack.current.push({ nodeId: selected, slot: { ...activeBuild.slots[selected] } });
-        clearSlot(selected);
-        e.preventDefault();
+      if ((e.key === 'Backspace' || e.key === 'Delete') && selected) {
+        if (activeBuild.slots[selected]?.soulId) {
+          undoStack.current.push({ nodeId: selected, slot: { ...activeBuild.slots[selected] } });
+          clearSlot(selected);
+          e.preventDefault();
+        } else if ((activeBuild.opened ?? []).includes(selected)) {
+          toggleOpen(selected); // close a manually-opened empty node
+          e.preventDefault();
+        }
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [editing, selected, activeBuild, clearSlot, setSlot]);
+  }, [editing, selected, activeBuild, clearSlot, setSlot, toggleOpen]);
 
   const canvasW = TREE_COLS * CELL;
   const canvasH = TREE_ROWS * CELL;
@@ -203,9 +208,10 @@ export function Planner() {
                   if (moving) {
                     if (canReceive(n, moving)) { moveSoul(moving, n.id); setSelected(n.id); }
                     setMoving(null);
-                  } else {
-                    setSelected(n.id);
+                    return;
                   }
+                  if (!soul) toggleOpen(n.id); // empty node: open/close (manual unlock)
+                  setSelected(n.id);
                 }}
                 onDoubleClick={() => { setSelected(n.id); setEditing(n.id); }}
               >
@@ -227,6 +233,11 @@ export function Planner() {
                 ) : (
                   <span className="tnode-lvl">{slot.nodeLevel}</span>
                 ))}
+                {!soul && selected === n.id && (activeBuild.opened ?? []).includes(n.id) && (
+                  <span className="tnode-lvl ctrl" onClick={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
+                    <button className="lvl-adj wide" title="Adicionar soul neste node" onClick={(e) => { e.stopPropagation(); setSelected(n.id); setEditing(n.id); }}>+ soul</button>
+                  </span>
+                )}
                 {soul && (
                   <div className={`node-tip r-${soul.rarity} ${n.col >= 4 ? 'left' : 'right'}`}>
                     <div className="node-tip-head"><SoulIcon soul={soul} size={24} /><span>{soul.name}</span></div>
