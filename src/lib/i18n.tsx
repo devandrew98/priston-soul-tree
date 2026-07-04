@@ -15,25 +15,51 @@ const DICT: Record<string, Entry> = {
   // ---- TimeBoss ----
   'tb.title': { pt: 'TIMEBOSS', en: 'TIMEBOSS' },
   'tb.subtitle': {
-    pt: 'Veja quais bosses nascem e em quanto tempo — horário oficial de Brasília.',
-    en: 'See which bosses spawn and in how long — official Brasília time.',
+    pt: 'Veja quanto falta para cada boss nascer. Os horários seguem o tempo oficial do jogo (GMT 0).',
+    en: 'See how long until each boss spawns. Times follow the game official time (GMT 0).',
   },
-  'tb.timezone': { pt: 'Fuso: Brasília (GMT-3)', en: 'Timezone: Brasília (GMT-3)' },
-  'tb.nowlabel': { pt: 'Agora em Brasília', en: 'Now in Brasília' },
+  'tb.nowlabel': { pt: 'Agora', en: 'Now' },
   'tb.next': { pt: 'Próximos bosses', en: 'Upcoming bosses' },
   'tb.nextone': { pt: 'Próximo boss', en: 'Next boss' },
   'tb.in': { pt: 'em {t}', en: 'in {t}' },
   'tb.spawning': { pt: '⚔️ Nascendo agora!', en: '⚔️ Spawning now!' },
+  'tb.justspawned': { pt: 'Nasceram agora', en: 'Just spawned' },
+  'tb.spawnedago': { pt: 'nasceu há {t}', en: 'spawned {t} ago' },
   'tb.schedule': { pt: 'Cronograma do dia', en: 'Daily schedule' },
   'tb.schedulenote': {
-    pt: 'Cada boss nasce nos dois horários da linha (manhã e noite).',
-    en: 'Each boss spawns at both times in the row (AM and PM).',
+    pt: 'Horários no seu fuso. Os bosses são fiéis ao horário oficial do jogo (GMT 0) — o mesmo para todos.',
+    en: "Times in your timezone. Bosses follow the game's official time (GMT 0) — the same for everyone.",
   },
   'tb.time': { pt: 'Horário', en: 'Time' },
   'tb.bosses': { pt: 'Bosses', en: 'Bosses' },
   'tb.allbosses': { pt: 'Todos os bosses', en: 'All bosses' },
-  'tb.nextspawn': { pt: 'Próximo: {time} ({in})', en: 'Next: {time} ({in})' },
+  'tb.boss.next': { pt: 'Próximo: {time} · em {in}', en: 'Next: {time} · in {in}' },
   'tb.lvl': { pt: 'Lv', en: 'Lv' },
+
+  // timezone
+  'tb.tz.label': { pt: 'Fuso horário', en: 'Timezone' },
+  'tb.tz.showing': { pt: 'Mostrando em {tz}', en: 'Showing in {tz}' },
+
+  // favorites
+  'tb.fav.all': { pt: 'Todos', en: 'All' },
+  'tb.fav.only': { pt: '⭐ Só favoritos', en: '⭐ Favorites only' },
+  'tb.fav.hint': {
+    pt: 'Você ainda não escolheu favoritos. Clique na ⭐ dos bosses em "Todos os bosses" para filtrar o topo só por eles.',
+    en: 'No favorites yet. Click the ⭐ on bosses under "All bosses" to filter the top by them.',
+  },
+  'tb.fav.add': { pt: 'Adicionar aos favoritos', en: 'Add to favorites' },
+  'tb.fav.remove': { pt: 'Remover dos favoritos', en: 'Remove from favorites' },
+
+  // voice alerts
+  'tb.audio.label': { pt: '🔊 Alertas de voz', en: '🔊 Voice alerts' },
+  'tb.audio.hint': {
+    pt: 'Aviso falado (voz grave) 10, 5 e 2 minutos antes de cada boss nascer.',
+    en: 'Spoken alert (deep voice) 10, 5 and 2 minutes before each boss spawns.',
+  },
+  'tb.audio.enabled': { pt: 'Alertas de voz ativados.', en: 'Voice alerts enabled.' },
+  'tb.alert.one': { pt: 'O boss {name} vai nascer em {min} minutos.', en: 'Boss {name} will spawn in {min} minutes.' },
+  'tb.alert.many': { pt: 'Os bosses {list} vão nascer em {min} minutos.', en: 'Bosses {list} will spawn in {min} minutes.' },
+  'tb.alert.and': { pt: 'e', en: 'and' },
 
   // ---- Soul Tree (top level) ----
   'st.title': { pt: 'Priston Tale EU — Árvore de Souls', en: 'Priston Tale EU — Soul Tree' },

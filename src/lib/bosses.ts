@@ -1,5 +1,7 @@
-// Priston Tale EU boss spawn schedule (official Brasília time, GMT-3).
-// Times come from the in-game schedule the user provided. CHAOS QUEEN removed on request.
+// Priston Tale EU boss spawn schedule.
+// The schedule is anchored to the game's OFFICIAL time = GMT 0 (UTC). Spawns are
+// fixed absolute moments; every visitor sees the same countdown, only the displayed
+// wall-clock time is localised to their timezone. CHAOS QUEEN removed on request.
 
 export interface Boss {
   id: string;
@@ -16,7 +18,7 @@ export const BOSSES: Record<string, Boss> = {
   draxos: { id: 'draxos', name: 'Draxos', location: 'Secret Lab', level: 108, img: '/bosses/draxos.png' },
   eadric: { id: 'eadric', name: 'Eadric / Vault', location: 'Vaults of Ricarten', level: null, img: '/bosses/eadric.png' },
   dayane: { id: 'dayane', name: 'Dayane', location: 'Whispering Vale', level: null, img: '/bosses/dayane.png' },
-  'bloody-king': { id: 'bloody-king', name: 'Bloody King', location: 'Land of Chaos', level: 95, img: '/bosses/bloody-king.png' },
+  'bloody-king': { id: 'bloody-king', name: 'Blood Prince', location: 'Land of Chaos', level: 95, img: '/bosses/bloody-king.png' },
   'devil-shy': { id: 'devil-shy', name: 'Devil Shy', location: 'Endless Tower #2', level: 102, img: '/bosses/devil-shy.png' },
   'primal-golem': { id: 'primal-golem', name: 'Primal Golem', location: 'Forge of the Ancients', level: 115, img: '/bosses/primal-golem.png' },
   deius: { id: 'deius', name: 'Deius', location: 'Land of Neuren', level: 120, img: '/bosses/deius.png' },
@@ -30,85 +32,208 @@ export const BOSSES: Record<string, Boss> = {
 
 export const ALL_BOSSES: Boss[] = Object.values(BOSSES);
 
-// Schedule rows: index r = the ":30" hour (0..11). Each boss in a row spawns at
-// HH:30 and (HH+12):30 Brasília time. (Reproduces the in-game table exactly.)
-export const SCHEDULE_ROWS: string[][] = [
-  /* 0  00:30 / 12:30 */ ['valento', 'kelvezu', 'gorgoniac', 'draxos', 'eadric', 'dayane'],
-  /* 1  01:30 / 13:30 */ ['bloody-king', 'devil-shy', 'primal-golem', 'deius'],
-  /* 2  02:30 / 14:30 */ ['valento', 'mokova', 'tulla'],
-  /* 3  03:30 / 15:30 */ ['kelvezu', 'gorgoniac', 'deius', 'greedy', 'aragonian', 'eadric'],
-  /* 4  04:30 / 16:30 */ ['valento', 'bloody-king', 'draxos', 'yagditha'],
-  /* 5  05:30 / 17:30 */ ['mokova', 'devil-shy', 'ignis', 'deius'],
-  /* 6  06:30 / 18:30 */ ['valento', 'kelvezu', 'gorgoniac', 'tulla', 'eadric', 'dayane'],
-  /* 7  07:30 / 19:30 */ ['bloody-king', 'primal-golem', 'deius'],
-  /* 8  08:30 / 20:30 */ ['valento', 'mokova', 'draxos'],
-  /* 9  09:30 / 21:30 */ ['kelvezu', 'gorgoniac', 'devil-shy', 'greedy', 'aragonian', 'eadric'],
-  /* 10 10:30 / 22:30 */ ['valento', 'bloody-king', 'yagditha', 'tulla'],
-  /* 11 11:30 / 23:30 */ ['mokova', 'ignis', 'deius'],
+// Official schedule in GMT 0 (game time). Primal Golem at 10:30 & 22:30 is Hard mode "(H)".
+const RAW: [string, string[]][] = [
+  ['00:30', ['kelvezu', 'gorgoniac', 'devil-shy', 'greedy', 'aragonian', 'eadric']],
+  ['01:30', ['valento', 'bloody-king', 'yagditha', 'tulla']],
+  ['02:00', ['deius']],
+  ['02:30', ['mokova', 'ignis']],
+  ['03:30', ['valento', 'kelvezu', 'gorgoniac', 'draxos', 'eadric', 'dayane']],
+  ['04:00', ['deius']],
+  ['04:30', ['bloody-king', 'devil-shy', 'primal-golem']],
+  ['05:30', ['valento', 'mokova', 'tulla']],
+  ['06:00', ['deius']],
+  ['06:30', ['kelvezu', 'gorgoniac', 'greedy', 'aragonian', 'eadric']],
+  ['07:30', ['valento', 'bloody-king', 'draxos', 'yagditha']],
+  ['08:00', ['deius']],
+  ['08:30', ['mokova', 'devil-shy', 'ignis']],
+  ['09:30', ['valento', 'kelvezu', 'gorgoniac', 'tulla', 'eadric', 'dayane']],
+  ['10:00', ['deius']],
+  ['10:30', ['bloody-king', 'primal-golem']], // Primal Golem (H)
+  ['11:30', ['valento', 'mokova', 'draxos']],
+  ['12:00', ['deius']],
+  ['12:30', ['kelvezu', 'gorgoniac', 'devil-shy', 'greedy', 'aragonian', 'eadric']],
+  ['13:30', ['valento', 'bloody-king', 'yagditha', 'tulla']],
+  ['14:00', ['deius']],
+  ['14:30', ['mokova', 'ignis']],
+  ['15:30', ['valento', 'kelvezu', 'gorgoniac', 'draxos', 'eadric', 'dayane']],
+  ['16:00', ['deius']],
+  ['16:30', ['bloody-king', 'devil-shy', 'primal-golem']],
+  ['17:30', ['valento', 'mokova', 'tulla']],
+  ['18:00', ['deius']],
+  ['18:30', ['kelvezu', 'gorgoniac', 'greedy', 'aragonian', 'eadric']],
+  ['19:30', ['valento', 'bloody-king', 'draxos', 'yagditha']],
+  ['20:00', ['deius']],
+  ['20:30', ['mokova', 'devil-shy', 'ignis']],
+  ['21:30', ['valento', 'kelvezu', 'gorgoniac', 'tulla', 'eadric', 'dayane']],
+  ['22:00', ['deius']],
+  ['22:30', ['bloody-king', 'primal-golem']], // Primal Golem (H)
+  ['23:30', ['valento', 'mokova', 'draxos']],
 ];
 
-export interface SpawnSlot {
-  minute: number; // minutes past midnight (Brasília)
-  label: string; // "HH:30"
-  bossIds: string[];
+const HARD_PRIMAL_TIMES = new Set(['10:30', '22:30']);
+
+export interface ScheduleEntry {
+  hm: string; // "HH:MM" in GMT 0 (internal reference)
+  utcMin: number; // minutes past UTC midnight
+  ids: string[];
+  hardPrimal: boolean; // Primal Golem here is Hard mode
 }
 
-export function hhmm(minute: number): string {
-  const h = Math.floor(minute / 60) % 24;
-  const m = minute % 60;
-  return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+const toMin = (hm: string) => {
+  const [h, m] = hm.split(':').map(Number);
+  return h * 60 + m;
+};
+
+export const SCHEDULE: ScheduleEntry[] = RAW.map(([hm, ids]) => ({
+  hm,
+  utcMin: toMin(hm),
+  ids,
+  hardPrimal: HARD_PRIMAL_TIMES.has(hm),
+}));
+
+const DAY_MS = 86400000;
+
+/** The next absolute occurrence (>= now) of a UTC time-of-day. */
+export function nextOccurrence(utcMin: number, now: Date): Date {
+  const d = new Date(now);
+  d.setUTCHours(Math.floor(utcMin / 60), utcMin % 60, 0, 0);
+  if (d.getTime() <= now.getTime()) d.setTime(d.getTime() + DAY_MS);
+  return d;
 }
 
-/** All 24 daily spawn slots (each row at r:30 and r+12:30), sorted by time. */
-export function daySlots(): SpawnSlot[] {
-  const slots: SpawnSlot[] = [];
-  SCHEDULE_ROWS.forEach((bossIds, r) => {
-    for (const base of [r, r + 12]) {
-      const minute = base * 60 + 30;
-      slots.push({ minute, label: hhmm(minute), bossIds });
+export interface BossEvent {
+  entry: ScheduleEntry;
+  ids: string[]; // bosses at this spawn (already filtered)
+  when: Date; // absolute moment of the relevant occurrence
+  state: 'spawned' | 'upcoming';
+  sec: number; // seconds since spawn (spawned) or until spawn (upcoming)
+}
+
+// A boss stays visible as "just spawned" for this long after its spawn moment.
+export const RECENT_SEC = 180;
+
+/** Build the ordered event list: just-spawned first (newest), then upcoming (soonest). */
+export function buildEvents(now: Date, favorites?: Set<string>): BossEvent[] {
+  const out: BossEvent[] = [];
+  for (const entry of SCHEDULE) {
+    let ids = entry.ids;
+    if (favorites && favorites.size) {
+      ids = ids.filter((id) => favorites.has(id));
+      if (!ids.length) continue;
     }
-  });
-  return slots.sort((a, b) => a.minute - b.minute);
+    const next = nextOccurrence(entry.utcMin, now);
+    const last = new Date(next.getTime() - DAY_MS);
+    const untilNext = Math.round((next.getTime() - now.getTime()) / 1000);
+    const sinceLast = Math.round((now.getTime() - last.getTime()) / 1000);
+    if (sinceLast >= 0 && sinceLast <= RECENT_SEC) {
+      out.push({ entry, ids, when: last, state: 'spawned', sec: sinceLast });
+    } else {
+      out.push({ entry, ids, when: next, state: 'upcoming', sec: untilNext });
+    }
+  }
+  out.sort((a, b) => (a.state !== b.state ? (a.state === 'spawned' ? -1 : 1) : a.sec - b.sec));
+  return out;
 }
 
-/** Current time-of-day in Brasília (GMT-3), in seconds, independent of the user's timezone. */
-export function brasiliaSecondsNow(): number {
-  const now = new Date();
-  const utcSec = now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds();
-  return (((utcSec - 3 * 3600) % 86400) + 86400) % 86400;
+/** The soonest upcoming spawn for one boss. */
+export function nextForBoss(bossId: string, now: Date): { when: Date; sec: number } | null {
+  let best: { when: Date; sec: number } | null = null;
+  for (const e of SCHEDULE) {
+    if (!e.ids.includes(bossId)) continue;
+    const next = nextOccurrence(e.utcMin, now);
+    const sec = Math.round((next.getTime() - now.getTime()) / 1000);
+    if (!best || sec < best.sec) best = { when: next, sec };
+  }
+  return best;
 }
 
-/** Next `count` spawn slots from `nowSec` (seconds-of-day), with seconds until each. */
-export function upcomingSlots(nowSec: number, count: number): { slot: SpawnSlot; inSec: number }[] {
-  return daySlots()
-    .map((slot) => ({ slot, inSec: (((slot.minute * 60 - nowSec) % 86400) + 86400) % 86400 }))
-    .sort((a, b) => a.inSec - b.inSec)
-    .slice(0, count);
+// ---- formatting ----
+const pad = (n: number) => String(n).padStart(2, '0');
+
+/** "03h 08m" / "9m 19s" / "45s" — only the time remaining, no wall clock. */
+export function fmtCountdown(sec: number): string {
+  const s = Math.max(0, sec);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const ss = s % 60;
+  if (h > 0) return `${pad(h)}h ${pad(m)}m`;
+  if (m > 0) return `${m}m ${pad(ss)}s`;
+  return `${ss}s`;
 }
 
-/** Language-neutral countdown: "1h 23m" / "23m 05s" / "05s". */
-export function countdown(sec: number): string {
-  const h = Math.floor(sec / 3600);
-  const m = Math.floor((sec % 3600) / 60);
-  const s = sec % 60;
-  if (h > 0) return `${h}h ${String(m).padStart(2, '0')}m`;
-  if (m > 0) return `${m}m ${String(s).padStart(2, '0')}s`;
-  return `${s}s`;
+/** "2m 05s" / "40s" — elapsed since spawn. */
+export function fmtSince(sec: number): string {
+  const s = Math.max(0, sec);
+  const m = Math.floor(s / 60);
+  const ss = s % 60;
+  return m > 0 ? `${m}m ${pad(ss)}s` : `${ss}s`;
 }
 
-/** "HH:MM:SS" clock for a seconds-of-day value. */
-export function clock(sec: number): string {
-  const h = Math.floor(sec / 3600) % 24;
-  const m = Math.floor((sec % 3600) / 60);
-  const s = sec % 60;
-  return [h, m, s].map((n) => String(n).padStart(2, '0')).join(':');
+// ---- timezone ----
+export function detectTz(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  } catch {
+    return 'UTC';
+  }
 }
 
-/** The soonest spawn for one boss from `nowSec`. */
-export function nextForBoss(bossId: string, nowSec: number): { label: string; inSec: number } | null {
-  const times = daySlots()
-    .filter((s) => s.bossIds.includes(bossId))
-    .map((s) => ({ label: s.label, inSec: (((s.minute * 60 - nowSec) % 86400) + 86400) % 86400 }))
-    .sort((a, b) => a.inSec - b.inSec);
-  return times[0] ?? null;
+/** Resolve a UI choice ('auto' | 'UTC' | IANA id) to a real IANA timezone. */
+export function resolveTz(choice: string): string {
+  return choice === 'auto' ? detectTz() : choice;
 }
+
+/** "HH:MM" for a date in a timezone. */
+export function localTime(date: Date, tz: string): string {
+  return new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false }).format(date);
+}
+
+/** "HH:MM:SS" clock for a date in a timezone. */
+export function localClock(date: Date, tz: string): string {
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: tz,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).format(date);
+}
+
+/** Minutes-of-day for a date in a timezone (for sorting the schedule locally). */
+export function localMinutes(date: Date, tz: string): number {
+  const [h, m] = localTime(date, tz).split(':').map(Number);
+  return h * 60 + m;
+}
+
+/** Short offset label like "GMT-3" for a timezone. */
+export function tzOffsetLabel(tz: string): string {
+  try {
+    const part = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'shortOffset' })
+      .formatToParts(new Date())
+      .find((p) => p.type === 'timeZoneName');
+    return part?.value || '';
+  } catch {
+    return '';
+  }
+}
+
+export interface TzOption {
+  id: string;
+  pt: string;
+  en: string;
+}
+
+export const TZ_OPTIONS: TzOption[] = [
+  { id: 'auto', pt: 'Automático (seu fuso)', en: 'Automatic (your timezone)' },
+  { id: 'UTC', pt: 'Horário do jogo (GMT 0)', en: 'Game time (GMT 0)' },
+  { id: 'America/Sao_Paulo', pt: 'Brasília (GMT-3)', en: 'Brasília (GMT-3)' },
+  { id: 'Europe/London', pt: 'Londres', en: 'London' },
+  { id: 'Europe/Lisbon', pt: 'Lisboa', en: 'Lisbon' },
+  { id: 'Europe/Madrid', pt: 'Madri', en: 'Madrid' },
+  { id: 'Europe/Berlin', pt: 'Berlim / Paris', en: 'Berlin / Paris' },
+  { id: 'America/New_York', pt: 'Nova York (EUA Leste)', en: 'New York (US East)' },
+  { id: 'America/Los_Angeles', pt: 'Los Angeles (EUA Oeste)', en: 'Los Angeles (US West)' },
+  { id: 'America/Mexico_City', pt: 'Cidade do México', en: 'Mexico City' },
+  { id: 'America/Argentina/Buenos_Aires', pt: 'Buenos Aires', en: 'Buenos Aires' },
+];
