@@ -7,13 +7,14 @@ type Entry = { pt: string; en: string };
 // All UI strings. Boss names / locations are proper nouns and stay as-is.
 const DICT: Record<string, Entry> = {
   // ---- shell / nav ----
-  'nav.timeboss': { pt: 'TimeBoss', en: 'TimeBoss' },
+  'nav.timeboss': { pt: 'Timer Boss', en: 'Timer Boss' },
+  'nav.timerfury': { pt: 'Timer Fury', en: 'Timer Fury' },
   'nav.soultree': { pt: 'Árvore de Souls', en: 'Soul Tree' },
   'nav.tagline': { pt: 'Priston Tale EU · ferramentas da comunidade', en: 'Priston Tale EU · community tools' },
   'lang.switch': { pt: 'English', en: 'Português' },
 
   // ---- TimeBoss ----
-  'tb.title': { pt: 'TIMEBOSS', en: 'TIMEBOSS' },
+  'tb.title': { pt: 'TIMER BOSS', en: 'TIMER BOSS' },
   'tb.subtitle': {
     pt: 'Veja quanto falta para cada boss nascer. Os horários seguem o tempo oficial do jogo (GMT 0).',
     en: 'See how long until each boss spawns. Times follow the game official time (GMT 0).',
@@ -61,6 +62,22 @@ const DICT: Record<string, Entry> = {
   'tb.alert.one': { pt: 'O boss {name} vai nascer em {min} minutos.', en: 'Boss {name} will spawn in {min} minutes.' },
   'tb.alert.many': { pt: 'Os bosses {list} vão nascer em {min} minutos.', en: 'Bosses {list} will spawn in {min} minutes.' },
   'tb.alert.and': { pt: 'e', en: 'and' },
+
+  // ---- Timer Fury ----
+  'tf.title': { pt: 'TIMER FURY', en: 'TIMER FURY' },
+  'tf.subtitle': {
+    pt: 'Veja quanto falta para cada Fury aparecer. Os horários seguem o tempo oficial do jogo (GMT 0).',
+    en: 'See how long until each Fury appears. Times follow the game official time (GMT 0).',
+  },
+  'tf.nextone': { pt: 'Próximo Fury', en: 'Next Fury' },
+  'tf.justspawned': { pt: 'Apareceram agora', en: 'Just appeared' },
+  'tf.spawning': { pt: '🔥 Aparecendo agora!', en: '🔥 Appearing now!' },
+  'tf.spawnedago': { pt: 'apareceu há {t}', en: 'appeared {t} ago' },
+  'tf.next': { pt: 'Em seguida', en: 'Coming up' },
+  'tf.levels': { pt: 'Faixas de nível', en: 'Level ranges' },
+  'tf.times': { pt: 'Horários (GMT 0)', en: 'Times (GMT 0)' },
+  'tf.boss.next': { pt: 'Próximo em {in}', en: 'Next in {in}' },
+  'tf.alert.one': { pt: 'O Fury {name} vai aparecer em {min} minutos.', en: 'Fury {name} will appear in {min} minutes.' },
 
   // ---- Soul Tree (top level) ----
   'st.title': { pt: 'Priston Tale EU — Árvore de Souls', en: 'Priston Tale EU — Soul Tree' },

@@ -7,16 +7,18 @@ import { Inventory } from './components/Inventory';
 import { Optimizer } from './components/Optimizer';
 import { Tour } from './components/Tour';
 import { TimeBoss } from './components/TimeBoss';
+import { TimerFury } from './components/TimerFury';
 import { useI18n } from './lib/i18n';
 
-type Section = 'timeboss' | 'soultree';
+type Section = 'timeboss' | 'timerfury' | 'soultree';
 type Tab = 'planner' | 'inventory' | 'optimizer';
 
 export default function App() {
   const { t, lang, setLang } = useI18n();
-  const [section, setSection] = useState<Section>(() =>
-    localStorage.getItem('site-section') === 'soultree' ? 'soultree' : 'timeboss',
-  );
+  const [section, setSection] = useState<Section>(() => {
+    const saved = localStorage.getItem('site-section');
+    return saved === 'soultree' || saved === 'timerfury' ? saved : 'timeboss';
+  });
 
   const go = (s: Section) => {
     setSection(s);
@@ -38,6 +40,12 @@ export default function App() {
             🕐 {t('nav.timeboss')}
           </button>
           <button
+            className={`topnav-tab ${section === 'timerfury' ? 'active' : ''}`}
+            onClick={() => go('timerfury')}
+          >
+            🔥 {t('nav.timerfury')}
+          </button>
+          <button
             className={`topnav-tab ${section === 'soultree' ? 'active' : ''}`}
             onClick={() => go('soultree')}
           >
@@ -55,7 +63,7 @@ export default function App() {
         </div>
       </nav>
 
-      {section === 'timeboss' ? <TimeBoss /> : <SoulTree />}
+      {section === 'timeboss' ? <TimeBoss /> : section === 'timerfury' ? <TimerFury /> : <SoulTree />}
     </div>
   );
 }
