@@ -7,8 +7,10 @@ type Entry = { pt: string; en: string };
 // All UI strings. Boss names / locations are proper nouns and stay as-is.
 const DICT: Record<string, Entry> = {
   // ---- shell / nav ----
+  'nav.home': { pt: 'Home', en: 'Home' },
   'nav.timeboss': { pt: 'Timer Boss', en: 'Timer Boss' },
   'nav.timerfury': { pt: 'Timer Fury', en: 'Timer Fury' },
+  'nav.sod': { pt: 'SoD', en: 'SoD' },
   'nav.soultree': { pt: 'Árvore de Souls', en: 'Soul Tree' },
   'nav.tagline': { pt: 'Priston Tale EU · ferramentas da comunidade', en: 'Priston Tale EU · community tools' },
   'lang.switch': { pt: 'English', en: 'Português' },
@@ -78,6 +80,53 @@ const DICT: Record<string, Entry> = {
   'tf.times': { pt: 'Horários (GMT 0)', en: 'Times (GMT 0)' },
   'tf.boss.next': { pt: 'Próximo em {in}', en: 'Next in {in}' },
   'tf.alert.one': { pt: 'O Fury {name} vai aparecer em {min} minutos.', en: 'Fury {name} will appear in {min} minutes.' },
+
+  // ---- Home / Index ----
+  'home.hero.title': { pt: 'Priston Tale EU', en: 'Priston Tale EU' },
+  'home.hero.tagline': { pt: 'Ferramentas da comunidade', en: 'Community tools' },
+  'home.intro': {
+    pt: 'Um conjunto de ferramentas feitas pela comunidade para o Priston Tale EU: acompanhe o horário de nascimento dos bosses e dos Furys, meça seu desempenho no Survive or Die e planeje a sua Árvore de Souls — tudo em um só lugar.',
+    en: 'A set of community-made tools for Priston Tale EU: track boss and Fury spawn times, measure your Survive or Die performance and plan your Soul Tree — all in one place.',
+  },
+  'home.welcome.title': { pt: '👋 Boas-vindas', en: '👋 Welcome' },
+  'home.welcome.body': {
+    pt: 'A Árvore de Souls ainda não está funcionando 100% do jeito que gostaríamos, mas muito em breve será atualizada para uma IA que entenderá e aplicará as melhores builds de souls de acordo com o que o jogador deseja.',
+    en: 'The Soul Tree is not yet working 100% the way we would like, but very soon it will be updated to an AI that understands and applies the best soul builds according to what the player wants.',
+  },
+  'home.cards.title': { pt: 'O que você encontra aqui', en: 'What you find here' },
+  'home.card.timeboss': { pt: 'Contagem regressiva para cada boss nascer, no horário oficial do jogo (GMT 0).', en: 'Countdown to every boss spawn, on the game official time (GMT 0).' },
+  'home.card.timerfury': { pt: 'Horários dos Furys por faixa de nível, com alertas de voz.', en: 'Fury spawn times by level range, with voice alerts.' },
+  'home.card.sod': { pt: 'Registre seus pontos por round no Survive or Die e veja seu ritmo.', en: 'Log your points per round in Survive or Die and see your pace.' },
+  'home.card.soultree': { pt: 'Planejador de builds da Fusion Tier e gerador inteligente.', en: 'Fusion Tier build planner and smart generator.' },
+  'home.open': { pt: 'Abrir', en: 'Open' },
+  'home.credits': { pt: 'Desenvolvido por {a} e {b}', en: 'Developed by {a} and {b}' },
+
+  // ---- SoD (Survive or Die) ----
+  'sod.title': { pt: 'SURVIVE OR DIE', en: 'SURVIVE OR DIE' },
+  'sod.subtitle': {
+    pt: 'São 8 rounds de mobs. Marque quantos pontos você fez em cada round para acompanhar o seu ritmo.',
+    en: 'It is 8 rounds of mobs. Log how many points you scored each round to track your pace.',
+  },
+  'sod.round': { pt: 'Round', en: 'Round' },
+  'sod.endsat': { pt: 'Termina em', en: 'Ends at' },
+  'sod.duration': { pt: 'Duração', en: 'Duration' },
+  'sod.points': { pt: 'Pontos', en: 'Points' },
+  'sod.permin': { pt: 'Pts/min', en: 'Pts/min' },
+  'sod.total': { pt: 'Total de pontos', en: 'Total points' },
+  'sod.totaltime': { pt: 'Tempo total', en: 'Total time' },
+  'sod.overallpace': { pt: 'Ritmo geral', en: 'Overall pace' },
+  'sod.best': { pt: 'Melhor round', en: 'Best round' },
+  'sod.worst': { pt: 'Pior round', en: 'Worst round' },
+  'sod.record': { pt: 'Recorde pessoal', en: 'Personal best' },
+  'sod.record.none': { pt: 'sem recorde ainda', en: 'no record yet' },
+  'sod.record.new': { pt: '🎉 Novo recorde!', en: '🎉 New record!' },
+  'sod.record.vs': { pt: '{delta} vs. recorde', en: '{delta} vs. record' },
+  'sod.saverecord': { pt: '🏆 Salvar como recorde', en: '🏆 Save as record' },
+  'sod.clear': { pt: 'Limpar', en: 'Clear' },
+  'sod.clearconfirm': { pt: 'Limpar os pontos deste run?', en: 'Clear the points of this run?' },
+  'sod.enterpoints': { pt: 'Digite os pontos de cada round para ver suas métricas.', en: 'Enter each round points to see your metrics.' },
+  'sod.strong': { pt: 'acima da média', en: 'above average' },
+  'sod.weak': { pt: 'abaixo da média', en: 'below average' },
 
   // ---- Soul Tree (top level) ----
   'st.title': { pt: 'Priston Tale EU — Árvore de Souls', en: 'Priston Tale EU — Soul Tree' },

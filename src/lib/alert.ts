@@ -139,8 +139,8 @@ export function speak(text: string, lang: Lang) {
 
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang === 'pt' ? 'pt-BR' : 'en-US';
-  u.pitch = 0; // deepest the engine can go
-  u.rate = 0.72; // slow, deliberate, menacing
+  u.pitch = 0.75; // thick / deep, but a natural voice (not the robotic floor of 0)
+  u.rate = 1; // normal speaking speed, like a real person talking
   u.volume = 1;
   const v = pickVoice(lang);
   if (v) u.voice = v;

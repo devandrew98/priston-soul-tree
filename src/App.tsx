@@ -8,16 +8,28 @@ import { Optimizer } from './components/Optimizer';
 import { Tour } from './components/Tour';
 import { TimeBoss } from './components/TimeBoss';
 import { TimerFury } from './components/TimerFury';
+import { Home } from './components/Home';
+import { SoD } from './components/SoD';
 import { useI18n } from './lib/i18n';
 
-type Section = 'timeboss' | 'timerfury' | 'soultree';
+export type Section = 'home' | 'timeboss' | 'timerfury' | 'sod' | 'soultree';
 type Tab = 'planner' | 'inventory' | 'optimizer';
+
+const SECTIONS: Section[] = ['home', 'timeboss', 'timerfury', 'sod', 'soultree'];
+
+const NAV: { id: Section; icon: string; key: string }[] = [
+  { id: 'home', icon: '🏠', key: 'nav.home' },
+  { id: 'timeboss', icon: '🕐', key: 'nav.timeboss' },
+  { id: 'timerfury', icon: '🔥', key: 'nav.timerfury' },
+  { id: 'sod', icon: '🎯', key: 'nav.sod' },
+  { id: 'soultree', icon: '🌳', key: 'nav.soultree' },
+];
 
 export default function App() {
   const { t, lang, setLang } = useI18n();
   const [section, setSection] = useState<Section>(() => {
     const saved = localStorage.getItem('site-section');
-    return saved === 'soultree' || saved === 'timerfury' ? saved : 'timeboss';
+    return saved && SECTIONS.includes(saved as Section) ? (saved as Section) : 'home';
   });
 
   const go = (s: Section) => {
@@ -29,28 +41,19 @@ export default function App() {
   return (
     <div className="shell">
       <nav className="topnav">
-        <button className="topnav-brand" onClick={() => go('timeboss')}>
+        <button className="topnav-brand" onClick={() => go('home')}>
           ⚔️ <span>Priston Tale EU</span>
         </button>
         <div className="topnav-tabs">
-          <button
-            className={`topnav-tab ${section === 'timeboss' ? 'active' : ''}`}
-            onClick={() => go('timeboss')}
-          >
-            🕐 {t('nav.timeboss')}
-          </button>
-          <button
-            className={`topnav-tab ${section === 'timerfury' ? 'active' : ''}`}
-            onClick={() => go('timerfury')}
-          >
-            🔥 {t('nav.timerfury')}
-          </button>
-          <button
-            className={`topnav-tab ${section === 'soultree' ? 'active' : ''}`}
-            onClick={() => go('soultree')}
-          >
-            🌳 {t('nav.soultree')}
-          </button>
+          {NAV.map((n) => (
+            <button
+              key={n.id}
+              className={`topnav-tab ${section === n.id ? 'active' : ''}`}
+              onClick={() => go(n.id)}
+            >
+              {n.icon} {t(n.key)}
+            </button>
+          ))}
         </div>
         <span className="spacer" />
         <div className="lang-toggle" title={t('lang.switch')}>
@@ -63,7 +66,17 @@ export default function App() {
         </div>
       </nav>
 
-      {section === 'timeboss' ? <TimeBoss /> : section === 'timerfury' ? <TimerFury /> : <SoulTree />}
+      {section === 'home' ? (
+        <Home go={go} />
+      ) : section === 'timeboss' ? (
+        <TimeBoss />
+      ) : section === 'timerfury' ? (
+        <TimerFury />
+      ) : section === 'sod' ? (
+        <SoD />
+      ) : (
+        <SoulTree />
+      )}
     </div>
   );
 }
