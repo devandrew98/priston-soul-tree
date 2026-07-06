@@ -8,7 +8,9 @@ import { CreateListing } from './CreateListing';
 import { Dashboard } from './Dashboard';
 import { Chat } from './Chat';
 import { Stats } from './Stats';
-import { useChats, useMyListings } from './store';
+import { Admin } from './Admin';
+import { NotificationBell } from './NotificationBell';
+import { IS_ADMIN, type NotifLink, useChats, useMyListings } from './store';
 
 type View =
   | { name: 'browse' }
@@ -17,14 +19,16 @@ type View =
   | { name: 'create' }
   | { name: 'dashboard' }
   | { name: 'stats' }
-  | { name: 'messages'; seller?: string };
+  | { name: 'messages'; seller?: string }
+  | { name: 'admin' };
 
-const TABS: { name: View['name']; icon: string; key: string }[] = [
+const TABS: { name: View['name']; icon: string; key: string; admin?: boolean }[] = [
   { name: 'browse', icon: '🏪', key: 'mk.tab.browse' },
   { name: 'stats', icon: '📈', key: 'mk.tab.stats' },
   { name: 'messages', icon: '💬', key: 'mk.tab.messages' },
   { name: 'dashboard', icon: '📊', key: 'mk.tab.dashboard' },
   { name: 'create', icon: '📦', key: 'mk.tab.create' },
+  { name: 'admin', icon: '🛡️', key: 'mk.tab.admin', admin: true },
 ];
 
 export function Marketplace() {
@@ -41,8 +45,15 @@ export function Marketplace() {
     setView({ name: 'messages', seller: sellerId });
     window.scrollTo({ top: 0 });
   };
+  const onNotifNav = (link: NotifLink) => {
+    if (link.kind === 'messages') setView({ name: 'messages' });
+    else if (link.kind === 'item' && link.id) openItem(link.id);
+    else if (link.kind === 'seller' && link.id) openSeller(link.id);
+    window.scrollTo({ top: 0 });
+  };
 
   const resolve = (id: string) => LISTING_BY_ID[id] || myListings.find((l) => l.id === id);
+  const tabs = TABS.filter((tb) => !tb.admin || IS_ADMIN);
 
   return (
     <div className="mk">
@@ -51,18 +62,21 @@ export function Marketplace() {
           <h1 className="mk-title">🏰 {t('mk.title')}</h1>
           <p className="mk-sub">{t('mk.subtitle')}</p>
         </div>
-        <nav className="mk-subnav">
-          {TABS.map((tb) => (
-            <button
-              key={tb.name}
-              className={`mk-subtab ${view.name === tb.name ? 'active' : ''}`}
-              onClick={() => go(tb.name)}
-            >
-              {tb.icon} {t(tb.key)}
-              {tb.name === 'messages' && totalUnread > 0 && <span className="mk-chat-badge sm">{totalUnread}</span>}
-            </button>
-          ))}
-        </nav>
+        <div className="mk-head-tools">
+          <nav className="mk-subnav">
+            {tabs.map((tb) => (
+              <button
+                key={tb.name}
+                className={`mk-subtab ${view.name === tb.name ? 'active' : ''} ${tb.admin ? 'admin' : ''}`}
+                onClick={() => go(tb.name)}
+              >
+                {tb.icon} {t(tb.key)}
+                {tb.name === 'messages' && totalUnread > 0 && <span className="mk-chat-badge sm">{totalUnread}</span>}
+              </button>
+            ))}
+          </nav>
+          <NotificationBell onNavigate={onNotifNav} />
+        </div>
       </header>
 
       {view.name === 'browse' && <Browse onOpen={openItem} onSeller={openSeller} />}
@@ -70,6 +84,7 @@ export function Marketplace() {
       {view.name === 'messages' && <Chat initialSeller={view.seller} onSeller={openSeller} />}
       {view.name === 'dashboard' && <Dashboard onOpen={openItem} onSeller={openSeller} onCreate={() => go('create')} />}
       {view.name === 'create' && <CreateListing onDone={() => go('dashboard')} />}
+      {view.name === 'admin' && <Admin onOpen={openItem} onSeller={openSeller} />}
       {view.name === 'item' && (() => {
         const l = resolve(view.id);
         return l ? <ItemDetail listing={l} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} /> : <NotFound onBack={() => go('browse')} />;

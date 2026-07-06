@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { CATEGORIES, CLASSES, LISTINGS, RARITIES, SELLERS } from '../../lib/market/data';
 import { EMPTY_FILTERS, type Filters, type SortKey, filterListings, sortListings } from '../../lib/market/helpers';
 import { useI18n } from '../../lib/i18n';
-import { useMyListings } from './store';
+import { useAdmin, useMyListings } from './store';
 import { ItemCard } from './ItemCard';
 
 const SORTS: SortKey[] = ['price_asc', 'price_desc', 'newest', 'oldest', 'views', 'rating', 'sold'];
@@ -10,11 +10,16 @@ const SORTS: SortKey[] = ['price_asc', 'price_desc', 'newest', 'oldest', 'views'
 export function Browse({ onOpen, onSeller }: { onOpen: (id: string) => void; onSeller: (id: string) => void }) {
   const { t } = useI18n();
   const { myListings } = useMyListings();
+  const { adminRemoved, bannedUsers } = useAdmin();
   const [f, setF] = useState<Filters>(EMPTY_FILTERS);
   const [sort, setSort] = useState<SortKey>('newest');
   const [showFilters, setShowFilters] = useState(false);
 
-  const all = useMemo(() => [...myListings, ...LISTINGS], [myListings]);
+  // Hide moderator-removed listings and everything from banned sellers.
+  const all = useMemo(
+    () => [...myListings, ...LISTINGS].filter((l) => !adminRemoved.includes(l.id) && !bannedUsers.includes(l.sellerId)),
+    [myListings, adminRemoved, bannedUsers],
+  );
   const results = useMemo(() => sortListings(filterListings(all, f), sort), [all, f, sort]);
 
   const set = <K extends keyof Filters>(k: K, v: Filters[K]) => setF((p) => ({ ...p, [k]: v }));

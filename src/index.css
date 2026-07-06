@@ -917,3 +917,60 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
   .mk-chat-list { max-height: 180px; }
   .mk-chat-thread { height: 460px; }
 }
+
+/* --- header tools + notification bell --- */
+.mk-head-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.mk-subtab.admin { border-color: #7a4a2a; color: #e0966b; }
+.mk-subtab.admin.active { background: linear-gradient(180deg, #3a2412, #241408); border-color: #e0663b; color: #f0a06b; box-shadow: 0 0 16px -4px #e0663b; }
+.mk-bell { position: relative; }
+.mk-bell-btn { position: relative; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; width: 40px; height: 38px; font-size: 18px; color: var(--text); }
+.mk-bell-btn:hover, .mk-bell-btn.has { border-color: var(--gold); }
+.mk-bell-badge { position: absolute; top: -5px; right: -5px; background: var(--attack); color: #fff; border-radius: 20px; min-width: 17px; height: 17px; display: grid; place-items: center; font-size: 10px; font-weight: 800; padding: 0 4px; border: 1px solid var(--bg); }
+.mk-notif-panel { position: absolute; right: 0; top: calc(100% + 8px); width: 340px; max-width: 88vw; background: linear-gradient(180deg, var(--panel2), var(--bg2)); border: 1px solid var(--gold); border-radius: 12px; box-shadow: 0 18px 40px rgba(0,0,0,0.55); z-index: 50; overflow: hidden; animation: tbrise 0.2s both; }
+.mk-notif-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.mk-notif-head b { color: var(--gold-bright); }
+.mk-notif-actions { display: flex; gap: 8px; }
+.mk-notif-actions button { background: none; border: none; color: var(--text-dim); font-size: 12px; font-weight: 700; }
+.mk-notif-actions button:hover { color: var(--gold-bright); }
+.mk-notif-list { max-height: 380px; overflow-y: auto; }
+.mk-notif-empty { padding: 20px 14px; text-align: center; }
+.mk-notif { display: flex; gap: 10px; align-items: flex-start; width: 100%; background: none; border: none; border-bottom: 1px solid var(--border); padding: 11px 14px; text-align: left; color: var(--text); position: relative; }
+.mk-notif:hover { background: rgba(255,255,255,0.03); }
+.mk-notif.unread { background: rgba(212,175,106,0.06); }
+.mk-notif-ic { font-size: 18px; flex-shrink: 0; }
+.mk-notif-body { flex: 1; min-width: 0; }
+.mk-notif-text { display: block; font-size: 13px; line-height: 1.4; }
+.mk-notif-time { font-size: 11px; color: var(--text-dim); }
+.mk-notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 4px; }
+
+/* --- admin panel --- */
+.mk-admin-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.mk-admin-badge { background: linear-gradient(180deg, #e0663b, #b0442a); color: #fff; font-weight: 800; font-size: 11px; letter-spacing: 1px; padding: 3px 10px; border-radius: 20px; }
+.mk-admin-search { width: 100%; max-width: 360px; background: var(--bg); border: 1px solid var(--border); border-radius: 9px; color: var(--text); padding: 9px 12px; font-size: 14px; margin-bottom: 12px; }
+.mk-admin-search:focus { outline: none; border-color: var(--gold); }
+.mk-admin-table { display: flex; flex-direction: column; gap: 6px; }
+.mk-admin-row { display: flex; align-items: center; gap: 10px; background: linear-gradient(180deg, var(--panel), var(--bg2)); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; flex-wrap: wrap; }
+.mk-admin-row.removed { opacity: 0.5; border-style: dashed; }
+.mk-admin-name { flex: 1; min-width: 120px; background: none; border: none; color: var(--gold-bright); font-weight: 700; font-size: 13.5px; text-align: left; }
+.mk-admin-name:hover { text-decoration: underline; }
+.mk-admin-sub { background: none; border: none; color: var(--text-dim); font-size: 12.5px; }
+.mk-admin-sub:hover { color: var(--gold-bright); }
+.mk-admin-flags { display: flex; gap: 5px; }
+.mk-flag { font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 20px; border: 1px solid var(--border); color: var(--text-dim); }
+.mk-flag.bad { color: var(--attack); border-color: var(--attack); background: rgba(217,83,79,0.12); }
+.mk-flag.warn { color: var(--support); border-color: var(--support); background: rgba(224,169,59,0.12); }
+.mk-admin-acts { display: flex; gap: 6px; }
+.mk-admin-acts .mk-btn.sm { flex: none; }
+.mk-admin-reports { display: flex; flex-direction: column; gap: 10px; }
+.mk-report { background: linear-gradient(180deg, var(--panel), var(--bg2)); border: 1px solid var(--border); border-left: 3px solid var(--attack); border-radius: 10px; padding: 12px 14px; }
+.mk-report-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.mk-report-head b { color: var(--gold-bright); }
+.mk-report-note { margin: 8px 0; color: var(--text); font-size: 13px; }
+.mk-report-acts { display: flex; gap: 8px; }
+.mk-admin-global { max-width: 560px; display: flex; flex-direction: column; gap: 12px; }
+.mk-admin-global textarea { background: var(--bg); border: 1px solid var(--border); border-radius: 9px; color: var(--text); padding: 10px 12px; font-size: 14px; font-family: inherit; resize: vertical; }
+.mk-admin-global textarea:focus { outline: none; border-color: var(--gold); }
+.mk-admin-global .mk-btn { align-self: flex-start; }
+.mk-admin-logs { display: flex; flex-direction: column; gap: 4px; }
+.mk-log { display: flex; gap: 12px; padding: 8px 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 8px; font-size: 13px; color: var(--text); font-family: ui-monospace, monospace; }
+.mk-log-time { color: var(--text-dim); white-space: nowrap; }

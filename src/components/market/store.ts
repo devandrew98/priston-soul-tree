@@ -6,6 +6,8 @@ import type { Listing } from '../../lib/market/types';
 
 // The demo "logged in" user is this seller, so the Dashboard has data to show.
 export const CURRENT_USER_ID = 'hadder';
+// Demo: the current user also has admin rights (shows the Admin panel tab).
+export const IS_ADMIN = true;
 
 export interface WishEntry {
   id: string;
@@ -26,18 +28,61 @@ export interface Conversation {
   lastReadAt: number;
 }
 
+export type NotifType = 'message' | 'interest' | 'sold' | 'reserved' | 'expiring' | 'review' | 'wishlist' | 'global';
+
+export interface NotifLink {
+  kind: 'item' | 'seller' | 'messages';
+  id?: string;
+}
+
+export interface Notif {
+  id: string;
+  type: NotifType;
+  params?: Record<string, string | number>;
+  at: number;
+  read: boolean;
+  link?: NotifLink;
+}
+
+export interface AdminLog {
+  id: string;
+  text: string;
+  at: number;
+}
+
 interface State {
   favItems: string[];
   favSellers: string[];
   wishlist: WishEntry[];
   myListings: Listing[];
   chats: Record<string, Conversation>; // keyed by sellerId
+  notifications: Notif[];
+  // admin moderation state
+  adminRemoved: string[]; // listing ids hidden by a moderator
+  adminFeatured: Record<string, boolean>; // listing id → highlighted override
+  bannedUsers: string[];
+  suspendedUsers: string[];
+  resolvedReports: string[];
+  adminLogs: AdminLog[];
 }
 
 const KEY = 'mk-store-v1';
 
+const now = Date.now();
+const seedNotifications = (): Notif[] => [
+  { id: 'n1', type: 'interest', params: { item: 'Murky Sword' }, at: now - 4 * 60000, read: false, link: { kind: 'messages' } },
+  { id: 'n2', type: 'sold', params: { item: 'Shadow Robe', price: '720kk' }, at: now - 3 * 3600000, read: false, link: { kind: 'item', id: 'it-7' } },
+  { id: 'n3', type: 'review', params: { stars: 5 }, at: now - 20 * 3600000, read: false, link: { kind: 'seller', id: CURRENT_USER_ID } },
+  { id: 'n4', type: 'wishlist', params: { item: 'Aegis of Dawn' }, at: now - 26 * 3600000, read: true, link: { kind: 'item', id: 'it-9' } },
+  { id: 'n5', type: 'expiring', params: { item: 'Boots of Haste' }, at: now - 2 * 86400000, read: true, link: { kind: 'item', id: 'it-13' } },
+];
+
 function load(): State {
-  const base: State = { favItems: [], favSellers: [], wishlist: [], myListings: [], chats: {} };
+  const base: State = {
+    favItems: [], favSellers: [], wishlist: [], myListings: [], chats: {},
+    notifications: seedNotifications(),
+    adminRemoved: [], adminFeatured: {}, bannedUsers: [], suspendedUsers: [], resolvedReports: [], adminLogs: [],
+  };
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) || 'null');
     if (raw && typeof raw === 'object') return { ...base, ...raw };
@@ -150,5 +195,47 @@ export function useChats() {
     receiveMessage: (sellerId: string, text: string) =>
       upsertChat(sellerId, (c) => ({ ...c, messages: [...c.messages, mkMsg('them', text)] })),
     markRead: (sellerId: string) => upsertChat(sellerId, (c) => ({ ...c, lastReadAt: Date.now() })),
+  };
+}
+
+// Standalone (non-hook) notification pusher, callable from anywhere.
+export function pushNotif(type: NotifType, params?: Record<string, string | number>, link?: NotifLink) {
+  const n: Notif = { id: `n-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, type, params, at: Date.now(), read: false, link };
+  set({ notifications: [n, ...state.notifications].slice(0, 60) });
+}
+
+export function useNotifications() {
+  const s = useSnapshot();
+  return {
+    notifications: s.notifications,
+    unread: s.notifications.filter((n) => !n.read).length,
+    push: pushNotif,
+    markRead: (id: string) => set({ notifications: s.notifications.map((n) => (n.id === id ? { ...n, read: true } : n)) }),
+    markAllRead: () => set({ notifications: s.notifications.map((n) => ({ ...n, read: true })) }),
+    clearAll: () => set({ notifications: [] }),
+  };
+}
+
+function addLog(text: string) {
+  const log: AdminLog = { id: `log-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, text, at: Date.now() };
+  set({ adminLogs: [log, ...state.adminLogs].slice(0, 100) });
+}
+
+export function useAdmin() {
+  const s = useSnapshot();
+  return {
+    adminRemoved: s.adminRemoved,
+    adminFeatured: s.adminFeatured,
+    bannedUsers: s.bannedUsers,
+    suspendedUsers: s.suspendedUsers,
+    resolvedReports: s.resolvedReports,
+    logs: s.adminLogs,
+    removeListing: (id: string, name: string) => { set({ adminRemoved: [...new Set([...s.adminRemoved, id])] }); addLog(`Anúncio removido: ${name} (${id})`); },
+    restoreListing: (id: string) => set({ adminRemoved: s.adminRemoved.filter((x) => x !== id) }),
+    toggleFeatured: (id: string, name: string, next: boolean) => { set({ adminFeatured: { ...s.adminFeatured, [id]: next } }); addLog(`${next ? 'Destacou' : 'Removeu destaque de'}: ${name}`); },
+    toggleBan: (id: string, nick: string) => { const on = s.bannedUsers.includes(id); set({ bannedUsers: toggle(s.bannedUsers, id) }); addLog(`${on ? 'Desbaniu' : 'Baniu'} usuário: ${nick}`); },
+    toggleSuspend: (id: string, nick: string) => { const on = s.suspendedUsers.includes(id); set({ suspendedUsers: toggle(s.suspendedUsers, id) }); addLog(`${on ? 'Reativou' : 'Suspendeu'} vendedor: ${nick}`); },
+    resolveReport: (id: string, action: string) => { set({ resolvedReports: [...new Set([...s.resolvedReports, id])] }); addLog(`Denúncia ${id}: ${action}`); },
+    sendGlobal: (text: string) => { pushNotif('global', { text }); addLog(`Notificação global enviada: "${text}"`); },
   };
 }

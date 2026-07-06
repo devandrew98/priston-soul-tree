@@ -197,6 +197,27 @@ export const LISTINGS: Listing[] = SEEDS.map((s, i) => {
 export const LISTING_BY_ID: Record<string, Listing> = Object.fromEntries(LISTINGS.map((l) => [l.id, l]));
 export const SELLER_BY_ID: Record<string, Seller> = Object.fromEntries(SELLERS.map((s) => [s.id, s]));
 
+// ---- reports queue (admin) ---------------------------------------------------
+
+export interface Report {
+  id: string;
+  reporter: string; // nick
+  targetType: 'item' | 'user';
+  targetId: string;
+  reason: string; // reason id → mk.report.reason.<id>
+  note: string;
+  at: number;
+}
+
+export const REPORTS: Report[] = [
+  { id: 'r1', reporter: 'Kaelen', targetType: 'user', targetId: 'draven', reason: 'scam', note: 'Recebeu o pagamento e não entregou o item.', at: now - 2 * 3600000 },
+  { id: 'r2', reporter: 'Mira', targetType: 'item', targetId: 'it-4', reason: 'wrong_stats', note: 'Atributos anunciados não conferem com o item.', at: now - 8 * 3600000 },
+  { id: 'r3', reporter: 'Torvald', targetType: 'user', targetId: 'gorrim', reason: 'abuse', note: 'Comportamento ofensivo no chat.', at: now - 26 * 3600000 },
+  { id: 'r4', reporter: 'Selene', targetType: 'item', targetId: 'it-20', reason: 'overpriced', note: 'Preço muito acima do mercado, possível manipulação.', at: now - 3 * 86400000 },
+];
+
+export const REPORT_REASONS = ['scam', 'wrong_stats', 'abuse', 'overpriced', 'spam'];
+
 // ---- deterministic price history --------------------------------------------
 
 function hashStr(s: string): number {
