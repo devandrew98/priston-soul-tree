@@ -5,6 +5,7 @@ const CARDS: { id: Exclude<Section, 'home'>; icon: string; navKey: string; descK
   { id: 'timeboss', icon: '🕐', navKey: 'nav.timeboss', descKey: 'home.card.timeboss' },
   { id: 'timerfury', icon: '🔥', navKey: 'nav.timerfury', descKey: 'home.card.timerfury' },
   { id: 'sod', icon: '🎯', navKey: 'nav.sod', descKey: 'home.card.sod' },
+  { id: 'market', icon: '🏰', navKey: 'nav.market', descKey: 'home.card.market' },
   { id: 'soultree', icon: '🌳', navKey: 'nav.soultree', descKey: 'home.card.soultree' },
 ];
 

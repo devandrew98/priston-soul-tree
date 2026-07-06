@@ -10,18 +10,20 @@ import { TimeBoss } from './components/TimeBoss';
 import { TimerFury } from './components/TimerFury';
 import { Home } from './components/Home';
 import { SoD } from './components/SoD';
+import { Marketplace } from './components/market/Marketplace';
 import { useI18n } from './lib/i18n';
 
-export type Section = 'home' | 'timeboss' | 'timerfury' | 'sod' | 'soultree';
+export type Section = 'home' | 'timeboss' | 'timerfury' | 'sod' | 'market' | 'soultree';
 type Tab = 'planner' | 'inventory' | 'optimizer';
 
-const SECTIONS: Section[] = ['home', 'timeboss', 'timerfury', 'sod', 'soultree'];
+const SECTIONS: Section[] = ['home', 'timeboss', 'timerfury', 'sod', 'market', 'soultree'];
 
 const NAV: { id: Section; icon: string; key: string }[] = [
   { id: 'home', icon: '🏠', key: 'nav.home' },
   { id: 'timeboss', icon: '🕐', key: 'nav.timeboss' },
   { id: 'timerfury', icon: '🔥', key: 'nav.timerfury' },
   { id: 'sod', icon: '🎯', key: 'nav.sod' },
+  { id: 'market', icon: '🏰', key: 'nav.market' },
   { id: 'soultree', icon: '🌳', key: 'nav.soultree' },
 ];
 
@@ -74,6 +76,8 @@ export default function App() {
         <TimerFury />
       ) : section === 'sod' ? (
         <SoD />
+      ) : section === 'market' ? (
+        <Marketplace />
       ) : (
         <SoulTree />
       )}
