@@ -137,6 +137,8 @@ const DICT: Record<string, Entry> = {
     en: 'Buy and sell server items without AFK shops. Fast search, transparent prices and direct trading.',
   },
   'mk.tab.browse': { pt: 'Vitrine', en: 'Browse' },
+  'mk.tab.stats': { pt: 'Estatísticas', en: 'Statistics' },
+  'mk.tab.messages': { pt: 'Mensagens', en: 'Messages' },
   'mk.tab.dashboard': { pt: 'Meu Painel', en: 'Dashboard' },
   'mk.tab.create': { pt: 'Vender', en: 'Sell' },
   'mk.back': { pt: 'Voltar', en: 'Back' },
@@ -319,6 +321,28 @@ const DICT: Record<string, Entry> = {
   'mk.wish.maxprice': { pt: 'Preço máx.', en: 'Max price' },
   'mk.wish.add': { pt: 'Adicionar', en: 'Add' },
   'mk.wish.empty': { pt: 'Sua lista de desejos está vazia. Adicione o que procura e avisamos quando surgir.', en: 'Your wishlist is empty. Add what you want and we will alert you.' },
+
+  // chat / messages
+  'mk.chat.title': { pt: 'Conversas', en: 'Conversations' },
+  'mk.chat.none': { pt: 'Nenhuma conversa ainda. Clique em "Tenho interesse" em um item.', en: 'No conversations yet. Click "I\'m interested" on an item.' },
+  'mk.chat.pick': { pt: 'Selecione uma conversa para começar.', en: 'Select a conversation to start.' },
+  'mk.chat.you': { pt: 'Você', en: 'You' },
+  'mk.chat.ph': { pt: 'Escreva uma mensagem...', en: 'Write a message...' },
+  'mk.chat.send': { pt: 'Enviar', en: 'Send' },
+  'mk.chat.seed': { pt: 'Olá! Tenho interesse no seu item "{item}" por {price}. Ainda está disponível?', en: 'Hi! I\'m interested in your item "{item}" for {price}. Is it still available?' },
+
+  // market statistics
+  'mk.stats.totallistings': { pt: 'Anúncios ativos', en: 'Active listings' },
+  'mk.stats.totalsold': { pt: 'Itens vendidos', en: 'Items sold' },
+  'mk.stats.totalvolume': { pt: 'Volume total', en: 'Total volume' },
+  'mk.stats.today': { pt: 'Movimentado hoje', en: 'Moved today' },
+  'mk.stats.month': { pt: 'No mês', en: 'This month' },
+  'mk.stats.avgsell': { pt: 'Tempo médio p/ vender', en: 'Avg. time to sell' },
+  'mk.stats.volume14': { pt: 'Volume dos últimos 14 dias', en: 'Volume — last 14 days' },
+  'mk.stats.trending': { pt: 'Em alta', en: 'Trending' },
+  'mk.stats.mostviewed': { pt: 'Mais visualizados', en: 'Most viewed' },
+  'mk.stats.mostfav': { pt: 'Mais favoritados', en: 'Most favorited' },
+  'mk.stats.topsellers': { pt: 'Vendedores com mais vendas', en: 'Top sellers' },
 
   // ---- Soul Tree (top level) ----
   'st.title': { pt: 'Priston Tale EU — Árvore de Souls', en: 'Priston Tale EU — Soul Tree' },

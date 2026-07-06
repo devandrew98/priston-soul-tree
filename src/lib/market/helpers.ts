@@ -1,6 +1,6 @@
 // Pure helpers for the Marketplace: search / filter / sort, market stats from a
 // price series, reputation tiers, recommendations, reviews and formatting.
-import { LISTINGS, REP_TIERS, REVIEW_TAGS, SELLER_BY_ID } from './data';
+import { LISTINGS, REP_TIERS, REVIEW_TAGS, SELLERS, SELLER_BY_ID } from './data';
 import { priceHistory } from './data';
 import type { Currency, Listing, MarketStats, PricePoint, RepLevel, Review, Seller, Trend } from './types';
 
@@ -115,6 +115,63 @@ export function cheaperAlternatives(listing: Listing, limit = 3): Listing[] {
   return LISTINGS.filter((l) => l.category === listing.category && l.price < listing.price && l.id !== listing.id)
     .sort((a, b) => b.price - a.price)
     .slice(0, limit);
+}
+
+// ---- market-wide statistics --------------------------------------------------
+
+export interface DayVolume {
+  t: number; // epoch ms (day)
+  value: number; // gold moved that day
+}
+
+export interface MarketOverview {
+  totalListings: number;
+  totalSold: number;
+  totalVolume: number;
+  avgSellHours: number;
+  topViewed: Listing[];
+  trending: { listing: Listing; pct: number }[];
+  topFavorited: Listing[];
+  topSellers: Seller[];
+  volumeByDay: DayVolume[];
+  volumeToday: number;
+  volumeMonth: number;
+}
+
+const DAY = 86400000;
+
+export function marketOverview(): MarketOverview {
+  const totalListings = LISTINGS.length;
+  const totalSold = SELLERS.reduce((a, s) => a + s.itemsSold, 0);
+  const totalVolume = SELLERS.reduce((a, s) => a + s.totalSalesValue, 0);
+
+  const topViewed = [...LISTINGS].sort((a, b) => b.views - a.views).slice(0, 5);
+  const trending = LISTINGS
+    .map((l) => ({ listing: l, pct: marketStats(l, priceHistory(l)).trendPct }))
+    .sort((a, b) => b.pct - a.pct)
+    .slice(0, 5);
+  // "Favorited" proxy: rarer + more viewed items tend to be watched more.
+  const rarityWeight: Record<string, number> = { legendary: 4, epic: 3, rare: 2, common: 1 };
+  const topFavorited = [...LISTINGS]
+    .sort((a, b) => rarityWeight[b.rarity] * b.views - rarityWeight[a.rarity] * a.views)
+    .slice(0, 5);
+  const topSellers = [...SELLERS].sort((a, b) => b.itemsSold - a.itemsSold).slice(0, 5);
+
+  // Deterministic 14-day volume series around the daily average.
+  const dailyAvg = totalVolume / 365;
+  const volumeByDay: DayVolume[] = [];
+  const now = Date.now();
+  for (let d = 13; d >= 0; d--) {
+    const wobble = 0.6 + ((Math.sin(d * 1.7) + 1) / 2) * 0.9;
+    volumeByDay.push({ t: now - d * DAY, value: Math.round(dailyAvg * wobble) });
+  }
+  const volumeToday = volumeByDay[volumeByDay.length - 1].value;
+  const volumeMonth = Math.round(dailyAvg * 30);
+
+  return {
+    totalListings, totalSold, totalVolume, avgSellHours: 26,
+    topViewed, trending, topFavorited, topSellers, volumeByDay, volumeToday, volumeMonth,
+  };
 }
 
 // ---- reputation --------------------------------------------------------------

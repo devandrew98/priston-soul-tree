@@ -14,17 +14,30 @@ export interface WishEntry {
   createdAt: number;
 }
 
+export interface ChatMessage {
+  id: string;
+  from: 'me' | 'them';
+  text: string;
+  at: number;
+}
+
+export interface Conversation {
+  messages: ChatMessage[];
+  lastReadAt: number;
+}
+
 interface State {
   favItems: string[];
   favSellers: string[];
   wishlist: WishEntry[];
   myListings: Listing[];
+  chats: Record<string, Conversation>; // keyed by sellerId
 }
 
 const KEY = 'mk-store-v1';
 
 function load(): State {
-  const base: State = { favItems: [], favSellers: [], wishlist: [], myListings: [] };
+  const base: State = { favItems: [], favSellers: [], wishlist: [], myListings: [], chats: {} };
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) || 'null');
     if (raw && typeof raw === 'object') return { ...base, ...raw };
@@ -94,5 +107,48 @@ export function useMyListings() {
       if (!src) return;
       set({ myListings: [{ ...src, id: `my-${Date.now()}`, createdAt: Date.now(), views: 0, status: 'available' }, ...s.myListings] });
     },
+  };
+}
+
+const mkMsg = (from: ChatMessage['from'], text: string): ChatMessage => ({ id: `m-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, from, text, at: Date.now() });
+
+function upsertChat(sellerId: string, mutate: (c: Conversation) => Conversation) {
+  const current = state.chats[sellerId] ?? { messages: [], lastReadAt: 0 };
+  set({ chats: { ...state.chats, [sellerId]: mutate(current) } });
+}
+
+export function useChats() {
+  const s = useSnapshot();
+  const unread = (sellerId: string) => {
+    const c = s.chats[sellerId];
+    if (!c) return 0;
+    return c.messages.filter((m) => m.from === 'them' && m.at > c.lastReadAt).length;
+  };
+  return {
+    chats: s.chats,
+    // sellerIds ordered by most-recent activity
+    order: Object.keys(s.chats).sort((a, b) => {
+      const ma = s.chats[a].messages;
+      const mb = s.chats[b].messages;
+      const la = ma.length ? ma[ma.length - 1].at : 0;
+      const lb = mb.length ? mb[mb.length - 1].at : 0;
+      return lb - la;
+    }),
+    unread,
+    totalUnread: Object.keys(s.chats).reduce((sum, id) => sum + unread(id), 0),
+    /** Open (or create) a conversation, optionally seeding a first "me" message. */
+    startConversation: (sellerId: string, seed?: string) => {
+      const existing = state.chats[sellerId];
+      if (!existing) {
+        upsertChat(sellerId, () => ({ messages: seed ? [mkMsg('me', seed)] : [], lastReadAt: Date.now() }));
+      } else if (seed) {
+        upsertChat(sellerId, (c) => ({ ...c, messages: [...c.messages, mkMsg('me', seed)] }));
+      }
+    },
+    sendMessage: (sellerId: string, text: string) =>
+      upsertChat(sellerId, (c) => ({ ...c, messages: [...c.messages, mkMsg('me', text)] })),
+    receiveMessage: (sellerId: string, text: string) =>
+      upsertChat(sellerId, (c) => ({ ...c, messages: [...c.messages, mkMsg('them', text)] })),
+    markRead: (sellerId: string) => upsertChat(sellerId, (c) => ({ ...c, lastReadAt: Date.now() })),
   };
 }

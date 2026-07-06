@@ -6,17 +6,23 @@ import { ItemDetail } from './ItemDetail';
 import { SellerProfile } from './SellerProfile';
 import { CreateListing } from './CreateListing';
 import { Dashboard } from './Dashboard';
-import { useMyListings } from './store';
+import { Chat } from './Chat';
+import { Stats } from './Stats';
+import { useChats, useMyListings } from './store';
 
 type View =
   | { name: 'browse' }
   | { name: 'item'; id: string }
   | { name: 'seller'; id: string }
   | { name: 'create' }
-  | { name: 'dashboard' };
+  | { name: 'dashboard' }
+  | { name: 'stats' }
+  | { name: 'messages'; seller?: string };
 
 const TABS: { name: View['name']; icon: string; key: string }[] = [
   { name: 'browse', icon: '🏪', key: 'mk.tab.browse' },
+  { name: 'stats', icon: '📈', key: 'mk.tab.stats' },
+  { name: 'messages', icon: '💬', key: 'mk.tab.messages' },
   { name: 'dashboard', icon: '📊', key: 'mk.tab.dashboard' },
   { name: 'create', icon: '📦', key: 'mk.tab.create' },
 ];
@@ -24,11 +30,17 @@ const TABS: { name: View['name']; icon: string; key: string }[] = [
 export function Marketplace() {
   const { t } = useI18n();
   const { myListings } = useMyListings();
+  const { totalUnread, startConversation } = useChats();
   const [view, setView] = useState<View>({ name: 'browse' });
 
   const openItem = (id: string) => { setView({ name: 'item', id }); window.scrollTo({ top: 0 }); };
   const openSeller = (id: string) => { setView({ name: 'seller', id }); window.scrollTo({ top: 0 }); };
   const go = (name: View['name']) => { setView({ name } as View); window.scrollTo({ top: 0 }); };
+  const openChat = (sellerId: string, seed?: string) => {
+    startConversation(sellerId, seed);
+    setView({ name: 'messages', seller: sellerId });
+    window.scrollTo({ top: 0 });
+  };
 
   const resolve = (id: string) => LISTING_BY_ID[id] || myListings.find((l) => l.id === id);
 
@@ -47,19 +59,22 @@ export function Marketplace() {
               onClick={() => go(tb.name)}
             >
               {tb.icon} {t(tb.key)}
+              {tb.name === 'messages' && totalUnread > 0 && <span className="mk-chat-badge sm">{totalUnread}</span>}
             </button>
           ))}
         </nav>
       </header>
 
       {view.name === 'browse' && <Browse onOpen={openItem} onSeller={openSeller} />}
+      {view.name === 'stats' && <Stats onOpen={openItem} onSeller={openSeller} />}
+      {view.name === 'messages' && <Chat initialSeller={view.seller} onSeller={openSeller} />}
       {view.name === 'dashboard' && <Dashboard onOpen={openItem} onSeller={openSeller} onCreate={() => go('create')} />}
       {view.name === 'create' && <CreateListing onDone={() => go('dashboard')} />}
       {view.name === 'item' && (() => {
         const l = resolve(view.id);
-        return l ? <ItemDetail listing={l} onOpen={openItem} onSeller={openSeller} onBack={() => go('browse')} /> : <NotFound onBack={() => go('browse')} />;
+        return l ? <ItemDetail listing={l} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} /> : <NotFound onBack={() => go('browse')} />;
       })()}
-      {view.name === 'seller' && <SellerProfile sellerId={view.id} onOpen={openItem} onSeller={openSeller} onBack={() => go('browse')} />}
+      {view.name === 'seller' && <SellerProfile sellerId={view.id} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} />}
     </div>
   );
 }

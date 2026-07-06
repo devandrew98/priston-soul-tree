@@ -10,11 +10,12 @@ const MEDAL_ICON: Record<string, string> = Object.fromEntries(MEDALS.map((m) => 
 const DAY = 86400000;
 
 export function SellerProfile({
-  sellerId, onOpen, onSeller, onBack,
+  sellerId, onOpen, onSeller, onChat, onBack,
 }: {
   sellerId: string;
   onOpen: (id: string) => void;
   onSeller: (id: string) => void;
+  onChat: (sellerId: string, seed?: string) => void;
   onBack: () => void;
 }) {
   const { t } = useI18n();
@@ -50,6 +51,7 @@ export function SellerProfile({
             <span className="mk-muted">· {t('mk.member')} <Since at={seller.joinedAt} /> · {t('mk.onserver', { d: serverDays })}</span>
           </div>
           <div className="mk-profile-actions">
+            <button className="mk-btn sm primary" onClick={() => onChat(seller.id)}>💬 {t('mk.message')}</button>
             <button className={`mk-btn sm ${isFavSeller(seller.id) ? 'active' : ''}`} onClick={() => toggleFavSeller(seller.id)}>
               {isFavSeller(seller.id) ? '★' : '☆'} {t('mk.favseller')}
             </button>

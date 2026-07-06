@@ -12,11 +12,12 @@ import { OnlineDot, PriceTag, RarityTag, RepBadge, Since, Sockets, Stars, Status
 const TREND_ICON = { up: '📈', down: '📉', stable: '➖' } as const;
 
 export function ItemDetail({
-  listing, onOpen, onSeller, onBack,
+  listing, onOpen, onSeller, onChat, onBack,
 }: {
   listing: Listing;
   onOpen: (id: string) => void;
   onSeller: (id: string) => void;
+  onChat: (sellerId: string, seed?: string) => void;
   onBack: () => void;
 }) {
   const { t } = useI18n();
@@ -134,8 +135,8 @@ export function ItemDetail({
             {seller.reports >= 3 && <div className="mk-warn">⚠ {t('mk.reportwarn')}</div>}
 
             <div className="mk-actions">
-              <button className="mk-btn primary" onClick={() => flash(t('mk.flash.interest'))}>💬 {t('mk.interest')}</button>
-              <button className="mk-btn" onClick={() => flash(t('mk.flash.message'))}>✉ {t('mk.message')}</button>
+              <button className="mk-btn primary" onClick={() => onChat(seller.id, t('mk.chat.seed', { item: listing.name, price: fmtPrice(listing.price, listing.currency) }))}>💬 {t('mk.interest')}</button>
+              <button className="mk-btn" onClick={() => onChat(seller.id)}>✉ {t('mk.message')}</button>
               <div className="mk-actions-row">
                 <button className={`mk-btn sm ${isFav(listing.id) ? 'active' : ''}`} onClick={() => toggleFav(listing.id)}>
                   {isFav(listing.id) ? '★' : '☆'} {t('mk.favorite')}
