@@ -9,25 +9,26 @@ export interface Boss {
   location: string;
   level: number | null;
   img: string;
+  tone: string; // accent color used for the 3D glow behind the (transparent) portrait
 }
 
 export const BOSSES: Record<string, Boss> = {
-  valento: { id: 'valento', name: 'Valento', location: 'Frozen Sanctuary', level: 92, img: '/bosses/valento.png' },
-  kelvezu: { id: 'kelvezu', name: 'Kelvezu', location: 'Kelvezu Cave', level: 92, img: '/bosses/kelvezu.png' },
-  gorgoniac: { id: 'gorgoniac', name: 'Gorgoniac', location: 'Endless Tower #1', level: 100, img: '/bosses/gorgoniac.png' },
-  draxos: { id: 'draxos', name: 'Draxos', location: 'Secret Lab', level: 108, img: '/bosses/draxos.png' },
-  eadric: { id: 'eadric', name: 'Eadric / Vault', location: 'Vaults of Ricarten', level: null, img: '/bosses/eadric.png' },
-  dayane: { id: 'dayane', name: 'Dayane', location: 'Whispering Vale', level: null, img: '/bosses/dayane.png' },
-  'bloody-king': { id: 'bloody-king', name: 'Blood Prince', location: 'Land of Chaos', level: 95, img: '/bosses/bloody-king.png' },
-  'devil-shy': { id: 'devil-shy', name: 'Devil Shy', location: 'Endless Tower #2', level: 102, img: '/bosses/devil-shy.png' },
-  'primal-golem': { id: 'primal-golem', name: 'Primal Golem', location: 'Forge of the Ancients', level: 115, img: '/bosses/primal-golem.png' },
-  deius: { id: 'deius', name: 'Deius', location: 'Land of Neuren', level: 120, img: '/bosses/deius.png' },
-  mokova: { id: 'mokova', name: 'Mokova', location: 'Lost Temple', level: 98, img: '/bosses/mokova.png' },
-  tulla: { id: 'tulla', name: 'Tulla', location: 'Ice Mine', level: 105, img: '/bosses/tulla.png' },
-  greedy: { id: 'greedy', name: 'Greedy', location: 'Ancient Weapon', level: 110, img: '/bosses/greedy.png' },
-  aragonian: { id: 'aragonian', name: 'Aragonian', location: 'Cave Crystal Nest', level: 118, img: '/bosses/aragonian.png' },
-  yagditha: { id: 'yagditha', name: 'Yagditha', location: 'Abyss of the Sea', level: 113, img: '/bosses/yagditha.png' },
-  ignis: { id: 'ignis', name: 'Ignis', location: 'Heart of Fire', level: 113, img: '/bosses/ignis.png' },
+  valento: { id: 'valento', name: 'Valento', location: 'Frozen Sanctuary', level: 92, img: '/bosses/valento.png', tone: '#5aa9e6' },
+  kelvezu: { id: 'kelvezu', name: 'Kelvezu', location: 'Kelvezu Cave', level: 92, img: '/bosses/kelvezu.png', tone: '#9b6bd6' },
+  gorgoniac: { id: 'gorgoniac', name: 'Gorgoniac', location: 'Endless Tower #1', level: 100, img: '/bosses/gorgoniac.png', tone: '#6fbf73' },
+  draxos: { id: 'draxos', name: 'Draxos', location: 'Secret Lab', level: 108, img: '/bosses/draxos.png', tone: '#3fb6a8' },
+  eadric: { id: 'eadric', name: 'Eadric / Vault', location: 'Vaults of Ricarten', level: null, img: '/bosses/eadric.png', tone: '#e6c25a' },
+  dayane: { id: 'dayane', name: 'Dayane', location: 'Whispering Vale', level: null, img: '/bosses/dayane.png', tone: '#e46ea9' },
+  'bloody-king': { id: 'bloody-king', name: 'Blood Prince', location: 'Land of Chaos', level: 95, img: '/bosses/bloody-king.png', tone: '#e05252' },
+  'devil-shy': { id: 'devil-shy', name: 'Devil Shy', location: 'Endless Tower #2', level: 102, img: '/bosses/devil-shy.png', tone: '#b452d9' },
+  'primal-golem': { id: 'primal-golem', name: 'Primal Golem', location: 'Forge of the Ancients', level: 115, img: '/bosses/primal-golem.png', tone: '#e2953b' },
+  deius: { id: 'deius', name: 'Deius', location: 'Land of Neuren', level: 120, img: '/bosses/deius.png', tone: '#5ad6d0' },
+  mokova: { id: 'mokova', name: 'Mokova', location: 'Lost Temple', level: 98, img: '/bosses/mokova.png', tone: '#7fae4f' },
+  tulla: { id: 'tulla', name: 'Tulla', location: 'Ice Mine', level: 105, img: '/bosses/tulla.png', tone: '#6fc3e6' },
+  greedy: { id: 'greedy', name: 'Greedy', location: 'Ancient Weapon', level: 110, img: '/bosses/greedy.png', tone: '#e6b93b' },
+  aragonian: { id: 'aragonian', name: 'Aragonian', location: 'Cave Crystal Nest', level: 118, img: '/bosses/aragonian.png', tone: '#c060d9' },
+  yagditha: { id: 'yagditha', name: 'Yagditha', location: 'Abyss of the Sea', level: 113, img: '/bosses/yagditha.png', tone: '#4f7fd6' },
+  ignis: { id: 'ignis', name: 'Ignis', location: 'Heart of Fire', level: 113, img: '/bosses/ignis.png', tone: '#e0663b' },
 };
 
 export const ALL_BOSSES: Boss[] = Object.values(BOSSES);

@@ -19,7 +19,7 @@ const DICT: Record<string, Entry> = {
     en: 'See how long until each boss spawns. Times follow the game official time (GMT 0).',
   },
   'tb.nowlabel': { pt: 'Agora', en: 'Now' },
-  'tb.next': { pt: 'Próximos bosses', en: 'Upcoming bosses' },
+  'tb.next': { pt: 'Em seguida', en: 'Coming up' },
   'tb.nextone': { pt: 'Próximo boss', en: 'Next boss' },
   'tb.in': { pt: 'em {t}', en: 'in {t}' },
   'tb.spawning': { pt: '⚔️ Nascendo agora!', en: '⚔️ Spawning now!' },
@@ -33,7 +33,7 @@ const DICT: Record<string, Entry> = {
   'tb.time': { pt: 'Horário', en: 'Time' },
   'tb.bosses': { pt: 'Bosses', en: 'Bosses' },
   'tb.allbosses': { pt: 'Todos os bosses', en: 'All bosses' },
-  'tb.boss.next': { pt: 'Próximo: {time} · em {in}', en: 'Next: {time} · in {in}' },
+  'tb.boss.next': { pt: 'Próximo em {in}', en: 'Next in {in}' },
   'tb.lvl': { pt: 'Lv', en: 'Lv' },
 
   // timezone
@@ -53,9 +53,10 @@ const DICT: Record<string, Entry> = {
   // voice alerts
   'tb.audio.label': { pt: '🔊 Alertas de voz', en: '🔊 Voice alerts' },
   'tb.audio.hint': {
-    pt: 'Aviso falado (voz grave) 10, 5 e 2 minutos antes de cada boss nascer.',
-    en: 'Spoken alert (deep voice) 10, 5 and 2 minutes before each boss spawns.',
+    pt: 'Aviso falado com voz grave antes de cada boss nascer. Escolha os tempos abaixo.',
+    en: 'Spoken alert in a deep voice before each boss spawns. Pick the times below.',
   },
+  'tb.audio.times': { pt: 'Avisar aos:', en: 'Alert at:' },
   'tb.audio.enabled': { pt: 'Alertas de voz ativados.', en: 'Voice alerts enabled.' },
   'tb.alert.one': { pt: 'O boss {name} vai nascer em {min} minutos.', en: 'Boss {name} will spawn in {min} minutes.' },
   'tb.alert.many': { pt: 'Os bosses {list} vão nascer em {min} minutos.', en: 'Bosses {list} will spawn in {min} minutes.' },

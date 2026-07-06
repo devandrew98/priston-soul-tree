@@ -1,38 +1,38 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import {
   ALL_BOSSES,
   BOSSES,
-  SCHEDULE,
   type ScheduleEntry,
   buildEvents,
-  detectTz,
   fmtCountdown,
   fmtSince,
-  localClock,
-  localMinutes,
-  localTime,
   nextForBoss,
-  nextOccurrence,
-  resolveTz,
-  tzOffsetLabel,
-  TZ_OPTIONS,
 } from '../lib/bosses';
 import { useI18n, type Lang } from '../lib/i18n';
 
 const IMMINENT = 120; // <= 2 min → pulse
+const ALERT_MINS = [10, 5, 2];
 
-// Deep-voiced spoken alert via the Web Speech API.
+// Pick the deepest male-sounding voice available for the language.
+function pickVoice(lang: Lang): SpeechSynthesisVoice | undefined {
+  const voices = window.speechSynthesis?.getVoices() || [];
+  const same = voices.filter((v) => v.lang?.toLowerCase().startsWith(lang));
+  const male = /male|masculin|homem|daniel|david|diego|jorge|paulo|ricardo|felipe|thiago|antonio|george|mark|guy|fred/i;
+  const female = /female|feminin|mulher|maria|luciana|helo[íi]sa|francisca|zira|hazel|susan|linda|google/i;
+  return same.find((v) => male.test(v.name)) || same.find((v) => !female.test(v.name)) || same[0] || voices[0];
+}
+
+// Deep, slow, Kratos-style spoken alert via the Web Speech API.
 function speak(text: string, lang: Lang) {
   const synth = window.speechSynthesis;
   if (!synth) return;
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang === 'pt' ? 'pt-BR' : 'en-US';
-  u.pitch = 0.4; // grave / deep
-  u.rate = 0.95;
+  u.pitch = 0.1; // as deep as the engine allows (grave / Kratos)
+  u.rate = 0.8; // slow and deliberate
   u.volume = 1;
-  const voices = synth.getVoices();
-  const pref = voices.find((v) => v.lang?.toLowerCase().startsWith(lang));
-  if (pref) u.voice = pref;
+  const v = pickVoice(lang);
+  if (v) u.voice = v;
   synth.speak(u);
 }
 
@@ -48,12 +48,22 @@ function buildAlert(ids: string[], min: number, t: (k: string, v?: Record<string
 }
 
 const isHardPrimal = (entry: ScheduleEntry, id: string) => id === 'primal-golem' && entry.hardPrimal;
+const tone = (id: string) => ({ ['--tone']: BOSSES[id].tone } as CSSProperties);
+
+// Transparent portrait with a per-boss coloured 3D glow.
+function BossImg({ id, size }: { id: string; size: 'lg' | 'md' }) {
+  const b = BOSSES[id];
+  return (
+    <span className={`tb-portrait ${size}`} style={tone(id)} title={`${b.name} — ${b.location}`}>
+      <img src={b.img} alt={b.name} loading="lazy" />
+    </span>
+  );
+}
 
 export function TimeBoss() {
   const { t, lang } = useI18n();
   const [now, setNow] = useState(() => new Date());
 
-  const [tzChoice, setTzChoice] = useState(() => localStorage.getItem('tb-tz') || 'auto');
   const [favOnly, setFavOnly] = useState(() => localStorage.getItem('tb-favonly') === '1');
   const [audioOn, setAudioOn] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(() => {
@@ -61,6 +71,13 @@ export function TimeBoss() {
       return new Set(JSON.parse(localStorage.getItem('tb-favorites') || '[]'));
     } catch {
       return new Set();
+    }
+  });
+  const [alertMins, setAlertMins] = useState<Record<number, boolean>>(() => {
+    try {
+      return { 10: true, 5: true, 2: true, ...JSON.parse(localStorage.getItem('tb-alertmins') || '{}') };
+    } catch {
+      return { 10: true, 5: true, 2: true };
     }
   });
 
@@ -71,7 +88,6 @@ export function TimeBoss() {
     return () => clearInterval(id);
   }, []);
 
-  const tz = resolveTz(tzChoice);
   const filter = favOnly && favorites.size ? favorites : undefined;
   const events = useMemo(() => buildEvents(now, filter), [now, favOnly, favorites]);
   const spawned = events.filter((e) => e.state === 'spawned');
@@ -79,12 +95,13 @@ export function TimeBoss() {
   const hero = upcoming[0];
   const rest = upcoming.slice(1, 7);
 
-  // Voice alerts at 10 / 5 / 2 minutes before each upcoming spawn.
+  // Voice alerts at the selected minute marks before each upcoming spawn.
   useEffect(() => {
     if (!audioOn) return;
     for (const ev of events) {
       if (ev.state !== 'upcoming') continue;
-      for (const T of [10, 5, 2]) {
+      for (const T of ALERT_MINS) {
+        if (!alertMins[T]) continue;
         const th = T * 60;
         if (ev.sec <= th && ev.sec > th - 60) {
           const key = `${ev.when.getTime()}-${T}`;
@@ -99,12 +116,8 @@ export function TimeBoss() {
       const cutoff = now.getTime() - 3600000;
       for (const k of announced.current) if (Number(k.split('-')[0]) < cutoff) announced.current.delete(k);
     }
-  }, [events, audioOn, lang, now, t]);
+  }, [events, audioOn, alertMins, lang, now, t]);
 
-  const changeTz = (v: string) => {
-    setTzChoice(v);
-    localStorage.setItem('tb-tz', v);
-  };
   const changeFavOnly = (v: boolean) => {
     setFavOnly(v);
     localStorage.setItem('tb-favonly', v ? '1' : '0');
@@ -115,6 +128,12 @@ export function TimeBoss() {
       if (nx.has(id)) nx.delete(id);
       else nx.add(id);
       localStorage.setItem('tb-favorites', JSON.stringify([...nx]));
+      return nx;
+    });
+  const toggleAlertMin = (n: number) =>
+    setAlertMins((prev) => {
+      const nx = { ...prev, [n]: !prev[n] };
+      localStorage.setItem('tb-alertmins', JSON.stringify(nx));
       return nx;
     });
   const toggleAudio = () => {
@@ -132,32 +151,12 @@ export function TimeBoss() {
     }
   };
 
-  // Schedule rows formatted + sorted in the viewer's timezone (stable per tz).
-  const scheduleRows = useMemo(() => {
-    const ref = new Date();
-    return SCHEDULE.map((entry) => {
-      const occ = nextOccurrence(entry.utcMin, ref);
-      return { entry, localMin: localMinutes(occ, tz), localHm: localTime(occ, tz) };
-    }).sort((a, b) => a.localMin - b.localMin);
-  }, [tz]);
-
-  const tzName = tzChoice === 'auto' ? detectTz() : TZ_OPTIONS.find((o) => o.id === tzChoice)?.[lang] || tzChoice;
-
   return (
     <div className="tb">
       {/* header */}
       <header className="tb-head">
-        <div>
-          <h1 className="tb-h1">{t('tb.title')}</h1>
-          <p className="tb-sub">{t('tb.subtitle')}</p>
-        </div>
-        <div className="tb-clock">
-          <span className="tb-clock-label">{t('tb.nowlabel')}</span>
-          <span className="tb-clock-time">{localClock(now, tz)}</span>
-          <span className="tb-clock-tz">
-            {tzOffsetLabel(tz)} · {tzName}
-          </span>
-        </div>
+        <h1 className="tb-h1">{t('tb.title')}</h1>
+        <p className="tb-sub">{t('tb.subtitle')}</p>
       </header>
 
       {/* controls */}
@@ -170,19 +169,21 @@ export function TimeBoss() {
             {t('tb.fav.only')}
           </button>
         </div>
-        <label className="tb-ctl">
-          <span>🌐 {t('tb.tz.label')}</span>
-          <select className="input" value={tzChoice} onChange={(e) => changeTz(e.target.value)}>
-            {TZ_OPTIONS.map((o) => (
-              <option key={o.id} value={o.id}>
-                {o[lang]}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button className={`btn sm tb-audio ${audioOn ? 'on' : ''}`} onClick={toggleAudio} title={t('tb.audio.hint')}>
-          {t('tb.audio.label')} {audioOn ? '✓' : ''}
-        </button>
+        <div className="tb-audio-wrap">
+          <button className={`btn sm tb-audio ${audioOn ? 'on' : ''}`} onClick={toggleAudio} title={t('tb.audio.hint')}>
+            {t('tb.audio.label')} {audioOn ? '✓' : ''}
+          </button>
+          {audioOn && (
+            <span className="tb-audio-times">
+              <span className="tb-audio-times-lbl">{t('tb.audio.times')}</span>
+              {ALERT_MINS.map((n) => (
+                <label key={n} className={`tb-chk ${alertMins[n] ? 'on' : ''}`}>
+                  <input type="checkbox" checked={!!alertMins[n]} onChange={() => toggleAlertMin(n)} /> {n} min
+                </label>
+              ))}
+            </span>
+          )}
+        </div>
       </div>
       {favOnly && favorites.size === 0 && <p className="tb-hint">{t('tb.fav.hint')}</p>}
 
@@ -193,13 +194,11 @@ export function TimeBoss() {
           <div className="tb-next-grid">
             {spawned.map((ev) => (
               <div className="tb-next-card spawned" key={ev.entry.hm}>
-                <div className="tb-next-head">
-                  <span className="tb-next-count spawn">{t('tb.spawning')}</span>
-                </div>
+                <div className="tb-next-count spawn">{t('tb.spawning')}</div>
                 <div className="tb-next-sub">{t('tb.spawnedago', { t: fmtSince(ev.sec) })}</div>
                 <div className="tb-next-thumbs">
                   {ev.ids.map((id) => (
-                    <img key={id} src={BOSSES[id].img} alt={BOSSES[id].name} title={BOSSES[id].name} loading="lazy" />
+                    <BossImg key={id} id={id} size="md" />
                   ))}
                 </div>
               </div>
@@ -220,7 +219,7 @@ export function TimeBoss() {
               const b = BOSSES[id];
               return (
                 <div className="tb-hero-boss" key={id}>
-                  <img src={b.img} alt={b.name} loading="lazy" />
+                  <BossImg id={id} size="lg" />
                   <div className="tb-hero-binfo">
                     <strong>
                       {b.name}
@@ -238,26 +237,25 @@ export function TimeBoss() {
         </section>
       )}
 
-      {/* upcoming (countdown only) */}
+      {/* coming up (countdown only) */}
       {rest.length > 0 && (
         <section className="tb-section">
           <h2 className="tb-h2">⏳ {t('tb.next')}</h2>
-          <div className="tb-next-grid">
-            {rest.map((ev) => (
-              <div className={`tb-next-card ${ev.sec <= IMMINENT ? 'imminent' : ''}`} key={ev.entry.hm}>
-                <div className="tb-next-head">
-                  <span className="tb-next-count">{t('tb.in', { t: fmtCountdown(ev.sec) })}</span>
-                </div>
+          <div className="tb-next-grid big">
+            {rest.map((ev, i) => (
+              <div
+                className={`tb-next-card ${ev.sec <= IMMINENT ? 'imminent' : ''}`}
+                key={ev.entry.hm}
+                style={{ animationDelay: `${i * 45}ms` }}
+              >
+                <div className="tb-next-count">{t('tb.in', { t: fmtCountdown(ev.sec) })}</div>
                 <div className="tb-next-thumbs">
                   {ev.ids.map((id) => (
-                    <img
-                      key={id}
-                      src={BOSSES[id].img}
-                      alt={BOSSES[id].name}
-                      title={`${BOSSES[id].name} — ${BOSSES[id].location}`}
-                      loading="lazy"
-                    />
+                    <BossImg key={id} id={id} size="md" />
                   ))}
+                </div>
+                <div className="tb-next-names">
+                  {ev.ids.map((id) => BOSSES[id].name + (isHardPrimal(ev.entry, id) ? ' (H)' : '')).join(' · ')}
                 </div>
               </div>
             ))}
@@ -265,60 +263,19 @@ export function TimeBoss() {
         </section>
       )}
 
-      {/* full schedule (local times) */}
-      <section className="tb-section">
-        <h2 className="tb-h2">📅 {t('tb.schedule')}</h2>
-        <p className="tb-note">{t('tb.schedulenote')}</p>
-        <div className="tb-table-wrap">
-          <table className="tb-table">
-            <thead>
-              <tr>
-                <th className="tb-th-time">{t('tb.time')}</th>
-                <th>{t('tb.bosses')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {scheduleRows.map(({ entry, localHm }) => (
-                <tr key={entry.hm} className={hero && entry === hero.entry ? 'tb-row-next' : ''}>
-                  <td className="tb-td-time">{localHm}</td>
-                  <td>
-                    <div className="tb-cell-bosses">
-                      {entry.ids.map((id) => {
-                        const b = BOSSES[id];
-                        return (
-                          <span className="tb-chip" key={id} title={b.location}>
-                            <img src={b.img} alt="" loading="lazy" />
-                            <span className="tb-chip-text">
-                              <span className="tb-chip-name">
-                                {b.name}
-                                {isHardPrimal(entry, id) ? ' (H)' : ''}
-                              </span>
-                              <span className="tb-chip-loc">
-                                {b.location}
-                                {b.level ? ` · ${t('tb.lvl')}${b.level}` : ''}
-                              </span>
-                            </span>
-                          </span>
-                        );
-                      })}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
       {/* all bosses + favorites */}
       <section className="tb-section">
         <h2 className="tb-h2">👹 {t('tb.allbosses')}</h2>
         <div className="tb-boss-grid">
-          {ALL_BOSSES.map((b) => {
+          {ALL_BOSSES.map((b, i) => {
             const n = nextForBoss(b.id, now);
             const fav = favorites.has(b.id);
             return (
-              <div className={`tb-boss-card ${fav ? 'fav' : ''}`} key={b.id}>
+              <div
+                className={`tb-boss-card ${fav ? 'fav' : ''}`}
+                key={b.id}
+                style={{ ...tone(b.id), animationDelay: `${i * 30}ms` }}
+              >
                 <button
                   className={`tb-star ${fav ? 'on' : ''}`}
                   onClick={() => toggleFav(b.id)}
@@ -327,18 +284,14 @@ export function TimeBoss() {
                 >
                   {fav ? '⭐' : '☆'}
                 </button>
-                <img src={b.img} alt={b.name} loading="lazy" />
+                <BossImg id={b.id} size="md" />
                 <div className="tb-boss-body">
                   <strong>{b.name}</strong>
                   <span className="tb-boss-loc">
                     {b.location}
                     {b.level ? ` · ${t('tb.lvl')}${b.level}` : ''}
                   </span>
-                  {n && (
-                    <span className="tb-boss-next">
-                      {t('tb.boss.next', { time: localTime(n.when, tz), in: fmtCountdown(n.sec) })}
-                    </span>
-                  )}
+                  {n && <span className="tb-boss-next">{t('tb.boss.next', { in: fmtCountdown(n.sec) })}</span>}
                 </div>
               </div>
             );
