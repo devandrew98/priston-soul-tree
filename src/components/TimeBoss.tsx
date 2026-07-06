@@ -14,22 +14,32 @@ const IMMINENT = 120; // <= 2 min → pulse
 const ALERT_MINS = [10, 5, 2];
 
 // Pick the deepest male-sounding voice available for the language.
+// Ordered preference: known deep male voices first, then any non-female.
 function pickVoice(lang: Lang): SpeechSynthesisVoice | undefined {
   const voices = window.speechSynthesis?.getVoices() || [];
   const same = voices.filter((v) => v.lang?.toLowerCase().startsWith(lang));
-  const male = /male|masculin|homem|daniel|david|diego|jorge|paulo|ricardo|felipe|thiago|antonio|george|mark|guy|fred/i;
-  const female = /female|feminin|mulher|maria|luciana|helo[íi]sa|francisca|zira|hazel|susan|linda|google/i;
-  return same.find((v) => male.test(v.name)) || same.find((v) => !female.test(v.name)) || same[0] || voices[0];
+  const pool = same.length ? same : voices;
+  const pref =
+    lang === 'pt'
+      ? [/daniel/i, /fel[ií]pe/i, /ant[oô]nio/i, /ricardo/i, /jorge/i, /male|masculin|homem/i]
+      : [/david/i, /george/i, /mark/i, /uk english male/i, /daniel/i, /fred/i, /guy/i, /male/i];
+  for (const re of pref) {
+    const v = pool.find((x) => re.test(x.name));
+    if (v) return v;
+  }
+  const female = /female|feminin|mulher|maria|luciana|helo[íi]sa|francisca|zira|hazel|susan|linda/i;
+  return pool.find((v) => !female.test(v.name)) || pool[0];
 }
 
 // Deep, slow, Kratos-style spoken alert via the Web Speech API.
+// pitch 0 is the lowest the engine allows; rate is slowed for a heavy cadence.
 function speak(text: string, lang: Lang) {
   const synth = window.speechSynthesis;
   if (!synth) return;
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang === 'pt' ? 'pt-BR' : 'en-US';
-  u.pitch = 0.1; // as deep as the engine allows (grave / Kratos)
-  u.rate = 0.8; // slow and deliberate
+  u.pitch = 0; // deepest the engine can go
+  u.rate = 0.72; // slow, deliberate, menacing
   u.volume = 1;
   const v = pickVoice(lang);
   if (v) u.voice = v;
