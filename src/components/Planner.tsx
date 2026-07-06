@@ -20,6 +20,7 @@ import { fmt } from '../lib/formula';
 import { pointsSpent } from '../lib/calc';
 import { unlockedFor } from '../lib/graph';
 import { useStore, totalFusionPoints } from '../store';
+import { useI18n } from '../lib/i18n';
 import { SoulIcon } from './SoulIcon';
 import { NodeEditor } from './NodeEditor';
 import { HelpTip } from './HelpTip';
@@ -50,18 +51,12 @@ const SOUL_CAT_LABEL: Record<string, string> = {
   pvp: 'PvP',
 };
 
-// Rarity in Portuguese, like the in-game tooltip ("Lendário / Raro / Comum").
-const RARITY_PT: Record<string, string> = {
-  common: 'Comum',
-  rare: 'Raro',
-  legendary: 'Lendário',
-};
-
 // Build order (top → bottom, left → right) used by the "rapid build" auto-advance.
 const NODE_ORDER: string[] = [...TREE_NODES].sort((a, b) => a.row - b.row || a.col - b.col).map((n) => n.id);
 
 export function Planner() {
   const { activeBuild, clearSlot, setSlot, moveSoul, toggleOpen, fusionLevel } = useStore();
+  const { t } = useI18n();
   const [editing, setEditing] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [rapid, setRapid] = useState(false);
@@ -137,21 +132,21 @@ export function Planner() {
   return (
     <div>
       <div className="tree-legend">
-        <span>🌳 Árvore Fusion Tier</span>
+        <span>{t('st.tree.title')}</span>
         <span className="chip attack">⚔ {TYPE_COUNTS.atk} Attack</span>
         <span className="chip defense">🛡 {TYPE_COUNTS.def} Defense</span>
         <span className="chip support">⏳ {TYPE_COUNTS.uti} Support</span>
         <span className="chip pvp">★ {TYPE_COUNTS.pvp} PvP</span>
         <span className="chip" style={{ background: 'rgba(232,200,105,0.2)', color: 'var(--wildcard)' }}>✦ {TYPE_COUNTS.wild} Wildcard</span>
-        <label className="row" style={{ gap: 6, marginLeft: 'auto', fontSize: 12, cursor: 'pointer' }} title="Ao adicionar uma soul, abre o próximo node automaticamente. Clique em Finalizar pra parar.">
-          <input type="checkbox" checked={rapid} onChange={(e) => setRapid(e.target.checked)} /> 🔨 Montagem rápida
+        <label className="row" style={{ gap: 6, marginLeft: 'auto', fontSize: 12, cursor: 'pointer' }} title={t('st.rapid.title')}>
+          <input type="checkbox" checked={rapid} onChange={(e) => setRapid(e.target.checked)} /> {t('st.rapid')}
         </label>
-        <HelpTip text="Com isso ligado, ao adicionar uma soul num nó o próximo nó vazio abre sozinho — bom pra montar rápido. Clique em Finalizar (no editor) pra parar." />
-        <span className="muted" style={{ fontSize: 12 }}>clique = selecionar · duplo clique = abrir · Backspace = remover</span>
+        <HelpTip text={t('st.rapid.help')} />
+        <span className="muted" style={{ fontSize: 12 }}>{t('st.hint.interact')}</span>
       </div>
 
       {moving && (
-        <div className="move-hint">🔀 Movendo a soul — clique no node de destino (ou de novo no ⇄ pra cancelar).</div>
+        <div className="move-hint">{t('st.moving')}</div>
       )}
       <div className="tree-wrap">
         <div className="tree-canvas" style={{ width: canvasW, height: canvasH }}>
@@ -188,7 +183,7 @@ export function Planner() {
             const c = center(n.col, n.row);
             const slot = activeBuild.slots[n.id];
             const soul = slot?.soulId ? SOULS_BY_ID[slot.soulId] : null;
-            const emptyTitle = soul ? undefined : `${TYPE_LABEL[n.type]} — node ${n.rarity} vazio`;
+            const emptyTitle = soul ? undefined : t('st.node.emptytitle', { type: TYPE_LABEL[n.type], rarity: t('st.rarity.' + n.rarity) });
             return (
               <div
                 key={n.id}
@@ -227,24 +222,24 @@ export function Planner() {
                 </div>
                 {soul && (selected === n.id ? (
                   <span className="tnode-lvl ctrl" onClick={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
-                    <button className={`lvl-adj mv ${moving === n.id ? 'on' : ''}`} title="Mover esta soul para outro node" onClick={(e) => { e.stopPropagation(); setMoving(moving === n.id ? null : n.id); }}>⇄</button>
-                    <button className="lvl-adj" title="Diminuir nível do node" disabled={slot.nodeLevel <= 1} onClick={(e) => { e.stopPropagation(); setSlot(n.id, { nodeLevel: Math.max(1, slot.nodeLevel - 1) }); }}>−</button>
+                    <button className={`lvl-adj mv ${moving === n.id ? 'on' : ''}`} title={t('st.node.move')} onClick={(e) => { e.stopPropagation(); setMoving(moving === n.id ? null : n.id); }}>⇄</button>
+                    <button className="lvl-adj" title={t('st.node.lvldown')} disabled={slot.nodeLevel <= 1} onClick={(e) => { e.stopPropagation(); setSlot(n.id, { nodeLevel: Math.max(1, slot.nodeLevel - 1) }); }}>−</button>
                     <span className="lvl-num">{slot.nodeLevel}</span>
-                    <button className="lvl-adj" title="Aumentar nível do node" disabled={spent + RARITY_POINT_COST[n.rarity] > budget} onClick={(e) => { e.stopPropagation(); setSlot(n.id, { nodeLevel: slot.nodeLevel + 1 }); }}>+</button>
+                    <button className="lvl-adj" title={t('st.node.lvlup')} disabled={spent + RARITY_POINT_COST[n.rarity] > budget} onClick={(e) => { e.stopPropagation(); setSlot(n.id, { nodeLevel: slot.nodeLevel + 1 }); }}>+</button>
                   </span>
                 ) : (
                   <span className="tnode-lvl">{slot.nodeLevel}</span>
                 ))}
                 {!soul && selected === n.id && (activeBuild.opened ?? []).includes(n.id) && (
                   <span className="tnode-lvl ctrl" onClick={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
-                    <button className="lvl-adj wide" title="Adicionar soul neste node" onClick={(e) => { e.stopPropagation(); setSelected(n.id); setEditing(n.id); }}>+ soul</button>
+                    <button className="lvl-adj wide" title={t('st.node.addsoul')} onClick={(e) => { e.stopPropagation(); setSelected(n.id); setEditing(n.id); }}>+ soul</button>
                   </span>
                 )}
                 {soul && (
                   <div className={`node-tip r-${soul.rarity} ${n.col >= 4 ? 'left' : 'right'}`}>
                     <div className="node-tip-head"><SoulIcon soul={soul} size={24} /><span>{soul.name}</span></div>
                     <div className="node-tip-body">
-                      <div className="node-tip-sub">{RARITY_PT[soul.rarity]} {SOUL_CAT_LABEL[soul.category]} Soul</div>
+                      <div className="node-tip-sub">{t('st.rarity.' + soul.rarity)} {SOUL_CAT_LABEL[soul.category]} Soul</div>
                       {soul.stats.map((st) => (
                         <div key={st.stat} className="node-tip-stat">
                           {[1, 2, 3].map((lv) => (
@@ -276,9 +271,7 @@ export function Planner() {
       )}
 
       <p className="muted" style={{ fontSize: 12, marginTop: 12 }}>
-        Cada node tem uma raridade fixa (cinza = comum, azul = rara, dourado = lendária). Um node aceita souls da
-        sua categoria (<b>{CATEGORY_LABEL.attack}</b>, <b>{CATEGORY_LABEL.defense}</b>, <b>{CATEGORY_LABEL.support}</b>, <b>PvP</b>)
-        com raridade igual ou superior à do node. Os nodes <b>Wildcard</b> (✦) aceitam qualquer soul rara ou lendária.
+        {t('st.planner.note', { atk: CATEGORY_LABEL.attack, def: CATEGORY_LABEL.defense, sup: CATEGORY_LABEL.support })}
       </p>
     </div>
   );

@@ -4,11 +4,12 @@
 const API = '/api/player';
 const CODE_KEY = 'priston-player-code';
 
+// Values are i18n keys — resolved with t() at the display site.
 const FRIENDLY: Record<string, string> = {
-  cloud_not_configured: 'A sincronização na nuvem não está configurada neste servidor.',
-  not_found: 'Código de jogador não encontrado.',
-  invalid_data: 'Dados inválidos.',
-  missing_code: 'Informe um código.',
+  cloud_not_configured: 'st.err.player.cfg',
+  not_found: 'st.err.player.notfound',
+  invalid_data: 'st.err.invaliddata',
+  missing_code: 'st.err.missingcode',
 };
 
 async function errorFrom(r: Response): Promise<Error> {
@@ -18,7 +19,7 @@ async function errorFrom(r: Response): Promise<Error> {
   } catch {
     /* ignore */
   }
-  return new Error(FRIENDLY[code] || `Falha na requisição (${r.status}).`);
+  return new Error(FRIENDLY[code] || 'st.err.request');
 }
 
 export function getPlayerCode(): string | null {

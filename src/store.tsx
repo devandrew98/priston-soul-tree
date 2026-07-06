@@ -45,7 +45,7 @@ function normalize(p: PersistShape): PersistShape {
   if (!p.inventory || typeof p.inventory !== 'object') p.inventory = {};
   if (typeof p.fusionLevel !== 'number') p.fusionLevel = DEFAULT_FUSION_LEVEL;
   if (!Array.isArray(p.builds) || !p.builds.length) {
-    const b = newBuild('Minha Build');
+    const b = newBuild(localStorage.getItem('site-lang') === 'en' ? 'My Build' : 'Minha Build');
     p.builds = [b];
     p.activeBuildId = b.id;
   }
@@ -126,10 +126,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       .then((data) => {
         if (data && typeof data === 'object') {
           setState(normalize(data as PersistShape));
-          setSyncStatus('carregado da nuvem');
+          setSyncStatus('st.sync.loaded');
         }
       })
-      .catch(() => setSyncStatus('offline — usando dados locais'))
+      .catch(() => setSyncStatus('st.sync.offline'))
       .finally(() => { hydrated.current = true; });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -140,8 +140,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
       savePlayer(playerCode, state)
-        .then(() => setSyncStatus('salvo na nuvem ✓'))
-        .catch(() => setSyncStatus('falha ao salvar'));
+        .then(() => setSyncStatus('st.sync.saved'))
+        .catch(() => setSyncStatus('st.sync.savefail'));
     }, 1200);
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
   }, [state, playerCode]);
@@ -236,7 +236,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     selectBuild: (id) => setState((s) => ({ ...s, activeBuildId: id })),
     createBuild: (name) =>
       setState((s) => {
-        const b = newBuild(name || 'Nova Build');
+        const b = newBuild(name || (localStorage.getItem('site-lang') === 'en' ? 'New Build' : 'Nova Build'));
         return { ...s, builds: [...s.builds, b], activeBuildId: b.id };
       }),
     duplicateBuild: () =>
@@ -262,15 +262,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     playerCode,
     syncStatus,
     startSync: () => {
-      setSyncStatus('criando código...');
+      setSyncStatus('st.sync.creating');
       createPlayer(state)
-        .then((code) => { setPlayerCodeState(code); hydrated.current = true; setSyncStatus('salvo na nuvem ✓'); })
-        .catch((e) => setSyncStatus(e.message || 'falha'));
+        .then((code) => { setPlayerCodeState(code); hydrated.current = true; setSyncStatus('st.sync.saved'); })
+        .catch((e) => setSyncStatus(e.message || 'st.sync.fail'));
     },
     syncWithCode: (code) => {
       const c = code.toUpperCase().trim();
       if (!c) return;
-      setSyncStatus('carregando...');
+      setSyncStatus('st.sync.loading');
       loadPlayer(c)
         .then((data) => {
           if (data && typeof data === 'object') {
@@ -278,20 +278,20 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             setPlayerCode(c);
             setPlayerCodeState(c);
             hydrated.current = true;
-            setSyncStatus('carregado da nuvem ✓');
+            setSyncStatus('st.sync.loaded');
           } else {
-            setSyncStatus('código sem dados');
+            setSyncStatus('st.sync.nodata');
           }
         })
-        .catch((e) => setSyncStatus(e.message || 'falha'));
+        .catch((e) => setSyncStatus(e.message || 'st.sync.fail'));
     },
-    stopSync: () => { setPlayerCode(null); setPlayerCodeState(null); setSyncStatus('sync desligado'); },
+    stopSync: () => { setPlayerCode(null); setPlayerCodeState(null); setSyncStatus('st.sync.off'); },
     saveNow: () => {
       if (playerCode) {
-        setSyncStatus('salvando...');
-        savePlayer(playerCode, state).then(() => setSyncStatus('salvo na nuvem ✓')).catch(() => setSyncStatus('falha ao salvar'));
+        setSyncStatus('st.sync.saving');
+        savePlayer(playerCode, state).then(() => setSyncStatus('st.sync.saved')).catch(() => setSyncStatus('st.sync.savefail'));
       } else {
-        setSyncStatus('salvo neste navegador ✓');
+        setSyncStatus('st.sync.savedlocal');
       }
     },
   };

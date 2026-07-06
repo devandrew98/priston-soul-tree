@@ -5,10 +5,12 @@ import { SOULS, SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
 import { slotStatValues, nodePointCost, pointsSpent } from '../lib/calc';
 import { fmt, RARITY_LABEL } from '../lib/formula';
 import { useStore, totalFusionPoints } from '../store';
+import { useI18n } from '../lib/i18n';
 import { SoulIcon } from './SoulIcon';
 
 export function NodeEditor({ nodeId, type, onClose, onPlaced }: { nodeId: string; type: NodeType; onClose: () => void; onPlaced?: (nodeId: string) => void }) {
   const { activeBuild, inventory, setSlot, clearSlot, fusionLevel } = useStore();
+  const { t } = useI18n();
   const [q, setQ] = useState('');
 
   const node = TREE_NODE_BY_ID[nodeId];
@@ -71,17 +73,17 @@ export function NodeEditor({ nodeId, type, onClose, onPlaced }: { nodeId: string
 
           {/* Busca de soul inline — digite e escolha ali mesmo */}
           <div className="ne-picker">
-            <label className="ne-picker-label">{soul ? 'Trocar soul' : 'Escolher soul'}</label>
+            <label className="ne-picker-label">{soul ? t('st.ne.swap') : t('st.ne.choose')}</label>
             <input
               className="input"
-              placeholder="Digite o nome ou atributo da soul..."
+              placeholder={t('st.ne.searchph')}
               value={q}
               onChange={(e) => setQ(e.target.value)}
               style={{ width: '100%' }}
               autoFocus={!soul}
             />
             <div className="ne-picker-list">
-              {list.length === 0 && <div className="muted" style={{ padding: 8 }}>Nenhuma soul compatível.</div>}
+              {list.length === 0 && <div className="muted" style={{ padding: 8 }}>{t('st.ne.none')}</div>}
               {list.map((s) => {
                 const owned = inventory[s.id];
                 const used = usedElsewhere.has(s.id);
@@ -90,13 +92,13 @@ export function NodeEditor({ nodeId, type, onClose, onPlaced }: { nodeId: string
                     key={s.id}
                     className={`ne-pick-item ${soul?.id === s.id ? 'active' : ''}`}
                     disabled={used}
-                    title={used ? 'Essa soul já está na árvore (é única)' : undefined}
+                    title={used ? t('st.ne.unique') : undefined}
                     onClick={() => { setSlot(nodeId, { soulId: s.id, soulLevel: (owned || 1) as 1 | 2 | 3 }); onPlaced?.(nodeId); }}
                   >
                     <SoulIcon soul={s} size={26} />
                     <span className="ne-pick-name">
                       {s.name} <span className={`rarity-tag ${s.rarity}`}>{RARITY_LABEL[s.rarity]}</span>
-                      {used ? <span className="muted"> · já na árvore</span> : owned ? <span className="muted"> · tenho Lv{owned}</span> : null}
+                      {used ? <span className="muted">{t('st.ne.intree')}</span> : owned ? <span className="muted">{t('st.ne.have', { lv: owned })}</span> : null}
                     </span>
                     <span className="ne-pick-meta">{s.stats.map((st) => st.statLabel).join(' + ')}</span>
                   </button>
@@ -107,7 +109,7 @@ export function NodeEditor({ nodeId, type, onClose, onPlaced }: { nodeId: string
 
           {soul && (
             <div className="ne-ctrl">
-              <label>Nível da soul</label>
+              <label>{t('st.ne.soullvl')}</label>
               <div className="lvl-btns">
                 {[1, 2, 3].map((lv) => (
                   <button key={lv} className={`lvl-btn ${slot.soulLevel === lv ? 'active' : ''}`} onClick={() => setSlot(nodeId, { soulLevel: lv as 1 | 2 | 3 })}>{lv}</button>
@@ -117,7 +119,7 @@ export function NodeEditor({ nodeId, type, onClose, onPlaced }: { nodeId: string
           )}
 
           <div className="ne-ctrl">
-            <label>Nível do node (máx {maxNodeLevel} · limitado pelos pontos)</label>
+            <label>{t('st.ne.nodelvl', { max: maxNodeLevel })}</label>
             <div className="lvl-stepper">
               <button className="btn sm" disabled={slot.nodeLevel <= 1} onClick={() => setSlot(nodeId, { nodeLevel: Math.max(1, slot.nodeLevel - 1) })}>−</button>
               <input
@@ -134,16 +136,16 @@ export function NodeEditor({ nodeId, type, onClose, onPlaced }: { nodeId: string
           </div>
 
           <div className="ne-cost">
-            Custo: <b>{cost}</b> pontos de fusão ({RARITY_LABEL[rarity]} {RARITY_POINT_COST[rarity]} × Lv{slot.nodeLevel})
+            {t('st.ne.cost', { cost, rarity: RARITY_LABEL[rarity], mult: RARITY_POINT_COST[rarity], lvl: slot.nodeLevel })}
           </div>
 
           {soul && (
             <button className="btn danger" style={{ width: '100%', marginTop: 10 }} onClick={() => { clearSlot(nodeId); onClose(); }}>
-              Remover soul
+              {t('st.ne.remove')}
             </button>
           )}
           <button className="btn primary" style={{ width: '100%', marginTop: 10 }} onClick={onClose}>
-            ✓ Finalizar
+            {t('st.ne.finish')}
           </button>
         </div>
       </div>

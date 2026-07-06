@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useStore } from '../store';
+import { useI18n } from '../lib/i18n';
 import { HelpTip } from './HelpTip';
 
 export function CloudSync() {
   const { playerCode, syncStatus, startSync, syncWithCode, stopSync } = useStore();
+  const { t } = useI18n();
   const [entering, setEntering] = useState(false);
   const [codeInput, setCodeInput] = useState('');
   const [copied, setCopied] = useState(false);
@@ -18,39 +20,39 @@ export function CloudSync() {
 
   return (
     <div className="cloudsync">
-      <HelpTip text="Sincronização: ative pra ganhar um código de jogador. Com ele, seu inventário e builds ficam salvos na nuvem e acessíveis em qualquer aparelho — é só usar 'Entrar com código' em outro navegador. Sem senha." />
+      <HelpTip text={t('st.cs.help')} />
       {playerCode ? (
         <>
-          <span className="cs-code" title="Seu código de jogador — guarde para acessar seu inventário e builds em outro dispositivo">
+          <span className="cs-code" title={t('st.cs.codetitle')}>
             ☁ {playerCode}
           </span>
-          <button className="btn sm" onClick={copy}>{copied ? 'Copiado!' : 'Copiar'}</button>
-          <button className="btn sm" onClick={stopSync} title="Desligar a sincronização neste navegador">Sair</button>
+          <button className="btn sm" onClick={copy}>{copied ? t('st.cs.copied') : t('st.cs.copy')}</button>
+          <button className="btn sm" onClick={stopSync} title={t('st.cs.leave.title')}>{t('st.cs.leave')}</button>
         </>
       ) : (
         <>
-          <button className="btn sm primary" onClick={startSync} title="Salvar seu inventário e builds na nuvem e receber um código">
-            ☁ Ativar sincronização
+          <button className="btn sm primary" onClick={startSync} title={t('st.cs.activate.title')}>
+            {t('st.cs.activate')}
           </button>
           {entering ? (
             <span className="row" style={{ gap: 4 }}>
               <input
                 className="input"
                 style={{ width: 96, textTransform: 'uppercase', letterSpacing: 1 }}
-                placeholder="CÓDIGO"
+                placeholder={t('st.cs.codeph')}
                 value={codeInput}
                 onChange={(e) => setCodeInput(e.target.value)}
                 maxLength={8}
                 onKeyDown={(e) => { if (e.key === 'Enter') syncWithCode(codeInput); }}
               />
-              <button className="btn sm" onClick={() => syncWithCode(codeInput)}>Entrar</button>
+              <button className="btn sm" onClick={() => syncWithCode(codeInput)}>{t('st.cs.enter')}</button>
             </span>
           ) : (
-            <button className="btn sm" onClick={() => setEntering(true)}>Entrar com código</button>
+            <button className="btn sm" onClick={() => setEntering(true)}>{t('st.cs.entercode')}</button>
           )}
         </>
       )}
-      {syncStatus && <span className="cs-status muted">{syncStatus}</span>}
+      {syncStatus && <span className="cs-status muted">{t(syncStatus)}</span>}
     </div>
   );
 }

@@ -39,12 +39,13 @@ function onlyFilled(slots: Record<string, SlotState>): Record<string, SlotState>
   return out;
 }
 
+// Values are i18n keys — resolved with t() at the display site.
 const FRIENDLY: Record<string, string> = {
-  cloud_not_configured: 'O compartilhamento por código ainda não foi configurado neste servidor.',
-  not_found: 'Código não encontrado (pode ter expirado).',
-  forbidden: 'Esta build é privada — só quem a criou pode editá-la.',
-  invalid_build: 'Build inválida.',
-  missing_code: 'Informe um código.',
+  cloud_not_configured: 'st.err.share.cfg',
+  not_found: 'st.err.notfound',
+  forbidden: 'st.err.forbidden',
+  invalid_build: 'st.err.invalidbuild',
+  missing_code: 'st.err.missingcode',
 };
 
 async function errorFrom(r: Response): Promise<Error> {
@@ -54,7 +55,7 @@ async function errorFrom(r: Response): Promise<Error> {
   } catch {
     /* ignore */
   }
-  return new Error(FRIENDLY[code] || `Falha na requisição (${r.status}).`);
+  return new Error(FRIENDLY[code] || 'st.err.request');
 }
 
 export async function shareBuild(
@@ -95,7 +96,7 @@ export async function updateShared(
   publicEdit: boolean,
 ): Promise<void> {
   const meta = getCloudMeta(buildId);
-  if (!meta) throw new Error('Esta build ainda não tem um código.');
+  if (!meta) throw new Error('st.err.nocode');
   const r = await fetch(API, {
     method: 'PUT',
     headers: { 'content-type': 'application/json' },

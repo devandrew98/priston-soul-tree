@@ -74,6 +74,276 @@ const DICT: Record<string, Entry> = {
   'st.tab.optimizer': { pt: '🤖 Gerador (IA)', en: '🤖 Generator (AI)' },
   'st.tutorial': { pt: '❓ Tutorial', en: '❓ Tutorial' },
   'st.tutorial.tip': { pt: 'Abrir o tutorial guiado', en: 'Open the guided tutorial' },
+
+  // shared
+  'st.search': { pt: 'Buscar...', en: 'Search...' },
+  'st.aria.help': { pt: 'Ajuda', en: 'Help' },
+  'st.aria.close': { pt: 'Fechar', en: 'Close' },
+
+  // cloud sync status (set imperatively in the store, rendered via t())
+  'st.sync.loaded': { pt: 'carregado da nuvem ✓', en: 'loaded from cloud ✓' },
+  'st.sync.offline': { pt: 'offline — usando dados locais', en: 'offline — using local data' },
+  'st.sync.saved': { pt: 'salvo na nuvem ✓', en: 'saved to cloud ✓' },
+  'st.sync.savedlocal': { pt: 'salvo neste navegador ✓', en: 'saved in this browser ✓' },
+  'st.sync.savefail': { pt: 'falha ao salvar', en: 'save failed' },
+  'st.sync.creating': { pt: 'criando código...', en: 'creating code...' },
+  'st.sync.loading': { pt: 'carregando...', en: 'loading...' },
+  'st.sync.saving': { pt: 'salvando...', en: 'saving...' },
+  'st.sync.nodata': { pt: 'código sem dados', en: 'code has no data' },
+  'st.sync.off': { pt: 'sync desligado', en: 'sync off' },
+  'st.sync.fail': { pt: 'falha', en: 'failed' },
+
+  // cloud/player error messages (thrown as keys, rendered via t())
+  'st.err.request': { pt: 'Falha na requisição.', en: 'Request failed.' },
+  'st.err.missingcode': { pt: 'Informe um código.', en: 'Enter a code.' },
+  'st.err.invaliddata': { pt: 'Dados inválidos.', en: 'Invalid data.' },
+  'st.err.player.cfg': { pt: 'A sincronização na nuvem não está configurada neste servidor.', en: 'Cloud sync is not configured on this server.' },
+  'st.err.player.notfound': { pt: 'Código de jogador não encontrado.', en: 'Player code not found.' },
+  'st.err.share.cfg': { pt: 'O compartilhamento por código ainda não foi configurado neste servidor.', en: 'Code sharing is not configured on this server yet.' },
+  'st.err.notfound': { pt: 'Código não encontrado (pode ter expirado).', en: 'Code not found (it may have expired).' },
+  'st.err.forbidden': { pt: 'Esta build é privada — só quem a criou pode editá-la.', en: 'This build is private — only its creator can edit it.' },
+  'st.err.invalidbuild': { pt: 'Build inválida.', en: 'Invalid build.' },
+  'st.err.nocode': { pt: 'Esta build ainda não tem um código.', en: 'This build has no code yet.' },
+  'st.rarity.common': { pt: 'Comum', en: 'Common' },
+  'st.rarity.rare': { pt: 'Raro', en: 'Rare' },
+  'st.rarity.legendary': { pt: 'Lendário', en: 'Legendary' },
+
+  // Planner
+  'st.tree.title': { pt: '🌳 Árvore Fusion Tier', en: '🌳 Fusion Tier Tree' },
+  'st.rapid': { pt: '🔨 Montagem rápida', en: '🔨 Rapid build' },
+  'st.rapid.title': {
+    pt: 'Ao adicionar uma soul, abre o próximo node automaticamente. Clique em Finalizar pra parar.',
+    en: 'Adding a soul opens the next node automatically. Click Finish to stop.',
+  },
+  'st.rapid.help': {
+    pt: 'Com isso ligado, ao adicionar uma soul num nó o próximo nó vazio abre sozinho — bom pra montar rápido. Clique em Finalizar (no editor) pra parar.',
+    en: 'When on, adding a soul to a node opens the next empty node by itself — handy for fast building. Click Finish (in the editor) to stop.',
+  },
+  'st.hint.interact': {
+    pt: 'clique = selecionar · duplo clique = abrir · Backspace = remover',
+    en: 'click = select · double-click = open · Backspace = remove',
+  },
+  'st.moving': {
+    pt: '🔀 Movendo a soul — clique no node de destino (ou de novo no ⇄ pra cancelar).',
+    en: '🔀 Moving the soul — click the target node (or ⇄ again to cancel).',
+  },
+  'st.node.emptytitle': { pt: '{type} — node {rarity} vazio', en: '{type} — empty {rarity} node' },
+  'st.node.move': { pt: 'Mover esta soul para outro node', en: 'Move this soul to another node' },
+  'st.node.lvldown': { pt: 'Diminuir nível do node', en: 'Decrease node level' },
+  'st.node.lvlup': { pt: 'Aumentar nível do node', en: 'Increase node level' },
+  'st.node.addsoul': { pt: 'Adicionar soul neste node', en: 'Add a soul to this node' },
+  'st.planner.note': {
+    pt: 'Cada node tem uma raridade fixa (cinza = comum, azul = rara, dourado = lendária). Um node aceita souls da sua categoria ({atk}, {def}, {sup}, PvP) com raridade igual ou superior à do node. Os nodes Wildcard (✦) aceitam qualquer soul rara ou lendária.',
+    en: 'Each node has a fixed rarity (gray = common, blue = rare, gold = legendary). A node accepts souls of its category ({atk}, {def}, {sup}, PvP) with rarity equal to or higher than the node. Wildcard nodes (✦) accept any rare or legendary soul.',
+  },
+
+  // Inventory
+  'st.inv.title': { pt: 'Inventário de Souls', en: 'Soul Inventory' },
+  'st.inv.owned': { pt: '({n} possuídas)', en: '({n} owned)' },
+  'st.inv.allcats': { pt: 'Todas categorias', en: 'All categories' },
+  'st.inv.allstats': { pt: 'Todos atributos', en: 'All attributes' },
+  'st.inv.onlyowned': { pt: 'Só possuídas', en: 'Owned only' },
+  'st.inv.col.cat': { pt: 'Categoria', en: 'Category' },
+  'st.inv.col.attr': { pt: 'Atributo', en: 'Attribute' },
+  'st.inv.col.have': { pt: 'Tenho (nível)', en: 'I have (level)' },
+  'st.inv.donthave': { pt: 'Não tenho', en: "Don't have" },
+
+  // Totals panel
+  'st.totals.filled': { pt: '{filled} / {total} nodes preenchidos', en: '{filled} / {total} nodes filled' },
+  'st.totals.fusionpts': { pt: 'Pontos de Fusão', en: 'Fusion Points' },
+  'st.totals.fusionlvl': { pt: 'Nível de Fusão (Soul Level)', en: 'Fusion Level (Soul Level)' },
+  'st.totals.spent': { pt: 'Gasto', en: 'Spent' },
+  'st.totals.available': { pt: 'Disponível', en: 'Available' },
+  'st.totals.total': { pt: 'Total', en: 'Total' },
+  'st.totals.over': { pt: '⚠️ Você gastou {n} pontos além do seu limite.', en: '⚠️ You spent {n} points over your limit.' },
+  'st.totals.ptsnote': { pt: '16 pontos (níveis 1–80) + 1 por nível de fusão.', en: '16 points (levels 1–80) + 1 per fusion level.' },
+
+  // Node editor
+  'st.ne.swap': { pt: 'Trocar soul', en: 'Swap soul' },
+  'st.ne.choose': { pt: 'Escolher soul', en: 'Choose soul' },
+  'st.ne.searchph': { pt: 'Digite o nome ou atributo da soul...', en: 'Type the soul name or attribute...' },
+  'st.ne.none': { pt: 'Nenhuma soul compatível.', en: 'No compatible soul.' },
+  'st.ne.unique': { pt: 'Essa soul já está na árvore (é única)', en: 'This soul is already in the tree (unique)' },
+  'st.ne.intree': { pt: ' · já na árvore', en: ' · already in tree' },
+  'st.ne.have': { pt: ' · tenho Lv{lv}', en: ' · have Lv{lv}' },
+  'st.ne.soullvl': { pt: 'Nível da soul', en: 'Soul level' },
+  'st.ne.nodelvl': { pt: 'Nível do node (máx {max} · limitado pelos pontos)', en: 'Node level (max {max} · limited by points)' },
+  'st.ne.cost': { pt: 'Custo: {cost} pontos de fusão ({rarity} {mult} × Lv{lvl})', en: 'Cost: {cost} fusion points ({rarity} {mult} × Lv{lvl})' },
+  'st.ne.remove': { pt: 'Remover soul', en: 'Remove soul' },
+  'st.ne.finish': { pt: '✓ Finalizar', en: '✓ Finish' },
+
+  // Build bar
+  'st.bb.rename': { pt: 'Renomear build atual', en: 'Rename current build' },
+  'st.bb.new': { pt: '+ Nova', en: '+ New' },
+  'st.bb.newprompt': { pt: 'Nome da nova build:', en: 'Name of the new build:' },
+  'st.bb.newdefault': { pt: 'Nova Build', en: 'New Build' },
+  'st.bb.dup': { pt: '⧉ Duplicar', en: '⧉ Duplicate' },
+  'st.bb.clear': { pt: 'Limpar', en: 'Clear' },
+  'st.bb.clearconfirm': { pt: 'Limpar todos os slots desta build?', en: 'Clear all slots in this build?' },
+  'st.bb.save': { pt: '💾 Salvar', en: '💾 Save' },
+  'st.bb.save.title': {
+    pt: 'Salvar a árvore — fica no navegador ao sair/voltar; se a sincronização estiver ativa, salva na nuvem',
+    en: 'Save the tree — kept in your browser across visits; if sync is on, also saved to the cloud',
+  },
+  'st.bb.share': { pt: '🔗 Compartilhar', en: '🔗 Share' },
+  'st.bb.share.title': { pt: 'Compartilhar por código ou link', en: 'Share via code or link' },
+  'st.bb.delete': { pt: 'Excluir', en: 'Delete' },
+  'st.bb.deleteconfirm': { pt: 'Excluir esta build?', en: 'Delete this build?' },
+
+  // Optimizer
+  'st.opt.title': { pt: '🤖 Gerador de Build (IA)', en: '🤖 Build Generator (AI)' },
+  'st.opt.invcount': { pt: '{n} souls no inventário', en: '{n} souls in inventory' },
+  'st.opt.intro': {
+    pt: 'Distribua a importância entre os atributos que você quer (não precisa somar 100). A IA monta a build mais próxima possível, respeitando suas souls, os nodes e o limite de pontos — e te explica o que dá ou não dá.',
+    en: 'Distribute importance across the attributes you want (no need to total 100). The AI builds the closest tree possible, respecting your souls, the nodes and the point limit — and explains what is or is not achievable.',
+  },
+  'st.opt.nowarn': {
+    pt: '⚠️ Você não marcou souls no Inventário. Marque as suas (ou ligue "Considerar todas as souls" abaixo) pra IA gerar algo.',
+    en: '⚠️ You have not marked souls in the Inventory. Mark yours (or turn on "Consider all souls" below) for the AI to generate something.',
+  },
+  'st.opt.shortcuts': { pt: 'Atalhos:', en: 'Shortcuts:' },
+  'st.opt.q.atk': { pt: '⚔️ Ataque', en: '⚔️ Attack' },
+  'st.opt.q.tank': { pt: '🛡️ Tank', en: '🛡️ Tank' },
+  'st.opt.q.farm': { pt: '🌾 Farm', en: '🌾 Farm' },
+  'st.opt.q.pvp': { pt: '⚔ PvP', en: '⚔ PvP' },
+  'st.opt.budget': { pt: 'Respeitar limite ({n} pts)', en: 'Respect limit ({n} pts)' },
+  'st.opt.allsouls': { pt: 'Considerar todas as souls', en: 'Consider all souls' },
+  'st.opt.allsouls.help': {
+    pt: 'Ligado: a IA ignora seu inventário e monta a melhor build teórica com QUALQUER soul do jogo — bom pra descobrir souls que valeria a pena conseguir.',
+    en: 'On: the AI ignores your inventory and builds the best theoretical tree with ANY soul in the game — good to discover souls worth getting.',
+  },
+  'st.opt.pvp': { pt: 'Incluir PvP', en: 'Include PvP' },
+  'st.opt.apply': { pt: '✓ Aplicar', en: '✓ Apply' },
+  'st.opt.nodesused': { pt: 'Nodes usados', en: 'Nodes used' },
+  'st.opt.points': { pt: 'Pontos', en: 'Points' },
+  'st.opt.feedback': { pt: '🧠 Feedback da IA', en: '🧠 AI Feedback' },
+  'st.opt.plan': { pt: 'Plano de montagem ({n} nodes · {pts} pts)', en: 'Build plan ({n} nodes · {pts} pts)' },
+  'st.opt.distribute': { pt: 'Distribua os atributos acima pra gerar a build.', en: 'Distribute the attributes above to generate the build.' },
+  'st.opt.estimated': { pt: 'Resultado estimado', en: 'Estimated result' },
+  'st.opt.fb.none.all': { pt: 'não existe soul desse atributo compatível', en: 'there is no compatible soul for this attribute' },
+  'st.opt.fb.none.inv': { pt: 'você não tem nenhuma soul desse atributo — marque no Inventário', en: 'you have no soul of this attribute — mark it in the Inventory' },
+  'st.opt.fb.none': { pt: '❌ {stat}: você pediu ~{req}%, mas {detail}.', en: '❌ {stat}: you asked for ~{req}%, but {detail}.' },
+  'st.opt.fb.low': {
+    pt: '⚠️ {stat}: pediu ~{req}%, chegou em ~{ach}%. Suas souls de {stat} estão no nível {lvl} — subir pra nível 3 (juntando cópias) e investir mais pontos nesses nodes aumentaria bastante.',
+    en: '⚠️ {stat}: asked ~{req}%, reached ~{ach}%. Your {stat} souls are at level {lvl} — raising them to level 3 (merging copies) and investing more points in those nodes would help a lot.',
+  },
+  'st.opt.fb.limited': {
+    pt: '⚠️ {stat}: pediu ~{req}%, chegou em ~{ach}%. Limitado pelos pontos/nodes — os outros atributos disputam o mesmo espaço. Aumente o % dele (ou o Nível de Fusão) pra priorizar.',
+    en: '⚠️ {stat}: asked ~{req}%, reached ~{ach}%. Limited by points/nodes — the other attributes compete for the same space. Raise its % (or the Fusion Level) to prioritize.',
+  },
+  'st.opt.fb.ok': { pt: '✅ A build ficou bem próxima da distribuição que você pediu!', en: '✅ The build came out very close to the distribution you asked for!' },
+
+  // Cloud sync
+  'st.cs.help': {
+    pt: "Sincronização: ative pra ganhar um código de jogador. Com ele, seu inventário e builds ficam salvos na nuvem e acessíveis em qualquer aparelho — é só usar 'Entrar com código' em outro navegador. Sem senha.",
+    en: "Sync: turn it on to get a player code. With it, your inventory and builds are saved to the cloud and reachable on any device — just use 'Enter with code' in another browser. No password.",
+  },
+  'st.cs.codetitle': {
+    pt: 'Seu código de jogador — guarde para acessar seu inventário e builds em outro dispositivo',
+    en: 'Your player code — keep it to access your inventory and builds on another device',
+  },
+  'st.cs.copy': { pt: 'Copiar', en: 'Copy' },
+  'st.cs.copied': { pt: 'Copiado!', en: 'Copied!' },
+  'st.cs.leave': { pt: 'Sair', en: 'Leave' },
+  'st.cs.leave.title': { pt: 'Desligar a sincronização neste navegador', en: 'Turn off sync in this browser' },
+  'st.cs.activate': { pt: '☁ Ativar sincronização', en: '☁ Enable sync' },
+  'st.cs.activate.title': {
+    pt: 'Salvar seu inventário e builds na nuvem e receber um código',
+    en: 'Save your inventory and builds to the cloud and get a code',
+  },
+  'st.cs.codeph': { pt: 'CÓDIGO', en: 'CODE' },
+  'st.cs.enter': { pt: 'Entrar', en: 'Enter' },
+  'st.cs.entercode': { pt: 'Entrar com código', en: 'Enter with code' },
+
+  // Share modal
+  'st.sm.title': { pt: 'Compartilhar build', en: 'Share build' },
+  'st.sm.bycode': { pt: 'Compartilhar por código', en: 'Share via code' },
+  'st.sm.publicedit': { pt: 'Permitir que outras pessoas editem (build pública para edição)', en: 'Allow others to edit (public editable build)' },
+  'st.sm.public.on': { pt: 'Qualquer pessoa com o código poderá ver e salvar alterações.', en: 'Anyone with the code can view and save changes.' },
+  'st.sm.public.off': {
+    pt: 'Qualquer pessoa com o código pode ver a build, mas só você (neste navegador) pode editá-la.',
+    en: 'Anyone with the code can view the build, but only you (in this browser) can edit it.',
+  },
+  'st.sm.copycode': { pt: 'Copiar código', en: 'Copy code' },
+  'st.sm.copylink': { pt: 'Copiar link', en: 'Copy link' },
+  'st.sm.update': { pt: '↻ Atualizar build neste código', en: '↻ Update build in this code' },
+  'st.sm.snapshotnote': {
+    pt: 'O código guarda um retrato da build. Editou a árvore? Clique em Atualizar para salvar de novo.',
+    en: 'The code stores a snapshot of the build. Edited the tree? Click Update to save it again.',
+  },
+  'st.sm.generating': { pt: 'Gerando...', en: 'Generating...' },
+  'st.sm.gencode': { pt: 'Gerar código', en: 'Generate code' },
+  'st.sm.openbycode': { pt: 'Abrir por código', en: 'Open by code' },
+  'st.sm.open': { pt: 'Abrir', en: 'Open' },
+  'st.sm.openph': { pt: 'Ex.: 7KQ3MD', en: 'e.g. 7KQ3MD' },
+  'st.sm.opennote': { pt: 'Abre a build numa nova entrada da sua lista, sem apagar a atual.', en: 'Opens the build as a new entry in your list, without deleting the current one.' },
+  'st.sm.offlinenote': {
+    pt: 'Sem internet/servidor? Você ainda pode usar o link que carrega a build inteira na URL:',
+    en: 'No internet/server? You can still use the link that loads the whole build in the URL:',
+  },
+  'st.sm.copyoffline': { pt: 'Copiar link offline', en: 'Copy offline link' },
+  'st.sm.codegen': { pt: 'Código gerado!', en: 'Code generated!' },
+  'st.sm.updated': { pt: 'Build atualizada neste código.', en: 'Build updated in this code.' },
+  'st.sm.lbl.code': { pt: 'Código', en: 'Code' },
+  'st.sm.lbl.link': { pt: 'Link', en: 'Link' },
+  'st.copied': { pt: '{label} copiado!', en: '{label} copied!' },
+
+  // Tour
+  'st.tour.step': { pt: 'Passo {n} de {total}', en: 'Step {n} of {total}' },
+  'st.tour.skip': { pt: 'Pular', en: 'Skip' },
+  'st.tour.prev': { pt: '← Anterior', en: '← Back' },
+  'st.tour.finish': { pt: 'Concluir ✓', en: 'Finish ✓' },
+  'st.tour.next': { pt: 'Próximo →', en: 'Next →' },
+  'st.tour.s1.t': { pt: '👋 Bem-vindo!', en: '👋 Welcome!' },
+  'st.tour.s1.b': {
+    pt: 'Este é o planejador da Soul Tree (Fusion Tier) do Priston Tale EU. Vou te mostrar o básico rapidinho — pode pular quando quiser.',
+    en: "This is the Priston Tale EU Soul Tree (Fusion Tier) planner. Let me show you the basics quickly — you can skip anytime.",
+  },
+  'st.tour.s2.t': { pt: '🗂️ As abas', en: '🗂️ The tabs' },
+  'st.tour.s2.b': {
+    pt: 'Você alterna entre: 🌳 Árvore (montar a build), 🎒 Inventário (marcar as souls que você tem) e 🤖 Gerador (a IA monta pra você).',
+    en: 'Switch between: 🌳 Tree (build it), 🎒 Inventory (mark the souls you own) and 🤖 Generator (the AI builds for you).',
+  },
+  'st.tour.s3.t': { pt: '🌳 Abrindo os nós', en: '🌳 Opening nodes' },
+  'st.tour.s3.b': {
+    pt: 'Os nós começam bloqueados. Comece pelo topo: clique num nó vazio pra ABRIR (cada nó custa pontos). Clique de novo — ou Backspace — pra fechar.',
+    en: 'Nodes start locked. Start from the top: click an empty node to OPEN it (each node costs points). Click again — or Backspace — to close.',
+  },
+  'st.tour.s4.t': { pt: '✨ Colocando souls', en: '✨ Placing souls' },
+  'st.tour.s4.b': {
+    pt: 'Duplo-clique num nó (ou o botão "+ soul") pra escolher a soul — é só digitar o nome. Clique = selecionar · Backspace = remover · Ctrl+Z = desfazer · ⇄ = mover a soul de lugar · +/− = nível do nó.',
+    en: 'Double-click a node (or the "+ soul" button) to pick the soul — just type its name. Click = select · Backspace = remove · Ctrl+Z = undo · ⇄ = move the soul · +/− = node level.',
+  },
+  'st.tour.s5.t': { pt: '🔨 Montagem rápida', en: '🔨 Rapid build' },
+  'st.tour.s5.b': {
+    pt: 'Ligue aqui pra montar em sequência: ao adicionar uma soul, o próximo nó abre sozinho. Clique em Finalizar pra parar.',
+    en: 'Turn this on to build in sequence: adding a soul opens the next node by itself. Click Finish to stop.',
+  },
+  'st.tour.s6.t': { pt: '📊 Atributos & pontos', en: '📊 Attributes & points' },
+  'st.tour.s6.b': {
+    pt: 'Este painel mostra os atributos totais da build (PvE/PvP) e seus Pontos de Fusão: quanto já gastou e quanto ainda sobra.',
+    en: 'This panel shows the build totals (PvE/PvP) and your Fusion Points: how much you spent and how much is left.',
+  },
+  'st.tour.s7.t': { pt: '🎒 Inventário', en: '🎒 Inventory' },
+  'st.tour.s7.b': {
+    pt: 'Marque as souls que você tem e em qual nível (1/2/3). O Gerador usa isso pra montar a melhor build com o que você possui. (As souls que você põe na árvore entram aqui sozinhas.)',
+    en: 'Mark the souls you own and at which level (1/2/3). The Generator uses this to build the best tree with what you have. (Souls you place in the tree are added here automatically.)',
+  },
+  'st.tour.s8.t': { pt: '🤖 Gerador (IA)', en: '🤖 Generator (AI)' },
+  'st.tour.s8.b': {
+    pt: 'Escolha um objetivo — Ataque, Farm, PvP... — e a IA monta a melhor árvore possível. Marque "Considerar todas as souls" pra ver a build ideal e descobrir souls que valem a pena conseguir.',
+    en: 'Pick a goal — Attack, Farm, PvP... — and the AI builds the best tree possible. Turn on "Consider all souls" to see the ideal build and discover souls worth getting.',
+  },
+  'st.tour.s9.t': { pt: '☁️ Salvar & sincronizar', en: '☁️ Save & sync' },
+  'st.tour.s9.b': {
+    pt: 'Ative a sincronização pra ganhar um código de jogador e acessar seu inventário e builds em qualquer aparelho. O botão 💾 Salvar guarda tudo, e 🔗 Compartilhar gera um link/código da build.',
+    en: 'Enable sync to get a player code and reach your inventory and builds on any device. The 💾 Save button stores everything, and 🔗 Share creates a link/code for the build.',
+  },
+  'st.tour.s10.t': { pt: '✅ Pronto!', en: '✅ Done!' },
+  'st.tour.s10.b': {
+    pt: 'É só isso pra começar. Explore à vontade — e pra rever este tutorial é só clicar em "❓ Tutorial" lá no topo.',
+    en: 'That\'s it to get started. Explore freely — and to replay this tutorial just click "❓ Tutorial" at the top.',
+  },
 };
 
 type Ctx = {

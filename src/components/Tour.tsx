@@ -1,73 +1,30 @@
 import { useLayoutEffect, useState } from 'react';
+import { useI18n } from '../lib/i18n';
 
 type Tab = 'planner' | 'inventory' | 'optimizer';
 
 interface TourStep {
-  title: string;
-  body: string;
+  tKey: string; // title key
+  bKey: string; // body key
   selector?: string; // element to spotlight
   tab?: Tab; // switch to this tab first
 }
 
 const STEPS: TourStep[] = [
-  {
-    title: '👋 Bem-vindo!',
-    body: 'Este é o planejador da Soul Tree (Fusion Tier) do Priston Tale EU. Vou te mostrar o básico rapidinho — pode pular quando quiser.',
-  },
-  {
-    title: '🗂️ As abas',
-    body: 'Você alterna entre: 🌳 Árvore (montar a build), 🎒 Inventário (marcar as souls que você tem) e 🤖 Gerador (a IA monta pra você).',
-    selector: '.tabs',
-  },
-  {
-    title: '🌳 Abrindo os nós',
-    body: 'Os nós começam bloqueados. Comece pelo topo: clique num nó vazio pra ABRIR (cada nó custa pontos). Clique de novo — ou Backspace — pra fechar.',
-    selector: '.tree-wrap',
-    tab: 'planner',
-  },
-  {
-    title: '✨ Colocando souls',
-    body: 'Duplo-clique num nó (ou o botão "+ soul") pra escolher a soul — é só digitar o nome. Clique = selecionar · Backspace = remover · Ctrl+Z = desfazer · ⇄ = mover a soul de lugar · +/− = nível do nó.',
-    selector: '.tree-wrap',
-    tab: 'planner',
-  },
-  {
-    title: '🔨 Montagem rápida',
-    body: 'Ligue aqui pra montar em sequência: ao adicionar uma soul, o próximo nó abre sozinho. Clique em Finalizar pra parar.',
-    selector: '.tree-legend',
-    tab: 'planner',
-  },
-  {
-    title: '📊 Atributos & pontos',
-    body: 'Este painel mostra os atributos totais da build (PvE/PvP) e seus Pontos de Fusão: quanto já gastou e quanto ainda sobra.',
-    selector: '.souls-stats',
-    tab: 'planner',
-  },
-  {
-    title: '🎒 Inventário',
-    body: 'Marque as souls que você tem e em qual nível (1/2/3). O Gerador usa isso pra montar a melhor build com o que você possui. (As souls que você põe na árvore entram aqui sozinhas.)',
-    selector: '.inv-controls',
-    tab: 'inventory',
-  },
-  {
-    title: '🤖 Gerador (IA)',
-    body: 'Escolha um objetivo — Ataque, Farm, PvP... — e a IA monta a melhor árvore possível. Marque "Considerar todas as souls" pra ver a build ideal e descobrir souls que valem a pena conseguir.',
-    selector: '.opt-grid',
-    tab: 'optimizer',
-  },
-  {
-    title: '☁️ Salvar & sincronizar',
-    body: 'Ative a sincronização pra ganhar um código de jogador e acessar seu inventário e builds em qualquer aparelho. O botão 💾 Salvar guarda tudo, e 🔗 Compartilhar gera um link/código da build.',
-    selector: '.cloudsync',
-    tab: 'planner',
-  },
-  {
-    title: '✅ Pronto!',
-    body: 'É só isso pra começar. Explore à vontade — e pra rever este tutorial é só clicar em "❓ Tutorial" lá no topo.',
-  },
+  { tKey: 'st.tour.s1.t', bKey: 'st.tour.s1.b' },
+  { tKey: 'st.tour.s2.t', bKey: 'st.tour.s2.b', selector: '.tabs' },
+  { tKey: 'st.tour.s3.t', bKey: 'st.tour.s3.b', selector: '.tree-wrap', tab: 'planner' },
+  { tKey: 'st.tour.s4.t', bKey: 'st.tour.s4.b', selector: '.tree-wrap', tab: 'planner' },
+  { tKey: 'st.tour.s5.t', bKey: 'st.tour.s5.b', selector: '.tree-legend', tab: 'planner' },
+  { tKey: 'st.tour.s6.t', bKey: 'st.tour.s6.b', selector: '.souls-stats', tab: 'planner' },
+  { tKey: 'st.tour.s7.t', bKey: 'st.tour.s7.b', selector: '.inv-controls', tab: 'inventory' },
+  { tKey: 'st.tour.s8.t', bKey: 'st.tour.s8.b', selector: '.opt-grid', tab: 'optimizer' },
+  { tKey: 'st.tour.s9.t', bKey: 'st.tour.s9.b', selector: '.cloudsync', tab: 'planner' },
+  { tKey: 'st.tour.s10.t', bKey: 'st.tour.s10.b' },
 ];
 
 export function Tour({ setTab, onClose }: { setTab: (t: Tab) => void; onClose: () => void }) {
+  const { t } = useI18n();
   const [step, setStep] = useState(0);
   const [rect, setRect] = useState<DOMRect | null>(null);
   const s = STEPS[step];
@@ -103,15 +60,15 @@ export function Tour({ setTab, onClose }: { setTab: (t: Tab) => void; onClose: (
         <div className="tour-spot full" />
       )}
       <div className={`tour-card ${cardPos}`}>
-        <div className="tour-step-n">Passo {step + 1} de {STEPS.length}</div>
-        <h3>{s.title}</h3>
-        <p>{s.body}</p>
+        <div className="tour-step-n">{t('st.tour.step', { n: step + 1, total: STEPS.length })}</div>
+        <h3>{t(s.tKey)}</h3>
+        <p>{t(s.bKey)}</p>
         <div className="tour-nav">
-          <button className="btn sm" onClick={onClose}>Pular</button>
+          <button className="btn sm" onClick={onClose}>{t('st.tour.skip')}</button>
           <span className="spacer" />
-          {step > 0 && <button className="btn sm" onClick={() => setStep(step - 1)}>← Anterior</button>}
+          {step > 0 && <button className="btn sm" onClick={() => setStep(step - 1)}>{t('st.tour.prev')}</button>}
           <button className="btn sm primary" onClick={() => (last ? onClose() : setStep(step + 1))}>
-            {last ? 'Concluir ✓' : 'Próximo →'}
+            {last ? t('st.tour.finish') : t('st.tour.next')}
           </button>
         </div>
       </div>

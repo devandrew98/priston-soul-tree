@@ -3,6 +3,7 @@ import { computeTotals, countFilled, pointsSpent } from '../lib/calc';
 import { fmt } from '../lib/formula';
 import { TREE_NODES } from '../lib/tree';
 import { useStore, totalFusionPoints } from '../store';
+import { useI18n } from '../lib/i18n';
 
 // Fixed stat list shown in the game's SOULS STATS panel, with the in-game labels.
 const GAME_STATS: { key: string; label: string; unit: Unit }[] = [
@@ -25,6 +26,7 @@ const GAME_STATS: { key: string; label: string; unit: Unit }[] = [
 
 export function TotalsPanel() {
   const { activeBuild, fusionLevel, setFusionLevel } = useStore();
+  const { t } = useI18n();
   const totals = computeTotals(activeBuild);
   const filled = countFilled(activeBuild);
 
@@ -62,13 +64,13 @@ export function TotalsPanel() {
         })}
       </div>
 
-      <div className="fill-meter" style={{ marginTop: 10 }}>{filled} / {TREE_NODES.length} nodes preenchidos</div>
+      <div className="fill-meter" style={{ marginTop: 10 }}>{t('st.totals.filled', { filled, total: TREE_NODES.length })}</div>
 
       <hr className="sep" />
 
-      <h3>Pontos de Fusão</h3>
+      <h3>{t('st.totals.fusionpts')}</h3>
       <div className="fusion-row">
-        <label>Nível de Fusão (Soul Level)</label>
+        <label>{t('st.totals.fusionlvl')}</label>
         <input
           className="input"
           type="number"
@@ -82,13 +84,13 @@ export function TotalsPanel() {
         <div className={`points-fill ${over ? 'over' : ''}`} style={{ width: `${pct}%` }} />
       </div>
       <div className="points-meta">
-        <span>Gasto <b>{spent}</b></span>
-        <span className={over ? 'over-txt' : ''}>Disponível <b>{remaining}</b></span>
-        <span className="muted">Total {totalPoints}</span>
+        <span>{t('st.totals.spent')} <b>{spent}</b></span>
+        <span className={over ? 'over-txt' : ''}>{t('st.totals.available')} <b>{remaining}</b></span>
+        <span className="muted">{t('st.totals.total')} {totalPoints}</span>
       </div>
-      {over && <p className="warn" style={{ marginTop: 6 }}>⚠️ Você gastou {-remaining} pontos além do seu limite.</p>}
+      {over && <p className="warn" style={{ marginTop: 6 }}>{t('st.totals.over', { n: -remaining })}</p>}
       <p className="muted" style={{ fontSize: 11, margin: '6px 0 0' }}>
-        16 pontos (níveis 1–80) + 1 por nível de fusão.
+        {t('st.totals.ptsnote')}
       </p>
     </div>
   );
