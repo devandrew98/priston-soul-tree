@@ -3,12 +3,14 @@ import { CATEGORIES, CLASSES, RARITIES } from '../../lib/market/data';
 import { fmtPrice, suggestPrice } from '../../lib/market/helpers';
 import type { Currency, Listing, Rarity, Stat } from '../../lib/market/types';
 import { useI18n } from '../../lib/i18n';
-import { CURRENT_USER_ID, useMyListings } from './store';
+import { useAuth, useMyListings } from './store';
+import { LoginPrompt } from './LoginPrompt';
 
 const CURRENCIES: Currency[] = ['gold', 'silver', 'premium'];
 
-export function CreateListing({ onDone }: { onDone: () => void }) {
+export function CreateListing({ onDone, onLogin }: { onDone: () => void; onLogin: () => void }) {
   const { t } = useI18n();
+  const { userId } = useAuth();
   const { addListing } = useMyListings();
 
   const [name, setName] = useState('');
@@ -32,7 +34,7 @@ export function CreateListing({ onDone }: { onDone: () => void }) {
     const synthetic: Listing = {
       id: 'draft', name, itemLevel, icon: cat.icon, category, subcategory, rarity, tier, sockets,
       classReq, stats, quantity, price, currency, description, status: 'available', highlighted,
-      sellerId: CURRENT_USER_ID, views: 0, createdAt: Date.now(),
+      sellerId: userId ?? 'draft', views: 0, createdAt: Date.now(),
     };
     return suggestPrice(synthetic);
   }, [name, itemLevel, category, subcategory, rarity, tier, sockets, classReq, stats, quantity, price, currency, description, highlighted, cat.icon]);
@@ -43,17 +45,20 @@ export function CreateListing({ onDone }: { onDone: () => void }) {
   const removeStat = (i: number) => setStats((prev) => prev.filter((_, idx) => idx !== i));
 
   const submit = () => {
+    if (!userId) return;
     const listing: Listing = {
       id: `my-${Date.now()}`,
       name: name.trim() || t('mk.create.untitled'),
       itemLevel, icon: cat.icon, category, subcategory, rarity, tier, sockets, classReq,
       stats: stats.filter((s) => s.label.trim()),
       quantity, price, currency, description: description.trim(),
-      status: 'available', highlighted, sellerId: CURRENT_USER_ID, views: 0, createdAt: Date.now(),
+      status: 'available', highlighted, sellerId: userId, views: 0, createdAt: Date.now(),
     };
     addListing(listing);
     onDone();
   };
+
+  if (!userId) return <LoginPrompt onLogin={onLogin} />;
 
   return (
     <div className="mk-create">

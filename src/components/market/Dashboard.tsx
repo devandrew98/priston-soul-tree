@@ -1,17 +1,18 @@
 import { useMemo, useState } from 'react';
-import { LISTING_BY_ID, SELLER_BY_ID } from '../../lib/market/data';
+import { LISTING_BY_ID } from '../../lib/market/data';
 import { fmtPrice, sellerItems } from '../../lib/market/helpers';
 import type { Listing } from '../../lib/market/types';
 import { useI18n } from '../../lib/i18n';
-import { CURRENT_USER_ID, useFavorites, useMyListings, useWishlist } from './store';
+import { useAuth, useFavorites, useMyListings, useWishlist } from './store';
 import { ItemCard } from './ItemCard';
+import { LoginPrompt } from './LoginPrompt';
 import { PriceTag, Since, StatusPill } from './parts';
 
 type Tab = 'active' | 'sold' | 'favorites' | 'wishlist';
 
-export function Dashboard({ onOpen, onSeller, onCreate }: { onOpen: (id: string) => void; onSeller: (id: string) => void; onCreate: () => void }) {
+export function Dashboard({ onOpen, onSeller, onCreate, onLogin }: { onOpen: (id: string) => void; onSeller: (id: string) => void; onCreate: () => void; onLogin: () => void }) {
   const { t } = useI18n();
-  const me = SELLER_BY_ID[CURRENT_USER_ID];
+  const { userId, user } = useAuth();
   const { myListings, removeListing, duplicateListing } = useMyListings();
   const { favs } = useFavorites();
   const { wishlist, addWish, removeWish } = useWishlist();
@@ -19,7 +20,7 @@ export function Dashboard({ onOpen, onSeller, onCreate }: { onOpen: (id: string)
   const [wishText, setWishText] = useState('');
   const [wishMax, setWishMax] = useState('');
 
-  const owned = useMemo(() => [...myListings, ...sellerItems(CURRENT_USER_ID)], [myListings]);
+  const owned = useMemo(() => (userId ? [...myListings.filter((l) => l.sellerId === userId), ...sellerItems(userId)] : []), [myListings, userId]);
   const active = owned.filter((l) => l.status === 'available');
   const reserved = owned.filter((l) => l.status === 'reserved');
   const sold = owned.filter((l) => l.status === 'sold');
@@ -27,12 +28,14 @@ export function Dashboard({ onOpen, onSeller, onCreate }: { onOpen: (id: string)
   const totalViews = owned.reduce((a, l) => a + l.views, 0);
   const profit = sold.reduce((a, l) => a + l.price, 0);
 
+  if (!user) return <LoginPrompt onLogin={onLogin} />;
+
   return (
     <div className="mk-dash">
       <div className="mk-dash-head">
         <div>
           <h1 className="mk-h1">📊 {t('mk.dash.title')}</h1>
-          <p className="mk-muted">{t('mk.dash.hello', { nick: me.nick })}</p>
+          <p className="mk-muted">{t('mk.dash.hello', { nick: user.nick })}</p>
         </div>
         <button className="mk-btn primary" onClick={onCreate}>+ {t('mk.create.title')}</button>
       </div>

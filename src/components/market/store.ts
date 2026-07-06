@@ -2,12 +2,13 @@
 // sellers, wishlist, user-created listings). Persisted to localStorage and
 // shared across views via useSyncExternalStore — no provider needed.
 import { useSyncExternalStore } from 'react';
-import type { Listing } from '../../lib/market/types';
+import { SELLER_BY_ID } from '../../lib/market/data';
+import type { Listing, Seller } from '../../lib/market/types';
 
-// The demo "logged in" user is this seller, so the Dashboard has data to show.
+// The demo account pre-selected on first load (so the Dashboard has data).
 export const CURRENT_USER_ID = 'hadder';
-// Demo: the current user also has admin rights (shows the Admin panel tab).
-export const IS_ADMIN = true;
+// Accounts with moderation powers (show the Admin panel tab).
+export const ADMIN_IDS = ['hadder'];
 
 export interface WishEntry {
   id: string;
@@ -51,6 +52,8 @@ export interface AdminLog {
 }
 
 interface State {
+  authUserId: string | null; // logged-in seller id, or null when logged out
+  accounts: Seller[]; // locally registered accounts (extend the seller directory)
   favItems: string[];
   favSellers: string[];
   wishlist: WishEntry[];
@@ -79,6 +82,7 @@ const seedNotifications = (): Notif[] => [
 
 function load(): State {
   const base: State = {
+    authUserId: CURRENT_USER_ID, accounts: [],
     favItems: [], favSellers: [], wishlist: [], myListings: [], chats: {},
     notifications: seedNotifications(),
     adminRemoved: [], adminFeatured: {}, bannedUsers: [], suspendedUsers: [], resolvedReports: [], adminLogs: [],
@@ -112,6 +116,12 @@ function useSnapshot(): State {
 }
 
 const toggle = (arr: string[], id: string) => (arr.includes(id) ? arr.filter((x) => x !== id) : [...arr, id]);
+
+/** Resolve a seller by id across the built-in directory and locally-registered accounts. */
+export function getSeller(id: string | null | undefined): Seller | undefined {
+  if (!id) return undefined;
+  return SELLER_BY_ID[id] ?? state.accounts.find((a) => a.id === id);
+}
 
 export function useFavorites() {
   const s = useSnapshot();
@@ -195,6 +205,38 @@ export function useChats() {
     receiveMessage: (sellerId: string, text: string) =>
       upsertChat(sellerId, (c) => ({ ...c, messages: [...c.messages, mkMsg('them', text)] })),
     markRead: (sellerId: string) => upsertChat(sellerId, (c) => ({ ...c, lastReadAt: Date.now() })),
+  };
+}
+
+export interface RegisterInput {
+  nick: string;
+  className: string;
+  clan: string;
+  avatar: string;
+}
+
+export function useAuth() {
+  const s = useSnapshot();
+  const user = getSeller(s.authUserId);
+  return {
+    userId: s.authUserId,
+    user,
+    isLoggedIn: !!user,
+    isAdmin: !!s.authUserId && ADMIN_IDS.includes(s.authUserId),
+    accounts: s.accounts,
+    loginAs: (id: string) => set({ authUserId: id }),
+    logout: () => set({ authUserId: null }),
+    register: (input: RegisterInput) => {
+      const id = `acc-${Date.now()}`;
+      const account: Seller = {
+        id, nick: input.nick, avatar: input.avatar || '🧑', className: input.className, level: 1,
+        clan: input.clan || '—', joinedAt: Date.now(), lastSeen: Date.now(), online: true, verified: false,
+        totalSalesValue: 0, itemsSold: 0, itemsBought: 0, ratingAvg: 0, ratingCount: 0, positivePct: 0,
+        avgResponseMin: 0, avgCompleteMin: 0, reports: 0, medals: [],
+      };
+      set({ accounts: [...s.accounts, account], authUserId: id });
+      return id;
+    },
   };
 }
 

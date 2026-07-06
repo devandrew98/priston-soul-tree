@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LISTING_BY_ID } from '../../lib/market/data';
 import { useI18n } from '../../lib/i18n';
 import { Browse } from './Browse';
@@ -10,7 +10,9 @@ import { Chat } from './Chat';
 import { Stats } from './Stats';
 import { Admin } from './Admin';
 import { NotificationBell } from './NotificationBell';
-import { IS_ADMIN, type NotifLink, useChats, useMyListings } from './store';
+import { AuthModal } from './AuthModal';
+import { type NotifLink, useAuth, useChats, useMyListings } from './store';
+import { RepBadge } from './parts';
 
 type View =
   | { name: 'browse' }
@@ -35,7 +37,9 @@ export function Marketplace() {
   const { t } = useI18n();
   const { myListings } = useMyListings();
   const { totalUnread, startConversation } = useChats();
+  const { isAdmin } = useAuth();
   const [view, setView] = useState<View>({ name: 'browse' });
+  const [showAuth, setShowAuth] = useState(false);
 
   const openItem = (id: string) => { setView({ name: 'item', id }); window.scrollTo({ top: 0 }); };
   const openSeller = (id: string) => { setView({ name: 'seller', id }); window.scrollTo({ top: 0 }); };
@@ -53,7 +57,8 @@ export function Marketplace() {
   };
 
   const resolve = (id: string) => LISTING_BY_ID[id] || myListings.find((l) => l.id === id);
-  const tabs = TABS.filter((tb) => !tb.admin || IS_ADMIN);
+  const tabs = TABS.filter((tb) => !tb.admin || isAdmin);
+  const openLogin = () => setShowAuth(true);
 
   return (
     <div className="mk">
@@ -76,20 +81,61 @@ export function Marketplace() {
             ))}
           </nav>
           <NotificationBell onNavigate={onNotifNav} />
+          <UserMenu onLogin={openLogin} onDashboard={() => go('dashboard')} />
         </div>
       </header>
 
       {view.name === 'browse' && <Browse onOpen={openItem} onSeller={openSeller} />}
       {view.name === 'stats' && <Stats onOpen={openItem} onSeller={openSeller} />}
       {view.name === 'messages' && <Chat initialSeller={view.seller} onSeller={openSeller} />}
-      {view.name === 'dashboard' && <Dashboard onOpen={openItem} onSeller={openSeller} onCreate={() => go('create')} />}
-      {view.name === 'create' && <CreateListing onDone={() => go('dashboard')} />}
+      {view.name === 'dashboard' && <Dashboard onOpen={openItem} onSeller={openSeller} onCreate={() => go('create')} onLogin={openLogin} />}
+      {view.name === 'create' && <CreateListing onDone={() => go('dashboard')} onLogin={openLogin} />}
       {view.name === 'admin' && <Admin onOpen={openItem} onSeller={openSeller} />}
       {view.name === 'item' && (() => {
         const l = resolve(view.id);
         return l ? <ItemDetail listing={l} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} /> : <NotFound onBack={() => go('browse')} />;
       })()}
       {view.name === 'seller' && <SellerProfile sellerId={view.id} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} />}
+
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
+    </div>
+  );
+}
+
+function UserMenu({ onLogin, onDashboard }: { onLogin: () => void; onDashboard: () => void }) {
+  const { t } = useI18n();
+  const { user, logout } = useAuth();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [open]);
+
+  if (!user) return <button className="mk-btn primary mk-login-btn" onClick={onLogin}>👤 {t('mk.auth.login')}</button>;
+
+  return (
+    <div className="mk-usermenu" ref={ref}>
+      <button className="mk-userchip" onClick={() => setOpen((o) => !o)}>
+        <span className="mk-av">{user.avatar}</span>
+        <span className="mk-userchip-nick">{user.nick}</span>
+      </button>
+      {open && (
+        <div className="mk-usermenu-panel">
+          <div className="mk-usermenu-head">
+            <span className="mk-av lg">{user.avatar}</span>
+            <div>
+              <b>{user.nick}</b>
+              <RepBadge seller={user} />
+            </div>
+          </div>
+          <button onClick={() => { setOpen(false); onDashboard(); }}>📊 {t('mk.tab.dashboard')}</button>
+          <button onClick={() => { setOpen(false); logout(); }}>🚪 {t('mk.auth.logout')}</button>
+        </div>
+      )}
     </div>
   );
 }

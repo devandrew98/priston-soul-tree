@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { MEDALS, SELLER_BY_ID } from '../../lib/market/data';
+import { MEDALS } from '../../lib/market/data';
 import { fmtPrice, sellerItems, sellerReviews } from '../../lib/market/helpers';
 import { useI18n } from '../../lib/i18n';
-import { useFavSellers } from './store';
+import { getSeller, useFavSellers } from './store';
 import { ItemCard } from './ItemCard';
 import { OnlineDot, RepBadge, Since, Stars } from './parts';
 
@@ -20,7 +20,7 @@ export function SellerProfile({
 }) {
   const { t } = useI18n();
   const { isFavSeller, toggleFavSeller } = useFavSellers();
-  const seller = SELLER_BY_ID[sellerId];
+  const seller = getSeller(sellerId);
   const items = useMemo(() => sellerItems(sellerId), [sellerId]);
   const reviews = useMemo(() => (seller ? sellerReviews(seller) : []), [seller]);
 

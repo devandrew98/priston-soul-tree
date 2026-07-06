@@ -391,6 +391,21 @@ const DICT: Record<string, Entry> = {
   'mk.report.reason.overpriced': { pt: 'Preço abusivo', en: 'Overpriced' },
   'mk.report.reason.spam': { pt: 'Spam', en: 'Spam' },
 
+  // auth
+  'mk.close': { pt: 'Fechar', en: 'Close' },
+  'mk.auth.welcome': { pt: 'Entrar no Mercado', en: 'Enter the Market' },
+  'mk.auth.login': { pt: 'Entrar', en: 'Log in' },
+  'mk.auth.register': { pt: 'Criar conta', en: 'Register' },
+  'mk.auth.logout': { pt: 'Sair', en: 'Log out' },
+  'mk.auth.pickchar': { pt: 'Entre com um dos seus personagens:', en: 'Log in with one of your characters:' },
+  'mk.auth.nick': { pt: 'Nickname', en: 'Nickname' },
+  'mk.auth.clan': { pt: 'Clã', en: 'Clan' },
+  'mk.auth.avatar': { pt: 'Avatar', en: 'Avatar' },
+  'mk.auth.createaccount': { pt: 'Criar conta e entrar', en: 'Create account & log in' },
+  'mk.auth.demonote': { pt: 'Demo: nenhuma senha é exigida — sua conta fica salva apenas neste navegador.', en: 'Demo: no password required — your account is saved in this browser only.' },
+  'mk.auth.required': { pt: 'Faça login para continuar', en: 'Log in to continue' },
+  'mk.auth.requiredsub': { pt: 'Você precisa estar logado para acessar esta área.', en: 'You need to be logged in to access this area.' },
+
   // ---- Soul Tree (top level) ----
   'st.title': { pt: 'Priston Tale EU — Árvore de Souls', en: 'Priston Tale EU — Soul Tree' },
   'st.subtitle': {
