@@ -180,7 +180,7 @@ const isHardPrimal = (entry: ScheduleEntry, id: string) => id === 'primal-golem'
 const tone = (id: string) => ({ ['--tone']: BOSSES[id].tone } as CSSProperties);
 
 // Transparent portrait with a per-boss coloured 3D glow.
-function BossImg({ id, size }: { id: string; size: 'lg' | 'md' }) {
+function BossImg({ id, size }: { id: string; size: 'xl' | 'lg' | 'md' }) {
   const b = BOSSES[id];
   return (
     <span className={`tb-portrait ${size}`} style={tone(id)} title={`${b.name} — ${b.location}`}>
@@ -320,14 +320,14 @@ export function TimeBoss() {
       {spawned.length > 0 && (
         <section className="tb-section">
           <h2 className="tb-h2 spawn">⚔️ {t('tb.justspawned')}</h2>
-          <div className="tb-next-grid">
+          <div className="tb-next-grid big">
             {spawned.map((ev) => (
               <div className="tb-next-card spawned" key={ev.entry.hm}>
                 <div className="tb-next-count spawn">{t('tb.spawning')}</div>
                 <div className="tb-next-sub">{t('tb.spawnedago', { t: fmtSince(ev.sec) })}</div>
-                <div className="tb-next-thumbs">
+                <div className="tb-next-thumbs big">
                   {ev.ids.map((id) => (
-                    <BossImg key={id} id={id} size="md" />
+                    <BossImg key={id} id={id} size="lg" />
                   ))}
                 </div>
               </div>
@@ -348,7 +348,7 @@ export function TimeBoss() {
               const b = BOSSES[id];
               return (
                 <div className="tb-hero-boss" key={id}>
-                  <BossImg id={id} size="lg" />
+                  <BossImg id={id} size="xl" />
                   <div className="tb-hero-binfo">
                     <strong>
                       {b.name}
