@@ -10,6 +10,15 @@ const ALERT_MINS = [10, 5, 2];
 const pad = (n: number) => String(n).padStart(2, '0');
 const tone = (color: string) => ({ ['--tone']: color } as CSSProperties);
 
+// Transparent Fury portrait with a per-level coloured 3D glow.
+function FuryImg({ src, tone: color, size }: { src: string; tone: string; size: 'xl' | 'md' }) {
+  return (
+    <span className={`tb-portrait ${size}`} style={tone(color)}>
+      <img src={src} alt="Fury" loading="lazy" />
+    </span>
+  );
+}
+
 export function TimerFury() {
   const { t, lang } = useI18n();
   const [now, setNow] = useState(() => new Date());
@@ -133,6 +142,7 @@ export function TimerFury() {
           </div>
           <div className="tb-hero-bosses">
             <div className="tb-hero-boss">
+              <FuryImg src={hero.level.img} tone={hero.level.tone} size="xl" />
               <div className="tb-hero-binfo">
                 <strong>{hero.level.name}</strong>
                 <span>
@@ -175,6 +185,7 @@ export function TimerFury() {
                 key={level.id}
                 style={{ ...tone(level.tone), animationDelay: `${i * 30}ms` }}
               >
+                <FuryImg src={level.img} tone={level.tone} size="md" />
                 <div className="tb-boss-body">
                   <strong>{level.name}</strong>
                   <span className="tb-boss-loc">

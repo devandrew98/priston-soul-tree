@@ -8,12 +8,16 @@ export interface FuryLevel {
   name: string; // level-range label, shown as-is in PT/EN
   hours: number[]; // GMT-0 hours the Fury spawns at
   tone: string; // accent color for the 3D glow / card border
+  img: string; // Fury portrait (same creature for every level range)
 }
 
+// Same Fury creature across all ranges — only the level bracket / schedule differ.
+export const FURY_IMG = '/fury/fury.gif';
+
 export const FURY_LEVELS: FuryLevel[] = [
-  { id: 'fury-70-88', name: 'Level 70–88', hours: [0, 3, 6, 9, 12, 15, 18], tone: '#6fbf73' },
-  { id: 'fury-89-103', name: 'Level 89–103', hours: [1, 4, 7, 10, 13, 16, 19, 22], tone: '#5aa9e6' },
-  { id: 'fury-104', name: 'Level 104+', hours: [2, 5, 8, 11, 14, 17, 20, 23], tone: '#e0663b' },
+  { id: 'fury-70-88', name: 'Level 70–88', hours: [0, 3, 6, 9, 12, 15, 18], tone: '#6fbf73', img: FURY_IMG },
+  { id: 'fury-89-103', name: 'Level 89–103', hours: [1, 4, 7, 10, 13, 16, 19, 22], tone: '#5aa9e6', img: FURY_IMG },
+  { id: 'fury-104', name: 'Level 104+', hours: [2, 5, 8, 11, 14, 17, 20, 23], tone: '#e0663b', img: FURY_IMG },
 ];
 
 export const FURY_BY_ID: Record<string, FuryLevel> = Object.fromEntries(FURY_LEVELS.map((l) => [l.id, l]));
