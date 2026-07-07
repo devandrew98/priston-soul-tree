@@ -4,6 +4,9 @@
 import { useSyncExternalStore } from 'react';
 import { SELLER_BY_ID } from '../../lib/market/data';
 import type { Listing, Seller } from '../../lib/market/types';
+import { BACKEND_ENABLED } from '../../lib/market/supabase';
+import { signOut as sbSignOut } from '../../lib/market/auth';
+import { useSession } from './session';
 
 // The demo account pre-selected on first load (so the Dashboard has data).
 export const CURRENT_USER_ID = 'hadder';
@@ -218,8 +221,29 @@ export interface RegisterInput {
 
 export function useAuth() {
   const s = useSnapshot();
+  const session = useSession(); // always called (BACKEND_ENABLED is a stable module constant)
+
+  // Real backend: identity comes from the Supabase session + profile.
+  if (BACKEND_ENABLED) {
+    return {
+      backend: true as const,
+      ready: session.ready,
+      userId: session.userId,
+      user: session.profile ?? undefined,
+      isLoggedIn: !!session.profile,
+      isAdmin: !!session.raw?.is_admin,
+      accounts: [] as Seller[],
+      loginAs: (_id: string) => {},                 // n/a with real auth
+      logout: () => { void sbSignOut(); },
+      register: (_input: RegisterInput) => '',       // handled by AuthModal via auth.ts
+    };
+  }
+
+  // Demo mode: identity from the local mock store.
   const user = getSeller(s.authUserId);
   return {
+    backend: false as const,
+    ready: true,
     userId: s.authUserId,
     user,
     isLoggedIn: !!user,

@@ -1001,6 +1001,8 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .mk-avatar-opt.on { border-color: var(--gold); background: rgba(212,175,106,0.16); box-shadow: 0 0 0 1px var(--gold) inset; }
 .mk-auth-submit { margin-top: 4px; }
 .mk-auth-note { font-size: 12px; text-align: center; margin: 0; }
+.mk-auth-err { color: var(--attack); font-size: 13px; margin: 2px 0 0; }
+.mk-auth-info { background: rgba(92,184,92,0.1); border: 1px solid var(--green); color: var(--green); border-radius: 10px; padding: 14px; font-size: 14px; text-align: center; line-height: 1.5; }
 
 .mk-login-btn { white-space: nowrap; }
 .mk-usermenu { position: relative; }
