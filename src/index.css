@@ -281,9 +281,10 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 }
 .pip:hover { border-color: #fff; }
 .pip.on {
-  border-color: var(--gold-bright);
-  background: radial-gradient(circle at 35% 30%, #fff3c4, var(--gold) 55%, #8a6524);
-  box-shadow: 0 0 6px rgba(240, 210, 138, 0.95), inset 0 0 2px #fff;
+  /* magenta como no jogo */
+  border-color: #ff8ef0;
+  background: radial-gradient(circle at 35% 30%, #ffb6f4, #e23fd0 55%, #6e1560);
+  box-shadow: 0 0 7px rgba(255, 110, 225, 0.95), inset 0 0 2px #fff;
 }
 .pip.p1 { left: 23.3%; top: 39.2%; }
 .pip.p2 { left: 20.8%; top: 55%; }
