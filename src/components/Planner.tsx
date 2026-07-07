@@ -220,6 +220,16 @@ export function Planner() {
                     <img className="tnode-type" src={NODE_TYPE_ICON[n.type]} alt={TYPE_LABEL[n.type]} />
                   )}
                 </div>
+                {soul &&
+                  [1, 2, 3].map((lv) => (
+                    <button
+                      key={lv}
+                      className={`pip p${lv} ${slot.soulLevel >= lv ? 'on' : ''}`}
+                      title={t('st.pip', { n: lv })}
+                      onClick={(e) => { e.stopPropagation(); setSlot(n.id, { soulLevel: lv as 1 | 2 | 3 }); }}
+                      onDoubleClick={(e) => e.stopPropagation()}
+                    />
+                  ))}
                 {soul && (selected === n.id ? (
                   <span className="tnode-lvl ctrl" onClick={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
                     <button className={`lvl-adj mv ${moving === n.id ? 'on' : ''}`} title={t('st.node.move')} onClick={(e) => { e.stopPropagation(); setMoving(moving === n.id ? null : n.id); }}>⇄</button>

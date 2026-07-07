@@ -93,7 +93,7 @@ export function NodeEditor({ nodeId, type, onClose, onPlaced }: { nodeId: string
                     className={`ne-pick-item ${soul?.id === s.id ? 'active' : ''}`}
                     disabled={used}
                     title={used ? t('st.ne.unique') : undefined}
-                    onClick={() => { setSlot(nodeId, { soulId: s.id, soulLevel: (owned || 1) as 1 | 2 | 3 }); onPlaced?.(nodeId); }}
+                    onClick={() => { setSlot(nodeId, { soulId: s.id, soulLevel: 1 }); onPlaced?.(nodeId); }}
                   >
                     <SoulIcon soul={s} size={26} />
                     <span className="ne-pick-name">

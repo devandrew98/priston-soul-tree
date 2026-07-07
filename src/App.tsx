@@ -133,28 +133,25 @@ function SoulTree() {
         </button>
       </div>
 
-      {tab === 'planner' && (
-        <div className="layout">
-          <div className="panel">
-            <Planner />
-          </div>
-          <TotalsPanel />
+      {/* All tabs stay MOUNTED (hidden with CSS) so their state survives
+          switching — e.g. the Generator's deep-search results and sliders
+          are still there when the player comes back from the tree. */}
+      <div className="layout" style={{ display: tab === 'planner' ? undefined : 'none' }}>
+        <div className="panel">
+          <Planner />
         </div>
-      )}
+        <TotalsPanel />
+      </div>
 
-      {tab === 'inventory' && (
-        <div className="layout">
-          <Inventory />
-          <TotalsPanel />
-        </div>
-      )}
+      <div className="layout" style={{ display: tab === 'inventory' ? undefined : 'none' }}>
+        <Inventory />
+        <TotalsPanel />
+      </div>
 
-      {tab === 'optimizer' && (
-        <div className="layout">
-          <Optimizer />
-          <TotalsPanel />
-        </div>
-      )}
+      <div className="layout" style={{ display: tab === 'optimizer' ? undefined : 'none' }}>
+        <Optimizer />
+        <TotalsPanel />
+      </div>
 
       {showTour && <Tour setTab={setTab} onClose={closeTour} />}
     </div>

@@ -490,6 +490,7 @@ const DICT: Record<string, Entry> = {
   'st.node.lvldown': { pt: 'Diminuir nível do node', en: 'Decrease node level' },
   'st.node.lvlup': { pt: 'Aumentar nível do node', en: 'Increase node level' },
   'st.node.addsoul': { pt: 'Adicionar soul neste node', en: 'Add a soul to this node' },
+  'st.pip': { pt: 'Nível da soul: clique pra definir Lv{n}', en: 'Soul level: click to set Lv{n}' },
   'st.planner.note': {
     pt: 'Cada node tem uma raridade fixa (cinza = comum, azul = rara, dourado = lendária). Um node aceita souls da sua categoria ({atk}, {def}, {sup}, PvP) com raridade igual ou superior à do node. Os nodes Wildcard (✦) aceitam qualquer soul rara ou lendária.',
     en: 'Each node has a fixed rarity (gray = common, blue = rare, gold = legendary). A node accepts souls of its category ({atk}, {def}, {sup}, PvP) with rarity equal to or higher than the node. Wildcard nodes (✦) accept any rare or legendary soul.',

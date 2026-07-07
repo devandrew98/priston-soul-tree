@@ -16,6 +16,10 @@ Tudo que foi feito hoje, em ordem:
 5. **Fill Pass — "nó aberto vazio = pontos desperdiçados"** (pedido do usuário): novo `engine/filler.ts`. Insight-chave: soul nível 1 num nó já aberto custa **zero** a mais (o desbloqueio já foi pago). Após a busca (e também no gerador rápido), TODO nó aberto vazio recebe a melhor soul restante na hierarquia **objetivo → sobrevivência (wiki: precisa tankar o mapa) → qualquer stat útil**; souls PvP só entram como filler em nós PvP (ou com PvP ligado). Pontos que sobrarem viram level-ups pelos melhores ganhos marginais. A IA explica: "🧩 Preenchi N nodes de passagem…" / "🛡️ N receberam souls defensivas…".
 6. **Testes: 17 → 22** (5 novos do filler: preenche tudo que dá, nunca piora o score, nunca estoura orçamento, sobra < 3 pontos, degrada sem crash).
 7. **Verificação real no navegador** — busca profunda de 8s: 209.576 builds, top com 24 nodes/214 pts; aplicado na árvore: **0 nodes desbloqueados vazios**, 214/214 pontos, stats de ataque (AP 780/Crit 3,5%) + camada de sobrevivência (Defense 450/Absorb 148/HP 140/Evade 3%).
+8. **UX da árvore + Gerador persistente** (pedidos do usuário):
+   - **Abas do Soul Tree agora ficam MONTADAS** (ocultas via CSS em vez de desmontar): os resultados da busca profunda (top 1–5), sliders e filtros **sobrevivem** ao ir pra Árvore e voltar — dá pra aplicar a opção #2, #3 depois de olhar a #1.
+   - **Fundo da árvore removido** (backsplash.png) — visual clean, só vinhete escuro.
+   - **Pips de nível da soul clicáveis** (como no jogo): 3 bolinhas nos soquetes da moldura (coordenadas medidas por pixel-sampling do asset 96×120: centros (16,47)/(13,66)/(15,84) → 23%/21%/22% × 39%/55%/70% no node de 64px). Soul na árvore = Lv1 por padrão (colocação manual agora sempre inicia em 1); clicar na bolinha 2/3 sobe o nível ali mesmo, sem abrir o editor, e o cálculo reage na hora (verificado: AP 779,90→765,00 ao baixar pra Lv1). Acesas = nível atual.
 
 ---
 
