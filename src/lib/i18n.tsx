@@ -367,7 +367,7 @@ const DICT: Record<string, Entry> = {
   'mk.notif.markall': { pt: 'Marcar lidas', en: 'Mark read' },
   'mk.notif.clear': { pt: 'Limpar', en: 'Clear' },
   'mk.notif.empty': { pt: 'Sem notificações.', en: 'No notifications.' },
-  'mk.notif.message': { pt: 'Nova mensagem recebida.', en: 'New message received.' },
+  'mk.notif.message': { pt: 'Nova mensagem de {nick}.', en: 'New message from {nick}.' },
   'mk.notif.interest': { pt: 'Novo interessado no seu item "{item}".', en: 'New interest in your item "{item}".' },
   'mk.notif.sold': { pt: 'Seu item "{item}" foi vendido por {price}.', en: 'Your item "{item}" sold for {price}.' },
   'mk.notif.reserved': { pt: 'Seu item "{item}" foi reservado.', en: 'Your item "{item}" was reserved.' },

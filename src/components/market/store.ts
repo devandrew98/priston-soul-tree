@@ -12,6 +12,7 @@ import {
   addWishBackend, removeWishBackend, toggleFavBackend, toggleFavSellerBackend, useSocialState,
 } from './socialBackend';
 import { chatMarkRead, chatOpen, chatSend, chatUnread, useChatState } from './chatBackend';
+import { notifClearAll, notifMarkAllRead, notifMarkRead, notifPush, useNotifState } from './notifBackend';
 
 // The demo account pre-selected on first load (so the Dashboard has data).
 export const CURRENT_USER_ID = 'hadder';
@@ -311,12 +312,24 @@ export function useAuth() {
 
 // Standalone (non-hook) notification pusher, callable from anywhere.
 export function pushNotif(type: NotifType, params?: Record<string, string | number>, link?: NotifLink) {
+  if (BACKEND_ENABLED) { notifPush(type, params, link); return; }
   const n: Notif = { id: `n-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, type, params, at: Date.now(), read: false, link };
   set({ notifications: [n, ...state.notifications].slice(0, 60) });
 }
 
 export function useNotifications() {
   const s = useSnapshot();
+  const nb = useNotifState(); // always called (BACKEND_ENABLED is a stable module constant)
+  if (BACKEND_ENABLED) {
+    return {
+      notifications: nb.items,
+      unread: nb.items.filter((n) => !n.read).length,
+      push: pushNotif,
+      markRead: notifMarkRead,
+      markAllRead: notifMarkAllRead,
+      clearAll: notifClearAll,
+    };
+  }
   return {
     notifications: s.notifications,
     unread: s.notifications.filter((n) => !n.read).length,
