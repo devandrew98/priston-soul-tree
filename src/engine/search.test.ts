@@ -28,9 +28,11 @@ const cfg: EngineConfig = {
 };
 
 describe('SearchEngine (OptimizationEngine + SimulationEngine)', () => {
-  it('runs thousands of simulations, never exceeds budget, never loses to the seed', () => {
+  it('runs many simulations, never exceeds budget, never loses to the seed', () => {
     const { outcome, seedScore } = runSearch(cfg);
-    expect(outcome.sims).toBeGreaterThan(500);
+    // Loose floor: the count is time-budget-based, so a loaded machine does
+    // fewer sims (raw speed is guarded by bench.test.ts, best-of-2).
+    expect(outcome.sims).toBeGreaterThan(150);
     expect(outcome.top.length).toBeGreaterThan(0);
     for (const b of outcome.top) expect(b.score.points).toBeLessThanOrEqual(cfg.budget);
     expect(outcome.top[0].score.total).toBeGreaterThanOrEqual(seedScore);
