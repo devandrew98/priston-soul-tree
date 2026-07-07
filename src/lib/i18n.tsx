@@ -170,6 +170,9 @@ const DICT: Record<string, Entry> = {
   'mk.cancel': { pt: 'Cancelar', en: 'Cancel' },
   'mk.duplicate': { pt: 'Duplicar', en: 'Duplicate' },
   'mk.delete': { pt: 'Excluir', en: 'Delete' },
+  'mk.edit': { pt: 'Editar', en: 'Edit' },
+  'mk.edit.title': { pt: 'Editar anúncio', en: 'Edit listing' },
+  'mk.edit.save': { pt: 'Salvar alterações', en: 'Save changes' },
   'mk.favorites': { pt: 'Favoritos', en: 'Favorites' },
 
   // relative time
@@ -267,6 +270,11 @@ const DICT: Record<string, Entry> = {
   'mk.medals': { pt: 'Medalhas', en: 'Medals' },
   'mk.noactive': { pt: 'Nenhum anúncio ativo no momento.', en: 'No active listings right now.' },
   'mk.recentsold': { pt: 'Vendidos recentemente', en: 'Recently sold' },
+  'mk.noreviews': { pt: 'Ainda sem avaliações.', en: 'No reviews yet.' },
+  'mk.review.yours': { pt: 'Sua avaliação:', en: 'Your review:' },
+  'mk.review.ph': { pt: 'Conte como foi a negociação (opcional)...', en: 'Tell how the trade went (optional)...' },
+  'mk.review.submit': { pt: 'Enviar avaliação', en: 'Submit review' },
+  'mk.review.thanks': { pt: 'Obrigado pela sua avaliação!', en: 'Thanks for your review!' },
   'mk.medal.fast': { pt: 'Resposta Rápida', en: 'Fast Responder' },
   'mk.medal.fast.d': { pt: 'Responde mensagens em minutos.', en: 'Replies within minutes.' },
   'mk.medal.trusted': { pt: 'Confiável', en: 'Trusted' },

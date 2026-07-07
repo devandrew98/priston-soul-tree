@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
 import { MEDALS } from '../../lib/market/data';
-import { fmtPrice, sellerReviews } from '../../lib/market/helpers';
+import { fmtPrice } from '../../lib/market/helpers';
 import { useI18n } from '../../lib/i18n';
-import { getSeller, useFavSellers } from './store';
-import { useSellerListings } from './useMarketData';
+import { getSeller, useAuth, useFavSellers } from './store';
+import { useSellerListings, useSellerReputation } from './useMarketData';
 import { ItemCard } from './ItemCard';
+import { ReviewForm } from './ReviewForm';
 import { Avatar, ContribSeal, OnlineDot, RepBadge, Since, Stars } from './parts';
 
 const MEDAL_ICON: Record<string, string> = Object.fromEntries(MEDALS.map((m) => [m.id, m.icon]));
@@ -20,10 +20,11 @@ export function SellerProfile({
   onBack: () => void;
 }) {
   const { t } = useI18n();
+  const { userId } = useAuth();
   const { isFavSeller, toggleFavSeller } = useFavSellers();
   const { listings: items, loading } = useSellerListings(sellerId);
   const seller = getSeller(sellerId);
-  const reviews = useMemo(() => (seller ? sellerReviews(seller) : []), [seller]);
+  const { reviews, aggregates, reloadReviews } = useSellerReputation(sellerId, seller);
 
   if (!seller) {
     return (
@@ -37,6 +38,13 @@ export function SellerProfile({
   const active = items.filter((i) => i.status === 'available');
   const sold = items.filter((i) => i.status === 'sold');
   const serverDays = Math.floor((Date.now() - seller.joinedAt) / DAY);
+  // Prefer live DB aggregates, fall back to the (mock) profile values.
+  const ratingAvg = aggregates?.ratingAvg ?? seller.ratingAvg;
+  const ratingCount = aggregates?.ratingCount ?? seller.ratingCount;
+  const itemsSold = aggregates?.itemsSold ?? seller.itemsSold;
+  const totalSales = aggregates?.totalSalesValue ?? seller.totalSalesValue;
+  const activeCount = aggregates?.activeListings ?? active.length;
+  const canReview = !!userId && userId !== seller.id;
 
   return (
     <div className="mk-detail">
@@ -71,13 +79,10 @@ export function SellerProfile({
       </div>
 
       <div className="mk-profile-stats">
-        <Stat v={fmtPrice(seller.totalSalesValue)} l={t('mk.totalsales')} />
-        <Stat v={String(seller.itemsSold)} l={t('mk.itemssold')} />
-        <Stat v={String(active.length)} l={t('mk.activelistings')} />
-        <Stat v={`${seller.ratingAvg.toFixed(1)}★`} l={`${seller.ratingCount} ${t('mk.reviews')}`} />
-        <Stat v={`${seller.positivePct}%`} l={t('mk.positive')} />
-        <Stat v={`${seller.avgResponseMin}m`} l={t('mk.avgresp')} />
-        <Stat v={`${seller.avgCompleteMin}m`} l={t('mk.avgcomplete')} />
+        <Stat v={fmtPrice(totalSales)} l={t('mk.totalsales')} />
+        <Stat v={String(itemsSold)} l={t('mk.itemssold')} />
+        <Stat v={String(activeCount)} l={t('mk.activelistings')} />
+        <Stat v={`${ratingAvg.toFixed(1)}★`} l={`${ratingCount} ${t('mk.reviews')}`} />
       </div>
 
       {seller.medals.length > 0 && (
@@ -115,16 +120,17 @@ export function SellerProfile({
       )}
 
       <section className="mk-block">
-        <h2 className="mk-h2">{t('mk.reviews')} <span className="mk-count">{seller.ratingCount}</span></h2>
+        <h2 className="mk-h2">{t('mk.reviews')} <span className="mk-count">{ratingCount}</span></h2>
+        {canReview && <ReviewForm sellerId={seller.id} authorId={userId!} onDone={reloadReviews} />}
         <div className="mk-reviews">
           {reviews.map((r) => (
             <div key={r.id} className="mk-review">
-              <span className="mk-av">{r.fromAvatar}</span>
+              <Avatar value={r.fromAvatar} />
               <div className="mk-review-body">
                 <div className="mk-review-head">
                   <b>{r.fromNick}</b> <Stars n={r.stars} /> <span className="mk-muted">· <Since at={r.at} /></span>
                 </div>
-                <p>{r.comment}</p>
+                {r.comment && <p>{r.comment}</p>}
                 <div className="mk-review-tags">
                   {r.tags.map((tag) => (
                     <span key={tag} className="mk-tag">{t(`mk.revtag.${tag}`)}</span>
@@ -133,6 +139,7 @@ export function SellerProfile({
               </div>
             </div>
           ))}
+          {reviews.length === 0 && <p className="mk-muted">{t('mk.noreviews')}</p>}
         </div>
       </section>
     </div>

@@ -2,11 +2,13 @@
 // Components call these instead of touching either source directly.
 import { useEffect, useState } from 'react';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
-import { LISTINGS } from '../../lib/market/data';
-import { type Filters, type SortKey, filterListings, sellerItems, sortListings } from '../../lib/market/helpers';
-import { fetchListing, fetchListings, fetchSellerListings, fetchSimilar } from '../../lib/market/listings';
-import type { Listing } from '../../lib/market/types';
-import { useAdmin, useMyListings } from './store';
+import { LISTINGS, LISTING_BY_ID } from '../../lib/market/data';
+import { type Filters, type SortKey, filterListings, sellerItems, sellerReviews, sortListings } from '../../lib/market/helpers';
+import { fetchFavoriteListings, fetchListing, fetchListings, fetchSellerListings, fetchSimilar } from '../../lib/market/listings';
+import { fetchReviews, fetchSellerAggregates, type SellerAggregates } from '../../lib/market/social';
+import type { Listing, Review, Seller } from '../../lib/market/types';
+import { useAdmin, useFavorites, useMyListings } from './store';
+import { useSocialState } from './socialBackend';
 
 /** Vitrine listings — DB (server-side filter/sort) or mock (client filter/sort). */
 export function useBrowseListings(filters: Filters, sort: SortKey): { listings: Listing[]; loading: boolean; reloadKey: number } {
@@ -92,4 +94,42 @@ export function useSellerListings(sellerId: string): { listings: Listing[]; load
   const reload = () => setTick((x) => x + 1);
   if (!BACKEND_ENABLED) return { listings: sellerItems(sellerId), loading: false, reload };
   return { listings, loading, reload };
+}
+
+/** The current user's favorited listings (Dashboard tab). */
+export function useFavoriteListings(): { listings: Listing[]; loading: boolean } {
+  const soc = useSocialState();
+  const { favs: mockFavs } = useFavorites();
+  const [data, setData] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(BACKEND_ENABLED);
+  const favKey = soc.favs.join(',');
+  useEffect(() => {
+    if (!BACKEND_ENABLED || !soc.userId) { setLoading(false); return; }
+    let cancelled = false;
+    setLoading(true);
+    fetchFavoriteListings(soc.userId)
+      .then((r) => { if (!cancelled) setData(r); })
+      .catch(() => { if (!cancelled) setData([]); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [soc.userId, favKey]);
+  if (!BACKEND_ENABLED) return { listings: mockFavs.map((id) => LISTING_BY_ID[id]).filter(Boolean) as Listing[], loading: false };
+  return { listings: data, loading };
+}
+
+/** Reviews + rating aggregates for a seller profile (DB or mock). */
+export function useSellerReputation(sellerId: string, seller?: Seller): { reviews: Review[]; aggregates: SellerAggregates | null; reloadReviews: () => void } {
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [aggregates, setAggregates] = useState<SellerAggregates | null>(null);
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    if (!BACKEND_ENABLED || !sellerId) return;
+    let cancelled = false;
+    fetchReviews(sellerId).then((r) => { if (!cancelled) setReviews(r); }).catch(() => {});
+    fetchSellerAggregates(sellerId).then((a) => { if (!cancelled) setAggregates(a); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [sellerId, tick]);
+  const reloadReviews = () => setTick((x) => x + 1);
+  if (!BACKEND_ENABLED) return { reviews: seller ? sellerReviews(seller) : [], aggregates: null, reloadReviews };
+  return { reviews, aggregates, reloadReviews };
 }

@@ -20,7 +20,7 @@ type View =
   | { name: 'browse' }
   | { name: 'item'; id: string }
   | { name: 'seller'; id: string }
-  | { name: 'create' }
+  | { name: 'create'; editId?: string }
   | { name: 'dashboard' }
   | { name: 'stats' }
   | { name: 'messages'; seller?: string }
@@ -45,6 +45,7 @@ export function Marketplace() {
 
   const openItem = (id: string) => { setView({ name: 'item', id }); window.scrollTo({ top: 0 }); };
   const openSeller = (id: string) => { setView({ name: 'seller', id }); window.scrollTo({ top: 0 }); };
+  const openEdit = (id: string) => { setView({ name: 'create', editId: id }); window.scrollTo({ top: 0 }); };
   const go = (name: View['name']) => { setView({ name } as View); window.scrollTo({ top: 0 }); };
   const openChat = (sellerId: string, seed?: string) => {
     startConversation(sellerId, seed);
@@ -89,8 +90,8 @@ export function Marketplace() {
       {view.name === 'browse' && <Browse onOpen={openItem} onSeller={openSeller} />}
       {view.name === 'stats' && <Stats onOpen={openItem} onSeller={openSeller} />}
       {view.name === 'messages' && <Chat initialSeller={view.seller} onSeller={openSeller} />}
-      {view.name === 'dashboard' && <Dashboard onOpen={openItem} onSeller={openSeller} onCreate={() => go('create')} onLogin={openLogin} />}
-      {view.name === 'create' && <CreateListing onDone={() => go('dashboard')} onLogin={openLogin} />}
+      {view.name === 'dashboard' && <Dashboard onOpen={openItem} onSeller={openSeller} onCreate={() => go('create')} onEdit={openEdit} onLogin={openLogin} />}
+      {view.name === 'create' && <CreateListing editId={view.editId} onDone={() => go('dashboard')} onLogin={openLogin} />}
       {view.name === 'admin' && (adminUnlocked ? <Admin onOpen={openItem} onSeller={openSeller} /> : <AdminGate onUnlock={() => setAdminUnlocked(true)} />)}
       {view.name === 'item' && <ItemView id={view.id} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} />}
       {view.name === 'seller' && <SellerProfile sellerId={view.id} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} />}

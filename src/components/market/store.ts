@@ -8,6 +8,9 @@ import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { signOut as sbSignOut } from '../../lib/market/auth';
 import { getCachedProfile } from '../../lib/market/profileCache';
 import { useSession } from './session';
+import {
+  addWishBackend, removeWishBackend, toggleFavBackend, toggleFavSellerBackend, useSocialState,
+} from './socialBackend';
 
 // The demo account pre-selected on first load (so the Dashboard has data).
 export const CURRENT_USER_ID = 'hadder';
@@ -131,6 +134,10 @@ export function getSeller(id: string | null | undefined): Seller | undefined {
 
 export function useFavorites() {
   const s = useSnapshot();
+  const soc = useSocialState();
+  if (BACKEND_ENABLED) {
+    return { favs: soc.favs, isFav: (id: string) => soc.favs.includes(id), toggleFav: toggleFavBackend };
+  }
   return {
     favs: s.favItems,
     isFav: (id: string) => s.favItems.includes(id),
@@ -140,6 +147,10 @@ export function useFavorites() {
 
 export function useFavSellers() {
   const s = useSnapshot();
+  const soc = useSocialState();
+  if (BACKEND_ENABLED) {
+    return { favSellers: soc.favSellers, isFavSeller: (id: string) => soc.favSellers.includes(id), toggleFavSeller: toggleFavSellerBackend };
+  }
   return {
     favSellers: s.favSellers,
     isFavSeller: (id: string) => s.favSellers.includes(id),
@@ -149,6 +160,10 @@ export function useFavSellers() {
 
 export function useWishlist() {
   const s = useSnapshot();
+  const soc = useSocialState();
+  if (BACKEND_ENABLED) {
+    return { wishlist: soc.wishlist, addWish: addWishBackend, removeWish: removeWishBackend };
+  }
   return {
     wishlist: s.wishlist,
     addWish: (text: string, maxPrice: number | null) =>

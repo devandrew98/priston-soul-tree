@@ -1,25 +1,23 @@
 import { useMemo, useState } from 'react';
-import { LISTING_BY_ID } from '../../lib/market/data';
 import { fmtPrice, sellerItems } from '../../lib/market/helpers';
-import type { Listing } from '../../lib/market/types';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { deleteListing } from '../../lib/market/listings';
 import { useI18n } from '../../lib/i18n';
-import { useAuth, useFavorites, useMyListings, useWishlist } from './store';
-import { useSellerListings } from './useMarketData';
+import { useAuth, useMyListings, useWishlist } from './store';
+import { useFavoriteListings, useSellerListings } from './useMarketData';
 import { ItemCard } from './ItemCard';
 import { LoginPrompt } from './LoginPrompt';
 import { PriceTag, Since, StatusPill } from './parts';
 
 type Tab = 'active' | 'sold' | 'favorites' | 'wishlist';
 
-export function Dashboard({ onOpen, onSeller, onCreate, onLogin }: { onOpen: (id: string) => void; onSeller: (id: string) => void; onCreate: () => void; onLogin: () => void }) {
+export function Dashboard({ onOpen, onSeller, onCreate, onEdit, onLogin }: { onOpen: (id: string) => void; onSeller: (id: string) => void; onCreate: () => void; onEdit: (id: string) => void; onLogin: () => void }) {
   const { t } = useI18n();
   const { userId, user } = useAuth();
   const { myListings, removeListing, duplicateListing } = useMyListings();
-  const { favs } = useFavorites();
   const { wishlist, addWish, removeWish } = useWishlist();
   const dbSeller = useSellerListings(userId || '');
+  const { listings: favItems } = useFavoriteListings();
   const [tab, setTab] = useState<Tab>('active');
   const [wishText, setWishText] = useState('');
   const [wishMax, setWishMax] = useState('');
@@ -33,7 +31,6 @@ export function Dashboard({ onOpen, onSeller, onCreate, onLogin }: { onOpen: (id
   const active = owned.filter((l) => l.status === 'available');
   const reserved = owned.filter((l) => l.status === 'reserved');
   const sold = owned.filter((l) => l.status === 'sold');
-  const favItems = favs.map((id) => LISTING_BY_ID[id]).filter(Boolean) as Listing[];
   const totalViews = owned.reduce((a, l) => a + l.views, 0);
   const profit = sold.reduce((a, l) => a + l.price, 0);
 
@@ -77,9 +74,13 @@ export function Dashboard({ onOpen, onSeller, onCreate, onLogin }: { onOpen: (id
               <PriceTag value={l.price} currency={l.currency} />
               <span className="mk-dashrow-actions">
                 {BACKEND_ENABLED ? (
-                  <button className="mk-btn sm danger" onClick={() => del(l.id)}>{t('mk.delete')}</button>
+                  <>
+                    <button className="mk-btn sm" onClick={() => onEdit(l.id)}>{t('mk.edit')}</button>
+                    <button className="mk-btn sm danger" onClick={() => del(l.id)}>{t('mk.delete')}</button>
+                  </>
                 ) : myListings.some((m) => m.id === l.id) ? (
                   <>
+                    <button className="mk-btn sm" onClick={() => onEdit(l.id)}>{t('mk.edit')}</button>
                     <button className="mk-btn sm" onClick={() => duplicateListing(l.id)}>{t('mk.duplicate')}</button>
                     <button className="mk-btn sm danger" onClick={() => del(l.id)}>{t('mk.delete')}</button>
                   </>

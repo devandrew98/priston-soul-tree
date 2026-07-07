@@ -32,7 +32,13 @@ async function loadProfile(userId: string | null) {
 
 if (BACKEND_ENABLED && supabase) {
   supabase.auth.getSession().then(({ data }) => loadProfile(data.session?.user?.id ?? null));
-  supabase.auth.onAuthStateChange((_event, sess) => { void loadProfile(sess?.user?.id ?? null); });
+  // IMPORTANT: never run DB queries synchronously inside onAuthStateChange —
+  // supabase-js holds an auth lock during the callback and awaiting a query
+  // there deadlocks signIn/getSession. Defer out of the callback.
+  supabase.auth.onAuthStateChange((_event, sess) => {
+    const uid = sess?.user?.id ?? null;
+    setTimeout(() => { void loadProfile(uid); }, 0);
+  });
 }
 
 /** Force a profile re-fetch (e.g. after updating the avatar). */

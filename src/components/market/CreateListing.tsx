@@ -1,19 +1,22 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CATEGORIES, RARITIES } from '../../lib/market/data';
 import type { Currency, Listing, Rarity } from '../../lib/market/types';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
-import { createListing } from '../../lib/market/listings';
+import { createListing, updateListing } from '../../lib/market/listings';
 import { useI18n } from '../../lib/i18n';
 import { useAuth, useMyListings } from './store';
+import { useListing } from './useMarketData';
 import { LoginPrompt } from './LoginPrompt';
 
 const CURRENCIES: Currency[] = ['gold', 'coins'];
 
-export function CreateListing({ onDone, onLogin }: { onDone: () => void; onLogin: () => void }) {
+export function CreateListing({ editId, onDone, onLogin }: { editId?: string; onDone: () => void; onLogin: () => void }) {
   const { t } = useI18n();
   const { userId, isContributor } = useAuth();
   const { addListing } = useMyListings();
   const fileRef = useRef<HTMLInputElement>(null);
+  const editing = !!editId;
+  const { listing: editListing } = useListing(editId || '');
 
   const [name, setName] = useState('');
   const [category, setCategory] = useState(CATEGORIES[0].id);
@@ -29,6 +32,24 @@ export function CreateListing({ onDone, onLogin }: { onDone: () => void; onLogin
   const [highlighted, setHighlighted] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [prefilled, setPrefilled] = useState(false);
+
+  // Prefill the form once when editing an existing listing.
+  useEffect(() => {
+    if (!editing || prefilled || !editListing) return;
+    setName(editListing.name);
+    setCategory(editListing.category);
+    setSubcategory(editListing.subcategory);
+    setRarity(editListing.rarity);
+    setItemLevel(editListing.itemLevel);
+    setQuantity(editListing.quantity);
+    setPrice(editListing.price);
+    setCurrency(editListing.currency);
+    setDescription(editListing.description);
+    setImage(editListing.image || '');
+    setHighlighted(editListing.highlighted);
+    setPrefilled(true);
+  }, [editing, prefilled, editListing]);
 
   const canContribute = isContributor;
   const cat = CATEGORIES.find((c) => c.id === category) ?? CATEGORIES[0];
@@ -45,15 +66,17 @@ export function CreateListing({ onDone, onLogin }: { onDone: () => void; onLogin
   const submit = async () => {
     if (!userId || !image) return;
     setError('');
+    const fields = {
+      name: name.trim() || t('mk.create.untitled'),
+      itemLevel, category, subcategory, rarity, quantity, price, currency,
+      description: description.trim(), highlighted: canContribute && highlighted,
+    };
     if (BACKEND_ENABLED) {
-      if (!imageFile) return;
+      if (!editing && !imageFile) return; // new listing requires an image
       setBusy(true);
       try {
-        await createListing(userId, {
-          name: name.trim() || t('mk.create.untitled'),
-          itemLevel, category, subcategory, rarity, quantity, price, currency,
-          description: description.trim(), highlighted: canContribute && highlighted, imageFile,
-        });
+        if (editing) await updateListing(editId!, userId, fields, imageFile);
+        else await createListing(userId, { ...fields, imageFile: imageFile! });
         onDone();
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e));
@@ -63,12 +86,10 @@ export function CreateListing({ onDone, onLogin }: { onDone: () => void; onLogin
       return;
     }
     const listing: Listing = {
-      id: `my-${Date.now()}`,
-      name: name.trim() || t('mk.create.untitled'),
-      itemLevel, icon: cat.icon, image, category, subcategory, rarity,
-      tier: 0, sockets: 0, classReq: 'Todas', stats: [],
-      quantity, price, currency, description: description.trim(),
-      status: 'available', highlighted: canContribute && highlighted, sellerId: userId, views: 0, createdAt: Date.now(),
+      id: editId || `my-${Date.now()}`,
+      icon: cat.icon, image, tier: 0, sockets: 0, classReq: 'Todas', stats: [],
+      status: 'available', sellerId: userId, views: 0, createdAt: Date.now(),
+      ...fields,
     };
     addListing(listing);
     onDone();
@@ -79,7 +100,7 @@ export function CreateListing({ onDone, onLogin }: { onDone: () => void; onLogin
   return (
     <div className="mk-create">
       <button className="mk-back" onClick={onDone}>← {t('mk.back')}</button>
-      <h1 className="mk-h1">📦 {t('mk.create.title')}</h1>
+      <h1 className="mk-h1">📦 {editing ? t('mk.edit.title') : t('mk.create.title')}</h1>
 
       <div className="mk-form">
         {/* image (required) */}
@@ -162,11 +183,11 @@ export function CreateListing({ onDone, onLogin }: { onDone: () => void; onLogin
 
         <div className="mk-field span2 mk-form-actions">
           <button className="mk-btn primary" onClick={submit} disabled={!image || busy}>
-            {busy ? `⏳ ${t('mk.loading')}` : `✓ ${t('mk.create.publish')}`}
+            {busy ? `⏳ ${t('mk.loading')}` : editing ? `✓ ${t('mk.edit.save')}` : `✓ ${t('mk.create.publish')}`}
           </button>
           <button className="mk-btn" onClick={onDone} disabled={busy}>{t('mk.cancel')}</button>
         </div>
-        {!image && <p className="mk-muted mk-create-imgreq">⚠ {t('mk.create.imagereq')}</p>}
+        {!image && !editing && <p className="mk-muted mk-create-imgreq">⚠ {t('mk.create.imagereq')}</p>}
         {error && <p className="mk-auth-err">✕ {error}</p>}
       </div>
     </div>

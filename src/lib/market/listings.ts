@@ -108,6 +108,18 @@ export async function fetchSellerListings(sellerId: string): Promise<Listing[]> 
   return (data as ListingRow[]).map(rowToListing);
 }
 
+export async function fetchFavoriteListings(userId: string): Promise<Listing[]> {
+  const { data, error } = await sb()
+    .from('favorites')
+    .select(`listing:listings!listing_id(${SELECT})`)
+    .eq('user_id', userId);
+  if (error) throw error;
+  return (data as unknown as { listing: ListingRow | null }[])
+    .map((r) => r.listing)
+    .filter((l): l is ListingRow => !!l)
+    .map(rowToListing);
+}
+
 export async function fetchSimilar(listing: Listing, limit = 4): Promise<Listing[]> {
   const { data, error } = await sb().from('listings').select(SELECT)
     .eq('category', listing.category).eq('removed', false).neq('id', listing.id).limit(limit + 2);
@@ -148,6 +160,28 @@ export async function createListing(userId: string, input: NewListingInput): Pro
   }).select('id').single();
   if (error) throw error;
   return (data as { id: string }).id;
+}
+
+export type EditableFields = Omit<NewListingInput, 'imageFile'>;
+
+/** Update a listing; optionally replace the image. */
+export async function updateListing(id: string, userId: string, fields: EditableFields, newImage?: File | null): Promise<void> {
+  const patch: Record<string, unknown> = {
+    name: fields.name,
+    item_level: fields.itemLevel,
+    category: fields.category,
+    subcategory: fields.subcategory,
+    rarity: fields.rarity,
+    quantity: fields.quantity,
+    price: fields.price,
+    currency: fields.currency,
+    description: fields.description,
+    highlighted: fields.highlighted,
+    updated_at: new Date().toISOString(),
+  };
+  if (newImage) patch.image_url = await uploadToBucket('item-images', userId, newImage);
+  const { error } = await sb().from('listings').update(patch).eq('id', id);
+  if (error) throw error;
 }
 
 export async function deleteListing(id: string): Promise<void> {
