@@ -11,6 +11,7 @@ import { useSession } from './session';
 import {
   addWishBackend, removeWishBackend, toggleFavBackend, toggleFavSellerBackend, useSocialState,
 } from './socialBackend';
+import { chatMarkRead, chatOpen, chatSend, chatUnread, useChatState } from './chatBackend';
 
 // The demo account pre-selected on first load (so the Dashboard has data).
 export const CURRENT_USER_ID = 'hadder';
@@ -195,6 +196,30 @@ function upsertChat(sellerId: string, mutate: (c: Conversation) => Conversation)
 
 export function useChats() {
   const s = useSnapshot();
+  const cs = useChatState(); // always called (BACKEND_ENABLED is a stable module constant)
+
+  if (BACKEND_ENABLED) {
+    const chats: Record<string, Conversation> = {};
+    for (const [peerId, th] of Object.entries(cs.threads)) chats[peerId] = { messages: th.messages, lastReadAt: 0 };
+    const order = Object.keys(cs.threads).sort((a, b) => {
+      const ma = cs.threads[a].messages;
+      const mb = cs.threads[b].messages;
+      const la = ma.length ? ma[ma.length - 1].at : 0;
+      const lb = mb.length ? mb[mb.length - 1].at : 0;
+      return lb - la;
+    });
+    return {
+      chats,
+      order,
+      unread: chatUnread,
+      totalUnread: order.reduce((sum, id) => sum + chatUnread(id), 0),
+      startConversation: chatOpen,
+      sendMessage: chatSend,
+      receiveMessage: (_sellerId: string, _text: string) => {}, // real messages arrive via realtime
+      markRead: chatMarkRead,
+    };
+  }
+
   const unread = (sellerId: string) => {
     const c = s.chats[sellerId];
     if (!c) return 0;

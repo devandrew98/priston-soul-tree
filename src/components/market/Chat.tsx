@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { SELLER_BY_ID } from '../../lib/market/data';
+import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { useI18n } from '../../lib/i18n';
-import { useChats } from './store';
+import { getSeller, useChats } from './store';
 import { Avatar, OnlineDot, Since } from './parts';
 
 const EMOJIS = ['👍', '🙏', '😄', '🔥', '💰', '⚔️', '🛡️', '❤️', '🤝', '👀'];
@@ -39,7 +39,7 @@ export function Chat({ initialSeller, onSeller }: { initialSeller?: string; onSe
     if (!active && order.length) setActive(order[0]);
   }, [active, order]);
 
-  const activeSeller = active ? SELLER_BY_ID[active] : undefined;
+  const activeSeller = active ? getSeller(active) : undefined;
   const conv = active ? chats[active] : undefined;
   const messages = useMemo(() => conv?.messages ?? [], [conv]);
 
@@ -57,7 +57,8 @@ export function Chat({ initialSeller, onSeller }: { initialSeller?: string; onSe
     if (!text || !active) return;
     sendMessage(active, text);
     setDraft('');
-    // Simulated seller reply with a "typing…" delay.
+    if (BACKEND_ENABLED) return; // real replies come from the other player via realtime
+    // Demo mode only: simulated seller reply with a "typing…" delay.
     const target = active;
     if (replyTimer.current) window.clearTimeout(replyTimer.current);
     setTyping(true);
@@ -74,7 +75,7 @@ export function Chat({ initialSeller, onSeller }: { initialSeller?: string; onSe
         <div className="mk-chat-list-head">💬 {t('mk.chat.title')}</div>
         {order.length === 0 && <p className="mk-muted mk-chat-empty">{t('mk.chat.none')}</p>}
         {order.map((id) => {
-          const s = SELLER_BY_ID[id];
+          const s = getSeller(id);
           const msgs = chats[id].messages;
           const last = msgs[msgs.length - 1];
           const u = unread(id);

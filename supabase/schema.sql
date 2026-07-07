@@ -276,6 +276,10 @@ create policy messages_insert on public.messages for insert with check (
   sender_id = auth.uid() and exists (
     select 1 from public.conversations c where c.id = conversation_id
     and (c.buyer_id = auth.uid() or c.seller_id = auth.uid())));
+drop policy if exists messages_update on public.messages;
+create policy messages_update on public.messages for update using (
+  exists (select 1 from public.conversations c where c.id = conversation_id
+          and (c.buyer_id = auth.uid() or c.seller_id = auth.uid())));
 
 -- reviews: world-readable; authored by the logged-in user
 drop policy if exists reviews_read on public.reviews;
@@ -305,3 +309,16 @@ create policy "public read images" on storage.objects for select
 drop policy if exists "authed upload images" on storage.objects;
 create policy "authed upload images" on storage.objects for insert to authenticated
   with check (bucket_id in ('item-images','avatars'));
+
+-- ============================================================================
+-- Realtime — stream new chat messages to participants (RLS-filtered).
+-- ============================================================================
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'messages'
+  ) then
+    alter publication supabase_realtime add table public.messages;
+  end if;
+end $$;
