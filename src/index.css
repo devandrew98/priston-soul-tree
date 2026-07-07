@@ -238,13 +238,12 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 
 /* Visual tree */
 .tree-legend { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; font-weight: 700; color: var(--gold-bright); }
-.tree-wrap { overflow: auto; padding: 8px; background: radial-gradient(circle at 50% 30%, #1c160d 0%, var(--bg2) 70%); border: 1px solid var(--border); border-radius: 8px; }
+.tree-wrap { overflow: auto; padding: 8px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; }
 .tree-canvas {
   position: relative;
   margin: 0 auto;
-  /* clean: sem imagem de fundo, só um vinhete suave pra dar profundidade */
-  background: radial-gradient(ellipse at 50% 30%, #14100a 0%, #0b0806 70%);
-  border-radius: 6px;
+  /* um só tom: herda o fundo do wrap, sem caixa mais escura */
+  background: transparent;
 }
 
 .tedge { position: absolute; image-rendering: auto; pointer-events: none; z-index: 0; }
