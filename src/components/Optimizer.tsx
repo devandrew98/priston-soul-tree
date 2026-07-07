@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { optimize, type Goal } from '../lib/optimizer';
 import { RARITY_LABEL, fmt } from '../lib/formula';
 import { computeTotals, slotStatValues } from '../lib/calc';
@@ -7,6 +7,10 @@ import { SOULS, SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
 import { useStore, totalFusionPoints } from '../store';
 import { useI18n } from '../lib/i18n';
 import { HelpTip } from './HelpTip';
+import { deepOptimize, type DeepProgress } from '../engine/controller';
+import { genomeToSlots } from '../engine/genome';
+import { explainResult, recommend, type AdviceToken } from '../engine/consultant';
+import type { EngineConfig, SolverResult } from '../engine/types';
 
 // Curated, short list of the attributes the player distributes across.
 // `scale` normalizes each stat so a % means a comparable amount of the build
@@ -70,6 +74,41 @@ export function Optimizer() {
 
   const setAttr = (key: string, v: number) => setPct((p) => ({ ...p, [key]: Math.max(0, Math.min(100, Math.round(v))) }));
 
+  // ---- deep search (solver engine) ----
+  const [deepTime, setDeepTime] = useState(8);
+  const [deepRunning, setDeepRunning] = useState(false);
+  const [deepProg, setDeepProg] = useState<DeepProgress | null>(null);
+  const [deepRes, setDeepRes] = useState<SolverResult | null>(null);
+  const deepCfg = useRef<EngineConfig | null>(null);
+
+  const runDeep = async () => {
+    if (deepRunning) return;
+    const cfg: EngineConfig = {
+      weights: goal.weights,
+      inventory,
+      allSouls,
+      includePvp,
+      budget: useBudget ? budget : 999999,
+      timeMs: deepTime * 1000,
+      rngSeed: (Date.now() % 100000) + 1,
+    };
+    deepCfg.current = cfg;
+    setDeepRunning(true);
+    setDeepRes(null);
+    setDeepProg({ sims: 0, best: 0, elapsedMs: 0, timeMs: cfg.timeMs });
+    try {
+      const res = await deepOptimize(cfg, (p) => setDeepProg(p));
+      setDeepRes(res);
+    } finally {
+      setDeepRunning(false);
+      setDeepProg(null);
+    }
+  };
+
+  const renderToken = (tok: AdviceToken, i: number) => (
+    <p key={i} className="ai-note">{t(tok.key, tok.vars)}</p>
+  );
+
   return (
     <div className="panel">
       <div className="row" style={{ marginBottom: 8 }}>
@@ -130,6 +169,77 @@ export function Optimizer() {
           {notes.map((n, i) => <p key={i} className="ai-note">{n}</p>)}
         </div>
       )}
+
+      <hr className="sep" />
+
+      {/* ---- Deep search (solver engine) ---- */}
+      <div className="deep">
+        <div className="row" style={{ gap: 8 }}>
+          <strong style={{ color: 'var(--gold-bright)' }}>{t('ai2.title')}</strong>
+          <HelpTip text={t('ai2.desc')} />
+          <span className="spacer" />
+          <label className="row" style={{ gap: 6, fontSize: 13 }}>
+            {t('ai2.time')}
+            <select className="input" value={deepTime} onChange={(e) => setDeepTime(Number(e.target.value))}>
+              <option value={3}>3s</option>
+              <option value={8}>8s</option>
+              <option value={20}>20s</option>
+            </select>
+          </label>
+          <button className="btn primary" disabled={deepRunning || total === 0} onClick={runDeep}>
+            {deepRunning ? t('ai2.running') : t('ai2.run')}
+          </button>
+        </div>
+
+        {deepRunning && deepProg && (
+          <div style={{ marginTop: 10 }}>
+            <div className="points-bar">
+              <div className="points-fill" style={{ width: `${Math.min(100, (deepProg.elapsedMs / deepProg.timeMs) * 100)}%` }} />
+            </div>
+            <div className="points-meta" style={{ marginTop: 4 }}>
+              <span>{t('ai2.progress', { sims: deepProg.sims.toLocaleString(), best: Math.round(deepProg.best).toLocaleString() })}</span>
+            </div>
+          </div>
+        )}
+
+        {deepRes && deepRes.top.length > 0 && (
+          <div style={{ marginTop: 10 }}>
+            <div className="row" style={{ gap: 8 }}>
+              <span className="conf-badge">{t('ai2.confidence', { c: deepRes.confidence })}</span>
+              <span className="muted" style={{ fontSize: 12 }}>
+                {deepRes.workers > 0
+                  ? t('ai2.stats', { sims: deepRes.sims.toLocaleString(), s: (deepRes.elapsedMs / 1000).toFixed(1), w: deepRes.workers })
+                  : t('ai2.statsinline', { sims: deepRes.sims.toLocaleString(), s: (deepRes.elapsedMs / 1000).toFixed(1) })}
+              </span>
+            </div>
+
+            <div className="total-sub" style={{ marginTop: 10 }}>{t('ai2.top')}</div>
+            {deepRes.top.filter((b) => b.score.total > 0).map((b, i) => (
+              <div className="total-row" key={b.hash}>
+                <span className="lbl">
+                  <b style={{ color: i === 0 ? 'var(--gold-bright)' : undefined }}>#{i + 1}</b>{' '}
+                  {t('ai2.score', { s: Math.round(b.score.total).toLocaleString() })}{' '}
+                  <span className="muted">{t('ai2.buildrow', { n: Object.keys(b.genome).length, pts: b.score.points })}</span>
+                </span>
+                <span className="val">
+                  <button className="btn sm primary" onClick={() => applySlots(genomeToSlots(b.genome))}>{t('st.opt.apply')}</button>
+                </span>
+              </div>
+            ))}
+
+            <div className="ai-feedback" style={{ marginTop: 10 }}>
+              <div className="total-sub">{t('ai2.ex.title')}</div>
+              {explainResult(deepRes).map(renderToken)}
+              {deepCfg.current && recommend(deepRes, deepCfg.current).length > 0 && (
+                <>
+                  <div className="total-sub" style={{ marginTop: 8 }}>{t('ai2.rec.title')}</div>
+                  {recommend(deepRes, deepCfg.current).map(renderToken)}
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
       <hr className="sep" />
 

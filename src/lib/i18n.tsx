@@ -701,6 +701,38 @@ const DICT: Record<string, Entry> = {
     pt: 'É só isso pra começar. Explore à vontade — e pra rever este tutorial é só clicar em "❓ Tutorial" lá no topo.',
     en: 'That\'s it to get started. Explore freely — and to replay this tutorial just click "❓ Tutorial" at the top.',
   },
+
+  // ---- Deep search (solver engine) ----
+  'ai2.title': { pt: '🚀 Busca profunda', en: '🚀 Deep search' },
+  'ai2.desc': {
+    pt: 'O motor simula milhares de builds em paralelo (nos núcleos do seu aparelho), compara, descarta e refina até achar a melhor combinação possível pra sua distribuição — bem além do gerador rápido acima.',
+    en: 'The engine simulates thousands of builds in parallel (on your device cores), compares, discards and refines until it finds the best possible combination for your distribution — well beyond the quick generator above.',
+  },
+  'ai2.time': { pt: 'Tempo', en: 'Time' },
+  'ai2.run': { pt: '🚀 Buscar melhor build', en: '🚀 Find best build' },
+  'ai2.running': { pt: 'Simulando builds…', en: 'Simulating builds…' },
+  'ai2.progress': { pt: '{sims} builds testadas · melhor score {best}', en: '{sims} builds tested · best score {best}' },
+  'ai2.confidence': { pt: 'Confiança {c}%', en: 'Confidence {c}%' },
+  'ai2.stats': { pt: '{sims} builds · {s}s · {w} núcleos', en: '{sims} builds · {s}s · {w} cores' },
+  'ai2.statsinline': { pt: '{sims} builds · {s}s', en: '{sims} builds · {s}s' },
+  'ai2.top': { pt: '🏆 Top builds encontradas', en: '🏆 Top builds found' },
+  'ai2.buildrow': { pt: '{n} nodes · {pts} pts', en: '{n} nodes · {pts} pts' },
+  'ai2.score': { pt: 'Score {s}', en: 'Score {s}' },
+  'ai2.ex.title': { pt: '🧠 Análise da IA', en: '🧠 AI analysis' },
+  'ai2.ex.none': { pt: 'Nenhuma build viável encontrada — verifique inventário e pontos.', en: 'No viable build found — check your inventory and points.' },
+  'ai2.ex.summary': {
+    pt: 'Testei {sims} builds em {s}s. A melhor marcou score {score} usando {nodes} nodes e {pts} pontos.',
+    en: 'I tested {sims} builds in {s}s. The best scored {score} using {nodes} nodes and {pts} points.',
+  },
+  'ai2.ex.breakdown': { pt: 'Perfil do score: {off}% ofensa · {def}% defesa · {uti}% utilidade.', en: 'Score profile: {off}% offense · {def}% defense · {uti}% utility.' },
+  'ai2.ex.vsgreedy': { pt: 'A busca profunda superou o gerador rápido em {pct}%.', en: 'Deep search beat the quick generator by {pct}%.' },
+  'ai2.ex.samegreedy': { pt: 'Empatou com o gerador rápido — pra esse objetivo, ele provavelmente já é o ótimo.', en: 'Tied with the quick generator — for this goal it is probably already optimal.' },
+  'ai2.ex.plateau': { pt: 'A busca estabilizou (platô): mais tempo dificilmente melhoraria o resultado.', en: 'The search plateaued: more time would hardly improve the result.' },
+  'ai2.ex.timeup': { pt: 'O tempo acabou antes de estabilizar — rodar com mais tempo pode achar algo melhor.', en: 'Time ran out before stabilizing — a longer run may find something better.' },
+  'ai2.ex.kb': { pt: 'Aproveitei conhecimento de buscas anteriores como ponto de partida.', en: 'I reused knowledge from previous searches as a starting point.' },
+  'ai2.rec.title': { pt: '💡 Recomendações', en: '💡 Recommendations' },
+  'ai2.rec.levelup': { pt: '⬆️ {name} está no nível {lvl}: juntar cópias até o nível 3 rende mais nos mesmos nodes.', en: '⬆️ {name} is at level {lvl}: merging copies up to level 3 yields more on the same nodes.' },
+  'ai2.rec.acquire': { pt: '🎯 Vale caçar: {name} — entraria direto no topo da sua build.', en: '🎯 Worth hunting: {name} — it would go straight into your build\'s top.' },
 };
 
 type Ctx = {

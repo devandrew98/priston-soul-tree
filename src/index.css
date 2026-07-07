@@ -380,6 +380,9 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .ai-feedback { margin-top: 12px; background: rgba(160,107,255,0.08); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 12px; }
 .ai-note { margin: 5px 0; font-size: 13px; color: var(--text); line-height: 1.5; }
 
+/* Busca profunda (solver) */
+.conf-badge { background: linear-gradient(180deg, #2a4d2a, #1c331c); border: 1px solid var(--green); color: var(--green); border-radius: 6px; padding: 3px 10px; font-weight: 800; font-size: 13px; }
+
 /* ============ Top nav shell (TimeBoss + Soul Tree) ============ */
 .shell { max-width: 1400px; margin: 0 auto; padding: 0 16px 28px; }
 .topnav {
