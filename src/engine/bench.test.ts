@@ -27,11 +27,17 @@ describe('bench', () => {
     const rng = mulberry32(1);
     const N = 300;
 
-    let t = performance.now();
-    for (let i = 0; i < N; i++) genomeCost(g);
-    const costMs = performance.now() - t;
-    console.log('genomeCost x300:', costMs.toFixed(1), 'ms');
+    // Best-of-2 to shrug off transient machine load (a single noisy pass once
+    // tripped the guard at 169ms while the true cost was ~33ms).
+    let costMs = Infinity;
+    for (let pass = 0; pass < 2; pass++) {
+      const t0 = performance.now();
+      for (let i = 0; i < N; i++) genomeCost(g);
+      costMs = Math.min(costMs, performance.now() - t0);
+    }
+    console.log('genomeCost x300 (best of 2):', costMs.toFixed(1), 'ms');
     expect(costMs).toBeLessThan(150); // regression guard (was 281ms before the typed-array Steiner)
+    let t = performance.now();
 
     t = performance.now();
     for (let i = 0; i < N; i++) scoreGenome(g, cfg.weights, 100);

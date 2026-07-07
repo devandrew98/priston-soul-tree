@@ -30,6 +30,9 @@ const ATTRS: { key: string; label: string; scale: number }[] = [
   { key: 'exp', label: 'EXP', scale: 6 },
   { key: 'moveSpeed', label: 'Run Speed', scale: 8 },
   { key: 'stamina', label: 'Stamina', scale: 0.3 },
+  { key: 'agingSuccess', label: 'Aging Success', scale: 30 },
+  { key: 'ownItemType', label: 'Own Item Drop', scale: 5 },
+  { key: 'ownSpecChance', label: 'Own Spec Chance', scale: 5 },
 ];
 const LABEL: Record<string, string> = Object.fromEntries(ATTRS.map((a) => [a.key, a.label]));
 const SCALE: Record<string, number> = Object.fromEntries(ATTRS.map((a) => [a.key, a.scale]));
@@ -39,6 +42,8 @@ const QUICK: { id: string; pct: Record<string, number>; pvp?: boolean }[] = [
   { id: 'atk', pct: { attackPower: 70, critRate: 30 } },
   { id: 'tank', pct: { defense: 30, absorb: 40, hp: 30 } },
   { id: 'farm', pct: { exp: 60, hp: 20, absorb: 20 } },
+  { id: 'aging', pct: { agingSuccess: 100 } },
+  { id: 'item', pct: { ownItemType: 70, ownSpecChance: 30 } },
   { id: 'pvp', pct: { attackPower: 40, defense: 20, absorb: 20, evade: 20 }, pvp: true },
 ];
 

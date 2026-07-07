@@ -28,6 +28,9 @@ const GENERAL_SCALE: Record<string, number> = {
   exp: 6,
   moveSpeed: 8,
   stamina: 0.3,
+  agingSuccess: 30,
+  ownItemType: 5,
+  ownSpecChance: 5,
 };
 // Survivability emphasis (wiki.pristontale.eu — you must tank the map you farm).
 const SURVIVAL_SCALE: Record<string, number> = { defense: 1, absorb: 3, hp: 0.3, evade: 40, block: 40 };

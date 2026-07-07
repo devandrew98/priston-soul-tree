@@ -573,6 +573,8 @@ const DICT: Record<string, Entry> = {
   'st.opt.q.atk': { pt: '⚔️ Ataque', en: '⚔️ Attack' },
   'st.opt.q.tank': { pt: '🛡️ Tank', en: '🛡️ Tank' },
   'st.opt.q.farm': { pt: '🌾 Farm', en: '🌾 Farm' },
+  'st.opt.q.aging': { pt: '⚗️ Aging', en: '⚗️ Aging' },
+  'st.opt.q.item': { pt: '📦 Item Type', en: '📦 Item Type' },
   'st.opt.q.pvp': { pt: '⚔ PvP', en: '⚔ PvP' },
   'st.opt.budget': { pt: 'Respeitar limite ({n} pts)', en: 'Respect limit ({n} pts)' },
   'st.opt.allsouls': { pt: 'Considerar todas as souls', en: 'Consider all souls' },
