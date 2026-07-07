@@ -13,10 +13,10 @@ export const CATEGORIES: Category[] = [
   { id: 'weapons', icon: '⚔️', subs: ['Espadas', 'Machados', 'Arcos', 'Garras', 'Adagas', 'Martelos', 'Lanças', 'Fantasmas', 'Foices', 'Varinhas', 'Cajados'] },
   { id: 'armors', icon: '🛡️', subs: ['Armaduras', 'Roupões', 'Orbes', 'Escudos', 'Botas', 'Luvas', 'Braceletes'] },
   { id: 'jewels', icon: '💍', subs: ['Anéis', 'Amuletos'] },
-  { id: 'sheltoms', icon: '💠', subs: ['Sheltom Vermelho', 'Sheltom Azul', 'Sheltom Verde'] },
-  { id: 'souls', icon: '✨', subs: ['Soul de Ataque', 'Soul de Defesa', 'Soul de Suporte'] },
-  { id: 'pets', icon: '🐾', subs: ['Pet de Combate', 'Pet de Coleta'] },
-  { id: 'premium', icon: '👑', subs: ['Item Premium', 'Cosmético'] },
+  { id: 'sheltoms', icon: '💠', subs: [] },
+  { id: 'souls', icon: '✨', subs: [] },
+  { id: 'pets', icon: '🐾', subs: [] },
+  { id: 'premium', icon: '👑', subs: [] },
 ];
 
 export const CATEGORY_IDS = CATEGORIES.map((c) => c.id);
@@ -36,17 +36,18 @@ export const RARITY_COLOR: Record<Rarity, string> = {
 
 export interface RepTier {
   id: RepLevel;
+  label: string; // shown name (PristonTale-themed)
   icon: string;
   color: string;
   min: number; // min itemsSold to reach this tier
 }
 
 export const REP_TIERS: RepTier[] = [
-  { id: 'bronze', icon: '🥉', color: '#cd7f32', min: 0 },
-  { id: 'silver', icon: '🥈', color: '#c0c0c0', min: 25 },
-  { id: 'gold', icon: '🥇', color: '#e6b93b', min: 100 },
-  { id: 'diamond', icon: '💎', color: '#5ad6d0', min: 300 },
-  { id: 'legendary', icon: '👑', color: '#e0663b', min: 800 },
+  { id: 'bronze', label: 'Hopy', icon: '🥉', color: '#cd7f32', min: 0 },
+  { id: 'silver', label: 'Bargon', icon: '🥈', color: '#c0c0c0', min: 25 },
+  { id: 'gold', label: 'Head Cutter', icon: '🥇', color: '#e6b93b', min: 100 },
+  { id: 'diamond', label: 'Groqueste', icon: '💎', color: '#5ad6d0', min: 300 },
+  { id: 'legendary', label: 'Babel', icon: '👑', color: '#e0663b', min: 800 },
 ];
 
 export interface Medal {

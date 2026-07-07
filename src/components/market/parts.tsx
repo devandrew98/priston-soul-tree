@@ -1,6 +1,6 @@
 // Small reusable presentational pieces shared across the Marketplace views.
 import { RARITY_COLOR } from '../../lib/market/data';
-import { currencyIcon, fmtPrice, repTier, repLevelLabel, sinceParts } from '../../lib/market/helpers';
+import { currencyIcon, fmtPrice, repTier, sinceParts } from '../../lib/market/helpers';
 import type { Currency, ListingStatus, Rarity, Seller } from '../../lib/market/types';
 import { useI18n } from '../../lib/i18n';
 import { isCachedContributor } from '../../lib/market/profileCache';
@@ -77,7 +77,7 @@ export function RepBadge({ seller }: { seller: Seller }) {
   const tier = repTier(seller);
   return (
     <span className="mk-rep" style={{ color: tier.color, borderColor: tier.color }} title={t('mk.rep.tier')}>
-      {tier.icon} {repLevelLabel(tier.id)}
+      {tier.icon} {tier.label}
     </span>
   );
 }

@@ -44,7 +44,7 @@ export default function App() {
     <div className="shell">
       <nav className="topnav">
         <button className="topnav-brand" onClick={() => go('home')}>
-          ⚔️ <span>Priston Tale EU</span>
+          ⚔️ <span>PristonZONE</span>
         </button>
         <div className="topnav-tabs">
           {NAV.map((n) => (
@@ -69,7 +69,7 @@ export default function App() {
       </nav>
 
       {section === 'home' ? (
-        <Home go={go} />
+        <Home />
       ) : section === 'timeboss' ? (
         <TimeBoss />
       ) : section === 'timerfury' ? (

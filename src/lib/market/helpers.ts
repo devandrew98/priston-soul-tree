@@ -2,7 +2,7 @@
 // price series, reputation tiers, recommendations, reviews and formatting.
 import { LISTINGS, REP_TIERS, REVIEW_TAGS, SELLERS, SELLER_BY_ID } from './data';
 import { priceHistory } from './data';
-import type { Currency, Listing, MarketStats, PricePoint, RepLevel, Review, Seller, Trend } from './types';
+import type { Currency, Listing, MarketStats, PricePoint, Review, Seller, Trend } from './types';
 
 export type SortKey = 'price_asc' | 'price_desc' | 'newest' | 'oldest' | 'views' | 'rating' | 'sold';
 
@@ -166,10 +166,6 @@ export function marketOverview(): MarketOverview {
 
 export function repTier(seller: Seller) {
   return [...REP_TIERS].reverse().find((t) => seller.itemsSold >= t.min) ?? REP_TIERS[0];
-}
-
-export function repLevelLabel(id: RepLevel): string {
-  return id.charAt(0).toUpperCase() + id.slice(1);
 }
 
 // Deterministic mock reviews for a seller's public profile.

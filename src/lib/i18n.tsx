@@ -13,7 +13,7 @@ const DICT: Record<string, Entry> = {
   'nav.sod': { pt: 'SoD', en: 'SoD' },
   'nav.market': { pt: 'Marketplace', en: 'Marketplace' },
   'nav.soultree': { pt: 'Árvore de Souls', en: 'Soul Tree' },
-  'nav.tagline': { pt: 'Priston Tale EU · ferramentas da comunidade', en: 'Priston Tale EU · community tools' },
+  'nav.tagline': { pt: 'PristonZONE · ferramentas da comunidade', en: 'PristonZONE · community tools' },
   'lang.switch': { pt: 'English', en: 'Português' },
 
   // ---- TimeBoss ----
@@ -89,10 +89,10 @@ const DICT: Record<string, Entry> = {
     pt: 'Um conjunto de ferramentas feitas pela comunidade para o Priston Tale EU: acompanhe o horário de nascimento dos bosses e dos Furys, meça seu desempenho no Survive or Die e planeje a sua Árvore de Souls — tudo em um só lugar.',
     en: 'A set of community-made tools for Priston Tale EU: track boss and Fury spawn times, measure your Survive or Die performance and plan your Soul Tree — all in one place.',
   },
-  'home.welcome.title': { pt: '👋 Boas-vindas', en: '👋 Welcome' },
+  'home.welcome.title': { pt: 'Sejam bem vindos(as) ao site PristonZONE.', en: 'Welcome to the PristonZONE site.' },
   'home.welcome.body': {
-    pt: 'A Árvore de Souls ainda não está funcionando 100% do jeito que gostaríamos, mas muito em breve será atualizada para uma IA que entenderá e aplicará as melhores builds de souls de acordo com o que o jogador deseja.',
-    en: 'The Soul Tree is not yet working 100% the way we would like, but very soon it will be updated to an AI that understands and applies the best soul builds according to what the player wants.',
+    pt: 'Um site feito por jogadores com ferramentas para te acompanhar na sua jornada no PristonTale EU!',
+    en: 'A site made by players, with tools to accompany you on your PristonTale EU journey!',
   },
   'home.cards.title': { pt: 'O que você encontra aqui', en: 'What you find here' },
   'home.card.timeboss': { pt: 'Contagem regressiva para cada boss nascer, no horário oficial do jogo (GMT 0).', en: 'Countdown to every boss spawn, on the game official time (GMT 0).' },
@@ -131,7 +131,7 @@ const DICT: Record<string, Entry> = {
   'sod.weak': { pt: 'abaixo da média', en: 'below average' },
 
   // ---- Marketplace ----
-  'mk.title': { pt: 'Mercado PristonTale EU', en: 'PristonTale EU Market' },
+  'mk.title': { pt: 'Mercado PristonZONE', en: 'PristonZONE Market' },
   'mk.subtitle': {
     pt: 'Compre e venda itens do servidor sem depender de lojas AFK. Pesquisa rápida, preços transparentes e negociação direta.',
     en: 'Buy and sell server items without AFK shops. Fast search, transparent prices and direct trading.',
@@ -429,7 +429,7 @@ const DICT: Record<string, Entry> = {
   'mk.auth.requiredsub': { pt: 'Você precisa estar logado para acessar esta área.', en: 'You need to be logged in to access this area.' },
 
   // ---- Soul Tree (top level) ----
-  'st.title': { pt: 'Priston Tale EU — Árvore de Souls', en: 'Priston Tale EU — Soul Tree' },
+  'st.title': { pt: 'PristonZONE — Árvore de Souls', en: 'PristonZONE — Soul Tree' },
   'st.subtitle': {
     pt: 'Fusion Tier · planejador de builds & gerador inteligente',
     en: 'Fusion Tier · build planner & smart generator',

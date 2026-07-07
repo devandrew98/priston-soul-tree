@@ -20,11 +20,11 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
 
   const [name, setName] = useState('');
   const [category, setCategory] = useState(CATEGORIES[0].id);
-  const [subcategory, setSubcategory] = useState(CATEGORIES[0].subs[0]);
+  const [subcategory, setSubcategory] = useState(CATEGORIES[0].subs[0] ?? '');
   const [rarity, setRarity] = useState<Rarity>('rare');
   const [itemLevel, setItemLevel] = useState(90);
   const [quantity, setQuantity] = useState(1);
-  const [price, setPrice] = useState<number>(500_000_000);
+  const [price, setPrice] = useState<number>(0);
   const [currency, setCurrency] = useState<Currency>('gold');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState<string>('');
@@ -135,12 +135,14 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
             {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.icon} {t(`mk.cat.${c.id}`)}</option>)}
           </select>
         </label>
-        <label className="mk-field">
-          <span>{t('mk.subcategory')}</span>
-          <select value={subcategory} onChange={(e) => setSubcategory(e.target.value)}>
-            {cat.subs.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </label>
+        {cat.subs.length > 0 && (
+          <label className="mk-field">
+            <span>{t('mk.subcategory')}</span>
+            <select value={subcategory} onChange={(e) => setSubcategory(e.target.value)}>
+              {cat.subs.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </label>
+        )}
 
         <label className="mk-field">
           <span>{t('mk.rarity.label')}</span>
