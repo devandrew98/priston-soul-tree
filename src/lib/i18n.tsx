@@ -407,6 +407,7 @@ const DICT: Record<string, Entry> = {
   'mk.report.reason.abuse': { pt: 'Abuso / Ofensa', en: 'Abuse' },
   'mk.report.reason.overpriced': { pt: 'Preço abusivo', en: 'Overpriced' },
   'mk.report.reason.spam': { pt: 'Spam', en: 'Spam' },
+  'mk.report.reason.other': { pt: 'Denúncia', en: 'Report' },
 
   // auth
   'mk.close': { pt: 'Fechar', en: 'Close' },

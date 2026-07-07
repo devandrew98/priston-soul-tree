@@ -11,7 +11,7 @@ const CAT_ICON: Record<string, string> = Object.fromEntries(CATEGORIES.map((c) =
 
 // Embed the seller profile so cards can show nick/avatar/contributor.
 const SELECT =
-  '*, seller:profiles!seller_id(id,nick,char_class,level,clan,avatar_url,verified,is_admin,is_contributor,created_at,last_seen)';
+  '*, seller:profiles!seller_id(id,nick,char_class,level,clan,avatar_url,verified,is_admin,is_contributor,banned,created_at,last_seen)';
 
 interface ListingRow {
   id: string;
@@ -93,7 +93,8 @@ export async function fetchListings(f: Filters, sort: SortKey, limit = 60): Prom
   q = q.order(s.col, { ascending: s.asc }).limit(limit);
   const { data, error } = await q;
   if (error) throw error;
-  return (data as ListingRow[]).map(rowToListing);
+  // Hide listings from banned sellers.
+  return (data as ListingRow[]).filter((r) => !r.seller?.banned).map(rowToListing);
 }
 
 export async function fetchListing(id: string): Promise<Listing | null> {

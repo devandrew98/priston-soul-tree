@@ -4,8 +4,9 @@ import { priceHistory } from '../../lib/market/data';
 import { cheaperAlternatives, fmtPrice, marketStats, sellerItems } from '../../lib/market/helpers';
 import type { Listing } from '../../lib/market/types';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
+import { createReport } from '../../lib/market/admin';
 import { useI18n } from '../../lib/i18n';
-import { getSeller, useFavorites } from './store';
+import { getSeller, useAuth, useFavorites } from './store';
 import { useSimilar } from './useMarketData';
 import { ItemCard } from './ItemCard';
 import { PriceChart } from './PriceChart';
@@ -23,6 +24,7 @@ export function ItemDetail({
   onBack: () => void;
 }) {
   const { t } = useI18n();
+  const { userId } = useAuth();
   const { isFav, toggleFav } = useFavorites();
   const [note, setNote] = useState('');
   const seller = getSeller(listing.sellerId);
@@ -36,6 +38,10 @@ export function ItemDetail({
 
   const diffToLowest = stats.min > 0 ? ((listing.price - stats.min) / stats.min) * 100 : 0;
   const flash = (msg: string) => { setNote(msg); window.setTimeout(() => setNote(''), 2600); };
+  const report = () => {
+    if (BACKEND_ENABLED && userId) createReport(userId, 'item', listing.id, 'other', '').catch(() => {});
+    flash(t('mk.flash.reported'));
+  };
 
   if (!seller) return (
     <div className="mk-detail">
@@ -153,7 +159,7 @@ export function ItemDetail({
                   {isFav(listing.id) ? '★' : '☆'} {t('mk.favorite')}
                 </button>
                 <button className="mk-btn sm" onClick={() => { navigator.clipboard?.writeText(`${location.origin}/#item-${listing.id}`); flash(t('mk.flash.shared')); }}>🔗 {t('mk.share')}</button>
-                <button className="mk-btn sm danger" onClick={() => flash(t('mk.flash.reported'))}>⚑ {t('mk.report')}</button>
+                <button className="mk-btn sm danger" onClick={report}>⚑ {t('mk.report')}</button>
               </div>
             </div>
             {note && <div className="mk-note">{note}</div>}

@@ -14,6 +14,8 @@ export interface ProfileRow {
   verified: boolean;
   is_admin: boolean;
   is_contributor: boolean;
+  banned?: boolean;
+  suspended?: boolean;
   created_at: string;
   last_seen: string;
 }
