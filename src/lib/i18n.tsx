@@ -136,7 +136,7 @@ const DICT: Record<string, Entry> = {
     pt: 'Compre e venda itens do servidor sem depender de lojas AFK. Pesquisa rápida, preços transparentes e negociação direta.',
     en: 'Buy and sell server items without AFK shops. Fast search, transparent prices and direct trading.',
   },
-  'mk.tab.browse': { pt: 'Vitrine', en: 'Browse' },
+  'mk.tab.browse': { pt: 'Market', en: 'Market' },
   'mk.tab.stats': { pt: 'Estatísticas', en: 'Statistics' },
   'mk.tab.messages': { pt: 'Mensagens', en: 'Messages' },
   'mk.tab.dashboard': { pt: 'Meu Painel', en: 'Dashboard' },
