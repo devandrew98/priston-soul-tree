@@ -2,7 +2,7 @@
 // shapes mirror what a real API (Users / Items / Sellers / Prices) would return,
 // so wiring a backend later is a drop-in replacement.
 
-export type Currency = 'gold' | 'silver' | 'premium';
+export type Currency = 'gold' | 'coins';
 
 export type Rarity = 'common' | 'rare' | 'epic' | 'legendary';
 
@@ -45,12 +45,13 @@ export interface Listing {
   name: string;
   itemLevel: number;
   icon: string; // emoji fallback icon
+  image?: string; // uploaded item image (data URL); when present, shown instead of icon
   category: string; // category id
   subcategory: string;
   rarity: Rarity;
-  tier: number; // 1..5
-  sockets: number;
-  classReq: string; // required class or 'Todas'
+  tier: number; // legacy (no longer shown/edited)
+  sockets: number; // legacy (no longer shown/edited)
+  classReq: string; // legacy (no longer shown/edited)
   stats: Stat[];
   quantity: number;
   price: number;

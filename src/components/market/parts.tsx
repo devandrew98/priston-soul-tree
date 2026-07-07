@@ -3,6 +3,25 @@ import { RARITY_COLOR } from '../../lib/market/data';
 import { currencyIcon, fmtPrice, repTier, repLevelLabel, sinceParts } from '../../lib/market/helpers';
 import type { Currency, ListingStatus, Rarity, Seller } from '../../lib/market/types';
 import { useI18n } from '../../lib/i18n';
+import { useContributors } from './store';
+
+/** Renders an uploaded image (data URL / http) as an avatar, else the emoji glyph. */
+export function Avatar({ value, size = '' }: { value: string; size?: 'lg' | 'xxl' | '' }) {
+  const isImg = /^(data:|https?:|blob:)/.test(value);
+  return (
+    <span className={`mk-av ${size}`}>
+      {isImg ? <img src={value} alt="" className="mk-av-img" /> : value}
+    </span>
+  );
+}
+
+/** "⭐ Colaborador" seal shown for sellers granted it by an admin. */
+export function ContribSeal({ sellerId }: { sellerId: string }) {
+  const { t } = useI18n();
+  const { isContributor } = useContributors();
+  if (!isContributor(sellerId)) return null;
+  return <span className="mk-contrib" title={t('mk.contrib.hint')}>⭐ {t('mk.contrib')}</span>;
+}
 
 export function Stars({ n, size = 14 }: { n: number; size?: number }) {
   const full = Math.round(n);
@@ -62,13 +81,3 @@ export function RepBadge({ seller }: { seller: Seller }) {
   );
 }
 
-export function Sockets({ n }: { n: number }) {
-  if (!n) return null;
-  return (
-    <span className="mk-sockets" title={`${n} soquetes`}>
-      {Array.from({ length: n }).map((_, i) => (
-        <span key={i} className="mk-socket" />
-      ))}
-    </span>
-  );
-}

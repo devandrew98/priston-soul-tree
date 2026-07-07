@@ -10,14 +10,9 @@ export interface Category {
 
 // Category ids are stable keys; labels are localised in i18n (mk.cat.*).
 export const CATEGORIES: Category[] = [
-  { id: 'weapons', icon: '⚔️', subs: ['Espada', 'Lança', 'Machado', 'Arco', 'Cajado'] },
-  { id: 'armors', icon: '🛡️', subs: ['Peito', 'Calça', 'Elmo'] },
-  { id: 'shields', icon: '🔰', subs: ['Escudo Leve', 'Escudo Pesado'] },
-  { id: 'gloves', icon: '🧤', subs: ['Luva de Placa', 'Luva de Couro'] },
-  { id: 'boots', icon: '🥾', subs: ['Bota de Placa', 'Bota de Couro'] },
-  { id: 'bracelets', icon: '📿', subs: ['Bracelete'] },
-  { id: 'rings', icon: '💍', subs: ['Anel'] },
-  { id: 'amulets', icon: '🔱', subs: ['Amuleto'] },
+  { id: 'weapons', icon: '⚔️', subs: ['Espadas', 'Machados', 'Arcos', 'Garras', 'Adagas', 'Martelos', 'Lanças', 'Fantasmas', 'Foices', 'Varinhas', 'Cajados'] },
+  { id: 'armors', icon: '🛡️', subs: ['Armaduras', 'Roupões', 'Orbes', 'Escudos', 'Botas', 'Luvas', 'Braceletes'] },
+  { id: 'jewels', icon: '💍', subs: ['Anéis', 'Amuletos'] },
   { id: 'sheltoms', icon: '💠', subs: ['Sheltom Vermelho', 'Sheltom Azul', 'Sheltom Verde'] },
   { id: 'souls', icon: '✨', subs: ['Soul de Ataque', 'Soul de Defesa', 'Soul de Suporte'] },
   { id: 'pets', icon: '🐾', subs: ['Pet de Combate', 'Pet de Coleta'] },
@@ -28,7 +23,7 @@ export const CATEGORY_IDS = CATEGORIES.map((c) => c.id);
 
 export const CLASSES = ['Fighter', 'Mechanician', 'Archer', 'Pikeman', 'Atalanta', 'Knight', 'Magician', 'Priestess'];
 
-export const CURRENCIES = ['gold', 'silver', 'premium'] as const;
+export const CURRENCIES = ['gold', 'coins'] as const;
 
 export const RARITIES: Rarity[] = ['common', 'rare', 'epic', 'legendary'];
 
@@ -122,33 +117,33 @@ interface Seed {
 }
 
 const SEEDS: Seed[] = [
-  { name: 'Murky Sword', cat: 'weapons', sub: 'Espada', rarity: 'legendary', tier: 5, lvl: 120, price: 22_000_000_000, currency: 'gold', classReq: 'Knight', sockets: 3, stats: [['Dano', '742-810'], ['Força req.', '520'], ['Vel. Ataque', '+12%'], ['Crítico', '+8%']], desc: 'Lâmina lendária forjada nas profundezas de Pillai. Corte devastador.' },
-  { name: 'Dragon Slayer', cat: 'weapons', sub: 'Machado', rarity: 'epic', tier: 4, lvl: 108, price: 6_500_000_000, currency: 'gold', classReq: 'Fighter', sockets: 2, stats: [['Dano', '540-611'], ['Força req.', '440'], ['Dano a Bosses', '+18%']], desc: 'Machado pesado especializado em caçada de chefes.' },
-  { name: 'Elven Longbow', cat: 'weapons', sub: 'Arco', rarity: 'epic', tier: 4, lvl: 104, price: 4_100_000_000, currency: 'gold', classReq: 'Archer', sockets: 2, stats: [['Dano', '410-470'], ['Destreza req.', '480'], ['Alcance', '+2'], ['Crítico', '+10%']], desc: 'Precisão élfica com alcance estendido.' },
-  { name: 'Storm Halberd', cat: 'weapons', sub: 'Lança', rarity: 'rare', tier: 3, lvl: 92, price: 850_000_000, currency: 'gold', classReq: 'Pikeman', sockets: 1, stats: [['Dano', '300-360'], ['Força req.', '360'], ['Dano Elétrico', '+40']], desc: 'Lança carregada com energia elétrica.' },
-  { name: 'Arcane Staff', cat: 'weapons', sub: 'Cajado', rarity: 'legendary', tier: 5, lvl: 118, price: 18_000_000_000, currency: 'gold', classReq: 'Magician', sockets: 3, stats: [['Dano Mágico', '620-700'], ['Espírito req.', '540'], ['Mana', '+320'], ['Redução CD', '+12%']], desc: 'Cajado supremo dos arquimagos.' },
+  { name: 'Murky Sword', cat: 'weapons', sub: 'Espadas', rarity: 'legendary', tier: 5, lvl: 120, price: 22_000_000_000, currency: 'gold', classReq: 'Knight', sockets: 3, stats: [['Dano', '742-810'], ['Força req.', '520'], ['Vel. Ataque', '+12%'], ['Crítico', '+8%']], desc: 'Lâmina lendária forjada nas profundezas de Pillai. Corte devastador.' },
+  { name: 'Dragon Slayer', cat: 'weapons', sub: 'Machados', rarity: 'epic', tier: 4, lvl: 108, price: 6_500_000_000, currency: 'gold', classReq: 'Fighter', sockets: 2, stats: [['Dano', '540-611'], ['Força req.', '440'], ['Dano a Bosses', '+18%']], desc: 'Machado pesado especializado em caçada de chefes.' },
+  { name: 'Elven Longbow', cat: 'weapons', sub: 'Arcos', rarity: 'epic', tier: 4, lvl: 104, price: 4_100_000_000, currency: 'gold', classReq: 'Archer', sockets: 2, stats: [['Dano', '410-470'], ['Destreza req.', '480'], ['Alcance', '+2'], ['Crítico', '+10%']], desc: 'Precisão élfica com alcance estendido.' },
+  { name: 'Storm Halberd', cat: 'weapons', sub: 'Lanças', rarity: 'rare', tier: 3, lvl: 92, price: 850_000_000, currency: 'gold', classReq: 'Pikeman', sockets: 1, stats: [['Dano', '300-360'], ['Força req.', '360'], ['Dano Elétrico', '+40']], desc: 'Lança carregada com energia elétrica.' },
+  { name: 'Arcane Staff', cat: 'weapons', sub: 'Cajados', rarity: 'legendary', tier: 5, lvl: 118, price: 18_000_000_000, currency: 'gold', classReq: 'Magician', sockets: 3, stats: [['Dano Mágico', '620-700'], ['Espírito req.', '540'], ['Mana', '+320'], ['Redução CD', '+12%']], desc: 'Cajado supremo dos arquimagos.' },
 
-  { name: 'Titan Plate', cat: 'armors', sub: 'Peito', rarity: 'epic', tier: 4, lvl: 110, price: 3_200_000_000, currency: 'gold', classReq: 'Knight', sockets: 2, stats: [['Defesa', '+680'], ['HP', '+1200'], ['Resist. Física', '+15%']], desc: 'Armadura de placa titânica, muralha ambulante.' },
-  { name: 'Shadow Robe', cat: 'armors', sub: 'Peito', rarity: 'rare', tier: 3, lvl: 95, price: 720_000_000, currency: 'gold', classReq: 'Magician', sockets: 1, stats: [['Defesa', '+310'], ['Mana', '+450'], ['Resist. Mágica', '+12%']], desc: 'Manto leve tecido com fios de sombra.' },
-  { name: 'Ranger Vest', cat: 'armors', sub: 'Peito', rarity: 'rare', tier: 3, lvl: 90, price: 540_000_000, currency: 'gold', classReq: 'Archer', sockets: 1, stats: [['Defesa', '+280'], ['Destreza', '+40'], ['Vel. Mov.', '+6%']], desc: 'Colete ágil para batedores.' },
+  { name: 'Titan Plate', cat: 'armors', sub: 'Armaduras', rarity: 'epic', tier: 4, lvl: 110, price: 3_200_000_000, currency: 'gold', classReq: 'Knight', sockets: 2, stats: [['Defesa', '+680'], ['HP', '+1200'], ['Resist. Física', '+15%']], desc: 'Armadura de placa titânica, muralha ambulante.' },
+  { name: 'Shadow Robe', cat: 'armors', sub: 'Roupões', rarity: 'rare', tier: 3, lvl: 95, price: 720_000_000, currency: 'gold', classReq: 'Magician', sockets: 1, stats: [['Defesa', '+310'], ['Mana', '+450'], ['Resist. Mágica', '+12%']], desc: 'Manto leve tecido com fios de sombra.' },
+  { name: 'Ranger Vest', cat: 'armors', sub: 'Armaduras', rarity: 'rare', tier: 3, lvl: 90, price: 540_000_000, currency: 'gold', classReq: 'Archer', sockets: 1, stats: [['Defesa', '+280'], ['Destreza', '+40'], ['Vel. Mov.', '+6%']], desc: 'Colete ágil para batedores.' },
 
-  { name: 'Aegis of Dawn', cat: 'shields', sub: 'Escudo Pesado', rarity: 'legendary', tier: 5, lvl: 115, price: 12_000_000_000, currency: 'gold', classReq: 'Knight', sockets: 2, stats: [['Defesa', '+520'], ['Bloqueio', '+35%'], ['Reflexão', '+8%']], desc: 'Escudo sagrado que reflete o mal.' },
-  { name: 'Oak Buckler', cat: 'shields', sub: 'Escudo Leve', rarity: 'common', tier: 2, lvl: 60, price: 45_000_000, currency: 'gold', classReq: 'Todas', sockets: 0, stats: [['Defesa', '+90'], ['Bloqueio', '+12%']], desc: 'Escudo simples de carvalho.' },
+  { name: 'Aegis of Dawn', cat: 'armors', sub: 'Escudos', rarity: 'legendary', tier: 5, lvl: 115, price: 12_000_000_000, currency: 'gold', classReq: 'Knight', sockets: 2, stats: [['Defesa', '+520'], ['Bloqueio', '+35%'], ['Reflexão', '+8%']], desc: 'Escudo sagrado que reflete o mal.' },
+  { name: 'Oak Buckler', cat: 'armors', sub: 'Escudos', rarity: 'common', tier: 2, lvl: 60, price: 45_000_000, currency: 'gold', classReq: 'Todas', sockets: 0, stats: [['Defesa', '+90'], ['Bloqueio', '+12%']], desc: 'Escudo simples de carvalho.' },
 
-  { name: 'Gauntlets of Might', cat: 'gloves', sub: 'Luva de Placa', rarity: 'epic', tier: 4, lvl: 105, price: 2_400_000_000, currency: 'gold', classReq: 'Fighter', sockets: 2, stats: [['Defesa', '+210'], ['Força', '+35'], ['Dano', '+6%']], desc: 'Manoplas que amplificam a força bruta.' },
-  { name: 'Silk Gloves', cat: 'gloves', sub: 'Luva de Couro', rarity: 'rare', tier: 3, lvl: 88, price: 320_000_000, currency: 'gold', classReq: 'Priestess', sockets: 1, stats: [['Defesa', '+120'], ['Espírito', '+28'], ['Cura', '+8%']], desc: 'Luvas delicadas das sacerdotisas.' },
+  { name: 'Gauntlets of Might', cat: 'armors', sub: 'Luvas', rarity: 'epic', tier: 4, lvl: 105, price: 2_400_000_000, currency: 'gold', classReq: 'Fighter', sockets: 2, stats: [['Defesa', '+210'], ['Força', '+35'], ['Dano', '+6%']], desc: 'Manoplas que amplificam a força bruta.' },
+  { name: 'Silk Gloves', cat: 'armors', sub: 'Luvas', rarity: 'rare', tier: 3, lvl: 88, price: 320_000_000, currency: 'gold', classReq: 'Priestess', sockets: 1, stats: [['Defesa', '+120'], ['Espírito', '+28'], ['Cura', '+8%']], desc: 'Luvas delicadas das sacerdotisas.' },
 
-  { name: 'Boots of Haste', cat: 'boots', sub: 'Bota de Couro', rarity: 'epic', tier: 4, lvl: 100, price: 1_900_000_000, currency: 'gold', classReq: 'Todas', sockets: 1, stats: [['Defesa', '+160'], ['Vel. Mov.', '+15%'], ['Esquiva', '+6%']], desc: 'Botas encantadas com pressa arcana.' },
-  { name: 'Iron Greaves', cat: 'boots', sub: 'Bota de Placa', rarity: 'common', tier: 2, lvl: 55, price: 28_000_000, currency: 'gold', classReq: 'Todas', sockets: 0, stats: [['Defesa', '+70']], desc: 'Grevas de ferro resistentes.' },
+  { name: 'Boots of Haste', cat: 'armors', sub: 'Botas', rarity: 'epic', tier: 4, lvl: 100, price: 1_900_000_000, currency: 'gold', classReq: 'Todas', sockets: 1, stats: [['Defesa', '+160'], ['Vel. Mov.', '+15%'], ['Esquiva', '+6%']], desc: 'Botas encantadas com pressa arcana.' },
+  { name: 'Iron Greaves', cat: 'armors', sub: 'Botas', rarity: 'common', tier: 2, lvl: 55, price: 28_000_000, currency: 'gold', classReq: 'Todas', sockets: 0, stats: [['Defesa', '+70']], desc: 'Grevas de ferro resistentes.' },
 
-  { name: 'Bracelet of Kings', cat: 'bracelets', sub: 'Bracelete', rarity: 'legendary', tier: 5, lvl: 112, price: 9_800_000_000, currency: 'gold', classReq: 'Todas', sockets: 1, stats: [['Todos Atributos', '+25'], ['HP/MP', '+600'], ['EXP', '+5%']], desc: 'Relíquia da realeza de Ricarten.' },
-  { name: 'Copper Band', cat: 'bracelets', sub: 'Bracelete', rarity: 'rare', tier: 3, lvl: 80, price: 210_000_000, currency: 'gold', classReq: 'Todas', sockets: 1, stats: [['Força', '+18'], ['Talento', '+12']], desc: 'Bracelete de cobre bem trabalhado.' },
+  { name: 'Bracelet of Kings', cat: 'armors', sub: 'Braceletes', rarity: 'legendary', tier: 5, lvl: 112, price: 9_800_000_000, currency: 'gold', classReq: 'Todas', sockets: 1, stats: [['Todos Atributos', '+25'], ['HP/MP', '+600'], ['EXP', '+5%']], desc: 'Relíquia da realeza de Ricarten.' },
+  { name: 'Copper Band', cat: 'armors', sub: 'Braceletes', rarity: 'rare', tier: 3, lvl: 80, price: 210_000_000, currency: 'gold', classReq: 'Todas', sockets: 1, stats: [['Força', '+18'], ['Talento', '+12']], desc: 'Bracelete de cobre bem trabalhado.' },
 
-  { name: "Ring of Fury", cat: 'rings', sub: 'Anel', rarity: 'epic', tier: 4, lvl: 102, price: 3_600_000_000, currency: 'gold', classReq: 'Todas', sockets: 0, stats: [['Dano', '+9%'], ['Crítico', '+7%'], ['Fúria', '+15%']], desc: 'Anel que arde com fúria de batalha.' },
-  { name: 'Ring of Warding', cat: 'rings', sub: 'Anel', rarity: 'rare', tier: 3, lvl: 85, price: 480_000_000, currency: 'gold', classReq: 'Todas', sockets: 0, stats: [['Resist. Todas', '+10%'], ['HP', '+300']], desc: 'Proteção elemental balanceada.' },
+  { name: "Ring of Fury", cat: 'jewels', sub: 'Anéis', rarity: 'epic', tier: 4, lvl: 102, price: 3_600_000_000, currency: 'gold', classReq: 'Todas', sockets: 0, stats: [['Dano', '+9%'], ['Crítico', '+7%'], ['Fúria', '+15%']], desc: 'Anel que arde com fúria de batalha.' },
+  { name: 'Ring of Warding', cat: 'jewels', sub: 'Anéis', rarity: 'rare', tier: 3, lvl: 85, price: 480_000_000, currency: 'gold', classReq: 'Todas', sockets: 0, stats: [['Resist. Todas', '+10%'], ['HP', '+300']], desc: 'Proteção elemental balanceada.' },
 
-  { name: 'Amulet of the Sage', cat: 'amulets', sub: 'Amuleto', rarity: 'legendary', tier: 5, lvl: 116, price: 14_500_000_000, currency: 'gold', classReq: 'Magician', sockets: 1, stats: [['Dano Mágico', '+18%'], ['Mana', '+500'], ['Redução CD', '+15%']], desc: 'Amuleto dos antigos sábios de Neuren.' },
-  { name: 'Bone Amulet', cat: 'amulets', sub: 'Amuleto', rarity: 'common', tier: 2, lvl: 50, price: 18_000_000, currency: 'gold', classReq: 'Todas', sockets: 0, stats: [['Espírito', '+10']], desc: 'Amuleto rústico de osso.' },
+  { name: 'Amulet of the Sage', cat: 'jewels', sub: 'Amuletos', rarity: 'legendary', tier: 5, lvl: 116, price: 14_500_000_000, currency: 'gold', classReq: 'Magician', sockets: 1, stats: [['Dano Mágico', '+18%'], ['Mana', '+500'], ['Redução CD', '+15%']], desc: 'Amuleto dos antigos sábios de Neuren.' },
+  { name: 'Bone Amulet', cat: 'jewels', sub: 'Amuletos', rarity: 'common', tier: 2, lvl: 50, price: 18_000_000, currency: 'gold', classReq: 'Todas', sockets: 0, stats: [['Espírito', '+10']], desc: 'Amuleto rústico de osso.' },
 
   { name: 'Sheltom Vermelho +9', cat: 'sheltoms', sub: 'Sheltom Vermelho', rarity: 'epic', tier: 4, lvl: 1, price: 2_100_000_000, currency: 'gold', classReq: 'Todas', sockets: 0, stats: [['Bônus de Refino', '+9'], ['Dano', '+14%']], desc: 'Pedra de refino de alto nível.' },
   { name: 'Sheltom Azul +7', cat: 'sheltoms', sub: 'Sheltom Azul', rarity: 'rare', tier: 3, lvl: 1, price: 620_000_000, currency: 'gold', classReq: 'Todas', sockets: 0, stats: [['Bônus de Refino', '+7'], ['Defesa', '+12%']], desc: 'Refino defensivo confiável.' },
@@ -157,11 +152,11 @@ const SEEDS: Seed[] = [
   { name: 'Soul de Tulla Lv2', cat: 'souls', sub: 'Soul de Defesa', rarity: 'epic', tier: 4, lvl: 1, price: 1_500_000_000, currency: 'gold', classReq: 'Todas', sockets: 0, stats: [['Resist. Gelo', '+80'], ['HP', '+400']], desc: 'Soul defensiva do domínio congelado.' },
   { name: 'Soul de Deius Lv1', cat: 'souls', sub: 'Soul de Suporte', rarity: 'rare', tier: 3, lvl: 1, price: 260_000_000, currency: 'gold', classReq: 'Todas', sockets: 0, stats: [['Regen. MP', '+18%']], desc: 'Suporte de sustentação de mana.' },
 
-  { name: 'Baby Draxos', cat: 'pets', sub: 'Pet de Combate', rarity: 'epic', tier: 4, lvl: 100, price: 5_200_000_000, currency: 'premium', classReq: 'Todas', sockets: 0, stats: [['Dano do Pet', '+220'], ['Vel. Ataque Pet', '+15%']], desc: 'Filhote de Draxos, companheiro feroz.' },
-  { name: 'Coletor Guloso', cat: 'pets', sub: 'Pet de Coleta', rarity: 'rare', tier: 3, lvl: 40, price: 900_000_000, currency: 'premium', classReq: 'Todas', sockets: 0, stats: [['Auto-coleta', 'Sim'], ['Alcance', '+3']], desc: 'Coleta itens automaticamente.' },
+  { name: 'Baby Draxos', cat: 'pets', sub: 'Pet de Combate', rarity: 'epic', tier: 4, lvl: 100, price: 850, currency: 'coins', classReq: 'Todas', sockets: 0, stats: [['Dano do Pet', '+220'], ['Vel. Ataque Pet', '+15%']], desc: 'Filhote de Draxos, companheiro feroz.' },
+  { name: 'Coletor Guloso', cat: 'pets', sub: 'Pet de Coleta', rarity: 'rare', tier: 3, lvl: 40, price: 320, currency: 'coins', classReq: 'Todas', sockets: 0, stats: [['Auto-coleta', 'Sim'], ['Alcance', '+3']], desc: 'Coleta itens automaticamente.' },
 
-  { name: 'Asa Celestial (Cosmético)', cat: 'premium', sub: 'Cosmético', rarity: 'legendary', tier: 5, lvl: 1, price: 250, currency: 'premium', classReq: 'Todas', sockets: 0, stats: [['Cosmético', 'Asas brilhantes'], ['Vaidade', '★★★★★']], desc: 'Asas celestiais puramente cosméticas.' },
-  { name: 'Pacote Premium 30d', cat: 'premium', sub: 'Item Premium', rarity: 'epic', tier: 4, lvl: 1, price: 120, currency: 'premium', classReq: 'Todas', sockets: 0, stats: [['EXP', '+30%'], ['Drop', '+20%'], ['Duração', '30 dias']], desc: 'Benefícios premium por 30 dias.' },
+  { name: 'Asa Celestial (Cosmético)', cat: 'premium', sub: 'Cosmético', rarity: 'legendary', tier: 5, lvl: 1, price: 250, currency: 'coins', classReq: 'Todas', sockets: 0, stats: [['Cosmético', 'Asas brilhantes'], ['Vaidade', '★★★★★']], desc: 'Asas celestiais puramente cosméticas.' },
+  { name: 'Pacote Premium 30d', cat: 'premium', sub: 'Item Premium', rarity: 'epic', tier: 4, lvl: 1, price: 120, currency: 'coins', classReq: 'Todas', sockets: 0, stats: [['EXP', '+30%'], ['Drop', '+20%'], ['Duração', '30 dias']], desc: 'Benefícios premium por 30 dias.' },
 ];
 
 const CAT_ICON: Record<string, string> = Object.fromEntries(CATEGORIES.map((c) => [c.id, c.icon]));

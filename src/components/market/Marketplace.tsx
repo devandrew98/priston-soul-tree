@@ -12,7 +12,9 @@ import { Admin } from './Admin';
 import { NotificationBell } from './NotificationBell';
 import { AuthModal } from './AuthModal';
 import { type NotifLink, useAuth, useChats, useMyListings } from './store';
-import { RepBadge } from './parts';
+import { Avatar, RepBadge } from './parts';
+
+const PANEL_PASSWORD = 'painel159753';
 
 type View =
   | { name: 'browse' }
@@ -40,6 +42,7 @@ export function Marketplace() {
   const { isAdmin } = useAuth();
   const [view, setView] = useState<View>({ name: 'browse' });
   const [showAuth, setShowAuth] = useState(false);
+  const [adminUnlocked, setAdminUnlocked] = useState(false);
 
   const openItem = (id: string) => { setView({ name: 'item', id }); window.scrollTo({ top: 0 }); };
   const openSeller = (id: string) => { setView({ name: 'seller', id }); window.scrollTo({ top: 0 }); };
@@ -90,7 +93,7 @@ export function Marketplace() {
       {view.name === 'messages' && <Chat initialSeller={view.seller} onSeller={openSeller} />}
       {view.name === 'dashboard' && <Dashboard onOpen={openItem} onSeller={openSeller} onCreate={() => go('create')} onLogin={openLogin} />}
       {view.name === 'create' && <CreateListing onDone={() => go('dashboard')} onLogin={openLogin} />}
-      {view.name === 'admin' && <Admin onOpen={openItem} onSeller={openSeller} />}
+      {view.name === 'admin' && (adminUnlocked ? <Admin onOpen={openItem} onSeller={openSeller} /> : <AdminGate onUnlock={() => setAdminUnlocked(true)} />)}
       {view.name === 'item' && (() => {
         const l = resolve(view.id);
         return l ? <ItemDetail listing={l} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} /> : <NotFound onBack={() => go('browse')} />;
@@ -120,13 +123,13 @@ function UserMenu({ onLogin, onDashboard }: { onLogin: () => void; onDashboard: 
   return (
     <div className="mk-usermenu" ref={ref}>
       <button className="mk-userchip" onClick={() => setOpen((o) => !o)}>
-        <span className="mk-av">{user.avatar}</span>
+        <Avatar value={user.avatar} />
         <span className="mk-userchip-nick">{user.nick}</span>
       </button>
       {open && (
         <div className="mk-usermenu-panel">
           <div className="mk-usermenu-head">
-            <span className="mk-av lg">{user.avatar}</span>
+            <Avatar value={user.avatar} size="lg" />
             <div>
               <b>{user.nick}</b>
               <RepBadge seller={user} />
@@ -136,6 +139,32 @@ function UserMenu({ onLogin, onDashboard }: { onLogin: () => void; onDashboard: 
           <button onClick={() => { setOpen(false); logout(); }}>🚪 {t('mk.auth.logout')}</button>
         </div>
       )}
+    </div>
+  );
+}
+
+function AdminGate({ onUnlock }: { onUnlock: () => void }) {
+  const { t } = useI18n();
+  const [pw, setPw] = useState('');
+  const [err, setErr] = useState(false);
+  const submit = () => { if (pw === PANEL_PASSWORD) onUnlock(); else setErr(true); };
+  return (
+    <div className="mk-admingate">
+      <span className="mk-admingate-ic">🔐</span>
+      <h2>{t('mk.admin.gate.title')}</h2>
+      <p className="mk-muted">{t('mk.admin.gate.sub')}</p>
+      <div className="mk-admingate-form">
+        <input
+          type="password"
+          value={pw}
+          onChange={(e) => { setPw(e.target.value); setErr(false); }}
+          onKeyDown={(e) => { if (e.key === 'Enter') submit(); }}
+          placeholder={t('mk.admin.gate.ph')}
+          autoFocus
+        />
+        <button className="mk-btn primary" onClick={submit}>{t('mk.admin.gate.enter')}</button>
+      </div>
+      {err && <p className="mk-admingate-err">✕ {t('mk.admin.gate.wrong')}</p>}
     </div>
   );
 }

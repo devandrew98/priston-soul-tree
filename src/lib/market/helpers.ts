@@ -9,10 +9,7 @@ export type SortKey = 'price_asc' | 'price_desc' | 'newest' | 'oldest' | 'views'
 export interface Filters {
   q: string;
   category: string; // '' = all
-  className: string; // '' = all
   rarity: string; // '' = all
-  tier: number; // 0 = all
-  minSockets: number;
   minLevel: number;
   minPrice: number | null;
   maxPrice: number | null;
@@ -23,7 +20,7 @@ export interface Filters {
 }
 
 export const EMPTY_FILTERS: Filters = {
-  q: '', category: '', className: '', rarity: '', tier: 0, minSockets: 0, minLevel: 0,
+  q: '', category: '', rarity: '', minLevel: 0,
   minPrice: null, maxPrice: null, seller: '', onlineOnly: false, verifiedOnly: false, highlightedOnly: false,
 };
 
@@ -32,14 +29,11 @@ export function filterListings(listings: Listing[], f: Filters): Listing[] {
   return listings.filter((l) => {
     const seller = SELLER_BY_ID[l.sellerId];
     if (q) {
-      const hay = `${l.name} ${l.subcategory} ${l.classReq} ${seller?.nick ?? ''} ${l.stats.map((s) => s.label + ' ' + s.value).join(' ')}`.toLowerCase();
+      const hay = `${l.name} ${l.subcategory} ${seller?.nick ?? ''}`.toLowerCase();
       if (!hay.includes(q)) return false;
     }
     if (f.category && l.category !== f.category) return false;
-    if (f.className && l.classReq !== f.className && l.classReq !== 'Todas') return false;
     if (f.rarity && l.rarity !== f.rarity) return false;
-    if (f.tier && l.tier !== f.tier) return false;
-    if (f.minSockets && l.sockets < f.minSockets) return false;
     if (f.minLevel && l.itemLevel < f.minLevel) return false;
     if (f.minPrice != null && l.price < f.minPrice) return false;
     if (f.maxPrice != null && l.price > f.maxPrice) return false;
@@ -91,12 +85,6 @@ export function marketStats(listing: Listing, series: PricePoint[]): MarketStats
     lastSale: Math.round(last * 0.98), lastSaleAt: series[series.length - 2]?.t ?? Date.now(),
     trend, trendPct,
   };
-}
-
-/** Suggest a competitive price when creating a listing (just under median). */
-export function suggestPrice(listing: Listing): number {
-  const stats = marketStats(listing, priceHistory(listing));
-  return Math.round(stats.median * 0.97);
 }
 
 // ---- recommendations ---------------------------------------------------------
@@ -215,11 +203,9 @@ export function sellerReviews(seller: Seller, limit = 6): Review[] {
 
 // ---- formatting --------------------------------------------------------------
 
-const CURRENCY_SUFFIX: Record<Currency, string> = { gold: '', silver: '', premium: ' PC' };
-
-/** 22_000_000_000 → "22kkk", 1_500_000 → "1.5kk", 20_000 → "20k". Premium → raw + PC. */
+/** 22_000_000_000 → "22kkk", 1_500_000 → "1.5kk", 20_000 → "20k". Coins → raw + Coins. */
 export function fmtPrice(value: number, currency: Currency = 'gold'): string {
-  if (currency === 'premium') return `${value.toLocaleString('pt-BR')}${CURRENCY_SUFFIX.premium}`;
+  if (currency === 'coins') return `${value.toLocaleString('pt-BR')} Coins`;
   const units: [number, string][] = [
     [1_000_000_000, 'kkk'],
     [1_000_000, 'kk'],
@@ -236,7 +222,7 @@ export function fmtPrice(value: number, currency: Currency = 'gold'): string {
 }
 
 export function currencyIcon(currency: Currency): string {
-  return currency === 'premium' ? '👑' : currency === 'silver' ? '⚪' : '🪙';
+  return currency === 'coins' ? '💰' : '🪙';
 }
 
 /** Compact "há X" relative time in PT / "X ago" in EN handled by caller labels. */

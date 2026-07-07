@@ -65,6 +65,7 @@ interface State {
   adminFeatured: Record<string, boolean>; // listing id → highlighted override
   bannedUsers: string[];
   suspendedUsers: string[];
+  contributors: string[]; // sellers granted the "Colaborador" seal (admin only)
   resolvedReports: string[];
   adminLogs: AdminLog[];
 }
@@ -85,7 +86,7 @@ function load(): State {
     authUserId: CURRENT_USER_ID, accounts: [],
     favItems: [], favSellers: [], wishlist: [], myListings: [], chats: {},
     notifications: seedNotifications(),
-    adminRemoved: [], adminFeatured: {}, bannedUsers: [], suspendedUsers: [], resolvedReports: [], adminLogs: [],
+    adminRemoved: [], adminFeatured: {}, bannedUsers: [], suspendedUsers: [], contributors: ['hadder', 'commita'], resolvedReports: [], adminLogs: [],
   };
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) || 'null');
@@ -270,6 +271,7 @@ export function useAdmin() {
     adminFeatured: s.adminFeatured,
     bannedUsers: s.bannedUsers,
     suspendedUsers: s.suspendedUsers,
+    contributors: s.contributors,
     resolvedReports: s.resolvedReports,
     logs: s.adminLogs,
     removeListing: (id: string, name: string) => { set({ adminRemoved: [...new Set([...s.adminRemoved, id])] }); addLog(`Anúncio removido: ${name} (${id})`); },
@@ -277,7 +279,14 @@ export function useAdmin() {
     toggleFeatured: (id: string, name: string, next: boolean) => { set({ adminFeatured: { ...s.adminFeatured, [id]: next } }); addLog(`${next ? 'Destacou' : 'Removeu destaque de'}: ${name}`); },
     toggleBan: (id: string, nick: string) => { const on = s.bannedUsers.includes(id); set({ bannedUsers: toggle(s.bannedUsers, id) }); addLog(`${on ? 'Desbaniu' : 'Baniu'} usuário: ${nick}`); },
     toggleSuspend: (id: string, nick: string) => { const on = s.suspendedUsers.includes(id); set({ suspendedUsers: toggle(s.suspendedUsers, id) }); addLog(`${on ? 'Reativou' : 'Suspendeu'} vendedor: ${nick}`); },
+    toggleContributor: (id: string, nick: string) => { const on = s.contributors.includes(id); set({ contributors: toggle(s.contributors, id) }); addLog(`${on ? 'Removeu selo Colaborador de' : 'Concedeu selo Colaborador a'}: ${nick}`); },
     resolveReport: (id: string, action: string) => { set({ resolvedReports: [...new Set([...s.resolvedReports, id])] }); addLog(`Denúncia ${id}: ${action}`); },
     sendGlobal: (text: string) => { pushNotif('global', { text }); addLog(`Notificação global enviada: "${text}"`); },
   };
+}
+
+/** Lightweight read-only hook for the "Colaborador" seal, usable anywhere. */
+export function useContributors() {
+  const s = useSnapshot();
+  return { contributors: s.contributors, isContributor: (id: string | null | undefined) => !!id && s.contributors.includes(id) };
 }

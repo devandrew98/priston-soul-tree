@@ -3,7 +3,7 @@ import { SELLER_BY_ID } from '../../lib/market/data';
 import { fmtPrice, marketOverview } from '../../lib/market/helpers';
 import type { Listing } from '../../lib/market/types';
 import { useI18n } from '../../lib/i18n';
-import { OnlineDot, PriceTag, RepBadge, Stars } from './parts';
+import { Avatar, OnlineDot, PriceTag, RepBadge, Stars } from './parts';
 
 export function Stats({ onOpen, onSeller }: { onOpen: (id: string) => void; onSeller: (id: string) => void }) {
   const { t } = useI18n();
@@ -44,7 +44,7 @@ export function Stats({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
           {o.topSellers.map((s, i) => (
             <button key={s.id} className="mk-rankrow" onClick={() => onSeller(s.id)}>
               <span className="mk-rank-n">{i + 1}</span>
-              <span className="mk-av">{s.avatar}</span>
+              <Avatar value={s.avatar} />
               <span className="mk-rankrow-main">
                 <b>{s.nick}</b> <OnlineDot online={s.online} />
                 <span className="mk-muted"><Stars n={s.ratingAvg} size={12} /> {s.ratingAvg.toFixed(1)}</span>
@@ -76,7 +76,7 @@ function RankList({ title, rows, onOpen }: { title: string; rows: { l: Listing; 
         {rows.map((r, i) => (
           <button key={r.l.id} className="mk-rankrow" onClick={() => onOpen(r.l.id)}>
             <span className="mk-rank-n">{i + 1}</span>
-            <span className="mk-icon sm" style={{ ['--rar' as string]: 'var(--gold)' }}>{r.l.icon}</span>
+            <span className="mk-icon sm" style={{ ['--rar' as string]: 'var(--gold)' }}>{r.l.image ? <img src={r.l.image} alt="" className="mk-icon-img" /> : r.l.icon}</span>
             <span className="mk-rankrow-main">
               <b>{r.l.name}</b>
               <span className="mk-muted">{SELLER_BY_ID[r.l.sellerId]?.nick}</span>

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { CATEGORIES, CLASSES, LISTINGS, RARITIES, SELLERS } from '../../lib/market/data';
+import { CATEGORIES, LISTINGS, RARITIES, SELLERS } from '../../lib/market/data';
 import { EMPTY_FILTERS, type Filters, type SortKey, filterListings, sortListings } from '../../lib/market/helpers';
 import { useI18n } from '../../lib/i18n';
 import { useAdmin, useMyListings } from './store';
@@ -66,31 +66,10 @@ export function Browse({ onOpen, onSeller }: { onOpen: (id: string) => void; onS
               <button className="mk-btn sm" onClick={() => setF({ ...EMPTY_FILTERS, q: f.q })}>{t('mk.clearfilters')}</button>
             </div>
 
-            <FField label={t('mk.class')}>
-              <select value={f.className} onChange={(e) => set('className', e.target.value)}>
-                <option value="">{t('mk.any')}</option>
-                {CLASSES.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </FField>
-
             <FField label={t('mk.rarity.label')}>
               <select value={f.rarity} onChange={(e) => set('rarity', e.target.value)}>
                 <option value="">{t('mk.any')}</option>
                 {RARITIES.map((r) => <option key={r} value={r}>{t(`mk.rarity.${r}`)}</option>)}
-              </select>
-            </FField>
-
-            <FField label="Tier">
-              <select value={f.tier} onChange={(e) => set('tier', Number(e.target.value))}>
-                <option value={0}>{t('mk.any')}</option>
-                {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>T{n}</option>)}
-              </select>
-            </FField>
-
-            <FField label={t('mk.sockets')}>
-              <select value={f.minSockets} onChange={(e) => set('minSockets', Number(e.target.value))}>
-                <option value={0}>{t('mk.any')}</option>
-                {[1, 2, 3].map((n) => <option key={n} value={n}>≥ {n}</option>)}
               </select>
             </FField>
 

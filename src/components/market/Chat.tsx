@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { SELLER_BY_ID } from '../../lib/market/data';
 import { useI18n } from '../../lib/i18n';
 import { useChats } from './store';
-import { OnlineDot, Since } from './parts';
+import { Avatar, OnlineDot, Since } from './parts';
 
 const EMOJIS = ['👍', '🙏', '😄', '🔥', '💰', '⚔️', '🛡️', '❤️', '🤝', '👀'];
 
@@ -80,7 +80,7 @@ export function Chat({ initialSeller, onSeller }: { initialSeller?: string; onSe
           const u = unread(id);
           return (
             <button key={id} className={`mk-chat-conv ${active === id ? 'on' : ''}`} onClick={() => setActive(id)}>
-              <span className="mk-av">{s?.avatar}</span>
+              <Avatar value={s?.avatar || ''} />
               <span className="mk-chat-conv-body">
                 <span className="mk-chat-conv-top">
                   <b>{s?.nick}</b>
@@ -100,7 +100,7 @@ export function Chat({ initialSeller, onSeller }: { initialSeller?: string; onSe
           <>
             <header className="mk-chat-head">
               <button className="mk-chat-head-id" onClick={() => onSeller(activeSeller.id)}>
-                <span className="mk-av">{activeSeller.avatar}</span>
+                <Avatar value={activeSeller.avatar} />
                 <span>
                   <b>{activeSeller.nick}</b>
                   <span className="mk-chat-head-sub">

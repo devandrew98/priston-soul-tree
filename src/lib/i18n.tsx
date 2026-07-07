@@ -131,7 +131,7 @@ const DICT: Record<string, Entry> = {
   'sod.weak': { pt: 'abaixo da média', en: 'below average' },
 
   // ---- Marketplace ----
-  'mk.title': { pt: 'Mercado de Priston', en: 'Priston Market' },
+  'mk.title': { pt: 'Mercado PristonTale EU', en: 'PristonTale EU Market' },
   'mk.subtitle': {
     pt: 'Compre e venda itens do servidor sem depender de lojas AFK. Pesquisa rápida, preços transparentes e negociação direta.',
     en: 'Buy and sell server items without AFK shops. Fast search, transparent prices and direct trading.',
@@ -179,30 +179,24 @@ const DICT: Record<string, Entry> = {
 
   // rarity / status / currency
   'mk.rarity.label': { pt: 'Raridade', en: 'Rarity' },
-  'mk.rarity.common': { pt: 'Comum', en: 'Common' },
-  'mk.rarity.rare': { pt: 'Raro', en: 'Rare' },
-  'mk.rarity.epic': { pt: 'Épico', en: 'Epic' },
-  'mk.rarity.legendary': { pt: 'Lendário', en: 'Legendary' },
+  'mk.rarity.common': { pt: 'Incomum', en: 'Uncommon' },
+  'mk.rarity.rare': { pt: 'Rara', en: 'Rare' },
+  'mk.rarity.epic': { pt: 'Épica', en: 'Epic' },
+  'mk.rarity.legendary': { pt: 'Lendária', en: 'Legendary' },
   'mk.status.available': { pt: 'Disponível', en: 'Available' },
   'mk.status.reserved': { pt: 'Reservado', en: 'Reserved' },
   'mk.status.sold': { pt: 'Vendido', en: 'Sold' },
   'mk.currency.gold': { pt: 'Gold', en: 'Gold' },
-  'mk.currency.silver': { pt: 'Prata', en: 'Silver' },
-  'mk.currency.premium': { pt: 'Premium Coin', en: 'Premium Coin' },
+  'mk.currency.coins': { pt: 'Coins', en: 'Coins' },
 
   // categories
   'mk.cat.weapons': { pt: 'Armas', en: 'Weapons' },
   'mk.cat.armors': { pt: 'Armaduras', en: 'Armors' },
-  'mk.cat.shields': { pt: 'Escudos', en: 'Shields' },
-  'mk.cat.gloves': { pt: 'Luvas', en: 'Gloves' },
-  'mk.cat.boots': { pt: 'Botas', en: 'Boots' },
-  'mk.cat.bracelets': { pt: 'Braceletes', en: 'Bracelets' },
-  'mk.cat.rings': { pt: 'Anéis', en: 'Rings' },
-  'mk.cat.amulets': { pt: 'Amuletos', en: 'Amulets' },
+  'mk.cat.jewels': { pt: 'Jóias', en: 'Jewelry' },
   'mk.cat.sheltoms': { pt: 'Sheltoms', en: 'Sheltoms' },
   'mk.cat.souls': { pt: 'Souls', en: 'Souls' },
   'mk.cat.pets': { pt: 'Pets', en: 'Pets' },
-  'mk.cat.premium': { pt: 'Premium', en: 'Premium' },
+  'mk.cat.premium': { pt: 'Premiums', en: 'Premiums' },
 
   // search / filters / sort
   'mk.search.ph': { pt: 'Pesquisar itens, atributos, vendedores...', en: 'Search items, stats, sellers...' },
@@ -300,8 +294,22 @@ const DICT: Record<string, Entry> = {
   'mk.create.statvalue': { pt: 'Valor', en: 'Value' },
   'mk.create.addstat': { pt: 'Adicionar atributo', en: 'Add stat' },
   'mk.create.descph': { pt: 'Descreva o item, condições da negociação, etc.', en: 'Describe the item, trade conditions, etc.' },
-  'mk.create.highlight': { pt: 'Destacar anúncio (aparece no topo da vitrine)', en: 'Highlight listing (shows at the top)' },
+  'mk.create.highlight': { pt: 'Destacar anúncio', en: 'Highlight listing' },
   'mk.create.publish': { pt: 'Publicar anúncio', en: 'Publish listing' },
+  'mk.create.image': { pt: 'Imagem do item', en: 'Item image' },
+  'mk.create.imagehint': { pt: 'Clique ou arraste uma imagem aqui', en: 'Click or drag an image here' },
+  'mk.create.imagereq': { pt: 'A imagem do item é obrigatória para publicar.', en: 'An item image is required to publish.' },
+
+  // contributors
+  'mk.contrib': { pt: 'Colaborador', en: 'Contributor' },
+  'mk.contrib.hint': { pt: 'Selo concedido pelo administrador a quem ajuda financeiramente o servidor. Permite destacar anúncios.', en: 'Seal granted by an admin to those who support the server financially. Allows highlighting listings.' },
+
+  // admin password gate
+  'mk.admin.gate.title': { pt: 'Painel restrito', en: 'Restricted panel' },
+  'mk.admin.gate.sub': { pt: 'Digite a senha para acessar o painel administrativo.', en: 'Enter the password to access the admin panel.' },
+  'mk.admin.gate.ph': { pt: 'Senha do painel', en: 'Panel password' },
+  'mk.admin.gate.enter': { pt: 'Acessar', en: 'Enter' },
+  'mk.admin.gate.wrong': { pt: 'Senha incorreta.', en: 'Wrong password.' },
 
   // dashboard
   'mk.dash.title': { pt: 'Meu Painel', en: 'My Dashboard' },
@@ -401,6 +409,7 @@ const DICT: Record<string, Entry> = {
   'mk.auth.nick': { pt: 'Nickname', en: 'Nickname' },
   'mk.auth.clan': { pt: 'Clã', en: 'Clan' },
   'mk.auth.avatar': { pt: 'Avatar', en: 'Avatar' },
+  'mk.auth.uploadavatar': { pt: 'Enviar meu próprio avatar', en: 'Upload my own avatar' },
   'mk.auth.createaccount': { pt: 'Criar conta e entrar', en: 'Create account & log in' },
   'mk.auth.demonote': { pt: 'Demo: nenhuma senha é exigida — sua conta fica salva apenas neste navegador.', en: 'Demo: no password required — your account is saved in this browser only.' },
   'mk.auth.required': { pt: 'Faça login para continuar', en: 'Log in to continue' },

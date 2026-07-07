@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
-import { RARITY_COLOR, SELLER_BY_ID } from '../../lib/market/data';
+import { RARITY_COLOR } from '../../lib/market/data';
 import { priceHistory } from '../../lib/market/data';
 import { cheaperAlternatives, fmtPrice, marketStats, sellerItems, similarItems } from '../../lib/market/helpers';
 import type { Listing } from '../../lib/market/types';
 import { useI18n } from '../../lib/i18n';
-import { useFavorites } from './store';
+import { getSeller, useFavorites } from './store';
 import { ItemCard } from './ItemCard';
 import { PriceChart } from './PriceChart';
-import { OnlineDot, PriceTag, RarityTag, RepBadge, Since, Sockets, Stars, StatusPill } from './parts';
+import { Avatar, ContribSeal, OnlineDot, PriceTag, RarityTag, RepBadge, Since, Stars, StatusPill } from './parts';
 
 const TREND_ICON = { up: '📈', down: '📉', stable: '➖' } as const;
 
@@ -23,7 +23,7 @@ export function ItemDetail({
   const { t } = useI18n();
   const { isFav, toggleFav } = useFavorites();
   const [note, setNote] = useState('');
-  const seller = SELLER_BY_ID[listing.sellerId];
+  const seller = getSeller(listing.sellerId);
   const glow = RARITY_COLOR[listing.rarity];
 
   const series = useMemo(() => priceHistory(listing), [listing]);
@@ -35,6 +35,13 @@ export function ItemDetail({
   const diffToLowest = stats.min > 0 ? ((listing.price - stats.min) / stats.min) * 100 : 0;
   const flash = (msg: string) => { setNote(msg); window.setTimeout(() => setNote(''), 2600); };
 
+  if (!seller) return (
+    <div className="mk-detail">
+      <button className="mk-back" onClick={onBack}>← {t('mk.back')}</button>
+      <p className="mk-empty">{t('mk.notfound')}</p>
+    </div>
+  );
+
   return (
     <div className="mk-detail">
       <button className="mk-back" onClick={onBack}>← {t('mk.back')}</button>
@@ -43,16 +50,15 @@ export function ItemDetail({
         {/* left: item */}
         <div className="mk-detail-main">
           <div className="mk-detail-hero">
-            <span className="mk-icon xl" style={{ ['--rar' as string]: glow }}>{listing.icon}</span>
+            <span className="mk-icon xl" style={{ ['--rar' as string]: glow }}>
+              {listing.image ? <img src={listing.image} alt={listing.name} className="mk-icon-img" /> : listing.icon}
+            </span>
             <div className="mk-detail-headinfo">
               {listing.highlighted && <span className="mk-featured-tag inline">★ {t('mk.featured')}</span>}
               <h1 className="mk-detail-name">{listing.name}</h1>
               <div className="mk-detail-tags">
                 <RarityTag rarity={listing.rarity} />
-                <span className="mk-chip">T{listing.tier}</span>
                 <span className="mk-chip">{t('mk.lvl')} {listing.itemLevel}</span>
-                <span className="mk-chip">{listing.classReq}</span>
-                <Sockets n={listing.sockets} />
                 <StatusPill status={listing.status} />
               </div>
               <div className="mk-detail-price">
@@ -65,17 +71,19 @@ export function ItemDetail({
             </div>
           </div>
 
-          <section className="mk-block">
-            <h2 className="mk-h2">{t('mk.attributes')}</h2>
-            <div className="mk-attrs">
-              {listing.stats.map((s) => (
-                <div key={s.label} className="mk-attr">
-                  <span>{s.label}</span>
-                  <b>{s.value}</b>
-                </div>
-              ))}
-            </div>
-          </section>
+          {listing.stats.length > 0 && (
+            <section className="mk-block">
+              <h2 className="mk-h2">{t('mk.attributes')}</h2>
+              <div className="mk-attrs">
+                {listing.stats.map((s) => (
+                  <div key={s.label} className="mk-attr">
+                    <span>{s.label}</span>
+                    <b>{s.value}</b>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           <section className="mk-block">
             <h2 className="mk-h2">{t('mk.description')}</h2>
@@ -117,10 +125,11 @@ export function ItemDetail({
         <aside className="mk-detail-side">
           <div className="mk-sellercard">
             <button className="mk-sellercard-head" onClick={() => onSeller(seller.id)}>
-              <span className="mk-av lg">{seller.avatar}</span>
+              <Avatar value={seller.avatar} size="lg" />
               <div>
                 <strong>{seller.nick} {seller.verified && <span className="mk-verified" title={t('mk.verified')}>✔</span>}</strong>
                 <span className="mk-sellercard-sub">{seller.className} · {t('mk.lvl')} {seller.level} · {seller.clan}</span>
+                <ContribSeal sellerId={seller.id} />
               </div>
             </button>
             <div className="mk-sellercard-row">

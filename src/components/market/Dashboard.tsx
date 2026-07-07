@@ -61,7 +61,7 @@ export function Dashboard({ onOpen, onSeller, onCreate, onLogin }: { onOpen: (id
         <div className="mk-dash-list">
           {active.map((l) => (
             <div key={l.id} className="mk-dashrow">
-              <span className="mk-icon" style={{ ['--rar' as string]: 'var(--gold)' }}>{l.icon}</span>
+              <span className="mk-icon" style={{ ['--rar' as string]: 'var(--gold)' }}>{l.image ? <img src={l.image} alt="" className="mk-icon-img" /> : l.icon}</span>
               <button className="mk-dashrow-name" onClick={() => onOpen(l.id)}>{l.name}</button>
               <StatusPill status={l.status} />
               <span className="mk-muted">👁 {l.views}</span>

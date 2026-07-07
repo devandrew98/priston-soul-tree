@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { LISTINGS, LISTING_BY_ID, REPORTS, SELLERS, SELLER_BY_ID } from '../../lib/market/data';
 import { useI18n } from '../../lib/i18n';
 import { useAdmin, useMyListings } from './store';
-import { PriceTag, Since, StatusPill } from './parts';
+import { Avatar, PriceTag, Since, StatusPill } from './parts';
 
 type Section = 'listings' | 'users' | 'reports' | 'global' | 'logs';
 
@@ -52,7 +52,7 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
               const featured = admin.adminFeatured[l.id] ?? l.highlighted;
               return (
                 <div key={l.id} className={`mk-admin-row ${removed ? 'removed' : ''}`}>
-                  <span className="mk-icon sm" style={{ ['--rar' as string]: 'var(--gold)' }}>{l.icon}</span>
+                  <span className="mk-icon sm" style={{ ['--rar' as string]: 'var(--gold)' }}>{l.image ? <img src={l.image} alt="" className="mk-icon-img" /> : l.icon}</span>
                   <button className="mk-admin-name" onClick={() => onOpen(l.id)}>{l.name}</button>
                   <button className="mk-admin-sub" onClick={() => onSeller(l.sellerId)}>{SELLER_BY_ID[l.sellerId]?.nick}</button>
                   <PriceTag value={l.price} currency={l.currency} />
@@ -78,18 +78,21 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
           {SELLERS.map((u) => {
             const banned = admin.bannedUsers.includes(u.id);
             const suspended = admin.suspendedUsers.includes(u.id);
+            const contributor = admin.contributors.includes(u.id);
             return (
               <div key={u.id} className={`mk-admin-row ${banned ? 'removed' : ''}`}>
-                <span className="mk-av">{u.avatar}</span>
+                <Avatar value={u.avatar} />
                 <button className="mk-admin-name" onClick={() => onSeller(u.id)}>{u.nick}</button>
                 <span className="mk-admin-sub">{u.className} · {t('mk.lvl')} {u.level}</span>
                 <span className="mk-muted">{u.itemsSold} {t('mk.itemssold')}</span>
                 <span className="mk-admin-flags">
+                  {contributor && <span className="mk-flag contrib">⭐ {t('mk.contrib')}</span>}
                   {u.reports > 0 && <span className={`mk-flag ${u.reports >= 3 ? 'bad' : ''}`}>⚑ {u.reports}</span>}
                   {banned && <span className="mk-flag bad">{t('mk.admin.banned')}</span>}
                   {suspended && <span className="mk-flag warn">{t('mk.admin.suspended')}</span>}
                 </span>
                 <span className="mk-admin-acts">
+                  <button className={`mk-btn sm ${contributor ? 'active' : ''}`} onClick={() => admin.toggleContributor(u.id, u.nick)} title={t('mk.contrib.hint')}>⭐ {t('mk.contrib')}</button>
                   <button className={`mk-btn sm ${suspended ? 'active' : ''}`} onClick={() => admin.toggleSuspend(u.id, u.nick)}>{suspended ? t('mk.admin.reactivate') : t('mk.admin.suspend')}</button>
                   <button className={`mk-btn sm ${banned ? 'active' : 'danger'}`} onClick={() => admin.toggleBan(u.id, u.nick)}>{banned ? t('mk.admin.unban') : t('mk.admin.ban')}</button>
                 </span>

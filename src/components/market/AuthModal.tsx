@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { CLASSES, SELLERS } from '../../lib/market/data';
 import { useI18n } from '../../lib/i18n';
 import { useAuth } from './store';
-import { OnlineDot, RepBadge } from './parts';
+import { Avatar, OnlineDot, RepBadge } from './parts';
 
 const AVATARS = ['🧑', '🐺', '🦁', '🏹', '⚔️', '🛡️', '🔮', '🐉', '👑', '🌙', '🦅', '🗡️'];
 
@@ -11,12 +11,21 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
   const { t } = useI18n();
   const { loginAs, register } = useAuth();
   const [mode, setMode] = useState<'login' | 'register'>('login');
+  const fileRef = useRef<HTMLInputElement>(null);
 
   // register fields
   const [nick, setNick] = useState('');
   const [className, setClassName] = useState(CLASSES[0]);
   const [clan, setClan] = useState('');
   const [avatar, setAvatar] = useState(AVATARS[0]);
+
+  const onAvatarFile = (file: File | undefined) => {
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = () => setAvatar(String(reader.result));
+    reader.readAsDataURL(file);
+  };
+  const customAvatar = /^data:/.test(avatar);
 
   const doLogin = (id: string) => { loginAs(id); onClose(); };
   const doRegister = () => {
@@ -42,7 +51,7 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
             <div className="mk-auth-chars">
               {SELLERS.map((s) => (
                 <button key={s.id} className="mk-auth-char" onClick={() => doLogin(s.id)}>
-                  <span className="mk-av lg">{s.avatar}</span>
+                  <Avatar value={s.avatar} size="lg" />
                   <span className="mk-auth-char-info">
                     <b>{s.nick} {s.verified && <span className="mk-verified">✔</span>}</b>
                     <span className="mk-muted">{s.className} · {t('mk.lvl')} {s.level} <OnlineDot online={s.online} /></span>
@@ -76,6 +85,10 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
                 {AVATARS.map((a) => (
                   <button key={a} className={`mk-avatar-opt ${avatar === a ? 'on' : ''}`} onClick={() => setAvatar(a)}>{a}</button>
                 ))}
+                <button className={`mk-avatar-opt upload ${customAvatar ? 'on' : ''}`} onClick={() => fileRef.current?.click()} title={t('mk.auth.uploadavatar')}>
+                  {customAvatar ? <Avatar value={avatar} /> : '📷'}
+                </button>
+                <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => onAvatarFile(e.target.files?.[0])} />
               </div>
             </div>
             <button className="mk-btn primary mk-auth-submit" onClick={doRegister} disabled={!nick.trim()}>

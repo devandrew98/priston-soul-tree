@@ -4,7 +4,7 @@ import { fmtPrice, sellerItems, sellerReviews } from '../../lib/market/helpers';
 import { useI18n } from '../../lib/i18n';
 import { getSeller, useFavSellers } from './store';
 import { ItemCard } from './ItemCard';
-import { OnlineDot, RepBadge, Since, Stars } from './parts';
+import { Avatar, ContribSeal, OnlineDot, RepBadge, Since, Stars } from './parts';
 
 const MEDAL_ICON: Record<string, string> = Object.fromEntries(MEDALS.map((m) => [m.id, m.icon]));
 const DAY = 86400000;
@@ -35,12 +35,13 @@ export function SellerProfile({
       <button className="mk-back" onClick={onBack}>← {t('mk.back')}</button>
 
       <div className="mk-profile-head">
-        <span className="mk-av xxl">{seller.avatar}</span>
+        <Avatar value={seller.avatar} size="xxl" />
         <div className="mk-profile-id">
           <h1 className="mk-profile-nick">
             {seller.nick}
             {seller.verified && <span className="mk-verified" title={t('mk.verified')}>✔</span>}
             <RepBadge seller={seller} />
+            <ContribSeal sellerId={seller.id} />
           </h1>
           <div className="mk-profile-sub">
             {seller.className} · {t('mk.lvl')} {seller.level} · 🛡 {seller.clan}

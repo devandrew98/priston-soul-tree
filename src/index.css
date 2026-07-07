@@ -1017,3 +1017,32 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .mk-loginprompt-ic { font-size: 46px; }
 .mk-loginprompt h2 { color: var(--gold-bright); margin: 0; }
 .mk-loginprompt .mk-btn { margin-top: 8px; }
+
+/* --- item image + avatar image + contributor seal --- */
+.mk-icon { overflow: hidden; }
+.mk-icon-img { width: 100%; height: 100%; object-fit: cover; }
+.mk-av-img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+.mk-av { overflow: hidden; }
+.mk-contrib { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 800; color: #1a1206; background: linear-gradient(180deg, var(--gold-bright), var(--gold)); border-radius: 20px; padding: 1px 7px; white-space: nowrap; }
+.mk-flag.contrib { color: var(--gold-bright); border-color: var(--gold); background: rgba(212,175,106,0.14); }
+
+/* --- create: image upload --- */
+.mk-imgdrop { position: relative; display: grid; place-items: center; min-height: 150px; background: var(--bg); border: 2px dashed var(--border); border-radius: 12px; cursor: pointer; transition: 0.15s; overflow: hidden; }
+.mk-imgdrop:hover { border-color: var(--gold); }
+.mk-imgdrop.has { border-style: solid; border-color: var(--gold); }
+.mk-imgdrop-hint { color: var(--text-dim); font-size: 14px; }
+.mk-imgdrop-preview { max-width: 100%; max-height: 240px; object-fit: contain; border-radius: 8px; }
+.mk-imgdrop-remove { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border: 1px solid var(--border); color: #fff; width: 28px; height: 28px; border-radius: 8px; }
+.mk-imgdrop-remove:hover { border-color: var(--attack); color: var(--attack); }
+.mk-create-imgreq { font-size: 12.5px; color: var(--support); margin: -4px 0 0; }
+.mk-avatar-opt.upload { display: grid; place-items: center; overflow: hidden; padding: 0; }
+.mk-avatar-opt.upload .mk-av { width: 100%; height: 100%; border: none; border-radius: 8px; }
+
+/* --- admin password gate --- */
+.mk-admingate { text-align: center; padding: 60px 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.mk-admingate-ic { font-size: 46px; }
+.mk-admingate h2 { color: var(--gold-bright); margin: 0; }
+.mk-admingate-form { display: flex; gap: 8px; margin-top: 8px; }
+.mk-admingate-form input { background: var(--bg); border: 1px solid var(--border); border-radius: 9px; color: var(--text); padding: 10px 12px; font-size: 14px; min-width: 220px; }
+.mk-admingate-form input:focus { outline: none; border-color: var(--gold); }
+.mk-admingate-err { color: var(--attack); font-size: 13px; }
