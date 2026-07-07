@@ -726,6 +726,14 @@ const DICT: Record<string, Entry> = {
     en: 'I tested {sims} builds in {s}s. The best scored {score} using {nodes} nodes and {pts} points.',
   },
   'ai2.ex.breakdown': { pt: 'Perfil do score: {off}% ofensa · {def}% defesa · {uti}% utilidade.', en: 'Score profile: {off}% offense · {def}% defense · {uti}% utility.' },
+  'ai2.ex.filled': {
+    pt: '🧩 Preenchi {n} node(s) de passagem que ficariam vazios — nó aberto sem soul desperdiça os pontos de desbloqueio.',
+    en: '🧩 I filled {n} pass-through node(s) that would sit empty — an opened node without a soul wastes its unlock points.',
+  },
+  'ai2.ex.survival': {
+    pt: '🛡️ Desses, {n} receberam souls defensivas pra você aguentar o mapa (dano puro não farma se você morre).',
+    en: '🛡️ Of those, {n} got defensive souls so you can survive the map (pure damage does not farm if you die).',
+  },
   'ai2.ex.vsgreedy': { pt: 'A busca profunda superou o gerador rápido em {pct}%.', en: 'Deep search beat the quick generator by {pct}%.' },
   'ai2.ex.samegreedy': { pt: 'Empatou com o gerador rápido — pra esse objetivo, ele provavelmente já é o ótimo.', en: 'Tied with the quick generator — for this goal it is probably already optimal.' },
   'ai2.ex.plateau': { pt: 'A busca estabilizou (platô): mais tempo dificilmente melhoraria o resultado.', en: 'The search plateaued: more time would hardly improve the result.' },

@@ -41,6 +41,9 @@ export function explainResult(res: SolverResult): AdviceToken[] {
     },
   });
 
+  if (res.filled > 0) tokens.push({ key: 'ai2.ex.filled', vars: { n: res.filled } });
+  if (res.filledSurvival > 0) tokens.push({ key: 'ai2.ex.survival', vars: { n: res.filledSurvival } });
+
   if (res.seedScore > 0) {
     const gain = ((best.score.total - res.seedScore) / res.seedScore) * 100;
     if (gain >= 0.5) tokens.push({ key: 'ai2.ex.vsgreedy', vars: { pct: gain.toFixed(1) } });

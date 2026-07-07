@@ -1,7 +1,21 @@
 # PROJECT_STATE.md — Priston Soul Tree · Motor de IA (Solver)
 
 > Fonte única da verdade do estado do projeto. Atualizado a cada sessão de desenvolvimento.
-> Última atualização: 2026-07-07.
+> Última atualização: 2026-07-07 (sessão do motor de IA + fill pass).
+
+---
+
+# Registro da sessão — 2026-07-07 (últimas ~5 horas)
+
+Tudo que foi feito hoje, em ordem:
+
+1. **Motor de IA completo (`src/engine/`, 10 módulos + 6 arquivos de teste)** — ScoringEngine, PathFinder, genoma com 7 mutações válidas, SearchEngine (hill-climb + restarts + TimeBudget + Plateau Detection + cache), KnowledgeBase + StatisticsEngine (aprendizado entre buscas), AIConsultant (explicabilidade + recomendações + PromptBuilder p/ LLM futuro), Web Workers paralelos (1 por núcleo, cap 4) com fallback inline.
+2. **Otimização de performance guiada por benchmark** — o gargalo era o Steiner (`unlockedFor`): 0,94ms/avaliação → reescrito com typed arrays indexadas por inteiro em `lib/graph.ts` → **0,11ms (8,6×)**. Resultado: **~30.000 builds/s**, 193k–240k builds por rodada de 8s.
+3. **UI "🚀 Busca profunda"** no Gerador — tempo 3/8/20s, progresso ao vivo, badge de confiança, Top-5 com Aplicar, Análise da IA + Recomendações, tudo PT/EN.
+4. **Integração com o trabalho da outra máquina** — o remoto tinha 11 commits (Home, Timer Fury, SoD, Marketplace+Supabase, voz refatorada em `lib/alert.ts`); rebase resolvido (conflito só no package-lock), build+testes verdes com tudo junto.
+5. **Fill Pass — "nó aberto vazio = pontos desperdiçados"** (pedido do usuário): novo `engine/filler.ts`. Insight-chave: soul nível 1 num nó já aberto custa **zero** a mais (o desbloqueio já foi pago). Após a busca (e também no gerador rápido), TODO nó aberto vazio recebe a melhor soul restante na hierarquia **objetivo → sobrevivência (wiki: precisa tankar o mapa) → qualquer stat útil**; souls PvP só entram como filler em nós PvP (ou com PvP ligado). Pontos que sobrarem viram level-ups pelos melhores ganhos marginais. A IA explica: "🧩 Preenchi N nodes de passagem…" / "🛡️ N receberam souls defensivas…".
+6. **Testes: 17 → 22** (5 novos do filler: preenche tudo que dá, nunca piora o score, nunca estoura orçamento, sobra < 3 pontos, degrada sem crash).
+7. **Verificação real no navegador** — busca profunda de 8s: 209.576 builds, top com 24 nodes/214 pts; aplicado na árvore: **0 nodes desbloqueados vazios**, 214/214 pontos, stats de ataque (AP 780/Crit 3,5%) + camada de sobrevivência (Defense 450/Absorb 148/HP 140/Evade 3%).
 
 ---
 
@@ -55,6 +69,7 @@ src/
     pathfinder.ts    ← PathFinder: custo EXATO da build sob as regras de desbloqueio
     genome.ts        ← domínio do solver: representação esparsa, candidatos, hash, 7 mutações válidas
     search.ts        ← SearchEngine (Optimization+Simulation): hill-climb, TimeBudget, Plateau, cache, top-K
+    filler.ts        ← Fill Pass: soul em TODO nó aberto vazio (objetivo→sobrevivência→geral) + sobra de pontos em level-ups
     knowledge.ts     ← KnowledgeBase + StatisticsEngine (storage injetável)
     consultant.ts    ← AIConsultant: explainResult, recommend, buildPrompt (tokens i18n)
     worker.ts        ← entry do Web Worker (1 SearchEngine por núcleo)
@@ -82,6 +97,7 @@ api/                 ← serverless Vercel (build share + player sync, Upstash R
 | `pathfinder.ts` | Custo exato/conectividade (regras do jogo) | genome, search |
 | `genome.ts` | Espaço de busca: candidatos, mutações, conversões | search, controller, UI |
 | `search.ts` | Loop de otimização (sim, aceita/descarta, platô, cache) | worker, controller |
+| `filler.ts` | Preencher nós abertos vazios (grátis) + gastar sobra de pontos | controller, UI (gerador rápido) |
 | `knowledge.ts` | Persistir melhor build por perfil + estatísticas | controller, testes |
 | `consultant.ts` | Explicar/recomendar (tokens i18n) + prompt p/ LLM futuro | UI |
 | `worker.ts` | Rodar 1 SearchEngine fora da thread da UI | controller (postMessage) |
@@ -111,12 +127,12 @@ api/                 ← serverless Vercel (build share + player sync, Upstash R
 - **F3 ScoringEngine** ✅ — score único ponderado + breakdown ofensa/defesa/utilidade + eficiência/ponto; pesos vêm dos sliders (% × escala por stat).
 - **F4 PathFinder** ✅ — já existia (`graph.ts`: Dijkstra node-weighted, Steiner guloso); ganhou fachada `genomeCost` com teste de equivalência às regras do jogo, e foi **reescrito com typed arrays** (ver F11).
 - **F5 OptimizationEngine** ✅ — `SearchEngine`: hill-climbing estocástico, aceitação com random-walk 2%, restarts (kick após 2.200 sims sem melhora), **TimeBudget** rígido, **Plateau Detection** (para cedo se >55% do tempo e 45% sem melhora), SearchState completo.
-- **F6 SimulationEngine** ✅ — milhares de builds geradas (7 mutações válidas), comparadas (score), descartadas (rejeição por orçamento/pior), rankeadas (**top-K distintas por hash**), medidas (**~30.000 builds/segundo** no total; 193k–240k por rodada de 7-8s).
+- **F6 SimulationEngine** ✅ — milhares de builds geradas (7 mutações válidas), comparadas (score), descartadas (rejeição por orçamento/pior), rankeadas (**top-K distintas por hash**), medidas (**~30.000 builds/segundo** no total; 193k–240k por rodada de 7-8s). **+ Fill Pass** (`filler.ts`): nenhum nó aberto fica vazio — soul grátis nível 1 em cada passagem (objetivo → sobrevivência → geral, conforme a wiki), sobra de orçamento vira level-ups; aplicado na busca profunda E no gerador rápido.
 - **F7 Cache + KnowledgeBase** ✅ — CacheEngine (memoização hash→score in-run, cap 60k); **KnowledgeBase** (melhor build por perfil de pergunta em localStorage; novas buscas seedam dela — **aprendizado comprovado**: 57.679 → 57.872 → 57.893 em rodadas sucessivas); **StatisticsEngine** (runs/sims/ms/bestEver acumulados).
 - **F8 IA** ✅ — `AIConsultant`: **ExplainabilityEngine** (resumo, breakdown, ganho vs greedy, platô/tempo, uso de conhecimento), **RecommendationEngine** (subir soul pra Lv3; souls que valem caçar), **PromptBuilder** (prompt pronto p/ LLM futuro). IA **não** cria builds.
 - **F9 UX** ✅ — seção "🚀 Busca profunda" no Gerador: seletor de tempo (3/8/20s), barra de progresso ao vivo (builds testadas + melhor score), **badge de confiança (%)**, **Top 5 builds** com Aplicar (1 clique → árvore), Análise da IA e Recomendações — tudo bilíngue PT/EN.
 - **F11 Performance** ✅ — benchmark identificou o gargalo (Steiner: 0,94ms/avaliação); reescrito com **arrays tipados indexados por inteiro** → 8,6× mais rápido (~0,11ms); paralelismo por **Web Workers** (min(4, núcleos−1)); cache de avaliação; guarda de regressão no teste de benchmark.
-- **F12 Testes** ✅ — **17 testes + benchmark (vitest, `npm test`)**: scoring (determinismo, monotonicidade, pesos), genome (hash estável, roundtrip, 300 mutações válidas, **equivalência genomeCost ≡ pointsSpent**), search (milhares de sims, orçamento nunca estourado, nunca perde pro seed, respeita tempo, caso sem candidatos), knowledge (perfil, roundtrip, só-melhor, estatísticas).
+- **F12 Testes** ✅ — **22 testes + benchmark (vitest, `npm test`)**: scoring (determinismo, monotonicidade, pesos), genome (hash estável, roundtrip, 300 mutações válidas, **equivalência genomeCost ≡ pointsSpent**), search (milhares de sims, orçamento nunca estourado, nunca perde pro seed, respeita tempo, caso sem candidatos), knowledge (perfil, roundtrip, só-melhor, estatísticas), **filler (preenche todo nó aberto possível, nunca piora o score, nunca estoura orçamento, sobra < 3 pts, degrada sem crash)**.
 
 ## O que ainda falta (com dependências documentadas)
 
@@ -133,9 +149,10 @@ api/                 ← serverless Vercel (build share + player sync, Upstash R
 
 - **~30.000 builds/s** agregadas (3 workers) · 193k–240k builds por rodada de 7–8s.
 - Avaliação: ~0,11ms/build (era 0,94ms antes da otimização — 8,6×).
-- **Busca profunda superou o gerador rápido em +8,8%** no objetivo Ataque/Crítico (214 pts).
+- **Busca profunda superou o gerador rápido em +8,7–8,8%** no objetivo Ataque/Crítico (214 pts).
 - Platô detectado encerrou rodada de 8s em 6,7s (economia real de tempo).
-- 17/17 testes verdes; bundle do worker: 33,7 kB.
+- **Fill Pass verificado na árvore real: 0 nodes desbloqueados vazios** (24/24 preenchidos, 214/214 pts; build de ataque ganhou Defense 450 / Absorb 148 / HP 140 / Evade 3% de graça nos nós de passagem).
+- 22/22 testes verdes; bundle do worker: 33,7 kB.
 
 ## Como rodar
 

@@ -59,6 +59,8 @@ export interface SolverResult extends SearchOutcome {
   workers: number;
   fromKnowledge: boolean; // a previous run's best was reused as a seed
   seedScore: number; // score of the greedy seed (to measure the deep search's gain)
+  filled: number; // pass-through nodes that received a soul in the fill pass
+  filledSurvival: number; // of those, how many got a survivability soul
 }
 
 // ---- worker protocol ----

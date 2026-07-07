@@ -2,13 +2,15 @@ import { useMemo, useRef, useState } from 'react';
 import { optimize, type Goal } from '../lib/optimizer';
 import { RARITY_LABEL, fmt } from '../lib/formula';
 import { computeTotals, slotStatValues } from '../lib/calc';
-import { TREE_NODE_BY_ID, NODE_CATEGORY } from '../lib/tree';
+import { TREE_NODE_BY_ID, NODE_CATEGORY, RARITY_POINT_COST } from '../lib/tree';
 import { SOULS, SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
 import { useStore, totalFusionPoints } from '../store';
 import { useI18n } from '../lib/i18n';
 import { HelpTip } from './HelpTip';
 import { deepOptimize, type DeepProgress } from '../engine/controller';
-import { genomeToSlots } from '../engine/genome';
+import { genomeToSlots, slotsToGenome } from '../engine/genome';
+import { genomeCost } from '../engine/pathfinder';
+import { fillGenome } from '../engine/filler';
 import { explainResult, recommend, type AdviceToken } from '../engine/consultant';
 import type { EngineConfig, SolverResult } from '../engine/types';
 
@@ -63,13 +65,38 @@ export function Optimizer() {
     [goal, inventory, useBudget, budget, allSouls],
   );
 
-  const previewBuild = { ...activeBuild, slots: result.slots };
+  // Fill pass on the quick result too: a soul on every opened-but-empty
+  // pass-through node (free — the unlock is already paid) and any leftover
+  // points into level-ups. Empty opened nodes waste their unlock points.
+  const quick = useMemo(() => {
+    if (!result.used.length) return { slots: result.slots, used: result.used, points: result.pointsSpent };
+    const cfg: EngineConfig = {
+      weights: goal.weights,
+      inventory,
+      allSouls,
+      includePvp,
+      budget: useBudget ? budget : 999999,
+      timeMs: 0,
+      rngSeed: 1,
+    };
+    const { genome } = fillGenome(slotsToGenome(result.slots), cfg);
+    const slots = genomeToSlots(genome);
+    const used = Object.entries(genome).map(([slotId, ge]) => {
+      const nodeRarity = TREE_NODE_BY_ID[slotId].rarity;
+      const svs = slotStatValues(slots[slotId], nodeRarity);
+      const score = svs.reduce((s, sv) => s + (goal.weights[sv.stat] || 0) * sv.value, 0);
+      return { soulId: ge.soulId, slotId, nodeRarity, nodeLevel: ge.nodeLevel, points: RARITY_POINT_COST[nodeRarity] * ge.nodeLevel, score };
+    });
+    return { slots, used, points: genomeCost(genome) };
+  }, [result, goal, inventory, allSouls, includePvp, useBudget, budget]);
+
+  const previewBuild = { ...activeBuild, slots: quick.slots };
   const totals = computeTotals(previewBuild);
-  const overBudget = result.pointsSpent > budget;
+  const overBudget = quick.points > budget;
 
   const notes = useMemo(
-    () => feedback(result, pct, inventory, allSouls, t),
-    [result, pct, inventory, allSouls, t],
+    () => feedback({ ...result, slots: quick.slots, used: quick.used }, pct, inventory, allSouls, t),
+    [result, quick, pct, inventory, allSouls, t],
   );
 
   const setAttr = (key: string, v: number) => setPct((p) => ({ ...p, [key]: Math.max(0, Math.min(100, Math.round(v))) }));
@@ -155,12 +182,12 @@ export function Optimizer() {
           <input type="checkbox" checked={includePvp} onChange={(e) => setIncludePvp(e.target.checked)} /> {t('st.opt.pvp')}
         </label>
         <span className="spacer" />
-        <button className="btn primary" disabled={result.used.length === 0} onClick={() => applySlots(result.slots)}>{t('st.opt.apply')}</button>
+        <button className="btn primary" disabled={quick.used.length === 0} onClick={() => applySlots(quick.slots)}>{t('st.opt.apply')}</button>
       </div>
 
       <div className="points-meta" style={{ marginTop: 10 }}>
-        <span>{t('st.opt.nodesused')} <b>{result.used.length}</b></span>
-        <span className={overBudget ? 'over-txt' : ''}>{t('st.opt.points')} <b>{result.pointsSpent}</b> / {budget}</span>
+        <span>{t('st.opt.nodesused')} <b>{quick.used.length}</b></span>
+        <span className={overBudget ? 'over-txt' : ''}>{t('st.opt.points')} <b>{quick.points}</b> / {budget}</span>
       </div>
 
       {total > 0 && notes.length > 0 && (
@@ -245,9 +272,9 @@ export function Optimizer() {
 
       <div className="opt-grid">
         <div>
-          <div className="total-sub">{t('st.opt.plan', { n: result.used.length, pts: result.pointsSpent })}</div>
-          {result.used.length === 0 && <p className="muted">{t('st.opt.distribute')}</p>}
-          {result.used
+          <div className="total-sub">{t('st.opt.plan', { n: quick.used.length, pts: quick.points })}</div>
+          {quick.used.length === 0 && <p className="muted">{t('st.opt.distribute')}</p>}
+          {quick.used
             .slice()
             .sort((a, b) => b.score - a.score)
             .map((u) => {
@@ -255,7 +282,7 @@ export function Optimizer() {
               const node = TREE_NODE_BY_ID[u.slotId];
               const cat = NODE_CATEGORY[node.type];
               const nodeLabel = cat === 'wildcard' ? 'Wildcard' : CATEGORY_LABEL[cat];
-              const svs = slotStatValues(result.slots[u.slotId], u.nodeRarity);
+              const svs = slotStatValues(quick.slots[u.slotId], u.nodeRarity);
               return (
                 <div className="total-row" key={u.slotId}>
                   <span className="lbl">

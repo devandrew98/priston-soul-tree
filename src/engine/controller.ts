@@ -16,6 +16,7 @@ import type {
   WorkerRequest,
 } from './types';
 import { evaluate, slotsToGenome } from './genome';
+import { fillGenome, type FillAdded } from './filler';
 import { SearchEngine } from './search';
 import { KnowledgeBase } from './knowledge';
 
@@ -142,6 +143,22 @@ export async function deepOptimize(cfg: EngineConfig, onProgress?: (p: DeepProgr
   }
 
   const merged = mergeOutcomes(outcomes);
+
+  // Fill pass: souls on every opened-but-empty pass-through node (free) and
+  // leftover budget into level-ups — then re-score and re-rank the top builds.
+  const filledTop: { ev: ReturnType<typeof evaluate>; added: FillAdded[] }[] = [];
+  const seenHash = new Set<string>();
+  for (const b of merged.top) {
+    const { genome, added } = fillGenome(b.genome, cfg);
+    const ev = evaluate(genome, cfg.weights);
+    if (seenHash.has(ev.hash)) continue; // fills can make near-duplicates collapse
+    seenHash.add(ev.hash);
+    filledTop.push({ ev, added });
+  }
+  filledTop.sort((a, b) => b.ev.score.total - a.ev.score.total);
+  merged.top = filledTop.map((x) => x.ev);
+  const added0 = filledTop[0]?.added ?? [];
+
   const plateauRatio = merged.elapsedMs > 0 ? Math.min(1, Math.max(0, (merged.elapsedMs - merged.bestAtMs) / merged.elapsedMs)) : 0;
   const confidence = Math.round(100 * (0.5 * plateauRatio + 0.3 * merged.agreement + 0.2 * Math.min(1, merged.sims / 15000)));
 
@@ -151,6 +168,8 @@ export async function deepOptimize(cfg: EngineConfig, onProgress?: (p: DeepProgr
     workers: usedWorkers,
     fromKnowledge: !!known,
     seedScore,
+    filled: added0.length,
+    filledSurvival: added0.filter((a) => a.kind === 'survival').length,
   };
 
   if (result.top[0]) {
