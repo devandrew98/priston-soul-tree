@@ -2,8 +2,11 @@ import { useMemo, useState } from 'react';
 import { LISTING_BY_ID } from '../../lib/market/data';
 import { fmtPrice, sellerItems } from '../../lib/market/helpers';
 import type { Listing } from '../../lib/market/types';
+import { BACKEND_ENABLED } from '../../lib/market/supabase';
+import { deleteListing } from '../../lib/market/listings';
 import { useI18n } from '../../lib/i18n';
 import { useAuth, useFavorites, useMyListings, useWishlist } from './store';
+import { useSellerListings } from './useMarketData';
 import { ItemCard } from './ItemCard';
 import { LoginPrompt } from './LoginPrompt';
 import { PriceTag, Since, StatusPill } from './parts';
@@ -16,11 +19,17 @@ export function Dashboard({ onOpen, onSeller, onCreate, onLogin }: { onOpen: (id
   const { myListings, removeListing, duplicateListing } = useMyListings();
   const { favs } = useFavorites();
   const { wishlist, addWish, removeWish } = useWishlist();
+  const dbSeller = useSellerListings(userId || '');
   const [tab, setTab] = useState<Tab>('active');
   const [wishText, setWishText] = useState('');
   const [wishMax, setWishMax] = useState('');
 
-  const owned = useMemo(() => (userId ? [...myListings.filter((l) => l.sellerId === userId), ...sellerItems(userId)] : []), [myListings, userId]);
+  const mockOwned = useMemo(() => (userId ? [...myListings.filter((l) => l.sellerId === userId), ...sellerItems(userId)] : []), [myListings, userId]);
+  const owned = BACKEND_ENABLED ? dbSeller.listings : mockOwned;
+  const del = async (id: string) => {
+    if (BACKEND_ENABLED) { await deleteListing(id); dbSeller.reload(); }
+    else removeListing(id);
+  };
   const active = owned.filter((l) => l.status === 'available');
   const reserved = owned.filter((l) => l.status === 'reserved');
   const sold = owned.filter((l) => l.status === 'sold');
@@ -67,10 +76,12 @@ export function Dashboard({ onOpen, onSeller, onCreate, onLogin }: { onOpen: (id
               <span className="mk-muted">👁 {l.views}</span>
               <PriceTag value={l.price} currency={l.currency} />
               <span className="mk-dashrow-actions">
-                {myListings.some((m) => m.id === l.id) ? (
+                {BACKEND_ENABLED ? (
+                  <button className="mk-btn sm danger" onClick={() => del(l.id)}>{t('mk.delete')}</button>
+                ) : myListings.some((m) => m.id === l.id) ? (
                   <>
                     <button className="mk-btn sm" onClick={() => duplicateListing(l.id)}>{t('mk.duplicate')}</button>
-                    <button className="mk-btn sm danger" onClick={() => removeListing(l.id)}>{t('mk.delete')}</button>
+                    <button className="mk-btn sm danger" onClick={() => del(l.id)}>{t('mk.delete')}</button>
                   </>
                 ) : (
                   <span className="mk-muted">· <Since at={l.createdAt} /></span>

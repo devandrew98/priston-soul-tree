@@ -1,16 +1,17 @@
 import { useRef, useState } from 'react';
 import { CATEGORIES, RARITIES } from '../../lib/market/data';
 import type { Currency, Listing, Rarity } from '../../lib/market/types';
+import { BACKEND_ENABLED } from '../../lib/market/supabase';
+import { createListing } from '../../lib/market/listings';
 import { useI18n } from '../../lib/i18n';
-import { useAuth, useContributors, useMyListings } from './store';
+import { useAuth, useMyListings } from './store';
 import { LoginPrompt } from './LoginPrompt';
 
 const CURRENCIES: Currency[] = ['gold', 'coins'];
 
 export function CreateListing({ onDone, onLogin }: { onDone: () => void; onLogin: () => void }) {
   const { t } = useI18n();
-  const { userId } = useAuth();
-  const { isContributor } = useContributors();
+  const { userId, isContributor } = useAuth();
   const { addListing } = useMyListings();
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -24,21 +25,43 @@ export function CreateListing({ onDone, onLogin }: { onDone: () => void; onLogin
   const [currency, setCurrency] = useState<Currency>('gold');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState<string>('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [highlighted, setHighlighted] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
 
-  const canContribute = isContributor(userId);
+  const canContribute = isContributor;
   const cat = CATEGORIES.find((c) => c.id === category) ?? CATEGORIES[0];
 
   const onFile = (file: File | undefined) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) return;
+    setImageFile(file);
     const reader = new FileReader();
     reader.onload = () => setImage(String(reader.result));
     reader.readAsDataURL(file);
   };
 
-  const submit = () => {
+  const submit = async () => {
     if (!userId || !image) return;
+    setError('');
+    if (BACKEND_ENABLED) {
+      if (!imageFile) return;
+      setBusy(true);
+      try {
+        await createListing(userId, {
+          name: name.trim() || t('mk.create.untitled'),
+          itemLevel, category, subcategory, rarity, quantity, price, currency,
+          description: description.trim(), highlighted: canContribute && highlighted, imageFile,
+        });
+        onDone();
+      } catch (e) {
+        setError(e instanceof Error ? e.message : String(e));
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
     const listing: Listing = {
       id: `my-${Date.now()}`,
       name: name.trim() || t('mk.create.untitled'),
@@ -71,7 +94,7 @@ export function CreateListing({ onDone, onLogin }: { onDone: () => void; onLogin
             {image ? (
               <>
                 <img src={image} alt="preview" className="mk-imgdrop-preview" />
-                <button className="mk-imgdrop-remove" onClick={(e) => { e.stopPropagation(); setImage(''); }}>✕</button>
+                <button className="mk-imgdrop-remove" onClick={(e) => { e.stopPropagation(); setImage(''); setImageFile(null); }}>✕</button>
               </>
             ) : (
               <span className="mk-imgdrop-hint">🖼️ {t('mk.create.imagehint')}</span>
@@ -138,10 +161,13 @@ export function CreateListing({ onDone, onLogin }: { onDone: () => void; onLogin
         )}
 
         <div className="mk-field span2 mk-form-actions">
-          <button className="mk-btn primary" onClick={submit} disabled={!image}>✓ {t('mk.create.publish')}</button>
-          <button className="mk-btn" onClick={onDone}>{t('mk.cancel')}</button>
+          <button className="mk-btn primary" onClick={submit} disabled={!image || busy}>
+            {busy ? `⏳ ${t('mk.loading')}` : `✓ ${t('mk.create.publish')}`}
+          </button>
+          <button className="mk-btn" onClick={onDone} disabled={busy}>{t('mk.cancel')}</button>
         </div>
         {!image && <p className="mk-muted mk-create-imgreq">⚠ {t('mk.create.imagereq')}</p>}
+        {error && <p className="mk-auth-err">✕ {error}</p>}
       </div>
     </div>
   );

@@ -144,6 +144,7 @@ const DICT: Record<string, Entry> = {
   'mk.tab.admin': { pt: 'Admin', en: 'Admin' },
   'mk.back': { pt: 'Voltar', en: 'Back' },
   'mk.notfound': { pt: 'Item não encontrado.', en: 'Item not found.' },
+  'mk.loading': { pt: 'Carregando...', en: 'Loading...' },
 
   // generic labels
   'mk.lvl': { pt: 'Lv', en: 'Lv' },

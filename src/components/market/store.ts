@@ -6,6 +6,7 @@ import { SELLER_BY_ID } from '../../lib/market/data';
 import type { Listing, Seller } from '../../lib/market/types';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { signOut as sbSignOut } from '../../lib/market/auth';
+import { getCachedProfile } from '../../lib/market/profileCache';
 import { useSession } from './session';
 
 // The demo account pre-selected on first load (so the Dashboard has data).
@@ -121,10 +122,11 @@ function useSnapshot(): State {
 
 const toggle = (arr: string[], id: string) => (arr.includes(id) ? arr.filter((x) => x !== id) : [...arr, id]);
 
-/** Resolve a seller by id across the built-in directory and locally-registered accounts. */
+/** Resolve a seller by id across the built-in directory, registered accounts and
+ *  the DB profile cache (populated when listings are fetched from the backend). */
 export function getSeller(id: string | null | undefined): Seller | undefined {
   if (!id) return undefined;
-  return SELLER_BY_ID[id] ?? state.accounts.find((a) => a.id === id);
+  return SELLER_BY_ID[id] ?? state.accounts.find((a) => a.id === id) ?? getCachedProfile(id);
 }
 
 export function useFavorites() {
@@ -232,6 +234,7 @@ export function useAuth() {
       user: session.profile ?? undefined,
       isLoggedIn: !!session.profile,
       isAdmin: !!session.raw?.is_admin,
+      isContributor: !!session.raw?.is_contributor,
       accounts: [] as Seller[],
       loginAs: (_id: string) => {},                 // n/a with real auth
       logout: () => { void sbSignOut(); },
@@ -248,6 +251,7 @@ export function useAuth() {
     user,
     isLoggedIn: !!user,
     isAdmin: !!s.authUserId && ADMIN_IDS.includes(s.authUserId),
+    isContributor: !!s.authUserId && s.contributors.includes(s.authUserId),
     accounts: s.accounts,
     loginAs: (id: string) => set({ authUserId: id }),
     logout: () => set({ authUserId: null }),

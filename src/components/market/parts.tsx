@@ -3,6 +3,7 @@ import { RARITY_COLOR } from '../../lib/market/data';
 import { currencyIcon, fmtPrice, repTier, repLevelLabel, sinceParts } from '../../lib/market/helpers';
 import type { Currency, ListingStatus, Rarity, Seller } from '../../lib/market/types';
 import { useI18n } from '../../lib/i18n';
+import { isCachedContributor } from '../../lib/market/profileCache';
 import { useContributors } from './store';
 
 /** Renders an uploaded image (data URL / http) as an avatar, else the emoji glyph. */
@@ -19,7 +20,7 @@ export function Avatar({ value, size = '' }: { value: string; size?: 'lg' | 'xxl
 export function ContribSeal({ sellerId }: { sellerId: string }) {
   const { t } = useI18n();
   const { isContributor } = useContributors();
-  if (!isContributor(sellerId)) return null;
+  if (!isContributor(sellerId) && !isCachedContributor(sellerId)) return null;
   return <span className="mk-contrib" title={t('mk.contrib.hint')}>⭐ {t('mk.contrib')}</span>;
 }
 

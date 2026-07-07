@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { LISTING_BY_ID } from '../../lib/market/data';
 import { useI18n } from '../../lib/i18n';
 import { Browse } from './Browse';
 import { ItemDetail } from './ItemDetail';
@@ -11,7 +10,8 @@ import { Stats } from './Stats';
 import { Admin } from './Admin';
 import { NotificationBell } from './NotificationBell';
 import { AuthModal } from './AuthModal';
-import { type NotifLink, useAuth, useChats, useMyListings } from './store';
+import { type NotifLink, useAuth, useChats } from './store';
+import { useListing } from './useMarketData';
 import { Avatar, RepBadge } from './parts';
 
 const PANEL_PASSWORD = 'painel159753';
@@ -37,7 +37,6 @@ const TABS: { name: View['name']; icon: string; key: string; admin?: boolean }[]
 
 export function Marketplace() {
   const { t } = useI18n();
-  const { myListings } = useMyListings();
   const { totalUnread, startConversation } = useChats();
   const { isAdmin } = useAuth();
   const [view, setView] = useState<View>({ name: 'browse' });
@@ -59,7 +58,6 @@ export function Marketplace() {
     window.scrollTo({ top: 0 });
   };
 
-  const resolve = (id: string) => LISTING_BY_ID[id] || myListings.find((l) => l.id === id);
   const tabs = TABS.filter((tb) => !tb.admin || isAdmin);
   const openLogin = () => setShowAuth(true);
 
@@ -94,10 +92,7 @@ export function Marketplace() {
       {view.name === 'dashboard' && <Dashboard onOpen={openItem} onSeller={openSeller} onCreate={() => go('create')} onLogin={openLogin} />}
       {view.name === 'create' && <CreateListing onDone={() => go('dashboard')} onLogin={openLogin} />}
       {view.name === 'admin' && (adminUnlocked ? <Admin onOpen={openItem} onSeller={openSeller} /> : <AdminGate onUnlock={() => setAdminUnlocked(true)} />)}
-      {view.name === 'item' && (() => {
-        const l = resolve(view.id);
-        return l ? <ItemDetail listing={l} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} /> : <NotFound onBack={() => go('browse')} />;
-      })()}
+      {view.name === 'item' && <ItemView id={view.id} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} />}
       {view.name === 'seller' && <SellerProfile sellerId={view.id} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} />}
 
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
@@ -167,6 +162,14 @@ function AdminGate({ onUnlock }: { onUnlock: () => void }) {
       {err && <p className="mk-admingate-err">✕ {t('mk.admin.gate.wrong')}</p>}
     </div>
   );
+}
+
+function ItemView({ id, onOpen, onSeller, onChat, onBack }: { id: string; onOpen: (id: string) => void; onSeller: (id: string) => void; onChat: (sellerId: string, seed?: string) => void; onBack: () => void }) {
+  const { t } = useI18n();
+  const { listing, loading } = useListing(id);
+  if (loading) return <div className="mk-detail"><button className="mk-back" onClick={onBack}>← {t('mk.back')}</button><p className="mk-empty">⏳ {t('mk.loading')}</p></div>;
+  if (!listing) return <NotFound onBack={onBack} />;
+  return <ItemDetail listing={listing} onOpen={onOpen} onSeller={onSeller} onChat={onChat} onBack={onBack} />;
 }
 
 function NotFound({ onBack }: { onBack: () => void }) {

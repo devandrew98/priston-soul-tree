@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
 import { RARITY_COLOR } from '../../lib/market/data';
 import { priceHistory } from '../../lib/market/data';
-import { cheaperAlternatives, fmtPrice, marketStats, sellerItems, similarItems } from '../../lib/market/helpers';
+import { cheaperAlternatives, fmtPrice, marketStats, sellerItems } from '../../lib/market/helpers';
 import type { Listing } from '../../lib/market/types';
+import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { useI18n } from '../../lib/i18n';
 import { getSeller, useFavorites } from './store';
+import { useSimilar } from './useMarketData';
 import { ItemCard } from './ItemCard';
 import { PriceChart } from './PriceChart';
 import { Avatar, ContribSeal, OnlineDot, PriceTag, RarityTag, RepBadge, Since, Stars, StatusPill } from './parts';
@@ -28,9 +30,9 @@ export function ItemDetail({
 
   const series = useMemo(() => priceHistory(listing), [listing]);
   const stats = useMemo(() => marketStats(listing, series), [listing, series]);
-  const similar = useMemo(() => similarItems(listing), [listing]);
-  const cheaper = useMemo(() => cheaperAlternatives(listing), [listing]);
-  const fromSeller = useMemo(() => sellerItems(listing.sellerId, listing.id).slice(0, 4), [listing]);
+  const similar = useSimilar(listing);
+  const cheaper = useMemo(() => (BACKEND_ENABLED ? [] : cheaperAlternatives(listing)), [listing]);
+  const fromSeller = useMemo(() => (BACKEND_ENABLED ? [] : sellerItems(listing.sellerId, listing.id).slice(0, 4)), [listing]);
 
   const diffToLowest = stats.min > 0 ? ((listing.price - stats.min) / stats.min) * 100 : 0;
   const flash = (msg: string) => { setNote(msg); window.setTimeout(() => setNote(''), 2600); };

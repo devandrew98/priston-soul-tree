@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { MEDALS } from '../../lib/market/data';
-import { fmtPrice, sellerItems, sellerReviews } from '../../lib/market/helpers';
+import { fmtPrice, sellerReviews } from '../../lib/market/helpers';
 import { useI18n } from '../../lib/i18n';
 import { getSeller, useFavSellers } from './store';
+import { useSellerListings } from './useMarketData';
 import { ItemCard } from './ItemCard';
 import { Avatar, ContribSeal, OnlineDot, RepBadge, Since, Stars } from './parts';
 
@@ -20,11 +21,18 @@ export function SellerProfile({
 }) {
   const { t } = useI18n();
   const { isFavSeller, toggleFavSeller } = useFavSellers();
+  const { listings: items, loading } = useSellerListings(sellerId);
   const seller = getSeller(sellerId);
-  const items = useMemo(() => sellerItems(sellerId), [sellerId]);
   const reviews = useMemo(() => (seller ? sellerReviews(seller) : []), [seller]);
 
-  if (!seller) return <div className="mk-detail"><button className="mk-back" onClick={onBack}>← {t('mk.back')}</button></div>;
+  if (!seller) {
+    return (
+      <div className="mk-detail">
+        <button className="mk-back" onClick={onBack}>← {t('mk.back')}</button>
+        <p className="mk-empty">{loading ? `⏳ ${t('mk.loading')}` : t('mk.notfound')}</p>
+      </div>
+    );
+  }
 
   const active = items.filter((i) => i.status === 'available');
   const sold = items.filter((i) => i.status === 'sold');
