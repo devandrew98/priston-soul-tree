@@ -1219,3 +1219,8 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .mk-auth-divider::before, .mk-auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 .mk-linkbtn { background: none; border: none; color: var(--gold); font-size: 13px; cursor: pointer; padding: 6px; text-decoration: underline; align-self: center; }
 .mk-linkbtn:hover { color: var(--gold-bright); }
+
+/* Admin — news bilingual fields */
+.mk-news-lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
+.mk-news-langfield { display: flex; flex-direction: column; gap: 3px; }
+.mk-news-langfield > span { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.4px; }

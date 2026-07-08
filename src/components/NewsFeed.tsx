@@ -32,8 +32,8 @@ export function NewsFeed() {
               {n.pinned && <span className="home-news-pin" title={t('home.news.pinned')}>📌</span>}
               <span className="home-news-date">{fmt(n.createdAt)}</span>
             </div>
-            <h3 className="home-news-h">{n.title}</h3>
-            {n.body && <p className="home-news-body">{n.body}</p>}
+            <h3 className="home-news-h">{n.title[lang]}</h3>
+            {n.body[lang] && <p className="home-news-body">{n.body[lang]}</p>}
           </article>
         ))}
       </div>
