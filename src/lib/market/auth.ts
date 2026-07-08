@@ -94,6 +94,39 @@ export async function signOut(): Promise<void> {
   await must().auth.signOut();
 }
 
+/** Start the Google OAuth flow (redirects away, returns to the site logged in). */
+export async function signInWithGoogle(): Promise<void> {
+  const { error } = await must().auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin },
+  });
+  if (error) throw error;
+}
+
+/** Send a password-reset email; the link returns to the site in recovery mode. */
+export async function sendPasswordReset(email: string): Promise<void> {
+  const { error } = await must().auth.resetPasswordForEmail(email.trim(), {
+    redirectTo: window.location.origin,
+  });
+  if (error) throw error;
+}
+
+/** Set a new password for the (recovery-authenticated) user. */
+export async function updatePassword(newPassword: string): Promise<void> {
+  const { error } = await must().auth.updateUser({ password: newPassword });
+  if (error) throw error;
+}
+
+/** Mask an email for display: "an****************1022@gmail.com". */
+export function maskEmail(email: string): string {
+  const [local, domain] = email.split('@');
+  if (!domain) return email;
+  const start = local.slice(0, 2);
+  const end = local.length > 6 ? local.slice(-4) : '';
+  const stars = '*'.repeat(Math.max(4, local.length - start.length - end.length));
+  return `${start}${stars}${end}@${domain}`;
+}
+
 export async function fetchProfile(userId: string): Promise<ProfileRow | null> {
   const { data, error } = await must().from('profiles').select('*').eq('id', userId).maybeSingle();
   if (error) throw error;

@@ -11,9 +11,10 @@ interface SessionState {
   userId: string | null;
   profile: Seller | null;
   raw: ProfileRow | null;
+  recovery: boolean;   // arrived via a password-reset link → show "set new password"
 }
 
-let state: SessionState = { ready: !BACKEND_ENABLED, userId: null, profile: null, raw: null };
+let state: SessionState = { ready: !BACKEND_ENABLED, userId: null, profile: null, raw: null, recovery: false };
 const listeners = new Set<() => void>();
 
 function emit() { listeners.forEach((l) => l()); }
@@ -35,14 +36,18 @@ if (BACKEND_ENABLED && supabase) {
   // IMPORTANT: never run DB queries synchronously inside onAuthStateChange —
   // supabase-js holds an auth lock during the callback and awaiting a query
   // there deadlocks signIn/getSession. Defer out of the callback.
-  supabase.auth.onAuthStateChange((_event, sess) => {
+  supabase.auth.onAuthStateChange((event, sess) => {
     const uid = sess?.user?.id ?? null;
+    if (event === 'PASSWORD_RECOVERY') set({ recovery: true });
     setTimeout(() => { void loadProfile(uid); }, 0);
   });
 }
 
 /** Force a profile re-fetch (e.g. after updating the avatar). */
 export function refreshProfile() { if (state.userId) void loadProfile(state.userId); }
+
+/** Leave password-recovery mode (after setting a new password or cancelling). */
+export function clearRecovery() { set({ recovery: false }); }
 
 export function useSession(): SessionState {
   return useSyncExternalStore(subscribe, () => state, () => state);

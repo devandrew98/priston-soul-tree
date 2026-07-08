@@ -12,6 +12,7 @@ import { Home } from './components/Home';
 import { SoD } from './components/SoD';
 import { Marketplace } from './components/market/Marketplace';
 import { Streamers } from './components/Streamers';
+import { ResetPasswordModal } from './components/market/ResetPasswordModal';
 import { useI18n } from './lib/i18n';
 
 export type Section = 'home' | 'timeboss' | 'timerfury' | 'sod' | 'market' | 'soultree' | 'streamers';
@@ -88,6 +89,8 @@ export default function App() {
       ) : (
         <SoulTree />
       )}
+
+      <ResetPasswordModal />
     </div>
   );
 }
