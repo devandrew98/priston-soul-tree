@@ -341,6 +341,7 @@ const DICT: Record<string, Entry> = {
   // dashboard
   'mk.dash.title': { pt: 'Meu Painel', en: 'My Dashboard' },
   'mk.dash.hello': { pt: 'Bem-vindo de volta, {nick}.', en: 'Welcome back, {nick}.' },
+  'mk.dash.viewprofile': { pt: 'Ver meu perfil', en: 'View my profile' },
   'mk.dash.active': { pt: 'Ativos', en: 'Active' },
   'mk.dash.sold': { pt: 'Vendidos', en: 'Sold' },
   'mk.dash.marksold': { pt: '✓ Vendido', en: '✓ Sold' },

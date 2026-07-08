@@ -5,9 +5,10 @@ import { deleteListing, setListingStatus } from '../../lib/market/listings';
 import { useI18n } from '../../lib/i18n';
 import { useAuth, useMyListings, useWishlist } from './store';
 import { useFavoriteListings, useSellerListings } from './useMarketData';
+import { AvatarEditor } from './AvatarEditor';
 import { ItemCard } from './ItemCard';
 import { LoginPrompt } from './LoginPrompt';
-import { PriceTag, Since, StatusPill } from './parts';
+import { Avatar, PriceTag, Since, StatusPill } from './parts';
 
 type Tab = 'active' | 'sold' | 'favorites' | 'wishlist';
 
@@ -40,11 +41,19 @@ export function Dashboard({ onOpen, onSeller, onCreate, onEdit, onLogin }: { onO
   return (
     <div className="mk-dash">
       <div className="mk-dash-head">
-        <div>
-          <h1 className="mk-h1">📊 {t('mk.dash.title')}</h1>
-          <p className="mk-muted">{t('mk.dash.hello', { nick: user.nick })}</p>
+        <div className="mk-dash-ident">
+          {BACKEND_ENABLED && userId
+            ? <AvatarEditor userId={userId} avatar={user.avatar} size="lg" />
+            : <Avatar value={user.avatar} size="lg" />}
+          <div>
+            <h1 className="mk-h1">📊 {t('mk.dash.title')}</h1>
+            <p className="mk-muted">{t('mk.dash.hello', { nick: user.nick })}</p>
+          </div>
         </div>
-        <button className="mk-btn primary" onClick={onCreate}>+ {t('mk.create.title')}</button>
+        <div className="mk-dash-headbtns">
+          {userId && <button className="mk-btn" onClick={() => onSeller(userId)}>👤 {t('mk.dash.viewprofile')}</button>}
+          <button className="mk-btn primary" onClick={onCreate}>+ {t('mk.create.title')}</button>
+        </div>
       </div>
 
       <div className="mk-dash-stats">

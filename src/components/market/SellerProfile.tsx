@@ -1,12 +1,10 @@
-import { useRef, useState } from 'react';
 import { MEDALS } from '../../lib/market/data';
 import { fmtPrice } from '../../lib/market/helpers';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
-import { updateAvatar, uploadToBucket } from '../../lib/market/auth';
 import { useI18n } from '../../lib/i18n';
 import { getSeller, useAuth, useFavSellers } from './store';
-import { refreshProfile } from './session';
 import { useSellerListings, useSellerReputation } from './useMarketData';
+import { AvatarEditor } from './AvatarEditor';
 import { ItemCard } from './ItemCard';
 import { ReviewForm } from './ReviewForm';
 import { Avatar, ContribSeal, OnlineDot, RepBadge, Since, Stars } from './parts';
@@ -32,22 +30,6 @@ export function SellerProfile({
 
   // Own-profile avatar editing.
   const own = !!userId && userId === sellerId && BACKEND_ENABLED;
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [avatarOverride, setAvatarOverride] = useState('');
-  const [avatarBusy, setAvatarBusy] = useState(false);
-  const [avatarErr, setAvatarErr] = useState('');
-  const changeAvatar = async (file?: File) => {
-    if (!file || !userId) return;
-    if (!file.type.startsWith('image/')) { setAvatarErr(t('mk.profile.avatarerr')); return; }
-    setAvatarErr(''); setAvatarBusy(true);
-    try {
-      const url = await uploadToBucket('avatars', userId, file);
-      await updateAvatar(userId, url);
-      setAvatarOverride(url);
-      refreshProfile();
-    } catch (e) { setAvatarErr(e instanceof Error ? e.message : String(e)); }
-    finally { setAvatarBusy(false); }
-  };
 
   if (!seller) {
     return (
@@ -74,17 +56,7 @@ export function SellerProfile({
       <button className="mk-back" onClick={onBack}>← {t('mk.back')}</button>
 
       <div className="mk-profile-head">
-        <div className={`mk-profile-avatar ${own ? 'editable' : ''}`}>
-          <Avatar value={avatarOverride || seller.avatar} size="xxl" />
-          {own && (
-            <>
-              <button className="mk-avatar-edit" onClick={() => fileRef.current?.click()} disabled={avatarBusy} title={t('mk.profile.changeavatar')}>
-                {avatarBusy ? '⏳' : '📷'}
-              </button>
-              <input ref={fileRef} type="file" accept="image/png,image/bmp,image/jpeg,image/webp" hidden onChange={(e) => changeAvatar(e.target.files?.[0])} />
-            </>
-          )}
-        </div>
+        {own ? <AvatarEditor userId={userId!} avatar={seller.avatar} size="xxl" /> : <Avatar value={seller.avatar} size="xxl" />}
         <div className="mk-profile-id">
           <h1 className="mk-profile-nick">
             {seller.nick}
@@ -107,7 +79,6 @@ export function SellerProfile({
             </button>
             <button className="mk-btn sm" onClick={() => navigator.clipboard?.writeText(`${location.origin}/#seller-${seller.id}`)}>🔗 {t('mk.shareprofile')}</button>
           </div>
-          {own && <div className="mk-profile-avatar-hint">{avatarErr ? <span className="mk-auth-err">✕ {avatarErr}</span> : <span className="mk-muted">📷 {t('mk.profile.changeavatar')}</span>}</div>}
           {seller.reports >= 3 && <div className="mk-warn">⚠ {t('mk.reportwarn')}</div>}
         </div>
       </div>

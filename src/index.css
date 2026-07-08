@@ -1143,3 +1143,7 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .mk-avatar-edit:hover { transform: scale(1.12); background: var(--gold-bright); }
 .mk-avatar-edit:disabled { cursor: default; opacity: 0.7; transform: none; }
 .mk-profile-avatar-hint { font-size: 12px; margin-top: 6px; }
+
+/* Dashboard header identity (avatar + greeting) */
+.mk-dash-ident { display: flex; align-items: center; gap: 14px; }
+.mk-dash-headbtns { display: flex; gap: 8px; flex-wrap: wrap; }

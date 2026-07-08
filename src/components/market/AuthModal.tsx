@@ -5,6 +5,7 @@ import { useI18n } from '../../lib/i18n';
 import { useAuth } from './store';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { signIn, signUp, updateAvatar, uploadToBucket } from '../../lib/market/auth';
+import { squareThumbnail } from '../../lib/market/image';
 import { refreshProfile } from './session';
 import { Avatar, OnlineDot, RepBadge } from './parts';
 
@@ -60,7 +61,8 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
       const { needsConfirmation, userId } = await signUp({ email, password, nick, className, clan, avatar });
       if (!needsConfirmation && userId && avatarFile) {
         try {
-          const url = await uploadToBucket('avatars', userId, avatarFile);
+          const square = await squareThumbnail(avatarFile, 256);
+          const url = await uploadToBucket('avatars', userId, square);
           await updateAvatar(userId, url);
           refreshProfile();
         } catch { /* avatar optional — ignore upload failures */ }
