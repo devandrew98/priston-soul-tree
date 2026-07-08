@@ -11,12 +11,13 @@ import { TimerFury } from './components/TimerFury';
 import { Home } from './components/Home';
 import { SoD } from './components/SoD';
 import { Marketplace } from './components/market/Marketplace';
+import { Streamers } from './components/Streamers';
 import { useI18n } from './lib/i18n';
 
-export type Section = 'home' | 'timeboss' | 'timerfury' | 'sod' | 'market' | 'soultree';
+export type Section = 'home' | 'timeboss' | 'timerfury' | 'sod' | 'market' | 'soultree' | 'streamers';
 type Tab = 'planner' | 'inventory' | 'optimizer';
 
-const SECTIONS: Section[] = ['home', 'timeboss', 'timerfury', 'sod', 'market', 'soultree'];
+const SECTIONS: Section[] = ['home', 'timeboss', 'timerfury', 'sod', 'market', 'soultree', 'streamers'];
 
 const NAV: { id: Section; icon: string; key: string }[] = [
   { id: 'home', icon: '🏠', key: 'nav.home' },
@@ -25,6 +26,7 @@ const NAV: { id: Section; icon: string; key: string }[] = [
   { id: 'sod', icon: '🎯', key: 'nav.sod' },
   { id: 'market', icon: '🏰', key: 'nav.market' },
   { id: 'soultree', icon: '🌳', key: 'nav.soultree' },
+  { id: 'streamers', icon: '📺', key: 'nav.streamers' },
 ];
 
 export default function App() {
@@ -78,6 +80,8 @@ export default function App() {
         <SoD />
       ) : section === 'market' ? (
         <Marketplace />
+      ) : section === 'streamers' ? (
+        <Streamers />
       ) : (
         <SoulTree />
       )}

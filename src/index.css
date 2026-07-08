@@ -1078,3 +1078,55 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .mk-admingate-form input { background: var(--bg); border: 1px solid var(--border); border-radius: 9px; color: var(--text); padding: 10px 12px; font-size: 14px; min-width: 220px; }
 .mk-admingate-form input:focus { outline: none; border-color: var(--gold); }
 .mk-admingate-err { color: var(--attack); font-size: 13px; }
+
+/* ============================================================================
+   Streamers tab
+   ============================================================================ */
+.strm { max-width: 1180px; margin: 0 auto; padding: 18px 16px 60px; }
+.strm-head { margin-bottom: 18px; }
+.strm-section { margin-top: 26px; }
+.strm-sec-title { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 800; letter-spacing: 0.5px; color: var(--gold-bright); text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin: 0 0 16px; }
+.strm-sec-title.live { color: #ff5a5a; }
+.strm-dot { width: 10px; height: 10px; border-radius: 50%; background: #ff3b3b; box-shadow: 0 0 8px #ff3b3b; animation: strmPulse 1.6s ease-in-out infinite; }
+@keyframes strmPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+.strm-count { font-size: 12px; font-weight: 700; color: var(--text-dim); background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 20px; padding: 1px 9px; }
+
+.strm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
+.strm-card { display: flex; flex-direction: column; background: linear-gradient(180deg, var(--panel) 0%, var(--bg2) 100%); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; text-decoration: none; color: inherit; transition: transform 0.14s, border-color 0.14s, box-shadow 0.14s; }
+.strm-card:hover { transform: translateY(-3px); border-color: var(--gold); box-shadow: 0 8px 24px rgba(0,0,0,0.45); }
+.strm-card.off { opacity: 0.62; filter: saturate(0.6); }
+.strm-card.off:hover { opacity: 1; filter: none; }
+
+.strm-cover { position: relative; aspect-ratio: 1 / 1; background: var(--bg); overflow: hidden; }
+.strm-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.strm-cover-fallback { width: 100%; height: 100%; display: grid; place-items: center; font-size: 46px; opacity: 0.5; }
+.strm-live-badge { position: absolute; top: 8px; left: 8px; background: #e21b1b; color: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.6px; padding: 3px 8px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.5); }
+.strm-plat { position: absolute; bottom: 8px; right: 8px; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: rgba(0,0,0,0.65); color: #fff; }
+.strm-plat.twitch { background: rgba(145,70,255,0.92); }
+.strm-plat.youtube { background: rgba(220,30,30,0.92); }
+
+.strm-info { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 4px; }
+.strm-name { color: var(--gold-bright); font-size: 15px; }
+.strm-cast { font-size: 12px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.strm-viewers { font-size: 12px; color: #ff8080; font-weight: 700; }
+.strm-off-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Streamers — admin CRUD */
+.strm-admin-add { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; }
+.strm-admin-form { display: flex; gap: 14px; }
+.strm-admin-cover, .strm-admin-thumb { flex: none; border: 1px dashed var(--border); border-radius: 10px; background: var(--bg); cursor: pointer; overflow: hidden; display: grid; place-items: center; text-align: center; color: var(--text-dim); font-size: 11px; }
+.strm-admin-cover { width: 108px; height: 108px; }
+.strm-admin-thumb { width: 52px; height: 52px; font-size: 18px; }
+.strm-admin-cover img, .strm-admin-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.strm-admin-cover:hover, .strm-admin-thumb:hover { border-color: var(--gold); }
+.strm-admin-fields { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.strm-admin-fields input, .strm-admin-fields select, .strm-admin-item input, .strm-admin-item select { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 10px; font-size: 13px; }
+.strm-admin-fields input:focus, .strm-admin-fields select:focus, .strm-admin-item input:focus, .strm-admin-item select:focus { outline: none; border-color: var(--gold); }
+.strm-admin-row2 { display: flex; gap: 8px; }
+.strm-admin-row2 input { flex: 1; }
+.strm-admin-sort { width: 64px; flex: none !important; }
+
+.strm-admin-list { display: flex; flex-direction: column; gap: 8px; }
+.strm-admin-item { display: flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
+.strm-admin-item.live { border-color: rgba(226,27,27,0.55); }
+.strm-admin-item > input:first-of-type { flex: 1; min-width: 120px; }

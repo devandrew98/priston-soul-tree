@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { useAdminModel } from './useAdminModel';
+import { StreamersAdmin } from './StreamersAdmin';
 import { Avatar, PriceTag, Since, StatusPill } from './parts';
 
-type Section = 'listings' | 'users' | 'reports' | 'global' | 'logs';
+type Section = 'listings' | 'users' | 'reports' | 'streamers' | 'global' | 'logs';
 
 const SECTIONS: { id: Section; icon: string; key: string }[] = [
   { id: 'listings', icon: '📦', key: 'mk.admin.listings' },
   { id: 'users', icon: '👤', key: 'mk.admin.users' },
   { id: 'reports', icon: '⚑', key: 'mk.admin.reports' },
+  { id: 'streamers', icon: '📺', key: 'mk.admin.streamers' },
   { id: 'global', icon: '📢', key: 'mk.admin.global' },
   { id: 'logs', icon: '📜', key: 'mk.admin.logs' },
 ];
@@ -112,6 +114,9 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
           ))}
         </div>
       )}
+
+      {/* STREAMERS */}
+      {sec === 'streamers' && <StreamersAdmin />}
 
       {/* GLOBAL NOTIFICATION */}
       {sec === 'global' && (

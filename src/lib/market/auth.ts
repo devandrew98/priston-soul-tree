@@ -99,7 +99,7 @@ export async function fetchProfile(userId: string): Promise<ProfileRow | null> {
 }
 
 /** Upload a file to a public bucket under the user's folder; returns public URL. */
-export async function uploadToBucket(bucket: 'avatars' | 'item-images', userId: string, file: File): Promise<string> {
+export async function uploadToBucket(bucket: 'avatars' | 'item-images' | 'streamer-covers', userId: string, file: File): Promise<string> {
   const sb = must();
   const ext = (file.name.split('.').pop() || 'png').toLowerCase();
   const path = `${userId}/${Date.now()}.${ext}`;
