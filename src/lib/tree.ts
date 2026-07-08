@@ -110,7 +110,7 @@ const RAW_NODES: RawNode[] = [
   { id: 'lv_6', x: 0, y: 6, category: 'Offensive', rarity: 'COMMON' },
   { id: 'cv_3', x: 3, y: 3, category: 'Utility', rarity: 'COMMON' },
   { id: 'cv_4', x: 3, y: 4, category: 'Utility', rarity: 'LEGENDARY' },
-  { id: 'cv_5', x: 3, y: 5, category: 'Defensive', rarity: 'COMMON' },
+  { id: 'cv_5', x: 3, y: 5, category: 'PVP', rarity: 'COMMON' },
   { id: 'cv_6', x: 3, y: 6, category: 'PVP', rarity: 'COMMON' },
   { id: 'rv_3', x: 6, y: 3, category: 'Offensive', rarity: 'COMMON' },
   { id: 'rv_4', x: 6, y: 4, category: 'Defensive', rarity: 'COMMON' },
