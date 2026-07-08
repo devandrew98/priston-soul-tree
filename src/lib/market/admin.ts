@@ -116,21 +116,23 @@ export interface AdminUser {
   suspended: boolean;
   contributor: boolean;
   verified: boolean;
+  repTierOverride: string | null;
 }
 
 export async function fetchAdminUsers(): Promise<AdminUser[]> {
   const { data, error } = await sb()
     .from('profiles')
-    .select('id,nick,avatar_url,char_class,level,banned,suspended,is_contributor,verified')
+    .select('id,nick,avatar_url,char_class,level,banned,suspended,is_contributor,verified,rep_tier_override')
     .order('created_at', { ascending: false })
     .limit(200);
   if (error) throw error;
   return ((data as {
     id: string; nick: string; avatar_url: string | null; char_class: string; level: number;
-    banned: boolean; suspended: boolean; is_contributor: boolean; verified: boolean;
+    banned: boolean; suspended: boolean; is_contributor: boolean; verified: boolean; rep_tier_override: string | null;
   }[]) ?? []).map((u) => ({
     id: u.id, nick: u.nick, avatar: u.avatar_url || '🧑', className: u.char_class, level: u.level,
     banned: u.banned, suspended: u.suspended, contributor: u.is_contributor, verified: u.verified,
+    repTierOverride: u.rep_tier_override,
   }));
 }
 

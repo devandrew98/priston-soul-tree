@@ -1147,3 +1147,21 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 /* Dashboard header identity (avatar + greeting) */
 .mk-dash-ident { display: flex; align-items: center; gap: 14px; }
 .mk-dash-headbtns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Admin — reputation categories (tiers) */
+.mk-tiers-admin { display: flex; flex-direction: column; gap: 8px; }
+.mk-tiers-head, .mk-tier-row { display: grid; grid-template-columns: 44px 64px 1fr 130px 48px 70px 74px auto; gap: 8px; align-items: center; }
+.mk-tiers-head { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.4px; padding: 0 2px; }
+.mk-tier-row { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
+.mk-tier-row input, .mk-tier-row select { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 7px 9px; font-size: 13px; min-width: 0; }
+.mk-tier-row input:focus, .mk-tier-row select:focus { outline: none; border-color: var(--gold); }
+.mk-tier-row input[type="color"] { padding: 2px; height: 34px; cursor: pointer; }
+.mk-tier-icon { text-align: center; }
+.mk-tier-num { text-align: center; }
+.mk-tier-badge { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid; border-radius: 8px; font-size: 18px; }
+.mk-tier-acts { display: flex; gap: 6px; }
+.mk-tiers-add { align-self: flex-start; margin-top: 6px; }
+
+/* Admin — member role selector */
+.mk-admin-tiersel { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 5px 8px; font-size: 12px; max-width: 150px; }
+.mk-admin-tiersel:focus { outline: none; border-color: var(--gold); }

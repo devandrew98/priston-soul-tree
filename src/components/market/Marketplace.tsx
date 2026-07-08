@@ -12,6 +12,7 @@ import { NotificationBell } from './NotificationBell';
 import { AuthModal } from './AuthModal';
 import { type NotifLink, useAuth, useChats } from './store';
 import { useListing } from './useMarketData';
+import { loadRepTiers } from '../../lib/market/repTiers';
 import { Avatar, RepBadge } from './parts';
 
 const PANEL_PASSWORD = 'painel159753';
@@ -42,6 +43,9 @@ export function Marketplace() {
   const [view, setView] = useState<View>({ name: 'browse' });
   const [showAuth, setShowAuth] = useState(false);
   const [adminUnlocked, setAdminUnlocked] = useState(false);
+
+  // Load the (DB-backed) reputation categories once when the marketplace opens.
+  useEffect(() => { void loadRepTiers(); }, []);
 
   const openItem = (id: string) => { setView({ name: 'item', id }); window.scrollTo({ top: 0 }); };
   const openSeller = (id: string) => { setView({ name: 'seller', id }); window.scrollTo({ top: 0 }); };

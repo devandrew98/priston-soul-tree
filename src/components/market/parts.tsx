@@ -1,6 +1,7 @@
 // Small reusable presentational pieces shared across the Marketplace views.
 import { RARITY_COLOR } from '../../lib/market/data';
-import { currencyIcon, fmtPrice, repTier, sinceParts } from '../../lib/market/helpers';
+import { currencyIcon, fmtPrice, sinceParts } from '../../lib/market/helpers';
+import { repTier, useRepTiers } from '../../lib/market/repTiers';
 import type { Currency, ListingStatus, Rarity, Seller } from '../../lib/market/types';
 import { useI18n } from '../../lib/i18n';
 import { isCachedContributor } from '../../lib/market/profileCache';
@@ -74,6 +75,7 @@ export function PriceTag({ value, currency, big }: { value: number; currency: Cu
 
 export function RepBadge({ seller }: { seller: Seller }) {
   const { t } = useI18n();
+  useRepTiers(); // re-render when an admin edits the categories
   const tier = repTier(seller);
   return (
     <span className="mk-rep" style={{ color: tier.color, borderColor: tier.color }} title={t('mk.rep.tier')}>

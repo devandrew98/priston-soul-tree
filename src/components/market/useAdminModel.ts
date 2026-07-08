@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { LISTINGS, LISTING_BY_ID, REPORTS, SELLERS, SELLER_BY_ID } from '../../lib/market/data';
 import * as admin from '../../lib/market/admin';
+import { setMemberTier as dbSetMemberTier } from '../../lib/market/repTiers';
 import { useAdmin, useAuth, useMyListings } from './store';
 
 export interface MReport { id: string; reporterNick: string; targetType: 'item' | 'user'; targetId: string; targetName: string; reason: string; note: string; at: number }
 export interface MListing { id: string; name: string; icon: string; image: string | null; sellerId: string; sellerNick: string; price: number; currency: string; status: string; removed: boolean; featured: boolean }
-export interface MUser { id: string; nick: string; avatar: string; className: string; level: number; itemsSold: number; reports: number; banned: boolean; suspended: boolean; contributor: boolean; verified: boolean }
+export interface MUser { id: string; nick: string; avatar: string; className: string; level: number; itemsSold: number; reports: number; banned: boolean; suspended: boolean; contributor: boolean; verified: boolean; repTierOverride: string | null }
 export interface MLog { id: string; text: string; at: number }
 
 export interface AdminModel {
@@ -23,6 +24,7 @@ export interface AdminModel {
   toggleBan: (id: string, nick: string, next: boolean) => void;
   toggleSuspend: (id: string, nick: string, next: boolean) => void;
   toggleContributor: (id: string, nick: string, next: boolean) => void;
+  setMemberTier: (id: string, nick: string, key: string | null, label: string) => void;
   resolveReport: (id: string, status: 'resolved' | 'dismissed', label: string) => void;
   sendGlobal: (text: string) => void;
 }
@@ -67,6 +69,7 @@ export function useAdminModel(): AdminModel {
       toggleBan: (id, nick, next) => { admin.setUserFlag(id, { banned: next }).then(() => { log(`${next ? 'Baniu' : 'Desbaniu'} usuário: ${nick}`); reload(); }).catch(() => {}); },
       toggleSuspend: (id, nick, next) => { admin.setUserFlag(id, { suspended: next }).then(() => { log(`${next ? 'Suspendeu' : 'Reativou'} vendedor: ${nick}`); reload(); }).catch(() => {}); },
       toggleContributor: (id, nick, next) => { admin.setUserFlag(id, { is_contributor: next }).then(() => { log(`${next ? 'Concedeu' : 'Removeu'} selo Colaborador: ${nick}`); reload(); }).catch(() => {}); },
+      setMemberTier: (id, nick, key, label) => { dbSetMemberTier(id, key).then(() => { log(`Cargo de ${nick}: ${label}`); reload(); }).catch(() => {}); },
       resolveReport: (id, status, label) => { admin.resolveReport(id, status).then(() => { log(`Denúncia ${id.slice(0, 8)}: ${label}`); reload(); }).catch(() => {}); },
       sendGlobal: (text) => { admin.adminBroadcast(text).then(() => { log(`Notificação global: "${text}"`); reload(); }).catch(() => {}); },
     };
@@ -86,6 +89,7 @@ export function useAdminModel(): AdminModel {
   const mUsers: MUser[] = SELLERS.map((u) => ({
     id: u.id, nick: u.nick, avatar: u.avatar, className: u.className, level: u.level, itemsSold: u.itemsSold, reports: u.reports,
     banned: mock.bannedUsers.includes(u.id), suspended: mock.suspendedUsers.includes(u.id), contributor: mock.contributors.includes(u.id), verified: u.verified,
+    repTierOverride: null,
   }));
 
   return {
@@ -96,6 +100,7 @@ export function useAdminModel(): AdminModel {
     toggleBan: (id, nick) => mock.toggleBan(id, nick),
     toggleSuspend: (id, nick) => mock.toggleSuspend(id, nick),
     toggleContributor: (id, nick) => mock.toggleContributor(id, nick),
+    setMemberTier: () => {}, // mock: categories are DB-only
     resolveReport: (id, _status, label) => mock.resolveReport(id, label),
     sendGlobal: (text) => mock.sendGlobal(text),
   };

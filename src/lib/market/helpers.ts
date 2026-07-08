@@ -1,6 +1,6 @@
 // Pure helpers for the Marketplace: search / filter / sort, market stats from a
 // price series, reputation tiers, recommendations, reviews and formatting.
-import { LISTINGS, REP_TIERS, REVIEW_TAGS, SELLERS, SELLER_BY_ID } from './data';
+import { LISTINGS, REVIEW_TAGS, SELLERS, SELLER_BY_ID } from './data';
 import { priceHistory } from './data';
 import type { Currency, Listing, MarketStats, PricePoint, Review, Seller, Trend } from './types';
 
@@ -174,10 +174,8 @@ export function marketOverview(): MarketOverview {
 }
 
 // ---- reputation --------------------------------------------------------------
-
-export function repTier(seller: Seller) {
-  return [...REP_TIERS].reverse().find((t) => seller.itemsSold >= t.min) ?? REP_TIERS[0];
-}
+// Tiers are now editable + DB-backed; the resolver lives in ./repTiers.
+export { repTier } from './repTiers';
 
 // Deterministic mock reviews for a seller's public profile.
 export function sellerReviews(seller: Seller, limit = 6): Review[] {

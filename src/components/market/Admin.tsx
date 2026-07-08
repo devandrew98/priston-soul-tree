@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { useI18n } from '../../lib/i18n';
+import { useRepTiers } from '../../lib/market/repTiers';
 import { useAdminModel } from './useAdminModel';
 import { StreamersAdmin } from './StreamersAdmin';
+import { RepTiersAdmin } from './RepTiersAdmin';
 import { Avatar, PriceTag, Since, StatusPill } from './parts';
 
-type Section = 'listings' | 'users' | 'reports' | 'streamers' | 'global' | 'logs';
+type Section = 'listings' | 'users' | 'tiers' | 'reports' | 'streamers' | 'global' | 'logs';
 
 const SECTIONS: { id: Section; icon: string; key: string }[] = [
   { id: 'listings', icon: '📦', key: 'mk.admin.listings' },
   { id: 'users', icon: '👤', key: 'mk.admin.users' },
+  { id: 'tiers', icon: '🏅', key: 'mk.admin.tiers' },
   { id: 'reports', icon: '⚑', key: 'mk.admin.reports' },
   { id: 'streamers', icon: '📺', key: 'mk.admin.streamers' },
   { id: 'global', icon: '📢', key: 'mk.admin.global' },
@@ -18,6 +21,7 @@ const SECTIONS: { id: Section; icon: string; key: string }[] = [
 export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSeller: (id: string) => void }) {
   const { t } = useI18n();
   const m = useAdminModel();
+  const tiers = useRepTiers();
   const [sec, setSec] = useState<Section>('listings');
   const [q, setQ] = useState('');
   const [globalText, setGlobalText] = useState('');
@@ -84,6 +88,15 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
                 {u.suspended && <span className="mk-flag warn">{t('mk.admin.suspended')}</span>}
               </span>
               <span className="mk-admin-acts">
+                <select
+                  className="mk-admin-tiersel"
+                  value={u.repTierOverride ?? ''}
+                  title={t('mk.admin.tier.assign')}
+                  onChange={(e) => { const key = e.target.value || null; const lbl = key ? (tiers.find((tt) => tt.key === key)?.label ?? key) : t('mk.admin.tier.auto'); m.setMemberTier(u.id, u.nick, key, lbl); }}
+                >
+                  <option value="">{t('mk.admin.tier.auto')}</option>
+                  {tiers.map((tt) => <option key={tt.key} value={tt.key}>{tt.icon} {tt.label}</option>)}
+                </select>
                 <button className={`mk-btn sm ${u.contributor ? 'active' : ''}`} onClick={() => m.toggleContributor(u.id, u.nick, !u.contributor)} title={t('mk.contrib.hint')}>⭐ {t('mk.contrib')}</button>
                 <button className={`mk-btn sm ${u.suspended ? 'active' : ''}`} onClick={() => m.toggleSuspend(u.id, u.nick, !u.suspended)}>{u.suspended ? t('mk.admin.reactivate') : t('mk.admin.suspend')}</button>
                 <button className={`mk-btn sm ${u.banned ? 'active' : 'danger'}`} onClick={() => m.toggleBan(u.id, u.nick, !u.banned)}>{u.banned ? t('mk.admin.unban') : t('mk.admin.ban')}</button>
@@ -114,6 +127,9 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
           ))}
         </div>
       )}
+
+      {/* CATEGORIES (reputation tiers) */}
+      {sec === 'tiers' && <RepTiersAdmin />}
 
       {/* STREAMERS */}
       {sec === 'streamers' && <StreamersAdmin />}

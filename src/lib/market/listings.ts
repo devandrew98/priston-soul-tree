@@ -11,7 +11,7 @@ const CAT_ICON: Record<string, string> = Object.fromEntries(CATEGORIES.map((c) =
 
 // Embed the seller profile so cards can show nick/avatar/contributor.
 export const LISTING_SELECT =
-  '*, seller:profiles!seller_id(id,nick,char_class,level,clan,avatar_url,verified,is_admin,is_contributor,banned,created_at,last_seen)';
+  '*, seller:profiles!seller_id(id,nick,char_class,level,clan,avatar_url,verified,is_admin,is_contributor,banned,rep_tier_override,created_at,last_seen)';
 const SELECT = LISTING_SELECT;
 
 export interface ListingRow {

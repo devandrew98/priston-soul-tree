@@ -38,6 +38,7 @@ export interface Seller {
   avgCompleteMin: number;
   reports: number; // number of times reported
   medals: string[]; // medal ids (see MEDALS)
+  repTierOverride?: string | null; // admin-assigned category (rep_tiers.key); null = automatic
 }
 
 export interface Listing {

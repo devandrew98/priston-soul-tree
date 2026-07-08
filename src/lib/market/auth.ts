@@ -16,6 +16,7 @@ export interface ProfileRow {
   is_contributor: boolean;
   banned?: boolean;
   suspended?: boolean;
+  rep_tier_override?: string | null;
   created_at: string;
   last_seen: string;
 }
@@ -57,6 +58,7 @@ export function profileToSeller(p: ProfileRow): Seller {
     avgCompleteMin: 0,
     reports: 0,
     medals: [],
+    repTierOverride: p.rep_tier_override ?? null,
   };
 }
 
