@@ -2,11 +2,12 @@
 // Components call these instead of touching either source directly.
 import { useEffect, useState } from 'react';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
-import { LISTINGS, LISTING_BY_ID } from '../../lib/market/data';
-import { type Filters, type SortKey, filterListings, sellerItems, sellerReviews, sortListings } from '../../lib/market/helpers';
+import { LISTINGS, LISTING_BY_ID, priceHistory } from '../../lib/market/data';
+import { type Filters, type SortKey, filterListings, marketOverview, marketStats, sellerItems, sellerReviews, sortListings } from '../../lib/market/helpers';
 import { fetchFavoriteListings, fetchListing, fetchListings, fetchSellerListings, fetchSimilar } from '../../lib/market/listings';
 import { fetchReviews, fetchSellerAggregates, type SellerAggregates } from '../../lib/market/social';
-import type { Listing, Review, Seller } from '../../lib/market/types';
+import { fetchItemMarket, fetchMarketOverview, type DbOverview } from '../../lib/market/stats';
+import type { Listing, MarketStats, PricePoint, Review, Seller } from '../../lib/market/types';
 import { useAdmin, useFavorites, useMyListings } from './store';
 import { useSocialState } from './socialBackend';
 
@@ -132,4 +133,44 @@ export function useSellerReputation(sellerId: string, seller?: Seller): { review
   const reloadReviews = () => setTick((x) => x + 1);
   if (!BACKEND_ENABLED) return { reviews: seller ? sellerReviews(seller) : [], aggregates: null, reloadReviews };
   return { reviews, aggregates, reloadReviews };
+}
+
+/** Market intelligence + price history for an item (DB sales, or mock synthetic). */
+export function useItemMarket(listing: Listing): { series: PricePoint[]; stats: MarketStats } {
+  const [data, setData] = useState<{ series: PricePoint[]; stats: MarketStats } | null>(null);
+  useEffect(() => {
+    if (!BACKEND_ENABLED) return;
+    let cancelled = false;
+    fetchItemMarket(listing).then((r) => { if (!cancelled) setData(r); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [listing.id]);
+  if (!BACKEND_ENABLED) { const series = priceHistory(listing); return { series, stats: marketStats(listing, series) }; }
+  return data ?? {
+    series: [],
+    stats: { min: listing.price, max: listing.price, avg: listing.price, median: listing.price, listed: 0, sold: 0, lastSale: 0, lastSaleAt: 0, trend: 'stable', trendPct: 0 },
+  };
+}
+
+/** Whole-market overview for the Statistics page (DB or mock), normalised. */
+export function useMarketOverview(): { overview: DbOverview | null; loading: boolean } {
+  const [data, setData] = useState<DbOverview | null>(null);
+  const [loading, setLoading] = useState(BACKEND_ENABLED);
+  useEffect(() => {
+    if (!BACKEND_ENABLED) return;
+    let cancelled = false;
+    fetchMarketOverview().then((o) => { if (!cancelled) setData(o); }).catch(() => {}).finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+  if (!BACKEND_ENABLED) {
+    const o = marketOverview();
+    const overview: DbOverview = {
+      totalListings: o.totalListings, totalSold: o.totalSold, totalVolume: o.totalVolume,
+      volumeToday: o.volumeToday, volumeMonth: o.volumeMonth, volumeByDay: o.volumeByDay,
+      topViewed: o.topViewed,
+      topSold: o.trending.map((x) => ({ name: x.listing.name, category: x.listing.category, count: Math.max(1, Math.round(Math.abs(x.pct))), volume: x.listing.price })),
+      topSellers: o.topSellers.map((s) => ({ id: s.id, nick: s.nick, avatar: s.avatar, ratingAvg: s.ratingAvg, ratingCount: s.ratingCount, itemsSold: s.itemsSold })),
+    };
+    return { overview, loading: false };
+  }
+  return { overview: data, loading };
 }

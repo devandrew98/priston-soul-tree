@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { fmtPrice, sellerItems } from '../../lib/market/helpers';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
-import { deleteListing } from '../../lib/market/listings';
+import { deleteListing, setListingStatus } from '../../lib/market/listings';
 import { useI18n } from '../../lib/i18n';
 import { useAuth, useMyListings, useWishlist } from './store';
 import { useFavoriteListings, useSellerListings } from './useMarketData';
@@ -28,6 +28,7 @@ export function Dashboard({ onOpen, onSeller, onCreate, onEdit, onLogin }: { onO
     if (BACKEND_ENABLED) { await deleteListing(id); dbSeller.reload(); }
     else removeListing(id);
   };
+  const markSold = async (id: string) => { await setListingStatus(id, 'sold'); dbSeller.reload(); };
   const active = owned.filter((l) => l.status === 'available');
   const reserved = owned.filter((l) => l.status === 'reserved');
   const sold = owned.filter((l) => l.status === 'sold');
@@ -75,6 +76,7 @@ export function Dashboard({ onOpen, onSeller, onCreate, onEdit, onLogin }: { onO
               <span className="mk-dashrow-actions">
                 {BACKEND_ENABLED ? (
                   <>
+                    <button className="mk-btn sm primary" onClick={() => markSold(l.id)}>{t('mk.dash.marksold')}</button>
                     <button className="mk-btn sm" onClick={() => onEdit(l.id)}>{t('mk.edit')}</button>
                     <button className="mk-btn sm danger" onClick={() => del(l.id)}>{t('mk.delete')}</button>
                   </>

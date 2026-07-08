@@ -930,6 +930,8 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .mk-ranklist { display: flex; flex-direction: column; gap: 7px; }
 .mk-rankrow { display: flex; align-items: center; gap: 10px; background: linear-gradient(180deg, var(--panel), var(--bg2)); border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; color: var(--text); text-align: left; width: 100%; }
 .mk-rankrow:hover { border-color: var(--gold); }
+.mk-rankrow.static { cursor: default; }
+.mk-rankrow.static:hover { border-color: var(--border); }
 .mk-rank-n { width: 22px; text-align: center; font-weight: 800; color: var(--gold); font-family: ui-monospace, monospace; flex-shrink: 0; }
 .mk-icon.sm { width: 34px; height: 34px; font-size: 18px; border-radius: 8px; }
 .mk-rankrow-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }

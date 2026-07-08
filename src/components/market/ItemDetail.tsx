@@ -1,13 +1,12 @@
 import { useMemo, useState } from 'react';
 import { RARITY_COLOR } from '../../lib/market/data';
-import { priceHistory } from '../../lib/market/data';
-import { cheaperAlternatives, fmtPrice, marketStats, sellerItems } from '../../lib/market/helpers';
+import { cheaperAlternatives, fmtPrice, sellerItems } from '../../lib/market/helpers';
 import type { Listing } from '../../lib/market/types';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { createReport } from '../../lib/market/admin';
 import { useI18n } from '../../lib/i18n';
 import { getSeller, useAuth, useFavorites } from './store';
-import { useSimilar } from './useMarketData';
+import { useItemMarket, useSimilar } from './useMarketData';
 import { ItemCard } from './ItemCard';
 import { PriceChart } from './PriceChart';
 import { Avatar, ContribSeal, OnlineDot, PriceTag, RarityTag, RepBadge, Since, Stars, StatusPill } from './parts';
@@ -30,8 +29,7 @@ export function ItemDetail({
   const seller = getSeller(listing.sellerId);
   const glow = RARITY_COLOR[listing.rarity];
 
-  const series = useMemo(() => priceHistory(listing), [listing]);
-  const stats = useMemo(() => marketStats(listing, series), [listing, series]);
+  const { series, stats } = useItemMarket(listing);
   const similar = useSimilar(listing);
   const cheaper = useMemo(() => (BACKEND_ENABLED ? [] : cheaperAlternatives(listing)), [listing]);
   const fromSeller = useMemo(() => (BACKEND_ENABLED ? [] : sellerItems(listing.sellerId, listing.id).slice(0, 4)), [listing]);
@@ -116,7 +114,11 @@ export function ItemDetail({
           {/* price history */}
           <section className="mk-block">
             <h2 className="mk-h2">{t('mk.hist.title')}</h2>
-            <PriceChart series={series} currency={listing.currency} />
+            {series.length > 1 ? (
+              <PriceChart series={series} currency={listing.currency} />
+            ) : (
+              <p className="mk-muted">{t('mk.hist.none')}</p>
+            )}
           </section>
 
           {/* recommendations */}

@@ -249,6 +249,7 @@ const DICT: Record<string, Entry> = {
 
   // price history
   'mk.hist.title': { pt: 'Histórico de preços', en: 'Price history' },
+  'mk.hist.none': { pt: 'Sem vendas registradas ainda — o histórico aparece quando houver vendas nesta categoria.', en: 'No recorded sales yet — history appears once items in this category sell.' },
   'mk.range.7d': { pt: '7 dias', en: '7 days' },
   'mk.range.30d': { pt: '30 dias', en: '30 days' },
   'mk.range.90d': { pt: '90 dias', en: '90 days' },
@@ -325,6 +326,7 @@ const DICT: Record<string, Entry> = {
   'mk.dash.hello': { pt: 'Bem-vindo de volta, {nick}.', en: 'Welcome back, {nick}.' },
   'mk.dash.active': { pt: 'Ativos', en: 'Active' },
   'mk.dash.sold': { pt: 'Vendidos', en: 'Sold' },
+  'mk.dash.marksold': { pt: '✓ Vendido', en: '✓ Sold' },
   'mk.dash.views': { pt: 'Visualizações', en: 'Views' },
   'mk.dash.profit': { pt: 'Lucro total', en: 'Total profit' },
   'mk.dash.empty': { pt: 'Nada por aqui ainda.', en: 'Nothing here yet.' },
@@ -361,6 +363,10 @@ const DICT: Record<string, Entry> = {
   'mk.stats.mostviewed': { pt: 'Mais visualizados', en: 'Most viewed' },
   'mk.stats.mostfav': { pt: 'Mais favoritados', en: 'Most favorited' },
   'mk.stats.topsellers': { pt: 'Vendedores com mais vendas', en: 'Top sellers' },
+  'mk.stats.mostsold': { pt: 'Mais vendidos', en: 'Best selling' },
+  'mk.stats.moved': { pt: 'movimentado', en: 'moved' },
+  'mk.stats.sold1': { pt: 'vendas', en: 'sold' },
+  'mk.stats.nosales': { pt: 'Nenhuma venda registrada ainda.', en: 'No sales recorded yet.' },
 
   // notifications
   'mk.notif.title': { pt: 'Notificações', en: 'Notifications' },

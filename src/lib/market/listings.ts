@@ -10,10 +10,11 @@ import type { Filters, SortKey } from './helpers';
 const CAT_ICON: Record<string, string> = Object.fromEntries(CATEGORIES.map((c) => [c.id, c.icon]));
 
 // Embed the seller profile so cards can show nick/avatar/contributor.
-const SELECT =
+export const LISTING_SELECT =
   '*, seller:profiles!seller_id(id,nick,char_class,level,clan,avatar_url,verified,is_admin,is_contributor,banned,created_at,last_seen)';
+const SELECT = LISTING_SELECT;
 
-interface ListingRow {
+export interface ListingRow {
   id: string;
   seller_id: string;
   name: string;
@@ -33,7 +34,7 @@ interface ListingRow {
   seller?: ProfileRow | null;
 }
 
-function rowToListing(row: ListingRow): Listing {
+export function rowToListing(row: ListingRow): Listing {
   if (row.seller) {
     const seller = profileToSeller(row.seller);
     cacheProfiles([seller], row.seller.is_contributor ? [row.seller.id] : []);
