@@ -81,7 +81,7 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
         <button className={`mk-avatar-opt upload ${customAvatar ? 'on' : ''}`} onClick={() => fileRef.current?.click()} title={t('mk.auth.uploadavatar')}>
           {customAvatar ? <Avatar value={avatar} /> : '📷'}
         </button>
-        <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => onAvatarFile(e.target.files?.[0])} />
+        <input ref={fileRef} type="file" accept="image/png,image/bmp,image/jpeg,image/webp" hidden onChange={(e) => onAvatarFile(e.target.files?.[0])} />
       </div>
     </div>
   );

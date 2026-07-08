@@ -457,6 +457,8 @@ const DICT: Record<string, Entry> = {
   'mk.auth.clan': { pt: 'Clã', en: 'Clan' },
   'mk.auth.avatar': { pt: 'Avatar', en: 'Avatar' },
   'mk.auth.uploadavatar': { pt: 'Enviar meu próprio avatar', en: 'Upload my own avatar' },
+  'mk.profile.changeavatar': { pt: 'Alterar avatar (PNG ou BMP do seu PC)', en: 'Change avatar (PNG or BMP from your PC)' },
+  'mk.profile.avatarerr': { pt: 'Envie uma imagem válida (PNG, BMP, JPG...).', en: 'Please upload a valid image (PNG, BMP, JPG...).' },
   'mk.auth.email': { pt: 'E-mail', en: 'Email' },
   'mk.auth.password': { pt: 'Senha', en: 'Password' },
   'mk.auth.err.fields': { pt: 'Preencha e-mail, senha (mín. 6) e nick.', en: 'Fill in email, password (min 6) and nick.' },

@@ -1136,3 +1136,10 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .strm-admin-item > input:first-of-type { flex: 1; min-width: 120px; }
 .strm-admin-ord { display: flex; flex-direction: column; gap: 2px; flex: none; }
 .strm-admin-ord > span { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.4px; }
+
+/* Editable avatar (own profile) */
+.mk-profile-avatar { position: relative; display: inline-block; line-height: 0; }
+.mk-avatar-edit { position: absolute; bottom: -2px; right: -2px; width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--bg); background: var(--gold); color: #1a1206; font-size: 15px; cursor: pointer; display: grid; place-items: center; box-shadow: 0 2px 7px rgba(0,0,0,0.55); transition: transform 0.12s, background 0.12s; }
+.mk-avatar-edit:hover { transform: scale(1.12); background: var(--gold-bright); }
+.mk-avatar-edit:disabled { cursor: default; opacity: 0.7; transform: none; }
+.mk-profile-avatar-hint { font-size: 12px; margin-top: 6px; }
