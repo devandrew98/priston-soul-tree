@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { NodeType } from '../lib/tree';
-import { NODE_CATEGORY, RARITY_POINT_COST, TREE_NODE_BY_ID, acceptsSoul } from '../lib/tree';
+import { NODE_CATEGORY, RARITY_POINT_COST, TREE_NODE_BY_ID, acceptsSoul, pvpSoulKind } from '../lib/tree';
 import { SOULS, SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
 import { slotStatValues, nodePointCost, pointsSpent } from '../lib/calc';
 import { fmt, RARITY_LABEL } from '../lib/formula';
@@ -27,10 +27,10 @@ export function NodeEditor({ nodeId, type, onClose, onPlaced }: { nodeId: string
 
   // Souls this node accepts, filtered live by the search box.
   const list = useMemo(() => {
-    return SOULS.filter((s) => acceptsSoul(accepts, rarity, s.category, s.rarity))
+    return SOULS.filter((s) => acceptsSoul(accepts, rarity, s.category, s.rarity, node.pvpKind, pvpSoulKind(s)))
       .filter((s) => (q ? (s.name + ' ' + s.stats.map((st) => st.statLabel).join(' ')).toLowerCase().includes(q.toLowerCase()) : true))
       .sort((a, b) => a.stats[0].statLabel.localeCompare(b.stats[0].statLabel) || a.name.localeCompare(b.name));
-  }, [accepts, rarity, q]);
+  }, [accepts, rarity, q, node.pvpKind]);
 
   // Souls já colocadas em OUTROS nodes — cada soul é única, não pode repetir.
   const usedElsewhere = useMemo(() => {

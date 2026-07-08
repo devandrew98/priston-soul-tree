@@ -11,6 +11,7 @@ import {
   NODE_CATEGORY,
   RARITY_POINT_COST,
   acceptsSoul,
+  pvpSoulKind,
   TYPE_COUNTS,
   type NodeType,
   type TreeNode,
@@ -79,12 +80,12 @@ export function Planner() {
     const aId = activeBuild.slots[fromId]?.soulId;
     const soulA = aId ? SOULS_BY_ID[aId] : null;
     if (!soulA) return false;
-    if (!acceptsSoul(NODE_CATEGORY[target.type], target.rarity, soulA.category, soulA.rarity)) return false;
+    if (!acceptsSoul(NODE_CATEGORY[target.type], target.rarity, soulA.category, soulA.rarity, target.pvpKind, pvpSoulKind(soulA))) return false;
     const bId = activeBuild.slots[target.id]?.soulId;
     const soulB = bId ? SOULS_BY_ID[bId] : null;
     if (!soulB) return true;
     const fromNode = TREE_NODE_BY_ID[fromId];
-    return acceptsSoul(NODE_CATEGORY[fromNode.type], fromNode.rarity, soulB.category, soulB.rarity);
+    return acceptsSoul(NODE_CATEGORY[fromNode.type], fromNode.rarity, soulB.category, soulB.rarity, fromNode.pvpKind, pvpSoulKind(soulB));
   };
 
   // Next still-empty node in build order (for rapid-build auto-advance).
@@ -212,12 +213,17 @@ export function Planner() {
                 }}
                 onDoubleClick={() => { setSelected(n.id); setEditing(n.id); }}
               >
-                <img className="tnode-frame" src={nodeFrameSrc(n.type, n.rarity)} alt="" />
+                <img className="tnode-frame" src={nodeFrameSrc(n.type, n.rarity, n.pvpKind)} alt="" />
                 <div className="tnode-content">
                   {soul ? (
                     <SoulIcon soul={soul} size={NODE * 0.56} />
                   ) : (
-                    <img className="tnode-type" src={NODE_TYPE_ICON[n.type]} alt={TYPE_LABEL[n.type]} />
+                    // defensive PvP node: shield icon (the ✚ is the offensive one)
+                    <img
+                      className="tnode-type"
+                      src={n.pvpKind === 'def' ? NODE_TYPE_ICON.def : NODE_TYPE_ICON[n.type]}
+                      alt={TYPE_LABEL[n.type]}
+                    />
                   )}
                 </div>
                 {soul &&

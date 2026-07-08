@@ -4,7 +4,7 @@
 
 import type { Category, Rarity, SlotState } from '../lib/types';
 import { SOULS } from '../lib/souls';
-import { TREE_NODES, NODE_CATEGORY, acceptsSoul } from '../lib/tree';
+import { TREE_NODES, NODE_CATEGORY, acceptsSoul, pvpSoulKind, type PvpKind } from '../lib/tree';
 import type { EngineConfig, EvaluatedBuild, Genome, Weights } from './types';
 import { genomeCost } from './pathfinder';
 import { scoreGenome } from './scoring';
@@ -15,6 +15,7 @@ export interface CandidateSoul {
   soulLevel: 1 | 2 | 3;
   category: Category;
   rarity: Rarity;
+  pvpKind: PvpKind | null; // PvP souls: offensive or defensive flavor
   value: number; // weighted base value (for seeding bias)
 }
 
@@ -31,7 +32,7 @@ export function candidateSouls(cfg: EngineConfig): CandidateSoul[] {
       if (w) v += w * st.ranks[lvl - 1];
     }
     if (v <= 0) continue;
-    out.push({ soulId: s.id, soulLevel: lvl, category: s.category, rarity: s.rarity, value: v });
+    out.push({ soulId: s.id, soulLevel: lvl, category: s.category, rarity: s.rarity, pvpKind: pvpSoulKind(s), value: v });
   }
   out.sort((a, b) => b.value - a.value);
   return out;
@@ -43,7 +44,9 @@ export function compatibleNodes(cands: CandidateSoul[]): Map<string, string[]> {
   for (const c of cands) {
     m.set(
       c.soulId,
-      TREE_NODES.filter((n) => acceptsSoul(NODE_CATEGORY[n.type], n.rarity, c.category, c.rarity)).map((n) => n.id),
+      TREE_NODES.filter((n) => acceptsSoul(NODE_CATEGORY[n.type], n.rarity, c.category, c.rarity, n.pvpKind, c.pvpKind)).map(
+        (n) => n.id,
+      ),
     );
   }
   return m;

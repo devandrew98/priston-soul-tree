@@ -9,7 +9,7 @@
 
 import type { Category, Rarity } from '../lib/types';
 import { SOULS, SOULS_BY_ID } from '../lib/souls';
-import { TREE_NODE_BY_ID, NODE_CATEGORY, RARITY_POINT_COST, RARITY_ORDER, acceptsSoul } from '../lib/tree';
+import { TREE_NODE_BY_ID, NODE_CATEGORY, RARITY_POINT_COST, RARITY_ORDER, acceptsSoul, pvpSoulKind, type PvpKind } from '../lib/tree';
 import { nodeFinalValue } from '../lib/formula';
 import { openSetFor, genomeCost } from './pathfinder';
 import type { EngineConfig, Genome } from './types';
@@ -48,6 +48,7 @@ interface FillerCand {
   soulLevel: 1 | 2 | 3;
   category: Category;
   rarity: Rarity;
+  pvpKind: PvpKind | null;
   goal: number;
   surv: number;
   gen: number;
@@ -68,7 +69,7 @@ function fillerPool(cfg: EngineConfig, used: Set<string>): FillerCand[] {
       surv += (SURVIVAL_SCALE[st.stat] || 0) * base;
       gen += (GENERAL_SCALE[st.stat] || 0) * base;
     }
-    out.push({ soulId: s.id, soulLevel: lvl, category: s.category, rarity: s.rarity, goal, surv, gen });
+    out.push({ soulId: s.id, soulLevel: lvl, category: s.category, rarity: s.rarity, pvpKind: pvpSoulKind(s), goal, surv, gen });
   }
   // Lexicographic-ish priority: goal ≫ survival ≫ general.
   out.sort((a, b) => b.goal * 1e6 + b.surv * 1e3 + b.gen - (a.goal * 1e6 + a.surv * 1e3 + a.gen));
@@ -98,7 +99,7 @@ export function fillGenome(g: Genome, cfg: EngineConfig): { genome: Genome; adde
     const cat = NODE_CATEGORY[node.type];
     const idx = pool.findIndex(
       (c) =>
-        acceptsSoul(cat, node.rarity, c.category, c.rarity) &&
+        acceptsSoul(cat, node.rarity, c.category, c.rarity, node.pvpKind, c.pvpKind) &&
         // PvP souls only help in PvP: use them as fillers only when the goal
         // includes PvP, or on PvP nodes (where nothing else fits anyway).
         (cfg.includePvp || c.category !== 'pvp' || cat === 'pvp'),

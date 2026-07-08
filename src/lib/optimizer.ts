@@ -6,6 +6,8 @@ import {
   NODE_CATEGORY,
   RARITY_POINT_COST,
   acceptsSoul,
+  pvpSoulKind,
+  type PvpKind,
 } from './tree';
 import { ROOT_NODE, reachAll, unlockCost } from './graph';
 import { nodeFinalValue } from './formula';
@@ -57,6 +59,7 @@ interface Candidate {
   soulId: string;
   category: Category;
   rarity: Rarity;
+  pvpKind: PvpKind | null;
   soulLevel: 1 | 2 | 3;
   stats: WStat[]; // only stats the goal cares about
   weightBase: number; // Σ weight*base at node level 1 — value of just placing it
@@ -116,7 +119,7 @@ export function optimize(goal: Goal, inv: Inventory, opt: OptimizeOptions): Opti
       weightBase += w * base;
     }
     if (stats.length === 0) continue;
-    candidates.push({ soulId: soul.id, category: soul.category, rarity: soul.rarity, soulLevel: owned, stats, weightBase });
+    candidates.push({ soulId: soul.id, category: soul.category, rarity: soul.rarity, pvpKind: pvpSoulKind(soul), soulLevel: owned, stats, weightBase });
   }
   candidates.sort((a, b) => b.weightBase - a.weightBase);
 
@@ -150,7 +153,7 @@ export function optimize(goal: Goal, inv: Inventory, opt: OptimizeOptions): Opti
       let bestNodeCost = Infinity;
       for (const n of TREE_NODES) {
         if (souledNodes.has(n.id)) continue;
-        if (!acceptsSoul(NODE_CATEGORY[n.type], n.rarity, c.category, c.rarity)) continue;
+        if (!acceptsSoul(NODE_CATEGORY[n.type], n.rarity, c.category, c.rarity, n.pvpKind, c.pvpKind)) continue;
         const rc = dist[n.id];
         if (rc === undefined) continue;
         if (rc < bestNodeCost) { bestNodeCost = rc; bestNode = n.id; }

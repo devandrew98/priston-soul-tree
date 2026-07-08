@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import type { Build } from '../lib/types';
 import { pointsSpent } from '../lib/calc';
 import { SOULS_BY_ID } from '../lib/souls';
-import { TREE_NODE_BY_ID, NODE_CATEGORY, acceptsSoul } from '../lib/tree';
+import { TREE_NODE_BY_ID, NODE_CATEGORY, acceptsSoul, pvpSoulKind } from '../lib/tree';
 import { candidateSouls, compatibleNodes, genomeToSlots, slotsToGenome, hashGenome, mutate } from './genome';
 import { genomeCost } from './pathfinder';
 import { mulberry32 } from './rng';
@@ -61,6 +61,23 @@ describe('Genome', () => {
     expect(genomeCost(g)).toBe(pointsSpent(build));
   });
 
+  it('defensive PvP node takes only defensive PvP souls (and vice-versa)', () => {
+    const defNode = TREE_NODE_BY_ID['bv3_8'];
+    const atkNode = TREE_NODE_BY_ID['cv_6'];
+    expect(defNode.pvpKind).toBe('def');
+    expect(atkNode.pvpKind).toBe('atk');
+    const offensive = SOULS_BY_ID['vault-mummy']; // attackPower PvP soul
+    const defensive = SOULS_BY_ID['vault-guard']; // defense+absorb PvP soul
+    expect(pvpSoulKind(offensive)).toBe('atk');
+    expect(pvpSoulKind(defensive)).toBe('def');
+    const fits = (n: typeof defNode, s: typeof offensive) =>
+      acceptsSoul(NODE_CATEGORY[n.type], n.rarity, s.category, s.rarity, n.pvpKind, pvpSoulKind(s));
+    expect(fits(defNode, defensive)).toBe(true);
+    expect(fits(defNode, offensive)).toBe(false);
+    expect(fits(atkNode, offensive)).toBe(true);
+    expect(fits(atkNode, defensive)).toBe(false);
+  });
+
   it('300 random mutations keep every genome structurally valid', () => {
     const cands = candidateSouls(cfg);
     const nodesBy = compatibleNodes(cands);
@@ -77,7 +94,7 @@ describe('Genome', () => {
         const soul = SOULS_BY_ID[gene.soulId];
         expect(node).toBeTruthy();
         expect(soul).toBeTruthy();
-        expect(acceptsSoul(NODE_CATEGORY[node.type], node.rarity, soul.category, soul.rarity)).toBe(true);
+        expect(acceptsSoul(NODE_CATEGORY[node.type], node.rarity, soul.category, soul.rarity, node.pvpKind, pvpSoulKind(soul))).toBe(true);
         expect(gene.nodeLevel).toBeGreaterThanOrEqual(1);
       }
     }

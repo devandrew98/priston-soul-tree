@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { optimize } from '../lib/optimizer';
 import { SOULS_BY_ID } from '../lib/souls';
-import { TREE_NODE_BY_ID, NODE_CATEGORY, acceptsSoul } from '../lib/tree';
+import { TREE_NODE_BY_ID, NODE_CATEGORY, acceptsSoul, pvpSoulKind } from '../lib/tree';
 import { fillGenome } from './filler';
 import { candidateSouls, compatibleNodes, evaluate, slotsToGenome } from './genome';
 import { genomeCost, openSetFor } from './pathfinder';
@@ -63,7 +63,7 @@ describe('Fill pass (empty opened nodes waste points)', () => {
     for (const [nodeId, gene] of Object.entries(filled)) {
       const node = TREE_NODE_BY_ID[nodeId];
       const soul = SOULS_BY_ID[gene.soulId];
-      expect(acceptsSoul(NODE_CATEGORY[node.type], node.rarity, soul.category, soul.rarity)).toBe(true);
+      expect(acceptsSoul(NODE_CATEGORY[node.type], node.rarity, soul.category, soul.rarity, node.pvpKind, pvpSoulKind(soul))).toBe(true);
     }
   });
 
