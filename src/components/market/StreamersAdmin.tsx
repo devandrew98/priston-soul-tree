@@ -63,7 +63,10 @@ export function StreamersAdmin() {
                 {PLATFORMS.map((p) => <option key={p} value={p}>{p === 'twitch' ? '🟣 Twitch' : '🔴 YouTube'}</option>)}
               </select>
               <input placeholder={draft.platform === 'twitch' ? t('mk.admin.strm.handle.tw') : t('mk.admin.strm.handle.yt')} value={draft.handle} onChange={(e) => setDraft({ ...draft, handle: e.target.value })} />
-              <input className="strm-admin-sort" type="number" title={t('mk.admin.strm.order')} value={draft.sort} onChange={(e) => setDraft({ ...draft, sort: Number(e.target.value) || 0 })} />
+              <label className="strm-admin-ord" title={t('mk.admin.strm.orderhint')}>
+                <span>{t('mk.admin.strm.order')}</span>
+                <input className="strm-admin-sort" type="number" value={draft.sort} onChange={(e) => setDraft({ ...draft, sort: Number(e.target.value) || 0 })} />
+              </label>
             </div>
             <input placeholder={t('mk.admin.strm.url')} value={draft.url} onChange={(e) => setDraft({ ...draft, url: e.target.value })} />
             <button className="mk-btn primary" onClick={add} disabled={busy || !draft.name.trim() || !draft.handle.trim()}>
@@ -121,7 +124,7 @@ function StreamerRow({ s, userId, onChange, onFilePick }: {
         <option value="youtube">🔴 YouTube</option>
       </select>
       <input value={d.handle} onChange={(e) => setD({ ...d, handle: e.target.value })} />
-      <input className="strm-admin-sort" type="number" value={d.sort} onChange={(e) => setD({ ...d, sort: Number(e.target.value) || 0 })} />
+      <input className="strm-admin-sort" type="number" title={t('mk.admin.strm.orderhint')} value={d.sort} onChange={(e) => setD({ ...d, sort: Number(e.target.value) || 0 })} />
       <button className={`mk-btn sm ${s.live ? 'active' : ''}`} onClick={toggleLive} title={t('mk.admin.strm.livehint')}>
         {s.live ? `● ${t('strm.live')}` : t('mk.admin.strm.offline')}
       </button>

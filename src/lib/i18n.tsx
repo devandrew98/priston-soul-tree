@@ -413,6 +413,7 @@ const DICT: Record<string, Entry> = {
   'mk.admin.strm.handle.tw': { pt: 'Login da Twitch (ex.: hadder)', en: 'Twitch login (e.g. hadder)' },
   'mk.admin.strm.handle.yt': { pt: '@handle ou ID (UC...) do YouTube', en: 'YouTube @handle or ID (UC...)' },
   'mk.admin.strm.order': { pt: 'Ordem', en: 'Order' },
+  'mk.admin.strm.orderhint': { pt: 'Ordem de exibição: número menor aparece primeiro (0 = padrão, ordena por nome).', en: 'Display order: lower number shows first (0 = default, sorts by name).' },
   'mk.admin.strm.url': { pt: 'Link do canal (opcional)', en: 'Channel URL (optional)' },
   'mk.admin.strm.create': { pt: 'Criar', en: 'Create' },
   'mk.admin.strm.empty': { pt: 'Nenhum streamer cadastrado ainda.', en: 'No streamers yet.' },

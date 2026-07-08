@@ -1130,3 +1130,5 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .strm-admin-item { display: flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
 .strm-admin-item.live { border-color: rgba(226,27,27,0.55); }
 .strm-admin-item > input:first-of-type { flex: 1; min-width: 120px; }
+.strm-admin-ord { display: flex; flex-direction: column; gap: 2px; flex: none; }
+.strm-admin-ord > span { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.4px; }
