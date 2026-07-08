@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { CATEGORIES, RARITIES } from '../../lib/market/data';
+import { RARITIES } from '../../lib/market/data';
+import { useCategories } from '../../lib/market/marketCategories';
 import type { Currency, Listing, Rarity } from '../../lib/market/types';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { limitErrorKey } from '../../lib/market/helpers';
@@ -12,16 +13,17 @@ import { LoginPrompt } from './LoginPrompt';
 const CURRENCIES: Currency[] = ['gold', 'coins'];
 
 export function CreateListing({ editId, onDone, onLogin }: { editId?: string; onDone: () => void; onLogin: () => void }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { userId, isContributor } = useAuth();
   const { addListing } = useMyListings();
+  const categories = useCategories();
   const fileRef = useRef<HTMLInputElement>(null);
   const editing = !!editId;
   const { listing: editListing } = useListing(editId || '');
 
   const [name, setName] = useState('');
-  const [category, setCategory] = useState(CATEGORIES[0].id);
-  const [subcategory, setSubcategory] = useState(CATEGORIES[0].subs[0] ?? '');
+  const [category, setCategory] = useState(categories[0].key);
+  const [subcategory, setSubcategory] = useState(categories[0].subs[0] ?? '');
   const [rarity, setRarity] = useState<Rarity>('rare');
   const [itemLevel, setItemLevel] = useState(90);
   const [quantity, setQuantity] = useState(1);
@@ -53,7 +55,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
   }, [editing, prefilled, editListing]);
 
   const canContribute = isContributor;
-  const cat = CATEGORIES.find((c) => c.id === category) ?? CATEGORIES[0];
+  const cat = categories.find((c) => c.key === category) ?? categories[0];
 
   const onFile = (file: File | undefined) => {
     if (!file) return;
@@ -133,8 +135,8 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
 
         <label className="mk-field">
           <span>{t('mk.category')}</span>
-          <select value={category} onChange={(e) => { setCategory(e.target.value); const c = CATEGORIES.find((x) => x.id === e.target.value); setSubcategory(c?.subs[0] ?? ''); }}>
-            {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.icon} {t(`mk.cat.${c.id}`)}</option>)}
+          <select value={category} onChange={(e) => { setCategory(e.target.value); const c = categories.find((x) => x.key === e.target.value); setSubcategory(c?.subs[0] ?? ''); }}>
+            {categories.map((c) => <option key={c.key} value={c.key}>{c.icon} {c.label[lang]}</option>)}
           </select>
         </label>
         {cat.subs.length > 0 && (

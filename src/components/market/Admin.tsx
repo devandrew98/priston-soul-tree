@@ -5,14 +5,16 @@ import { useAdminModel } from './useAdminModel';
 import { StreamersAdmin } from './StreamersAdmin';
 import { RepTiersAdmin } from './RepTiersAdmin';
 import { NewsAdmin } from './NewsAdmin';
+import { MarketCategoriesAdmin } from './MarketCategoriesAdmin';
 import { Avatar, PriceTag, Since, StatusPill } from './parts';
 
-type Section = 'listings' | 'users' | 'tiers' | 'reports' | 'streamers' | 'news' | 'global' | 'logs';
+type Section = 'listings' | 'users' | 'tiers' | 'itemcats' | 'reports' | 'streamers' | 'news' | 'global' | 'logs';
 
 const SECTIONS: { id: Section; icon: string; key: string }[] = [
   { id: 'listings', icon: '📦', key: 'mk.admin.listings' },
   { id: 'users', icon: '👤', key: 'mk.admin.users' },
   { id: 'tiers', icon: '🏅', key: 'mk.admin.tiers' },
+  { id: 'itemcats', icon: '🗂️', key: 'mk.admin.itemcats' },
   { id: 'reports', icon: '⚑', key: 'mk.admin.reports' },
   { id: 'streamers', icon: '📺', key: 'mk.admin.streamers' },
   { id: 'news', icon: '📰', key: 'mk.admin.news' },
@@ -157,6 +159,9 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
 
       {/* CATEGORIES (reputation tiers) */}
       {sec === 'tiers' && <RepTiersAdmin />}
+
+      {/* ITEM CATEGORIES */}
+      {sec === 'itemcats' && <MarketCategoriesAdmin />}
 
       {/* STREAMERS */}
       {sec === 'streamers' && <StreamersAdmin />}

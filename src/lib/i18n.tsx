@@ -416,6 +416,11 @@ const DICT: Record<string, Entry> = {
 
   // categorias de reputação (Fase 11)
   'mk.admin.tiers': { pt: 'Categorias', en: 'Categories' },
+  'mk.admin.itemcats': { pt: 'Tipos de item', en: 'Item types' },
+  'mk.admin.cat.hint': { pt: 'Edite os tipos de item do marketplace: ícone, nome (PT/EN), subcategorias e ordem.', en: 'Edit the marketplace item types: icon, name (PT/EN), subcategories and order.' },
+  'mk.admin.cat.add': { pt: 'Novo tipo de item', en: 'New item type' },
+  'mk.admin.cat.new': { pt: 'Novo tipo', en: 'New type' },
+  'mk.admin.cat.subs': { pt: 'Subcategorias (separadas por vírgula)', en: 'Subcategories (comma-separated)' },
   'mk.admin.news': { pt: 'Notícias', en: 'News' },
   'mk.admin.news.add': { pt: 'Nova notícia / evento', en: 'New news / event' },
   'mk.admin.news.titleph': { pt: 'Título', en: 'Title' },

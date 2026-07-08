@@ -1,12 +1,10 @@
-import { CATEGORIES } from '../../lib/market/data';
 import { fmtPrice, repTier } from '../../lib/market/helpers';
+import { categoryIcon } from '../../lib/market/marketCategories';
 import type { Seller } from '../../lib/market/types';
 import { useI18n } from '../../lib/i18n';
 import { getSeller } from './store';
 import { useMarketOverview } from './useMarketData';
 import { Avatar, OnlineDot, PriceTag, Stars } from './parts';
-
-const CAT_ICON: Record<string, string> = Object.fromEntries(CATEGORIES.map((c) => [c.id, c.icon]));
 
 export function Stats({ onOpen, onSeller }: { onOpen: (id: string) => void; onSeller: (id: string) => void }) {
   const { t } = useI18n();
@@ -51,7 +49,7 @@ export function Stats({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
             {o.topSold.map((s, i) => (
               <div key={s.name} className="mk-rankrow static">
                 <span className="mk-rank-n">{i + 1}</span>
-                <span className="mk-icon sm" style={{ ['--rar' as string]: 'var(--gold)' }}>{CAT_ICON[s.category] || '📦'}</span>
+                <span className="mk-icon sm" style={{ ['--rar' as string]: 'var(--gold)' }}>{categoryIcon(s.category)}</span>
                 <span className="mk-rankrow-main">
                   <b>{s.name}</b>
                   <span className="mk-muted">{fmtPrice(s.volume)} {t('mk.stats.moved')}</span>

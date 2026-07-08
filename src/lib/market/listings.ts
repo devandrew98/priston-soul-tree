@@ -1,13 +1,11 @@
 // DB data layer for listings (Supabase). Maps Postgres rows <-> the Listing type
 // the UI already uses, embeds the seller profile and warms the profile cache.
 import { supabase } from './supabase';
-import { CATEGORIES } from './data';
+import { categoryIcon } from './marketCategories';
 import { cacheProfiles } from './profileCache';
 import { profileToSeller, type ProfileRow, uploadToBucket } from './auth';
 import type { Currency, Listing, Rarity } from './types';
 import type { Filters, SortKey } from './helpers';
-
-const CAT_ICON: Record<string, string> = Object.fromEntries(CATEGORIES.map((c) => [c.id, c.icon]));
 
 // Embed the seller profile so cards can show nick/avatar/contributor.
 export const LISTING_SELECT =
@@ -43,7 +41,7 @@ export function rowToListing(row: ListingRow): Listing {
     id: row.id,
     name: row.name,
     itemLevel: row.item_level,
-    icon: CAT_ICON[row.category] || '📦',
+    icon: categoryIcon(row.category),
     image: row.image_url,
     category: row.category,
     subcategory: row.subcategory,

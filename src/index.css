@@ -1202,3 +1202,10 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .mk-admin-usercount { margin-left: auto; font-size: 12px; }
 .mk-admin-userid { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
 .mk-admin-banreason { font-size: 11px; color: var(--attack); }
+
+/* Admin — marketplace item categories */
+.mk-cat-row { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
+.mk-cat-main { display: grid; grid-template-columns: 60px 1fr 1fr 70px auto; gap: 8px; align-items: center; }
+.mk-cat-row input, .mk-cat-subs { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 7px 9px; font-size: 13px; min-width: 0; }
+.mk-cat-row input:focus { outline: none; border-color: var(--gold); }
+.mk-cat-subs { width: 100%; font-size: 12px; color: var(--text-dim); }

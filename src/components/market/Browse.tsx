@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { CATEGORIES, RARITIES, SELLERS } from '../../lib/market/data';
+import { RARITIES, SELLERS } from '../../lib/market/data';
+import { useCategories } from '../../lib/market/marketCategories';
 import { EMPTY_FILTERS, type Filters, type SortKey } from '../../lib/market/helpers';
 import { useI18n } from '../../lib/i18n';
 import { ItemCard } from './ItemCard';
@@ -8,7 +9,8 @@ import { useBrowseListings } from './useMarketData';
 const SORTS: SortKey[] = ['price_asc', 'price_desc', 'newest', 'oldest', 'views', 'rating', 'sold'];
 
 export function Browse({ onOpen, onSeller }: { onOpen: (id: string) => void; onSeller: (id: string) => void }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const categories = useCategories();
   const [f, setF] = useState<Filters>(EMPTY_FILTERS);
   const [sort, setSort] = useState<SortKey>('newest');
   const [showFilters, setShowFilters] = useState(false);
@@ -43,9 +45,9 @@ export function Browse({ onOpen, onSeller }: { onOpen: (id: string) => void; onS
       {/* category chips */}
       <div className="mk-cats">
         <button className={f.category === '' ? 'on' : ''} onClick={() => set('category', '')}>{t('mk.allcats')}</button>
-        {CATEGORIES.map((c) => (
-          <button key={c.id} className={f.category === c.id ? 'on' : ''} onClick={() => set('category', f.category === c.id ? '' : c.id)}>
-            {c.icon} {t(`mk.cat.${c.id}`)}
+        {categories.map((c) => (
+          <button key={c.key} className={f.category === c.key ? 'on' : ''} onClick={() => set('category', f.category === c.key ? '' : c.key)}>
+            {c.icon} {c.label[lang]}
           </button>
         ))}
       </div>
