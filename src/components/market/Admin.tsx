@@ -26,10 +26,22 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
   const tiers = useRepTiers();
   const [sec, setSec] = useState<Section>('listings');
   const [q, setQ] = useState('');
+  const [uq, setUq] = useState('');
+  const [uFilter, setUFilter] = useState<'all' | 'banned' | 'suspended' | 'contributors' | 'reported'>('all');
   const [globalText, setGlobalText] = useState('');
 
   const filtered = m.listings.filter((l) => l.name.toLowerCase().includes(q.toLowerCase()));
+  const usersFiltered = m.users.filter((u) =>
+    u.nick.toLowerCase().includes(uq.toLowerCase()) &&
+    (uFilter === 'all' || (uFilter === 'banned' && u.banned) || (uFilter === 'suspended' && u.suspended) ||
+      (uFilter === 'contributors' && u.contributor) || (uFilter === 'reported' && u.reports > 0)));
+  const USER_FILTERS: typeof uFilter[] = ['all', 'reported', 'contributors', 'suspended', 'banned'];
   const reasonLabel = (r: string) => { const k = `mk.report.reason.${r}`; const v = t(k); return v === k ? r : v; };
+  const banUser = (u: { id: string; nick: string; banned: boolean }) => {
+    if (u.banned) { m.toggleBan(u.id, u.nick, false); return; }
+    const reason = window.prompt(t('mk.admin.banreason.ask'), '') ?? '';
+    m.toggleBan(u.id, u.nick, true, reason);
+  };
 
   return (
     <div className="mk-admin">
@@ -77,12 +89,23 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
 
       {/* USERS */}
       {sec === 'users' && (
-        <div className="mk-admin-table">
-          {m.users.map((u) => (
+        <>
+          <input className="mk-admin-search" value={uq} onChange={(e) => setUq(e.target.value)} placeholder={t('mk.admin.usersearch')} />
+          <div className="mk-admin-userfilters">
+            {USER_FILTERS.map((f) => (
+              <button key={f} className={uFilter === f ? 'on' : ''} onClick={() => setUFilter(f)}>{t(`mk.admin.ufilter.${f}`)}</button>
+            ))}
+            <span className="mk-muted mk-admin-usercount">{usersFiltered.length}</span>
+          </div>
+          <div className="mk-admin-table">
+          {usersFiltered.map((u) => (
             <div key={u.id} className={`mk-admin-row ${u.banned ? 'removed' : ''}`}>
               <Avatar value={u.avatar} />
-              <button className="mk-admin-name" onClick={() => onSeller(u.id)}>{u.nick}</button>
-              <span className="mk-admin-sub">{u.className} · {t('mk.lvl')} {u.level}</span>
+              <span className="mk-admin-userid">
+                <button className="mk-admin-name" onClick={() => onSeller(u.id)}>{u.nick}</button>
+                <span className="mk-admin-sub">{u.className} · {t('mk.lvl')} {u.level} · {t('mk.member')} <Since at={u.createdAt} /> · {t('mk.lastseen')} <Since at={u.lastSeen} /></span>
+                {u.banned && u.banReason && <span className="mk-admin-banreason">🚫 {u.banReason}</span>}
+              </span>
               <span className="mk-admin-flags">
                 {u.contributor && <span className="mk-flag contrib">⭐ {t('mk.contrib')}</span>}
                 {u.reports > 0 && <span className={`mk-flag ${u.reports >= 3 ? 'bad' : ''}`}>⚑ {u.reports}</span>}
@@ -101,11 +124,13 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
                 </select>
                 <button className={`mk-btn sm ${u.contributor ? 'active' : ''}`} onClick={() => m.toggleContributor(u.id, u.nick, !u.contributor)} title={t('mk.contrib.hint')}>⭐ {t('mk.contrib')}</button>
                 <button className={`mk-btn sm ${u.suspended ? 'active' : ''}`} onClick={() => m.toggleSuspend(u.id, u.nick, !u.suspended)}>{u.suspended ? t('mk.admin.reactivate') : t('mk.admin.suspend')}</button>
-                <button className={`mk-btn sm ${u.banned ? 'active' : 'danger'}`} onClick={() => m.toggleBan(u.id, u.nick, !u.banned)}>{u.banned ? t('mk.admin.unban') : t('mk.admin.ban')}</button>
+                <button className={`mk-btn sm ${u.banned ? 'active' : 'danger'}`} onClick={() => banUser(u)}>{u.banned ? t('mk.admin.unban') : t('mk.admin.ban')}</button>
               </span>
             </div>
           ))}
-        </div>
+          {!m.loading && usersFiltered.length === 0 && <p className="mk-muted">{t('mk.dash.empty')}</p>}
+          </div>
+        </>
       )}
 
       {/* REPORTS */}

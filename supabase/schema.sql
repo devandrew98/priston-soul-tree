@@ -577,3 +577,6 @@ create policy news_read on public.news for select using (published or public.is_
 drop policy if exists news_write on public.news;
 create policy news_write on public.news for all
   using (public.is_admin()) with check (public.is_admin());                                -- só admin edita
+
+-- Fase 13 — moderacao de usuarios (ver 11_user_moderation.sql)
+alter table public.profiles add column if not exists ban_reason text;

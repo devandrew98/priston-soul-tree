@@ -9,7 +9,7 @@ import { useAdmin, useAuth, useMyListings } from './store';
 
 export interface MReport { id: string; reporterNick: string; targetType: 'item' | 'user'; targetId: string; targetName: string; reason: string; note: string; at: number }
 export interface MListing { id: string; name: string; icon: string; image: string | null; sellerId: string; sellerNick: string; price: number; currency: string; status: string; removed: boolean; featured: boolean }
-export interface MUser { id: string; nick: string; avatar: string; className: string; level: number; itemsSold: number; reports: number; banned: boolean; suspended: boolean; contributor: boolean; verified: boolean; repTierOverride: string | null }
+export interface MUser { id: string; nick: string; avatar: string; className: string; level: number; itemsSold: number; reports: number; banned: boolean; suspended: boolean; contributor: boolean; verified: boolean; repTierOverride: string | null; banReason: string | null; createdAt: number; lastSeen: number }
 export interface MLog { id: string; text: string; at: number }
 
 export interface AdminModel {
@@ -21,7 +21,7 @@ export interface AdminModel {
   removeListing: (id: string, name: string) => void;
   restoreListing: (id: string, name: string) => void;
   toggleFeatured: (id: string, name: string, next: boolean) => void;
-  toggleBan: (id: string, nick: string, next: boolean) => void;
+  toggleBan: (id: string, nick: string, next: boolean, reason?: string) => void;
   toggleSuspend: (id: string, nick: string, next: boolean) => void;
   toggleContributor: (id: string, nick: string, next: boolean) => void;
   setMemberTier: (id: string, nick: string, key: string | null, label: string) => void;
@@ -49,7 +49,10 @@ export function useAdminModel(): AdminModel {
         if (cancelled) return;
         setReports(rep);
         setListings(lis.map((l) => ({ ...l, featured: l.highlighted })));
-        setUsers(usr.map((u) => ({ ...u, itemsSold: 0, reports: 0 })));
+        // Count open reports filed against each user.
+        const repCount = new Map<string, number>();
+        for (const r of rep) if (r.targetType === 'user') repCount.set(r.targetId, (repCount.get(r.targetId) ?? 0) + 1);
+        setUsers(usr.map((u) => ({ ...u, itemsSold: 0, reports: repCount.get(u.id) ?? 0 })));
         setLogs(lg);
       })
       .catch(() => {})
@@ -66,7 +69,7 @@ export function useAdminModel(): AdminModel {
       removeListing: (id, name) => { admin.setListingRemoved(id, true).then(() => { log(`Anúncio removido: ${name}`); reload(); }).catch(() => {}); },
       restoreListing: (id, name) => { admin.setListingRemoved(id, false).then(() => { log(`Anúncio restaurado: ${name}`); reload(); }).catch(() => {}); },
       toggleFeatured: (id, name, next) => { admin.setListingFeatured(id, next).then(() => { log(`${next ? 'Destacou' : 'Removeu destaque de'}: ${name}`); reload(); }).catch(() => {}); },
-      toggleBan: (id, nick, next) => { admin.setUserFlag(id, { banned: next }).then(() => { log(`${next ? 'Baniu' : 'Desbaniu'} usuário: ${nick}`); reload(); }).catch(() => {}); },
+      toggleBan: (id, nick, next, reason) => { admin.setUserFlag(id, { banned: next, ban_reason: next ? (reason?.trim() || null) : null }).then(() => { log(`${next ? 'Baniu' : 'Desbaniu'} usuário: ${nick}${next && reason?.trim() ? ` — motivo: ${reason.trim()}` : ''}`); reload(); }).catch(() => {}); },
       toggleSuspend: (id, nick, next) => { admin.setUserFlag(id, { suspended: next }).then(() => { log(`${next ? 'Suspendeu' : 'Reativou'} vendedor: ${nick}`); reload(); }).catch(() => {}); },
       toggleContributor: (id, nick, next) => { admin.setUserFlag(id, { is_contributor: next }).then(() => { log(`${next ? 'Concedeu' : 'Removeu'} selo Colaborador: ${nick}`); reload(); }).catch(() => {}); },
       setMemberTier: (id, nick, key, label) => { dbSetMemberTier(id, key).then(() => { log(`Cargo de ${nick}: ${label}`); reload(); }).catch(() => {}); },
@@ -89,7 +92,7 @@ export function useAdminModel(): AdminModel {
   const mUsers: MUser[] = SELLERS.map((u) => ({
     id: u.id, nick: u.nick, avatar: u.avatar, className: u.className, level: u.level, itemsSold: u.itemsSold, reports: u.reports,
     banned: mock.bannedUsers.includes(u.id), suspended: mock.suspendedUsers.includes(u.id), contributor: mock.contributors.includes(u.id), verified: u.verified,
-    repTierOverride: null,
+    repTierOverride: null, banReason: null, createdAt: u.joinedAt, lastSeen: u.lastSeen,
   }));
 
   return {

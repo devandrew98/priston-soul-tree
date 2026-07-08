@@ -1194,3 +1194,11 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .mk-news-item > input:first-child { font-weight: 700; }
 .mk-news-sort { width: 60px; text-align: center; }
 .mk-news-acts { display: flex; gap: 6px; margin-left: auto; }
+
+/* Admin — user moderation (filters + extra info) */
+.mk-admin-userfilters { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: 4px 0 12px; }
+.mk-admin-userfilters button { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; color: var(--text-dim); padding: 4px 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.mk-admin-userfilters button.on { background: var(--panel2); border-color: var(--gold); color: var(--gold-bright); }
+.mk-admin-usercount { margin-left: auto; font-size: 12px; }
+.mk-admin-userid { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+.mk-admin-banreason { font-size: 11px; color: var(--attack); }

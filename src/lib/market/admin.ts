@@ -117,26 +117,34 @@ export interface AdminUser {
   contributor: boolean;
   verified: boolean;
   repTierOverride: string | null;
+  banReason: string | null;
+  createdAt: number;
+  lastSeen: number;
+}
+
+interface AdminUserRow {
+  id: string; nick: string; avatar_url: string | null; char_class: string; level: number;
+  banned: boolean; suspended: boolean; is_contributor: boolean; verified: boolean; rep_tier_override: string | null;
+  ban_reason?: string | null; created_at: string; last_seen: string;
 }
 
 export async function fetchAdminUsers(): Promise<AdminUser[]> {
-  const { data, error } = await sb()
-    .from('profiles')
-    .select('id,nick,avatar_url,char_class,level,banned,suspended,is_contributor,verified,rep_tier_override')
-    .order('created_at', { ascending: false })
-    .limit(200);
-  if (error) throw error;
-  return ((data as {
-    id: string; nick: string; avatar_url: string | null; char_class: string; level: number;
-    banned: boolean; suspended: boolean; is_contributor: boolean; verified: boolean; rep_tier_override: string | null;
-  }[]) ?? []).map((u) => ({
+  const BASE = 'id,nick,avatar_url,char_class,level,banned,suspended,is_contributor,verified,rep_tier_override,created_at,last_seen';
+  type Res = { data: AdminUserRow[] | null; error: unknown };
+  // ban_reason is added by 11_user_moderation.sql; tolerate its absence so the
+  // admin panel keeps working before that migration is applied.
+  let rows = await sb().from('profiles').select(`${BASE},ban_reason`).order('created_at', { ascending: false }).limit(200) as unknown as Res;
+  if (rows.error) rows = await sb().from('profiles').select(BASE).order('created_at', { ascending: false }).limit(200) as unknown as Res;
+  if (rows.error) throw rows.error;
+  return (rows.data ?? []).map((u) => ({
     id: u.id, nick: u.nick, avatar: u.avatar_url || '🧑', className: u.char_class, level: u.level,
     banned: u.banned, suspended: u.suspended, contributor: u.is_contributor, verified: u.verified,
-    repTierOverride: u.rep_tier_override,
+    repTierOverride: u.rep_tier_override, banReason: u.ban_reason ?? null,
+    createdAt: new Date(u.created_at).getTime(), lastSeen: new Date(u.last_seen).getTime(),
   }));
 }
 
-export async function setUserFlag(userId: string, patch: Partial<{ banned: boolean; suspended: boolean; is_contributor: boolean }>): Promise<void> {
+export async function setUserFlag(userId: string, patch: Partial<{ banned: boolean; suspended: boolean; is_contributor: boolean; ban_reason: string | null }>): Promise<void> {
   const { error } = await sb().from('profiles').update(patch).eq('id', userId);
   if (error) throw error;
 }
