@@ -1,5 +1,11 @@
 import type { Rarity } from './types';
 
+/** Hard game caps: fusion level tops out at 201, which yields 217 fusion
+ *  points (16 for levels 1-80 + 1 per fusion level). NOTHING in the app —
+ *  UI, generators or the deep-search engine — may ever exceed these. */
+export const MAX_FUSION_LEVEL = 201;
+export const MAX_FUSION_POINTS = 217;
+
 /** Rarity multipliers for the Fusion Tier node formula. */
 export const RARITY_MULT: Record<Rarity, number> = {
   common: 18,

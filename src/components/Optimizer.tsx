@@ -1,16 +1,15 @@
 import { useMemo, useRef, useState } from 'react';
 import { optimize, type Goal } from '../lib/optimizer';
-import { RARITY_LABEL, fmt } from '../lib/formula';
+import { RARITY_LABEL, fmt, MAX_FUSION_POINTS } from '../lib/formula';
 import { computeTotals, slotStatValues } from '../lib/calc';
 import { TREE_NODE_BY_ID, NODE_CATEGORY, RARITY_POINT_COST } from '../lib/tree';
 import { SOULS, SOULS_BY_ID, CATEGORY_LABEL } from '../lib/souls';
 import { useStore, totalFusionPoints } from '../store';
 import { useI18n } from '../lib/i18n';
 import { HelpTip } from './HelpTip';
-import { deepOptimize, type DeepProgress } from '../engine/controller';
-import { genomeToSlots, slotsToGenome } from '../engine/genome';
+import { deepOptimize, bestGreedyGenome, type DeepProgress } from '../engine/controller';
+import { genomeToSlots } from '../engine/genome';
 import { genomeCost } from '../engine/pathfinder';
-import { fillGenome } from '../engine/filler';
 import { explainResult, recommend, type AdviceToken } from '../engine/consultant';
 import type { EngineConfig, SolverResult } from '../engine/types';
 
@@ -65,26 +64,22 @@ export function Optimizer() {
     return { id: 'custom', name: 'Personalizado', weights, includePvp, custom: true };
   }, [pct, includePvp]);
 
-  const result = useMemo(
-    () => optimize(goal, inventory, { budget: useBudget ? budget : undefined, allSouls }),
-    [goal, inventory, useBudget, budget, allSouls],
-  );
-
-  // Fill pass on the quick result too: a soul on every opened-but-empty
-  // pass-through node (free — the unlock is already paid) and any leftover
-  // points into level-ups. Empty opened nodes waste their unlock points.
+  // Quick build = budget-monotonic greedy (budget ladder + fill pass): the
+  // fill puts a soul on every opened pass-through node and spends any
+  // leftover points, and the ladder guarantees more budget never yields a
+  // WORSE build (the raw greedy is myopic and could lose Attack Power when
+  // given 3 extra points). Hard-capped at 217 points by the engine.
   const quick = useMemo(() => {
-    if (!result.used.length) return { slots: result.slots, used: result.used, points: result.pointsSpent };
     const cfg: EngineConfig = {
       weights: goal.weights,
       inventory,
       allSouls,
       includePvp,
-      budget: useBudget ? budget : 999999,
+      budget: useBudget ? budget : MAX_FUSION_POINTS,
       timeMs: 0,
       rngSeed: 1,
     };
-    const { genome } = fillGenome(slotsToGenome(result.slots), cfg);
+    const genome = bestGreedyGenome(cfg);
     const slots = genomeToSlots(genome);
     const used = Object.entries(genome).map(([slotId, ge]) => {
       const nodeRarity = TREE_NODE_BY_ID[slotId].rarity;
@@ -93,15 +88,15 @@ export function Optimizer() {
       return { soulId: ge.soulId, slotId, nodeRarity, nodeLevel: ge.nodeLevel, points: RARITY_POINT_COST[nodeRarity] * ge.nodeLevel, score };
     });
     return { slots, used, points: genomeCost(genome) };
-  }, [result, goal, inventory, allSouls, includePvp, useBudget, budget]);
+  }, [goal, inventory, allSouls, includePvp, useBudget, budget]);
 
   const previewBuild = { ...activeBuild, slots: quick.slots };
   const totals = computeTotals(previewBuild);
   const overBudget = quick.points > budget;
 
   const notes = useMemo(
-    () => feedback({ ...result, slots: quick.slots, used: quick.used }, pct, inventory, allSouls, t),
-    [result, quick, pct, inventory, allSouls, t],
+    () => feedback({ slots: quick.slots, used: quick.used } as ReturnType<typeof optimize>, pct, inventory, allSouls, t),
+    [quick, pct, inventory, allSouls, t],
   );
 
   const setAttr = (key: string, v: number) => setPct((p) => ({ ...p, [key]: Math.max(0, Math.min(100, Math.round(v))) }));
@@ -120,7 +115,7 @@ export function Optimizer() {
       inventory,
       allSouls,
       includePvp,
-      budget: useBudget ? budget : 999999,
+      budget: useBudget ? budget : MAX_FUSION_POINTS,
       timeMs: deepTime * 1000,
       rngSeed: (Date.now() % 100000) + 1,
     };

@@ -5,6 +5,7 @@
 
 import type { Inventory } from '../lib/types';
 import { optimize, type Goal } from '../lib/optimizer';
+import { MAX_FUSION_POINTS } from '../lib/formula';
 import type {
   EngineConfig,
   EvaluatedBuild,
@@ -115,14 +116,37 @@ async function runInline(cfg: EngineConfig, seeds: Genome[], onProgress?: (p: De
   return [engine.outcome()];
 }
 
+/**
+ * Best greedy build for a config, made MONOTONIC in the budget: the greedy is
+ * myopic, so 3 extra points can flip an early decision and end up WORSE (a
+ * lvl-201 full-attack build losing Attack Power vs lvl 198). We run it on a
+ * small budget ladder (B, B-1..B-3), fill each result up to the FULL budget
+ * (fill pass spends the leftover on the best level-ups) and keep the best
+ * score — so more budget can never yield a worse build.
+ */
+export function bestGreedyGenome(cfg: EngineConfig): Genome {
+  const goal: Goal = { id: 'custom', name: 'custom', weights: cfg.weights, includePvp: cfg.includePvp, custom: true };
+  let best: { genome: Genome; total: number } | null = null;
+  for (const delta of [0, 1, 2, 3]) {
+    const budget = cfg.budget - delta;
+    if (budget <= 0) break;
+    const r = optimize(goal, cfg.inventory as Inventory, { budget, allSouls: cfg.allSouls });
+    const { genome } = fillGenome(slotsToGenome(r.slots), cfg); // fill back up to the FULL budget
+    const ev = evaluate(genome, cfg.weights);
+    if (ev.score.points > cfg.budget) continue;
+    if (!best || ev.score.total > best.total) best = { genome, total: ev.score.total };
+  }
+  return best?.genome ?? {};
+}
+
 /** The public entry: run the whole deep optimization for a config. */
-export async function deepOptimize(cfg: EngineConfig, onProgress?: (p: DeepProgress) => void): Promise<SolverResult> {
+export async function deepOptimize(rawCfg: EngineConfig, onProgress?: (p: DeepProgress) => void): Promise<SolverResult> {
+  // Hard game cap: never optimize beyond 217 fusion points.
+  const cfg: EngineConfig = { ...rawCfg, budget: Math.min(rawCfg.budget, MAX_FUSION_POINTS) };
   const kb = new KnowledgeBase();
 
-  // Seed 1: the fast greedy build (strong, instant starting point).
-  const goal: Goal = { id: 'custom', name: 'custom', weights: cfg.weights, includePvp: cfg.includePvp, custom: true };
-  const greedy = optimize(goal, cfg.inventory as Inventory, { budget: cfg.budget, allSouls: cfg.allSouls });
-  const seeds: Genome[] = [slotsToGenome(greedy.slots)];
+  // Seed 1: the budget-monotonic greedy build (strong, instant starting point).
+  const seeds: Genome[] = [bestGreedyGenome(cfg)];
   const seedScore = evaluate(seeds[0], cfg.weights).score.total;
 
   // Seed 2: best build KNOWN for this exact profile (accumulated knowledge).

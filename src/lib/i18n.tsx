@@ -536,7 +536,7 @@ const DICT: Record<string, Entry> = {
   'st.totals.available': { pt: 'Disponível', en: 'Available' },
   'st.totals.total': { pt: 'Total', en: 'Total' },
   'st.totals.over': { pt: '⚠️ Você gastou {n} pontos além do seu limite.', en: '⚠️ You spent {n} points over your limit.' },
-  'st.totals.ptsnote': { pt: '16 pontos (níveis 1–80) + 1 por nível de fusão.', en: '16 points (levels 1–80) + 1 per fusion level.' },
+  'st.totals.ptsnote': { pt: '16 pontos (níveis 1–80) + 1 por nível de fusão · máximo: nível 201 = 217 pontos.', en: '16 points (levels 1–80) + 1 per fusion level · max: level 201 = 217 points.' },
 
   // Node editor
   'st.ne.swap': { pt: 'Trocar soul', en: 'Swap soul' },

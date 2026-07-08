@@ -10,7 +10,7 @@ import {
   type PvpKind,
 } from './tree';
 import { ROOT_NODE, reachAll, unlockCost } from './graph';
-import { nodeFinalValue } from './formula';
+import { nodeFinalValue, MAX_FUSION_POINTS } from './formula';
 
 // No fixed per-node cap: the real limit is the fusion points budget. This high
 // value only guards the "no budget" case from looping forever.
@@ -101,7 +101,8 @@ function scoreAt(stats: WStat[], rarity: Rarity, level: number): number {
  * whichever buys the most score per point.
  */
 export function optimize(goal: Goal, inv: Inventory, opt: OptimizeOptions): OptimizeResult {
-  const budget = opt.budget ?? Infinity;
+  // Hard game cap: no build may ever spend more than 217 fusion points.
+  const budget = Math.min(opt.budget ?? MAX_FUSION_POINTS, MAX_FUSION_POINTS);
 
   const candidates: Candidate[] = [];
   for (const soul of SOULS) {

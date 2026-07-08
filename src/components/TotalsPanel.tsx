@@ -2,6 +2,7 @@ import type { Unit } from '../lib/types';
 import { computeTotals, countFilled, pointsSpent } from '../lib/calc';
 import { fmt } from '../lib/formula';
 import { TREE_NODES } from '../lib/tree';
+import { MAX_FUSION_LEVEL } from '../lib/formula';
 import { useStore, totalFusionPoints } from '../store';
 import { useI18n } from '../lib/i18n';
 
@@ -75,7 +76,7 @@ export function TotalsPanel() {
           className="input"
           type="number"
           min={1}
-          max={400}
+          max={MAX_FUSION_LEVEL}
           value={fusionLevel}
           onChange={(e) => setFusionLevel(Number(e.target.value))}
         />

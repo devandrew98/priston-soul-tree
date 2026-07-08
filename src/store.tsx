@@ -4,6 +4,7 @@ import { TREE_NODES } from './lib/tree';
 import { decodeBuild } from './lib/share';
 import { openByCode, rememberOpened } from './lib/cloud';
 import { getPlayerCode, setPlayerCode, createPlayer, savePlayer, loadPlayer } from './lib/player';
+import { MAX_FUSION_LEVEL, MAX_FUSION_POINTS } from './lib/formula';
 
 const LS_KEY = 'priston-soul-tree-v2';
 const DEFAULT_FUSION_LEVEL = 198;
@@ -44,6 +45,7 @@ function normalize(p: PersistShape): PersistShape {
   if (!p || typeof p !== 'object') p = {} as PersistShape;
   if (!p.inventory || typeof p.inventory !== 'object') p.inventory = {};
   if (typeof p.fusionLevel !== 'number') p.fusionLevel = DEFAULT_FUSION_LEVEL;
+  p.fusionLevel = Math.max(1, Math.min(MAX_FUSION_LEVEL, p.fusionLevel));
   if (!Array.isArray(p.builds) || !p.builds.length) {
     const b = newBuild(localStorage.getItem('site-lang') === 'en' ? 'My Build' : 'Minha Build');
     p.builds = [b];
@@ -69,9 +71,10 @@ function load(): PersistShape {
   return normalize({} as PersistShape);
 }
 
-/** Total fusion points available: 16 (levels 1-80) + 1 per fusion level. */
+/** Total fusion points available: 16 (levels 1-80) + 1 per fusion level.
+ *  Hard-capped at the game maximum (level 201 -> 217 points). */
 export function totalFusionPoints(fusionLevel: number): number {
-  return 16 + Math.max(0, fusionLevel);
+  return Math.min(MAX_FUSION_POINTS, 16 + Math.max(0, Math.min(MAX_FUSION_LEVEL, fusionLevel)));
 }
 
 interface Store {
@@ -163,7 +166,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     builds: state.builds,
     activeBuild,
     fusionLevel: state.fusionLevel,
-    setFusionLevel: (level) => setState((s) => ({ ...s, fusionLevel: Math.max(1, Math.min(400, Math.round(level || 0))) })),
+    setFusionLevel: (level) => setState((s) => ({ ...s, fusionLevel: Math.max(1, Math.min(MAX_FUSION_LEVEL, Math.round(level || 0))) })),
     setOwned: (soulId, level) =>
       setState((s) => {
         const inv = { ...s.inventory };
