@@ -48,6 +48,14 @@ export function Marketplace() {
   // Load the (DB-backed) reputation tiers + item categories when the marketplace opens.
   useEffect(() => { void loadRepTiers(); void loadCategories(); }, []);
 
+  // Deep link: a shared "#item-<id>" / "#seller-<id>" URL opens that item/seller.
+  // (ids are UUIDs with dashes, so slice by prefix instead of splitting on "-".)
+  useEffect(() => {
+    const h = window.location.hash;
+    if (h.startsWith('#item-')) setView({ name: 'item', id: h.slice('#item-'.length) });
+    else if (h.startsWith('#seller-')) setView({ name: 'seller', id: h.slice('#seller-'.length) });
+  }, []);
+
   const openItem = (id: string) => { setView({ name: 'item', id }); window.scrollTo({ top: 0 }); };
   const openSeller = (id: string) => { setView({ name: 'seller', id }); window.scrollTo({ top: 0 }); };
   const openEdit = (id: string) => { setView({ name: 'create', editId: id }); window.scrollTo({ top: 0 }); };

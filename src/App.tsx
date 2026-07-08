@@ -32,6 +32,9 @@ const NAV: { id: Section; icon: string; key: string }[] = [
 export default function App() {
   const { t, lang, setLang } = useI18n();
   const [section, setSection] = useState<Section>(() => {
+    // A shared listing/seller link (#item-… / #seller-…) opens the Marketplace.
+    const h = window.location.hash;
+    if (h.startsWith('#item-') || h.startsWith('#seller-')) return 'market';
     const saved = localStorage.getItem('site-section');
     return saved && SECTIONS.includes(saved as Section) ? (saved as Section) : 'home';
   });
