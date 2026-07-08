@@ -4,7 +4,7 @@ import { CLASSES, SELLERS } from '../../lib/market/data';
 import { useI18n } from '../../lib/i18n';
 import { useAuth } from './store';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
-import { maskEmail, sendPasswordReset, signIn, signInWithGoogle, signUp, updateAvatar, uploadToBucket } from '../../lib/market/auth';
+import { authErrMsg, maskEmail, sendPasswordReset, signIn, signInWithGoogle, signUp, updateAvatar, uploadToBucket } from '../../lib/market/auth';
 import { squareThumbnail } from '../../lib/market/image';
 import { refreshProfile } from './session';
 import { Avatar, OnlineDot, RepBadge } from './parts';
@@ -64,7 +64,7 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
   const realLogin = async () => {
     setError(''); setBusy(true);
     try { await signIn(email, password); onClose(); }
-    catch (e) { setError(errMsg(e)); }
+    catch (e) { setError(authErrMsg(e)); }
     finally { setBusy(false); }
   };
   const realRegister = async () => {
@@ -84,19 +84,19 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
       }
       if (needsConfirmation) setInfo(t('mk.auth.confirm'));
       else onClose();
-    } catch (e) { setError(errMsg(e)); }
+    } catch (e) { setError(authErrMsg(e)); }
     finally { setBusy(false); }
   };
   const googleLogin = async () => {
     setError(''); setBusy(true);
     try { await signInWithGoogle(); /* redirects away */ }
-    catch (e) { setError(errMsg(e)); setBusy(false); }
+    catch (e) { setError(authErrMsg(e)); setBusy(false); }
   };
   const sendReset = async () => {
     if (!email.trim()) return;
     setError(''); setBusy(true);
     try { await sendPasswordReset(email); setInfo(t('mk.auth.forgot.sent', { email: maskEmail(email.trim()) })); }
-    catch (e) { setError(errMsg(e)); }
+    catch (e) { setError(authErrMsg(e)); }
     finally { setBusy(false); }
   };
 
@@ -234,14 +234,4 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
     </div>,
     document.body,
   );
-}
-
-function errMsg(e: unknown): string {
-  const m = e instanceof Error ? e.message : String(e);
-  if (/invalid login credentials/i.test(m)) return 'E-mail ou senha incorretos.';
-  if (/already registered|already exists|duplicate/i.test(m)) return 'Este e-mail já está cadastrado.';
-  if (/password should be at least/i.test(m)) return 'A senha deve ter no mínimo 6 caracteres.';
-  if (/email not confirmed/i.test(m)) return 'Confirme seu e-mail antes de entrar (verifique sua caixa de entrada).';
-  if (/provider is not enabled|oauth/i.test(m)) return 'Login com Google ainda não está habilitado.';
-  return m;
 }

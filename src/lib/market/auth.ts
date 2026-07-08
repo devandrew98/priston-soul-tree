@@ -117,6 +117,35 @@ export async function updatePassword(newPassword: string): Promise<void> {
   if (error) throw error;
 }
 
+/**
+ * Human-friendly (PT) message for a Supabase auth error. When the project's
+ * e-mail server (SMTP) is missing/misconfigured, GoTrue returns a literal
+ * "{}" body — the raw message is useless, so we translate the common cases
+ * and never show "{}" to the player.
+ */
+export function authErrMsg(e: unknown): string {
+  const obj = (typeof e === 'object' && e !== null ? e : {}) as {
+    message?: string;
+    msg?: string;
+    error_description?: string;
+    status?: number;
+  };
+  const raw = (e instanceof Error ? e.message : obj.msg || obj.message || obj.error_description || String(e ?? '')) || '';
+  const m = raw === '{}' || raw === '[object Object]' ? '' : raw;
+  const status = obj.status;
+  if (/invalid login credentials/i.test(m)) return 'E-mail ou senha incorretos.';
+  if (/already registered|already exists|duplicate/i.test(m)) return 'Este e-mail já está cadastrado.';
+  if (/password should be at least/i.test(m)) return 'A senha deve ter no mínimo 6 caracteres.';
+  if (/email not confirmed/i.test(m)) return 'Confirme seu e-mail antes de entrar (verifique sua caixa de entrada).';
+  if (/unable to validate email|invalid email|invalid format/i.test(m)) return 'E-mail inválido.';
+  if (/provider is not enabled|oauth/i.test(m)) return 'Login com Google ainda não está habilitado.';
+  if (/rate limit|too many|over_email_send_rate/i.test(m) || status === 429)
+    return 'Muitas tentativas — aguarde alguns minutos e tente novamente.';
+  if (/error sending|smtp|recovery email|confirmation email/i.test(m) || (!m && (status ?? 500) >= 500))
+    return 'Não foi possível enviar o e-mail agora — o servidor de e-mail do site está em configuração. Tente novamente mais tarde.';
+  return m || 'Falha inesperada no servidor. Tente novamente.';
+}
+
 /** Mask an email for display: "an****************1022@gmail.com". */
 export function maskEmail(email: string): string {
   const [local, domain] = email.split('@');

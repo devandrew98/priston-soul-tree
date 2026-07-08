@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useI18n } from '../../lib/i18n';
-import { updatePassword } from '../../lib/market/auth';
+import { authErrMsg, updatePassword } from '../../lib/market/auth';
 import { clearRecovery, useSession } from './session';
 
 export function ResetPasswordModal() {
@@ -23,7 +23,7 @@ export function ResetPasswordModal() {
     if (pw !== pw2) { setError(t('mk.auth.err.pwmatch')); return; }
     setBusy(true);
     try { await updatePassword(pw); setDone(true); }
-    catch (e) { setError(e instanceof Error ? e.message : String(e)); }
+    catch (e) { setError(authErrMsg(e)); }
     finally { setBusy(false); }
   };
 
