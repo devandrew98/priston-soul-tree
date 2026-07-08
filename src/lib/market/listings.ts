@@ -195,3 +195,9 @@ export async function setListingStatus(id: string, status: Listing['status']): P
   const { error } = await sb().from('listings').update({ status, updated_at: new Date().toISOString() }).eq('id', id);
   if (error) throw error;
 }
+
+/** Atomic view increment (fire-and-forget from the item page). */
+export async function bumpViews(id: string): Promise<void> {
+  const { error } = await sb().rpc('increment_listing_views', { lid: id });
+  if (error) throw error;
+}

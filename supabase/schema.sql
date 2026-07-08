@@ -408,3 +408,10 @@ $$;
 drop trigger if exists on_listing_sold on public.listings;
 create trigger on_listing_sold after update on public.listings
   for each row execute function public.record_sale();
+
+-- Fase 8.1 — contagem de visualizacoes (ver supabase/06_views.sql)
+create or replace function public.increment_listing_views(lid uuid)
+returns void language sql security definer set search_path = public as $func$
+  update public.listings set views = views + 1 where id = lid and removed = false;
+$func$;
+grant execute on function public.increment_listing_views(uuid) to anon, authenticated;

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { LISTINGS, LISTING_BY_ID, priceHistory } from '../../lib/market/data';
 import { type Filters, type SortKey, filterListings, marketOverview, marketStats, sellerItems, sellerReviews, sortListings } from '../../lib/market/helpers';
-import { fetchFavoriteListings, fetchListing, fetchListings, fetchSellerListings, fetchSimilar } from '../../lib/market/listings';
+import { bumpViews, fetchFavoriteListings, fetchListing, fetchListings, fetchSellerListings, fetchSimilar } from '../../lib/market/listings';
 import { fetchReviews, fetchSellerAggregates, type SellerAggregates } from '../../lib/market/social';
 import { fetchItemMarket, fetchMarketOverview, type DbOverview } from '../../lib/market/stats';
 import type { Listing, MarketStats, PricePoint, Review, Seller } from '../../lib/market/types';
@@ -40,6 +40,10 @@ export function useBrowseListings(filters: Filters, sort: SortKey): { listings: 
   return { listings: data, loading, reloadKey };
 }
 
+// Listings whose view we've already counted this session (avoids double-count on
+// re-renders / React StrictMode double-invoke).
+const viewedThisSession = new Set<string>();
+
 /** A single listing by id — DB fetch or mock lookup. */
 export function useListing(id: string): { listing: Listing | null; loading: boolean } {
   const { myListings } = useMyListings();
@@ -54,6 +58,7 @@ export function useListing(id: string): { listing: Listing | null; loading: bool
       .then((l) => { if (!cancelled) setListing(l); })
       .catch(() => { if (!cancelled) setListing(null); })
       .finally(() => { if (!cancelled) setLoading(false); });
+    if (!viewedThisSession.has(id)) { viewedThisSession.add(id); void bumpViews(id).catch(() => {}); }
     return () => { cancelled = true; };
   }, [id]);
 
