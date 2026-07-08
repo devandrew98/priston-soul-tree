@@ -6,6 +6,7 @@ import { nextOccurrence, RECENT_SEC } from './bosses';
 export interface FuryLevel {
   id: string;
   name: string; // level-range label, shown as-is in PT/EN
+  speech: { pt: string; en: string }; // spelled-out level range for the voice alert
   hours: number[]; // GMT-0 hours the Fury spawns at
   tone: string; // accent color for the 3D glow / card border
   img: string; // Fury portrait (same creature for every level range)
@@ -14,10 +15,12 @@ export interface FuryLevel {
 // Same Fury creature across all ranges — only the level bracket / schedule differ.
 export const FURY_IMG = '/fury/fury.gif';
 
+// `speech` spells the range out in words so the TTS reads "cento e quatro"
+// instead of spelling the digits ("um, zero, quatro").
 export const FURY_LEVELS: FuryLevel[] = [
-  { id: 'fury-70-88', name: 'Level 70–88', hours: [0, 3, 6, 9, 12, 15, 18], tone: '#6fbf73', img: FURY_IMG },
-  { id: 'fury-89-103', name: 'Level 89–103', hours: [1, 4, 7, 10, 13, 16, 19, 22], tone: '#5aa9e6', img: FURY_IMG },
-  { id: 'fury-104', name: 'Level 104+', hours: [2, 5, 8, 11, 14, 17, 20, 23], tone: '#e0663b', img: FURY_IMG },
+  { id: 'fury-70-88', name: 'Level 70–88', speech: { pt: 'setenta ao oitenta e oito', en: 'seventy to eighty-eight' }, hours: [0, 3, 6, 9, 12, 15, 18], tone: '#6fbf73', img: FURY_IMG },
+  { id: 'fury-89-103', name: 'Level 89–103', speech: { pt: 'oitenta e nove ao cento e três', en: 'eighty-nine to one hundred three' }, hours: [1, 4, 7, 10, 13, 16, 19, 22], tone: '#5aa9e6', img: FURY_IMG },
+  { id: 'fury-104', name: 'Level 104+', speech: { pt: 'cento e quatro', en: 'one hundred four' }, hours: [2, 5, 8, 11, 14, 17, 20, 23], tone: '#e0663b', img: FURY_IMG },
 ];
 
 export const FURY_BY_ID: Record<string, FuryLevel> = Object.fromEntries(FURY_LEVELS.map((l) => [l.id, l]));

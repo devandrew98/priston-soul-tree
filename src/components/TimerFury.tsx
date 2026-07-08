@@ -56,7 +56,7 @@ export function TimerFury() {
           const key = `${ev.level.id}-${ev.when.getTime()}-${T}`;
           if (!announced.current.has(key)) {
             announced.current.add(key);
-            speak(t('tf.alert.one', { name: ev.level.name, min: T }), lang);
+            speak(t('tf.alert.one', { name: ev.level.speech[lang], min: T }), lang);
           }
         }
       }
