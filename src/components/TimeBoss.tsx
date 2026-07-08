@@ -43,7 +43,7 @@ export function TimeBoss() {
   const [now, setNow] = useState(() => new Date());
 
   const [favOnly, setFavOnly] = useState(() => localStorage.getItem('tb-favonly') === '1');
-  const [audioOn, setAudioOn] = useState(false);
+  const [audioOn, setAudioOn] = useState(() => localStorage.getItem('tb-audio') === '1');
   const [favorites, setFavorites] = useState<Set<string>>(() => {
     try {
       return new Set(JSON.parse(localStorage.getItem('tb-favorites') || '[]'));
@@ -60,6 +60,7 @@ export function TimeBoss() {
   });
 
   const announced = useRef<Set<string>>(new Set());
+  const prevSec = useRef<Map<string, number>>(new Map());
 
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 1000);
@@ -73,16 +74,23 @@ export function TimeBoss() {
   const hero = upcoming[0];
   const rest = upcoming.slice(1, 7);
 
-  // Voice alerts at the selected minute marks before each upcoming spawn.
+  // Voice alerts fire exactly when the countdown crosses each selected minute
+  // mark (downward), not anywhere inside a window — so 2 min alerts at 2:00.
   useEffect(() => {
-    if (!audioOn) return;
+    const seen = new Set<string>();
     for (const ev of events) {
       if (ev.state !== 'upcoming') continue;
+      const evKey = `${ev.when.getTime()}`;
+      seen.add(evKey);
+      const prev = prevSec.current.get(evKey);
+      prevSec.current.set(evKey, ev.sec);
+      // Track time even when muted, so re-enabling audio never fires retroactively.
+      if (!audioOn || prev === undefined) continue;
       for (const T of ALERT_MINS) {
         if (!alertMins[T]) continue;
         const th = T * 60;
-        if (ev.sec <= th && ev.sec > th - 60) {
-          const key = `${ev.when.getTime()}-${T}`;
+        if (prev > th && ev.sec <= th) {
+          const key = `${evKey}-${T}`;
           if (!announced.current.has(key)) {
             announced.current.add(key);
             speak(buildAlert(ev.ids, T, t), lang);
@@ -90,6 +98,7 @@ export function TimeBoss() {
         }
       }
     }
+    for (const k of prevSec.current.keys()) if (!seen.has(k)) prevSec.current.delete(k);
     if (announced.current.size > 240) {
       const cutoff = now.getTime() - 3600000;
       for (const k of announced.current) if (Number(k.split('-')[0]) < cutoff) announced.current.delete(k);
@@ -117,6 +126,7 @@ export function TimeBoss() {
   const toggleAudio = () => {
     const nx = !audioOn;
     setAudioOn(nx);
+    localStorage.setItem('tb-audio', nx ? '1' : '0');
     if (nx) {
       try {
         window.speechSynthesis?.getVoices();
