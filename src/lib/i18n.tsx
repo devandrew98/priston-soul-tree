@@ -113,6 +113,11 @@ const DICT: Record<string, Entry> = {
   'home.card.soultree': { pt: 'Planejador de builds da Fusion Tier e gerador inteligente.', en: 'Fusion Tier build planner and smart generator.' },
   'home.open': { pt: 'Abrir', en: 'Open' },
   'home.credits': { pt: 'Desenvolvido por {a} e {b}', en: 'Developed by {a} and {b}' },
+  'home.news.title': { pt: 'Novidades & Eventos', en: 'News & Events' },
+  'home.news.pinned': { pt: 'Fixado', en: 'Pinned' },
+  'home.news.kind.news': { pt: 'Notícia', en: 'News' },
+  'home.news.kind.event': { pt: 'Evento', en: 'Event' },
+  'home.news.kind.maintenance': { pt: 'Manutenção', en: 'Maintenance' },
 
   // ---- SoD (Survive or Die) ----
   'sod.title': { pt: 'SURVIVE OR DIE', en: 'SURVIVE OR DIE' },
@@ -411,6 +416,14 @@ const DICT: Record<string, Entry> = {
 
   // categorias de reputação (Fase 11)
   'mk.admin.tiers': { pt: 'Categorias', en: 'Categories' },
+  'mk.admin.news': { pt: 'Notícias', en: 'News' },
+  'mk.admin.news.add': { pt: 'Nova notícia / evento', en: 'New news / event' },
+  'mk.admin.news.titleph': { pt: 'Título', en: 'Title' },
+  'mk.admin.news.bodyph': { pt: 'Descrição (opcional)', en: 'Description (optional)' },
+  'mk.admin.news.pin': { pt: 'Fixar', en: 'Pin' },
+  'mk.admin.news.published': { pt: 'Publicado', en: 'Published' },
+  'mk.admin.news.publish': { pt: 'Publicar', en: 'Publish' },
+  'mk.admin.news.empty': { pt: 'Nenhuma notícia ainda.', en: 'No news yet.' },
   'mk.admin.tier.hint': { pt: 'Edite as categorias de reputação (nome, tipo, cor e vendas mínimas). A ordem é por "Ordem".', en: 'Edit the reputation categories (name, type, color and minimum sales). Ordered by "Order".' },
   'mk.admin.tier.label': { pt: 'Nome', en: 'Name' },
   'mk.admin.tier.base': { pt: 'Tipo', en: 'Type' },

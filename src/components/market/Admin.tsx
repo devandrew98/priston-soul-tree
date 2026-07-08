@@ -4,9 +4,10 @@ import { useRepTiers } from '../../lib/market/repTiers';
 import { useAdminModel } from './useAdminModel';
 import { StreamersAdmin } from './StreamersAdmin';
 import { RepTiersAdmin } from './RepTiersAdmin';
+import { NewsAdmin } from './NewsAdmin';
 import { Avatar, PriceTag, Since, StatusPill } from './parts';
 
-type Section = 'listings' | 'users' | 'tiers' | 'reports' | 'streamers' | 'global' | 'logs';
+type Section = 'listings' | 'users' | 'tiers' | 'reports' | 'streamers' | 'news' | 'global' | 'logs';
 
 const SECTIONS: { id: Section; icon: string; key: string }[] = [
   { id: 'listings', icon: '📦', key: 'mk.admin.listings' },
@@ -14,6 +15,7 @@ const SECTIONS: { id: Section; icon: string; key: string }[] = [
   { id: 'tiers', icon: '🏅', key: 'mk.admin.tiers' },
   { id: 'reports', icon: '⚑', key: 'mk.admin.reports' },
   { id: 'streamers', icon: '📺', key: 'mk.admin.streamers' },
+  { id: 'news', icon: '📰', key: 'mk.admin.news' },
   { id: 'global', icon: '📢', key: 'mk.admin.global' },
   { id: 'logs', icon: '📜', key: 'mk.admin.logs' },
 ];
@@ -133,6 +135,9 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
 
       {/* STREAMERS */}
       {sec === 'streamers' && <StreamersAdmin />}
+
+      {/* NEWS / EVENTS */}
+      {sec === 'news' && <NewsAdmin />}
 
       {/* GLOBAL NOTIFICATION */}
       {sec === 'global' && (

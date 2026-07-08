@@ -1,4 +1,5 @@
 import { useI18n } from '../lib/i18n';
+import { NewsFeed } from './NewsFeed';
 
 export function Home() {
   const { t } = useI18n();
@@ -10,6 +11,8 @@ export function Home() {
         <h1 className="home-welcome-title">{t('home.welcome.title')}</h1>
         <p className="home-welcome-body">{t('home.welcome.body')}</p>
       </header>
+
+      <NewsFeed />
 
       <footer className="home-credits">
         {t('home.credits', { a: 'HaDDeR', b: 'CommitaoDourado' })}
