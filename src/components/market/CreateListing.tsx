@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { CATEGORIES, RARITIES } from '../../lib/market/data';
 import type { Currency, Listing, Rarity } from '../../lib/market/types';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
+import { limitErrorKey } from '../../lib/market/helpers';
 import { createListing, updateListing } from '../../lib/market/listings';
 import { useI18n } from '../../lib/i18n';
 import { useAuth, useMyListings } from './store';
@@ -79,7 +80,8 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
         else await createListing(userId, { ...fields, imageFile: imageFile! });
         onDone();
       } catch (e) {
-        setError(e instanceof Error ? e.message : String(e));
+        const key = limitErrorKey(e);
+        setError(key ? t(key) : e instanceof Error ? e.message : String(e));
       } finally {
         setBusy(false);
       }

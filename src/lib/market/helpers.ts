@@ -6,6 +6,17 @@ import type { Currency, Listing, MarketStats, PricePoint, Review, Seller, Trend 
 
 export type SortKey = 'price_asc' | 'price_desc' | 'newest' | 'oldest' | 'views' | 'rating' | 'sold';
 
+/** Map a backend anti-spam/limit error (raised by DB triggers, Fase 9) to an
+ *  i18n key. Returns null for unrelated errors so the caller shows the raw text. */
+export function limitErrorKey(err: unknown): string | null {
+  const msg = err instanceof Error ? err.message : String(err ?? '');
+  if (msg.includes('limit_active_listings')) return 'mk.limit.active';
+  if (msg.includes('limit_rate_listings')) return 'mk.limit.rate';
+  if (msg.includes('limit_rate_messages')) return 'mk.limit.messages';
+  if (msg.includes('limit_rate_reports')) return 'mk.limit.reports';
+  return null;
+}
+
 export interface Filters {
   q: string;
   category: string; // '' = all

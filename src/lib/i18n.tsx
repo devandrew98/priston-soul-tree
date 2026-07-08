@@ -310,6 +310,12 @@ const DICT: Record<string, Entry> = {
   'mk.create.imagehint': { pt: 'Clique ou arraste uma imagem aqui', en: 'Click or drag an image here' },
   'mk.create.imagereq': { pt: 'A imagem do item é obrigatória para publicar.', en: 'An item image is required to publish.' },
 
+  // limites antifraude (Fase 9)
+  'mk.limit.active': { pt: 'Você atingiu o limite de 30 anúncios ativos. Marque alguns como vendidos ou remova para publicar novos.', en: 'You reached the limit of 30 active listings. Mark some as sold or remove them to post new ones.' },
+  'mk.limit.rate': { pt: 'Você criou muitos anúncios em pouco tempo. Aguarde um pouco e tente novamente.', en: 'You created too many listings in a short time. Please wait a bit and try again.' },
+  'mk.limit.messages': { pt: 'Você enviou mensagens demais em pouco tempo. Aguarde um instante.', en: 'You sent too many messages too fast. Please wait a moment.' },
+  'mk.limit.reports': { pt: 'Você fez muitas denúncias em pouco tempo. Tente novamente mais tarde.', en: 'You filed too many reports recently. Please try again later.' },
+
   // contributors
   'mk.contrib': { pt: 'Colaborador', en: 'Contributor' },
   'mk.contrib.hint': { pt: 'Selo concedido pelo administrador a quem ajuda financeiramente o servidor. Permite destacar anúncios.', en: 'Seal granted by an admin to those who support the server financially. Allows highlighting listings.' },
