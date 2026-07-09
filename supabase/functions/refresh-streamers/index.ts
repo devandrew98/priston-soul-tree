@@ -74,12 +74,19 @@ async function youtubeScrape(handle: string): Promise<ScrapeResult> {
     },
   });
   const html = await r.text();
+  // Several independent signals YouTube embeds when a channel's /live page
+  // resolves to an actually-live video; checking more than one (the ytInitial
+  // player-response fields AND the thumbnail LIVE badge) hedges against any
+  // one of them being absent in a particular page variant/region.
   const isLiveNow = html.includes('"isLiveNow":true');
+  const isLive = html.includes('"isLive":true');
+  const liveBadge = html.includes('"style":"LIVE"');
   const hls = html.includes('hlsManifestUrl');
   const blocked = /unusual traffic|detected unusual|solve this puzzle|consent\.youtube\.com|Before you continue/i.test(html);
-  const live = isLiveNow || hls;
+  const live = isLiveNow || isLive || liveBadge || hls;
   const m = html.match(/<meta name="title" content="([^"]*)">/);
-  const debug = `status=${r.status} bytes=${html.length} isLiveNow=${isLiveNow} hls=${hls} blocked=${blocked} finalUrl=${r.url}`;
+  const canon = html.match(/"canonicalBaseUrl":"([^"]*)"/);
+  const debug = `status=${r.status} bytes=${html.length} isLiveNow=${isLiveNow} isLive=${isLive} liveBadge=${liveBadge} hls=${hls} blocked=${blocked} canon=${canon?.[1] ?? '?'} finalUrl=${r.url}`;
   return { live, title: m?.[1] ?? '', debug };
 }
 
