@@ -29,6 +29,7 @@ export interface ListingRow {
   highlighted: boolean;
   views: number;
   created_at: string;
+  updated_at?: string; // setado quando o status muda (ex.: virar 'sold') → data da venda
   seller?: ProfileRow | null;
 }
 
@@ -59,6 +60,9 @@ export function rowToListing(row: ListingRow): Listing {
     sellerId: row.seller_id,
     views: row.views,
     createdAt: new Date(row.created_at).getTime(),
+    // Só faz sentido como "data da venda" quando o item está vendido; nesse
+    // estado o anúncio fica somente-leitura, então updated_at não muda mais.
+    soldAt: row.status === 'sold' && row.updated_at ? new Date(row.updated_at).getTime() : undefined,
   };
 }
 
@@ -77,9 +81,10 @@ const SORT_COL: Record<SortKey, { col: string; asc: boolean }> = {
   sold: { col: 'created_at', asc: false },
 };
 
-/** Vitrine query: server-side filters + sort. */
+/** Vitrine query: server-side filters + sort. Só mostra anúncios ATIVOS —
+ *  vendidos ('sold') nunca aparecem no marketplace público nem em pesquisas. */
 export async function fetchListings(f: Filters, sort: SortKey, limit = 60): Promise<Listing[]> {
-  let q = sb().from('listings').select(SELECT).eq('removed', false);
+  let q = sb().from('listings').select(SELECT).eq('removed', false).neq('status', 'sold');
   if (f.q.trim()) q = q.ilike('name', `%${f.q.trim()}%`);
   if (f.category) q = q.eq('category', f.category);
   if (f.rarity) q = q.eq('rarity', f.rarity);
@@ -121,8 +126,9 @@ export async function fetchFavoriteListings(userId: string): Promise<Listing[]> 
 }
 
 export async function fetchSimilar(listing: Listing, limit = 4): Promise<Listing[]> {
+  // Recomendações só trazem anúncios ativos (não recomenda item já vendido).
   const { data, error } = await sb().from('listings').select(SELECT)
-    .eq('category', listing.category).eq('removed', false).neq('id', listing.id).limit(limit + 2);
+    .eq('category', listing.category).eq('removed', false).neq('status', 'sold').neq('id', listing.id).limit(limit + 2);
   if (error) throw error;
   return (data as ListingRow[]).map(rowToListing).slice(0, limit);
 }

@@ -40,8 +40,9 @@ export function SellerProfile({
     );
   }
 
+  // Loja PÚBLICA: só anúncios ativos. Os vendidos ficam exclusivamente na área
+  // privada do dono (aba "Vendidos" do Painel), nunca aqui.
   const active = items.filter((i) => i.status === 'available');
-  const sold = items.filter((i) => i.status === 'sold');
   const serverDays = Math.floor((Date.now() - seller.joinedAt) / DAY);
   // Prefer live DB aggregates, fall back to the (mock) profile values.
   const ratingAvg = aggregates?.ratingAvg ?? seller.ratingAvg;
@@ -112,17 +113,6 @@ export function SellerProfile({
           {active.length === 0 && <p className="mk-muted">{t('mk.noactive')}</p>}
         </div>
       </section>
-
-      {sold.length > 0 && (
-        <section className="mk-block">
-          <h2 className="mk-h2">{t('mk.recentsold')}</h2>
-          <div className="mk-grid">
-            {sold.slice(0, 4).map((l) => (
-              <ItemCard key={l.id} listing={l} onOpen={onOpen} onSeller={onSeller} />
-            ))}
-          </div>
-        </section>
-      )}
 
       <section className="mk-block">
         <h2 className="mk-h2">{t('mk.reviews')} <span className="mk-count">{ratingCount}</span></h2>

@@ -34,7 +34,10 @@ export function useBrowseListings(filters: Filters, sort: SortKey): { listings: 
   }, [key]);
 
   if (!BACKEND_ENABLED) {
-    const all = [...myListings, ...LISTINGS].filter((l) => !adminRemoved.includes(l.id) && !bannedUsers.includes(l.sellerId));
+    // Vitrine mock: fora removidos, banidos e VENDIDOS (só anúncios ativos).
+    const all = [...myListings, ...LISTINGS].filter(
+      (l) => l.status !== 'sold' && !adminRemoved.includes(l.id) && !bannedUsers.includes(l.sellerId),
+    );
     return { listings: sortListings(filterListings(all, filters), sort), loading: false, reloadKey: 0 };
   }
   return { listings: data, loading, reloadKey };

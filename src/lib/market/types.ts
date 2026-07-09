@@ -63,6 +63,7 @@ export interface Listing {
   sellerId: string;
   views: number;
   createdAt: number; // epoch ms
+  soldAt?: number; // epoch ms — momento em que virou "sold" (vem de updated_at)
 }
 
 export interface PricePoint {

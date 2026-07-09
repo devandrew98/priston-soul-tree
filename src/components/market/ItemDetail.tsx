@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { RARITY_COLOR } from '../../lib/market/data';
 import { cheaperAlternatives, fmtPrice, sellerItems } from '../../lib/market/helpers';
 import type { Listing } from '../../lib/market/types';
@@ -22,12 +23,18 @@ export function ItemDetail({
   onChat: (sellerId: string, seed?: string) => void;
   onBack: () => void;
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { userId } = useAuth();
   const { isFav, toggleFav } = useFavorites();
   const [note, setNote] = useState('');
+  const [zoom, setZoom] = useState(false); // lightbox da imagem do item
   const seller = getSeller(listing.sellerId);
   const glow = RARITY_COLOR[listing.rarity];
+
+  // Um item VENDIDO é privado do dono e somente-leitura.
+  const isOwner = !!userId && userId === listing.sellerId;
+  const isSold = listing.status === 'sold';
+  const fmtDate = (ms: number) => new Date(ms).toLocaleDateString(lang === 'pt' ? 'pt-BR' : 'en-US');
 
   const { series, stats } = useItemMarket(listing);
   const similar = useSimilar(listing);
@@ -41,6 +48,17 @@ export function ItemDetail({
     flash(t('mk.flash.reported'));
   };
 
+  // Vendido + não é o dono → o anúncio some para todo mundo, exceto o vendedor.
+  if (isSold && !isOwner) return (
+    <div className="mk-detail">
+      <button className="mk-back" onClick={onBack}>← {t('mk.back')}</button>
+      <div className="mk-sold-gone">
+        <span className="mk-sold-gone-ic">🔒</span>
+        <p className="mk-empty">{t('mk.sold.unavailable')}</p>
+      </div>
+    </div>
+  );
+
   if (!seller) return (
     <div className="mk-detail">
       <button className="mk-back" onClick={onBack}>← {t('mk.back')}</button>
@@ -52,11 +70,28 @@ export function ItemDetail({
     <div className="mk-detail">
       <button className="mk-back" onClick={onBack}>← {t('mk.back')}</button>
 
+      {/* Item vendido (visão privada do dono): faixa com datas + aviso. */}
+      {isSold && (
+        <div className="mk-sold-banner">
+          <span className="mk-sold-badge">✅ {t('mk.sold.badge')}</span>
+          <span className="mk-muted">
+            {t('mk.created.on', { date: fmtDate(listing.createdAt) })}
+            {listing.soldAt ? ` · ${t('mk.sold.on', { date: fmtDate(listing.soldAt) })}` : ''}
+          </span>
+          <span className="mk-sold-note">{t('mk.sold.privatenote')}</span>
+        </div>
+      )}
+
       <div className="mk-detail-grid">
         {/* left: item */}
         <div className="mk-detail-main">
           <div className="mk-detail-hero">
-            <span className="mk-icon xl" style={{ ['--rar' as string]: glow }}>
+            <span
+              className={`mk-icon xl ${listing.image ? 'zoomable' : ''}`}
+              style={{ ['--rar' as string]: glow }}
+              onClick={() => { if (listing.image) setZoom(true); }}
+              title={listing.image ? t('mk.zoom.hint') : undefined}
+            >
               {listing.image ? <img src={listing.image} alt={listing.name} className="mk-icon-img" /> : listing.icon}
             </span>
             <div className="mk-detail-headinfo">
@@ -153,17 +188,24 @@ export function ItemDetail({
             </div>
             {seller.reports >= 3 && <div className="mk-warn">⚠ {t('mk.reportwarn')}</div>}
 
-            <div className="mk-actions">
-              <button className="mk-btn primary" onClick={() => onChat(seller.id, t('mk.chat.seed', { item: listing.name, price: fmtPrice(listing.price, listing.currency) }))}>💬 {t('mk.interest')}</button>
-              <button className="mk-btn" onClick={() => onChat(seller.id)}>✉ {t('mk.message')}</button>
-              <div className="mk-actions-row">
-                <button className={`mk-btn sm ${isFav(listing.id) ? 'active' : ''}`} onClick={() => toggleFav(listing.id)}>
-                  {isFav(listing.id) ? '★' : '☆'} {t('mk.favorite')}
-                </button>
-                <button className="mk-btn sm" onClick={() => { navigator.clipboard?.writeText(`${location.origin}/#item-${listing.id}`); flash(t('mk.flash.shared')); }}>🔗 {t('mk.share')}</button>
-                <button className="mk-btn sm danger" onClick={report}>⚑ {t('mk.report')}</button>
+            {isSold ? (
+              // Somente-leitura: nada de comprar/conversar/favoritar/denunciar.
+              <div className="mk-actions">
+                <div className="mk-sold-readonly">🔒 {t('mk.sold.readonly')}</div>
               </div>
-            </div>
+            ) : (
+              <div className="mk-actions">
+                <button className="mk-btn primary" onClick={() => onChat(seller.id, t('mk.chat.seed', { item: listing.name, price: fmtPrice(listing.price, listing.currency) }))}>💬 {t('mk.interest')}</button>
+                <button className="mk-btn" onClick={() => onChat(seller.id)}>✉ {t('mk.message')}</button>
+                <div className="mk-actions-row">
+                  <button className={`mk-btn sm ${isFav(listing.id) ? 'active' : ''}`} onClick={() => toggleFav(listing.id)}>
+                    {isFav(listing.id) ? '★' : '☆'} {t('mk.favorite')}
+                  </button>
+                  <button className="mk-btn sm" onClick={() => { navigator.clipboard?.writeText(`${location.origin}/#item-${listing.id}`); flash(t('mk.flash.shared')); }}>🔗 {t('mk.share')}</button>
+                  <button className="mk-btn sm danger" onClick={report}>⚑ {t('mk.report')}</button>
+                </div>
+              </div>
+            )}
             {note && <div className="mk-note">{note}</div>}
 
             <div className="mk-sellerstats">
@@ -174,6 +216,15 @@ export function ItemDetail({
           </div>
         </aside>
       </div>
+
+      {/* Lightbox: clique na imagem do item mostra a imagem real, tamanho cheio. */}
+      {zoom && listing.image && createPortal(
+        <div className="mk-lightbox" onClick={() => setZoom(false)}>
+          <button className="mk-lightbox-close" onClick={() => setZoom(false)} aria-label={t('mk.zoom.close')}>✕</button>
+          <img src={listing.image} alt={listing.name} onClick={(e) => e.stopPropagation()} />
+        </div>,
+        document.body,
+      )}
     </div>
   );
 }
