@@ -84,10 +84,15 @@ async function youtubeScrape(handle: string): Promise<ScrapeResult> {
   const hls = html.includes('hlsManifestUrl');
   const blocked = /unusual traffic|detected unusual|solve this puzzle|consent\.youtube\.com|Before you continue/i.test(html);
   const live = isLiveNow || isLive || liveBadge || hls;
-  const m = html.match(/<meta name="title" content="([^"]*)">/);
+  // The <meta name="title"> tag isn't present in every page variant; fall
+  // back to og:title, then the <title> tag (stripping the trailing " - YouTube").
+  const titleMeta = html.match(/<meta name="title" content="([^"]*)">/)?.[1]
+    ?? html.match(/<meta property="og:title" content="([^"]*)">/)?.[1]
+    ?? html.match(/<title>([^<]*)<\/title>/)?.[1]?.replace(/ - YouTube$/, '')
+    ?? '';
   const canon = html.match(/"canonicalBaseUrl":"([^"]*)"/);
   const debug = `status=${r.status} bytes=${html.length} isLiveNow=${isLiveNow} isLive=${isLive} liveBadge=${liveBadge} hls=${hls} blocked=${blocked} canon=${canon?.[1] ?? '?'} finalUrl=${r.url}`;
-  return { live, title: m?.[1] ?? '', debug };
+  return { live, title: titleMeta, debug };
 }
 
 Deno.serve(async (req) => {
