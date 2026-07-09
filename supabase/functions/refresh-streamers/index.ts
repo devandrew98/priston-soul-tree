@@ -84,9 +84,13 @@ async function youtubeScrape(handle: string): Promise<ScrapeResult> {
   const hls = html.includes('hlsManifestUrl');
   const blocked = /unusual traffic|detected unusual|solve this puzzle|consent\.youtube\.com|Before you continue/i.test(html);
   const live = isLiveNow || isLive || liveBadge || hls;
-  // The <meta name="title"> tag isn't present in every page variant; fall
-  // back to og:title, then the <title> tag (stripping the trailing " - YouTube").
-  const titleMeta = html.match(/<meta name="title" content="([^"]*)">/)?.[1]
+  // The <head> meta/title tags come back BLANK on the live-video page variant
+  // this server gets (confirmed via debug: <title> - YouTube</title>) even
+  // though the page is otherwise fully rendered — so try the embedded player
+  // JSON first (videoDetails.title, needed for the player itself to work and
+  // therefore reliably populated), then fall back to the meta tags.
+  const titleMeta = html.match(/"videoDetails":\{"videoId":"[^"]*","title":"([^"]*)"/)?.[1]
+    ?? html.match(/<meta name="title" content="([^"]*)">/)?.[1]
     ?? html.match(/<meta property="og:title" content="([^"]*)">/)?.[1]
     ?? html.match(/<title>([^<]*)<\/title>/)?.[1]?.replace(/ - YouTube$/, '')
     ?? '';
