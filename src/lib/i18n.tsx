@@ -14,6 +14,13 @@ const DICT: Record<string, Entry> = {
   'nav.market': { pt: 'Marketplace', en: 'Marketplace' },
   'nav.soultree': { pt: 'Árvore de Souls', en: 'Soul Tree' },
   'nav.streamers': { pt: 'Streamers', en: 'Streamers' },
+  'nav.guides': { pt: 'Guias', en: 'Guides' },
+
+  // guias (aba pública)
+  'guides.title': { pt: 'Guias', en: 'Guides' },
+  'guides.subtitle': { pt: 'Vídeos selecionados pela equipe para te ajudar na sua jornada.', en: 'Videos picked by the team to help you along your journey.' },
+  'guides.empty': { pt: 'Nenhum guia publicado ainda.', en: 'No guides published yet.' },
+  'guides.openyoutube': { pt: 'Abrir no YouTube', en: 'Open on YouTube' },
 
   // streamers (aba pública)
   'strm.title': { pt: 'Streamers', en: 'Streamers' },
@@ -422,6 +429,15 @@ const DICT: Record<string, Entry> = {
   'mk.admin.cat.new': { pt: 'Novo tipo', en: 'New type' },
   'mk.admin.cat.subs': { pt: 'Subcategorias (separadas por vírgula)', en: 'Subcategories (comma-separated)' },
   'mk.admin.news': { pt: 'Notícias', en: 'News' },
+  'mk.admin.guides': { pt: 'Guias', en: 'Guides' },
+  'mk.admin.guides.addcat': { pt: 'Nova categoria de guia', en: 'New guide category' },
+  'mk.admin.guides.catname': { pt: 'Nome da categoria (ex.: Guia de Souls)', en: 'Category name (e.g. Souls Guide)' },
+  'mk.admin.guides.create': { pt: 'Criar', en: 'Create' },
+  'mk.admin.guides.urlph': { pt: 'Link do vídeo no YouTube', en: 'YouTube video link' },
+  'mk.admin.guides.titleph': { pt: 'Título do vídeo (opcional)', en: 'Video title (optional)' },
+  'mk.admin.guides.addvideo': { pt: 'Adicionar vídeo', en: 'Add video' },
+  'mk.admin.guides.invalidurl': { pt: 'Link do YouTube inválido.', en: 'Invalid YouTube link.' },
+  'mk.admin.guides.novideos': { pt: 'Nenhum vídeo nesta categoria ainda.', en: 'No videos in this category yet.' },
   'mk.admin.news.add': { pt: 'Nova notícia / evento', en: 'New news / event' },
   'mk.admin.news.titleph': { pt: 'Título', en: 'Title' },
   'mk.admin.news.bodyph': { pt: 'Descrição (opcional)', en: 'Description (optional)' },

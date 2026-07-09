@@ -1224,3 +1224,41 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .mk-news-lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
 .mk-news-langfield { display: flex; flex-direction: column; gap: 3px; }
 .mk-news-langfield > span { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.4px; }
+
+/* ============================================================================
+   Guides (video guides by category)
+   ============================================================================ */
+.guides { max-width: 1180px; margin: 0 auto; padding: 18px 16px 60px; }
+.guides-head { margin-bottom: 18px; }
+.guides-section { margin-top: 26px; }
+.guides-cat-title { font-size: 16px; font-weight: 800; letter-spacing: 0.5px; color: var(--gold-bright); text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin: 0 0 16px; }
+.guides-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+
+.guide-card { display: flex; flex-direction: column; background: linear-gradient(180deg, var(--panel) 0%, var(--bg2) 100%); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; cursor: pointer; padding: 0; text-align: left; transition: transform 0.14s, border-color 0.14s, box-shadow 0.14s; }
+.guide-card:hover { transform: translateY(-3px); border-color: var(--gold); box-shadow: 0 8px 24px rgba(0,0,0,0.45); }
+.guide-cover { position: relative; aspect-ratio: 16 / 9; background: var(--bg); overflow: hidden; }
+.guide-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.guide-play { position: absolute; inset: 0; display: grid; place-items: center; font-size: 34px; color: #fff; background: rgba(0,0,0,0.25); opacity: 0; transition: opacity 0.15s; text-shadow: 0 2px 8px rgba(0,0,0,0.7); }
+.guide-card:hover .guide-play { opacity: 1; }
+.guide-card-title { padding: 10px 12px 12px; font-size: 13px; color: var(--text); line-height: 1.35; }
+
+.guide-lightbox { position: relative; width: min(880px, 92vw); background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.guide-lightbox-frame { width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #000; }
+.guide-lightbox-frame iframe { width: 100%; height: 100%; border: 0; }
+.guide-lightbox-title { margin: 0; font-size: 15px; color: var(--gold-bright); text-align: center; }
+
+/* Admin — guides CRUD */
+.mk-guides-cat { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+.mk-guides-cat-head { display: flex; align-items: center; gap: 8px; }
+.mk-guides-catname { flex: 1; font-weight: 700; font-size: 14px; }
+.mk-guides-cat-head input, .mk-guides-addvideo input { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 10px; font-size: 13px; }
+.mk-guides-cat-head input:focus, .mk-guides-addvideo input:focus { outline: none; border-color: var(--gold); }
+.mk-guides-addvideo { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-top: 4px; border-top: 1px dashed var(--border); }
+.mk-guides-addvideo input:first-of-type { flex: 2; min-width: 220px; }
+.mk-guides-addvideo input:nth-of-type(2) { flex: 1; min-width: 160px; }
+.mk-guides-videos { display: flex; flex-direction: column; gap: 6px; }
+.mk-guides-videorow { display: flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 6px 8px; }
+.mk-guides-videorow input { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 7px 9px; font-size: 13px; }
+.mk-guides-videorow input:focus { outline: none; border-color: var(--gold); }
+.mk-guides-thumb { width: 64px; height: 36px; object-fit: cover; border-radius: 6px; flex: none; }
+.mk-guides-empty { font-size: 12px; padding: 4px 2px; }

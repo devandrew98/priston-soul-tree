@@ -6,9 +6,10 @@ import { StreamersAdmin } from './StreamersAdmin';
 import { RepTiersAdmin } from './RepTiersAdmin';
 import { NewsAdmin } from './NewsAdmin';
 import { MarketCategoriesAdmin } from './MarketCategoriesAdmin';
+import { GuidesAdmin } from './GuidesAdmin';
 import { Avatar, PriceTag, Since, StatusPill } from './parts';
 
-type Section = 'listings' | 'users' | 'tiers' | 'itemcats' | 'reports' | 'streamers' | 'news' | 'global' | 'logs';
+type Section = 'listings' | 'users' | 'tiers' | 'itemcats' | 'reports' | 'streamers' | 'news' | 'guides' | 'global' | 'logs';
 
 const SECTIONS: { id: Section; icon: string; key: string }[] = [
   { id: 'listings', icon: '📦', key: 'mk.admin.listings' },
@@ -18,6 +19,7 @@ const SECTIONS: { id: Section; icon: string; key: string }[] = [
   { id: 'reports', icon: '⚑', key: 'mk.admin.reports' },
   { id: 'streamers', icon: '📺', key: 'mk.admin.streamers' },
   { id: 'news', icon: '📰', key: 'mk.admin.news' },
+  { id: 'guides', icon: '🎬', key: 'mk.admin.guides' },
   { id: 'global', icon: '📢', key: 'mk.admin.global' },
   { id: 'logs', icon: '📜', key: 'mk.admin.logs' },
 ];
@@ -168,6 +170,9 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
 
       {/* NEWS / EVENTS */}
       {sec === 'news' && <NewsAdmin />}
+
+      {/* GUIDES */}
+      {sec === 'guides' && <GuidesAdmin />}
 
       {/* GLOBAL NOTIFICATION */}
       {sec === 'global' && (

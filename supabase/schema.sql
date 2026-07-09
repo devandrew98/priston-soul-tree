@@ -628,3 +628,32 @@ update public.news set body_pt = body, body_en = body where body_pt = '' and bod
 
 alter table public.news drop column if exists title;
 alter table public.news drop column if exists body;
+
+-- ============================================================================
+-- Fase 16 — Guias em video por categoria (ver 14_guides.sql)
+-- ============================================================================
+create table if not exists public.guide_categories (
+  id         uuid primary key default gen_random_uuid(),
+  name       text not null,
+  sort       int  not null default 0,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.guides (
+  id          uuid primary key default gen_random_uuid(),
+  category_id uuid not null references public.guide_categories(id) on delete cascade,
+  title       text not null default '',
+  youtube_url text not null,
+  video_id    text not null,          -- extraído do link; usado pra capa/embed
+  sort        int  not null default 0,
+  created_at  timestamptz not null default now()
+);
+create index if not exists guides_category_idx on public.guides(category_id, sort);
+
+alter table public.guide_categories enable row level security;
+drop policy if exists guide_categories_read on public.guide_categories;
+create policy guide_categories_read on public.guide_categories for select using (true);
+drop policy if exists guide_categories_admin on public.guide_categories;
+create policy guide_categories_admin on public.guide_categories for all
+  using (public.is_admin()) with check (public.is_admin());
+
