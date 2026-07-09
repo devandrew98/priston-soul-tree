@@ -97,7 +97,9 @@ async function youtubeScrape(handle: string): Promise<ScrapeResult> {
   const canon = html.match(/"canonicalBaseUrl":"([^"]*)"/);
   const titleTagIdx = html.indexOf('<title>');
   const titleSample = titleTagIdx >= 0 ? html.slice(titleTagIdx, titleTagIdx + 120).replace(/\n/g, '\\n') : '(no <title> tag found)';
-  const debug = `status=${r.status} bytes=${html.length} isLiveNow=${isLiveNow} isLive=${isLive} liveBadge=${liveBadge} hls=${hls} blocked=${blocked} canon=${canon?.[1] ?? '?'} title="${titleMeta}" titleSample=${titleSample} finalUrl=${r.url}`;
+  const vdIdx = html.indexOf('"videoDetails"');
+  const vdSample = vdIdx >= 0 ? html.slice(vdIdx, vdIdx + 200).replace(/\n/g, '\\n') : '(no videoDetails found)';
+  const debug = `status=${r.status} bytes=${html.length} isLiveNow=${isLiveNow} isLive=${isLive} liveBadge=${liveBadge} hls=${hls} blocked=${blocked} canon=${canon?.[1] ?? '?'} title="${titleMeta}" titleSample=${titleSample} vdSample=${vdSample} finalUrl=${r.url}`;
   return { live, title: titleMeta, debug };
 }
 
