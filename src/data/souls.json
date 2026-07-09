@@ -2386,7 +2386,7 @@
   },
   {
     "id": "elite-crios",
-    "name": "Elite Crios Soul",
+    "name": "Crios Soul",
     "mapLevel": null,
     "category": "defense",
     "rarity": "rare",
@@ -2398,9 +2398,9 @@
         "statLabel": "Absorption",
         "unit": "flat",
         "ranks": [
-          7,
-          14,
-          28
+          6,
+          12,
+          24
         ]
       }
     ]
