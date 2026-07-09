@@ -8,6 +8,11 @@
 //   YOUTUBE_API_KEY                          (opcional; se ausente, usa raspagem)
 //   REFRESH_SECRET                           (opcional; protege o endpoint)
 // SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY são injetados automaticamente.
+//
+// Diagnóstico: chame com ?debug=1 (além do secret) para receber, em vez do
+// resumo curto, o detalhe por streamer do YouTube (status HTTP, tamanho da
+// resposta, se bateu um muro de consentimento/robô, etc.) — útil pra
+// descobrir por que a raspagem falha a partir do servidor da função.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
@@ -16,6 +21,8 @@ const TWITCH_ID = Deno.env.get('TWITCH_CLIENT_ID') ?? '';
 const TWITCH_SECRET = Deno.env.get('TWITCH_CLIENT_SECRET') ?? '';
 const YT_KEY = Deno.env.get('YOUTUBE_API_KEY') ?? '';
 const REFRESH_SECRET = Deno.env.get('REFRESH_SECRET') ?? '';
+
+const CHROME_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
 
 interface Row { id: string; platform: string; handle: string }
 interface Update { id: string; live: boolean; viewers: number; title: string }
@@ -53,27 +60,42 @@ async function youtubeApi(channelId: string): Promise<{ live: boolean; title: st
   return { live: !!item, title: item?.snippet?.title ?? '' };
 }
 
-async function youtubeScrape(handle: string): Promise<{ live: boolean; title: string }> {
+interface ScrapeResult { live: boolean; title: string; debug: string }
+
+async function youtubeScrape(handle: string): Promise<ScrapeResult> {
   const path = handle.startsWith('UC') ? `channel/${handle}` : handle.startsWith('@') ? handle : `@${handle}`;
-  const r = await fetch(`https://www.youtube.com/${path}/live?hl=en`, {
-    headers: { 'Accept-Language': 'en-US', cookie: 'CONSENT=YES+1', 'User-Agent': 'Mozilla/5.0' },
+  const url = `https://www.youtube.com/${path}/live?hl=en`;
+  const r = await fetch(url, {
+    headers: {
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Cookie': 'CONSENT=YES+1; SOCS=CAI',
+      'User-Agent': CHROME_UA,
+    },
   });
   const html = await r.text();
-  const live = html.includes('"isLiveNow":true') || html.includes('hlsManifestUrl');
+  const isLiveNow = html.includes('"isLiveNow":true');
+  const hls = html.includes('hlsManifestUrl');
+  const blocked = /unusual traffic|detected unusual|solve this puzzle|consent\.youtube\.com|Before you continue/i.test(html);
+  const live = isLiveNow || hls;
   const m = html.match(/<meta name="title" content="([^"]*)">/);
-  return { live, title: m?.[1] ?? '' };
+  const debug = `status=${r.status} bytes=${html.length} isLiveNow=${isLiveNow} hls=${hls} blocked=${blocked} finalUrl=${r.url}`;
+  return { live, title: m?.[1] ?? '', debug };
 }
 
 Deno.serve(async (req) => {
+  const url = new URL(req.url);
   if (REFRESH_SECRET) {
-    const given = req.headers.get('x-refresh-secret') ?? new URL(req.url).searchParams.get('secret');
+    const given = req.headers.get('x-refresh-secret') ?? url.searchParams.get('secret');
     if (given !== REFRESH_SECRET) return new Response('unauthorized', { status: 401 });
   }
+  const debugMode = url.searchParams.get('debug') === '1';
 
   const sb = createClient(SUPABASE_URL, SERVICE_KEY);
   const { data } = await sb.from('streamers').select('id,platform,handle');
   const rows = (data ?? []) as Row[];
   const updates: Update[] = [];
+  const debugInfo: Record<string, string> = {};
 
   const tw = rows.filter((s) => s.platform === 'twitch' && s.handle);
   if (tw.length && TWITCH_ID && TWITCH_SECRET) {
@@ -84,15 +106,25 @@ Deno.serve(async (req) => {
         const hit = liveMap.get(s.handle.toLowerCase());
         updates.push({ id: s.id, live: !!hit, viewers: hit?.viewers ?? 0, title: hit?.title ?? '' });
       }
-    } catch (_) { /* keep previous status on transient errors */ }
+    } catch (e) { debugInfo['twitch:error'] = String(e); }
   }
 
   const yt = rows.filter((s) => s.platform === 'youtube' && s.handle);
   for (const s of yt) {
     try {
-      const res = YT_KEY && s.handle.startsWith('UC') ? await youtubeApi(s.handle) : await youtubeScrape(s.handle);
-      updates.push({ id: s.id, live: res.live, viewers: 0, title: res.title });
-    } catch (_) { updates.push({ id: s.id, live: false, viewers: 0, title: '' }); }
+      if (YT_KEY && s.handle.startsWith('UC')) {
+        const res = await youtubeApi(s.handle);
+        updates.push({ id: s.id, live: res.live, viewers: 0, title: res.title });
+        if (debugMode) debugInfo[s.handle] = 'via youtube_api_key';
+      } else {
+        const res = await youtubeScrape(s.handle);
+        updates.push({ id: s.id, live: res.live, viewers: 0, title: res.title });
+        if (debugMode) debugInfo[s.handle] = res.debug;
+      }
+    } catch (e) {
+      updates.push({ id: s.id, live: false, viewers: 0, title: '' });
+      if (debugMode) debugInfo[s.handle] = `exception: ${e}`;
+    }
   }
 
   const now = new Date().toISOString();
@@ -100,7 +132,7 @@ Deno.serve(async (req) => {
     await sb.from('streamers').update({ live: u.live, viewers: u.viewers, title: u.title, live_checked_at: now }).eq('id', u.id);
   }
 
-  return new Response(JSON.stringify({ ok: true, checked: updates.length }), {
+  return new Response(JSON.stringify({ ok: true, checked: updates.length, ...(debugMode ? { debug: debugInfo } : {}) }), {
     headers: { 'Content-Type': 'application/json' },
   });
 });
