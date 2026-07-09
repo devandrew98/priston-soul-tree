@@ -85,11 +85,12 @@ async function youtubeScrape(handle: string): Promise<ScrapeResult> {
   const blocked = /unusual traffic|detected unusual|solve this puzzle|consent\.youtube\.com|Before you continue/i.test(html);
   const live = isLiveNow || isLive || liveBadge || hls;
   // The <head> meta/title tags come back BLANK on the live-video page variant
-  // this server gets (confirmed via debug: <title> - YouTube</title>) even
-  // though the page is otherwise fully rendered — so try the embedded player
-  // JSON first (videoDetails.title, needed for the player itself to work and
-  // therefore reliably populated), then fall back to the meta tags.
-  const titleMeta = html.match(/"videoDetails":\{"videoId":"[^"]*","title":"([^"]*)"/)?.[1]
+  // this server gets ("<title> - YouTube</title>") even though the page is
+  // otherwise fully rendered — the actual title lives in the player overlay's
+  // videoDetails renderer instead (confirmed via debug sampling). Fall back to
+  // the meta tags for pages that don't have that renderer (e.g. offline
+  // channels, where <title> already correctly holds the channel name).
+  const titleMeta = html.match(/"playerOverlayVideoDetailsRenderer":\{"title":\{"simpleText":"([^"]*)"/)?.[1]
     ?? html.match(/<meta name="title" content="([^"]*)">/)?.[1]
     ?? html.match(/<meta property="og:title" content="([^"]*)">/)?.[1]
     ?? html.match(/<title>([^<]*)<\/title>/)?.[1]?.replace(/ - YouTube$/, '')
