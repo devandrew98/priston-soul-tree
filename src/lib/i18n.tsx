@@ -746,6 +746,11 @@ const DICT: Record<string, Entry> = {
     en: 'On: the AI ignores your inventory and builds the best theoretical tree with ANY soul in the game — good to discover souls worth getting.',
   },
   'st.opt.pvp': { pt: 'Incluir PvP', en: 'Include PvP' },
+  'st.opt.baseline': { pt: '🔒 Partir das minhas nodes já abertas ({n})', en: '🔒 Start from my opened nodes ({n})' },
+  'st.opt.baseline.help': {
+    pt: 'Marque na aba 🌳 Árvore os nodes que você JÁ abriu no jogo (e os níveis já investidos). Com isso ligado, a IA trata esses pontos como gastos — nada é rebaixado (no jogo resetar exige um item caro) — e monta a melhor build possível a partir daí, reaproveitando os pontos presos. Sem nodes marcados, ela cria do zero normalmente.',
+    en: 'Mark on the 🌳 Tree tab the nodes you ALREADY opened in-game (with their invested levels). When on, the AI treats those points as spent — nothing is downgraded (resetting in-game needs an expensive item) — and builds the best possible tree from there, reusing the stuck points. With no nodes marked, it plans from scratch as usual.',
+  },
   'st.opt.apply': { pt: '✓ Aplicar', en: '✓ Apply' },
   'st.opt.nodesused': { pt: 'Nodes usados', en: 'Nodes used' },
   'st.opt.points': { pt: 'Pontos', en: 'Points' },
@@ -908,6 +913,10 @@ const DICT: Record<string, Entry> = {
   'ai2.ex.survival': {
     pt: '🛡️ Desses, {n} receberam souls defensivas pra você aguentar o mapa (dano puro não farma se você morre).',
     en: '🛡️ Of those, {n} got defensive souls so you can survive the map (pure damage does not farm if you die).',
+  },
+  'ai2.ex.baseline': {
+    pt: '🔒 Respeitei suas {n} nodes já abertas no jogo ({pts} pontos já investidos): nada foi rebaixado e a build reaproveita esses pontos.',
+    en: '🔒 I respected your {n} nodes already opened in-game ({pts} points already invested): nothing was downgraded and the build reuses those points.',
   },
   'ai2.ex.vsgreedy': { pt: 'A busca profunda superou o gerador rápido em {pct}%.', en: 'Deep search beat the quick generator by {pct}%.' },
   'ai2.ex.samegreedy': { pt: 'Empatou com o gerador rápido — pra esse objetivo, ele provavelmente já é o ótimo.', en: 'Tied with the quick generator — for this goal it is probably already optimal.' },

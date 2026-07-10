@@ -76,8 +76,8 @@ export function slotsToGenome(slots: Record<string, SlotState>): Genome {
   return g;
 }
 
-export function evaluate(genome: Genome, weights: Weights): EvaluatedBuild {
-  const points = genomeCost(genome);
+export function evaluate(genome: Genome, weights: Weights, baseline?: Record<string, number>): EvaluatedBuild {
+  const points = genomeCost(genome, baseline);
   return { genome, hash: hashGenome(genome), score: scoreGenome(genome, weights, points) };
 }
 
@@ -85,8 +85,16 @@ export function evaluate(genome: Genome, weights: Weights): EvaluatedBuild {
  * One random, structurally VALID neighbor of `g` (souls stay unique, category
  * and rarity compatibility respected). Budget is checked by the caller after
  * evaluation. Returns null when the drawn operation is not applicable.
+ * With a `baseline`, node levels never go below the invested floor and new
+ * placements on baseline nodes start AT the floor (reusing the sunk points).
  */
-export function mutate(g: Genome, cands: CandidateSoul[], nodesByCand: Map<string, string[]>, rng: Rng): Genome | null {
+export function mutate(
+  g: Genome,
+  cands: CandidateSoul[],
+  nodesByCand: Map<string, string[]>,
+  rng: Rng,
+  baseline?: Record<string, number>,
+): Genome | null {
   const entries = Object.entries(g);
   const usedSouls = new Set(entries.map(([, x]) => x.soulId));
   const op = Math.floor(rng() * 7);
@@ -99,7 +107,8 @@ export function mutate(g: Genome, cands: CandidateSoul[], nodesByCand: Map<strin
     const spots = (nodesByCand.get(c.soulId) || []).filter((id) => !g[id]);
     if (!spots.length) return null;
     const id = spots[Math.floor(rng() * spots.length)];
-    return { ...g, [id]: { soulId: c.soulId, soulLevel: c.soulLevel, nodeLevel: 1 } };
+    // baseline: começa no nível já investido (custo extra zero, valor de graça)
+    return { ...g, [id]: { soulId: c.soulId, soulLevel: c.soulLevel, nodeLevel: baseline?.[id] ?? 1 } };
   }
   if (!entries.length) return null;
   const [idA, ga] = entries[Math.floor(rng() * entries.length)];
@@ -117,7 +126,7 @@ export function mutate(g: Genome, cands: CandidateSoul[], nodesByCand: Map<strin
     const id = spots[Math.floor(rng() * spots.length)];
     const copy = { ...g };
     delete copy[idA];
-    copy[id] = { ...ga };
+    copy[id] = { ...ga, nodeLevel: Math.max(ga.nodeLevel, baseline?.[id] ?? 1) };
     return copy;
   }
   if (op === 3) {
@@ -145,18 +154,25 @@ export function mutate(g: Genome, cands: CandidateSoul[], nodesByCand: Map<strin
     // LEVEL UP
     return { ...g, [idA]: { ...ga, nodeLevel: ga.nodeLevel + 1 } };
   }
-  // LEVEL DOWN
-  if (ga.nodeLevel <= 1) return null;
+  // LEVEL DOWN — nunca abaixo do piso já investido no jogo (baseline)
+  const floor = baseline?.[idA] ?? 1;
+  if (ga.nodeLevel <= floor) return null;
   return { ...g, [idA]: { ...ga, nodeLevel: ga.nodeLevel - 1 } };
 }
 
 /** A few forced random mutations — used to escape plateaus (restart kick). */
-export function perturb(g: Genome, cands: CandidateSoul[], nodesByCand: Map<string, string[]>, rng: Rng): Genome {
+export function perturb(
+  g: Genome,
+  cands: CandidateSoul[],
+  nodesByCand: Map<string, string[]>,
+  rng: Rng,
+  baseline?: Record<string, number>,
+): Genome {
   let cur = g;
   const kicks = 2 + Math.floor(rng() * 4);
   for (let i = 0; i < kicks; i++) {
     for (let tries = 0; tries < 6; tries++) {
-      const nx = mutate(cur, cands, nodesByCand, rng);
+      const nx = mutate(cur, cands, nodesByCand, rng, baseline);
       if (nx) {
         cur = nx;
         break;

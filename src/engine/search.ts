@@ -77,7 +77,7 @@ export class SearchEngine {
 
       // Draw a valid neighbor (a few attempts — some ops don't apply).
       let neighbor: Genome | null = null;
-      for (let t = 0; t < 4 && !neighbor; t++) neighbor = mutate(this.cur.genome, this.cands, this.nodesByCand, this.rng);
+      for (let t = 0; t < 4 && !neighbor; t++) neighbor = mutate(this.cur.genome, this.cands, this.nodesByCand, this.rng, this.cfg.baseline);
       if (!neighbor) continue;
 
       const ev = this.evalG(neighbor);
@@ -102,7 +102,7 @@ export class SearchEngine {
 
       // Soft plateau -> restart from a kicked copy of the best build.
       if (this.sims - this.simsAtImprove > RESTART_AFTER) {
-        this.cur = this.evalG(perturb(this.best.genome, this.cands, this.nodesByCand, this.rng));
+        this.cur = this.evalG(perturb(this.best.genome, this.cands, this.nodesByCand, this.rng, this.cfg.baseline));
         this.simsAtImprove = this.sims;
       }
     }
@@ -129,7 +129,7 @@ export class SearchEngine {
     const hash = hashGenome(genome);
     const cached = this.cache.get(hash);
     if (cached) return { genome, hash, score: cached };
-    const points = genomeCost(genome);
+    const points = genomeCost(genome, this.cfg.baseline);
     const score = scoreGenome(genome, this.cfg.weights, points);
     if (this.cache.size < CACHE_MAX) this.cache.set(hash, score);
     return { genome, hash, score };

@@ -53,10 +53,23 @@ export function Optimizer() {
   const [useBudget, setUseBudget] = useState(true);
   const [allSouls, setAllSouls] = useState(false);
   const [includePvp, setIncludePvp] = useState(false);
+  const [useBaseline, setUseBaseline] = useState(false);
 
   const budget = totalFusionPoints(fusionLevel);
   const ownedCount = Object.keys(inventory).length;
   const total = Object.values(pct).reduce((a, b) => a + (b || 0), 0);
+
+  // Baseline = o que a pessoa marcou na 🌳 Árvore como JÁ aberto no jogo:
+  // nodes com soul (no nível investido) + nodes vazios abertos (nível 1).
+  // A IA só considera quando a opção estiver MARCADA e houver nodes abertos.
+  const baseline = useMemo(() => {
+    const b: Record<string, number> = {};
+    for (const [id, s] of Object.entries(activeBuild.slots)) if (s.soulId) b[id] = Math.max(1, s.nodeLevel);
+    for (const id of activeBuild.opened ?? []) if (!b[id]) b[id] = 1;
+    return b;
+  }, [activeBuild]);
+  const baselineCount = Object.keys(baseline).length;
+  const activeBaseline = useBaseline && baselineCount > 0 ? baseline : undefined;
 
   const goal: Goal = useMemo(() => {
     const weights: Record<string, number> = {};
@@ -78,6 +91,7 @@ export function Optimizer() {
       budget: useBudget ? budget : MAX_FUSION_POINTS,
       timeMs: 0,
       rngSeed: 1,
+      baseline: activeBaseline,
     };
     const genome = bestGreedyGenome(cfg);
     const slots = genomeToSlots(genome);
@@ -87,8 +101,8 @@ export function Optimizer() {
       const score = svs.reduce((s, sv) => s + (goal.weights[sv.stat] || 0) * sv.value, 0);
       return { soulId: ge.soulId, slotId, nodeRarity, nodeLevel: ge.nodeLevel, points: RARITY_POINT_COST[nodeRarity] * ge.nodeLevel, score };
     });
-    return { slots, used, points: genomeCost(genome) };
-  }, [goal, inventory, allSouls, includePvp, useBudget, budget]);
+    return { slots, used, points: genomeCost(genome, activeBaseline) };
+  }, [goal, inventory, allSouls, includePvp, useBudget, budget, activeBaseline]);
 
   const previewBuild = { ...activeBuild, slots: quick.slots };
   const totals = computeTotals(previewBuild);
@@ -118,6 +132,7 @@ export function Optimizer() {
       budget: useBudget ? budget : MAX_FUSION_POINTS,
       timeMs: deepTime * 1000,
       rngSeed: (Date.now() % 100000) + 1,
+      baseline: activeBaseline,
     };
     deepCfg.current = cfg;
     setDeepRunning(true);
@@ -178,6 +193,13 @@ export function Optimizer() {
           <input type="checkbox" checked={allSouls} onChange={(e) => setAllSouls(e.target.checked)} /> {t('st.opt.allsouls')}
         </label>
         <HelpTip text={t('st.opt.allsouls.help')} />
+        <label className="row" style={{ gap: 6 }} title={t('st.opt.baseline.help')}>
+          <input type="checkbox" checked={useBaseline} onChange={(e) => setUseBaseline(e.target.checked)} />{' '}
+          <span style={{ color: useBaseline && baselineCount > 0 ? 'var(--gold-bright)' : undefined }}>
+            {t('st.opt.baseline', { n: baselineCount })}
+          </span>
+        </label>
+        <HelpTip text={t('st.opt.baseline.help')} />
         <label className="row" style={{ gap: 6 }}>
           <input type="checkbox" checked={includePvp} onChange={(e) => setIncludePvp(e.target.checked)} /> {t('st.opt.pvp')}
         </label>
