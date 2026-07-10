@@ -82,6 +82,9 @@ const DICT: Record<string, Entry> = {
   'tb.audio.enabled': { pt: 'Alertas de voz ativados.', en: 'Voice alerts enabled.' },
   'tb.alert.one': { pt: 'O boss {name} vai nascer em {min} minutos.', en: 'Boss {name} will spawn in {min} minutes.' },
   'tb.alert.many': { pt: 'Os bosses {list} vão nascer em {min} minutos.', en: 'Bosses {list} will spawn in {min} minutes.' },
+  // Aviso URGENTE dos 2 minutos: chama o jogador pro mapa.
+  'tb.alert2.one': { pt: 'Vá para o mapa! O boss {name} irá nascer em 2 minutos.', en: 'Go to the map! Boss {name} will spawn in 2 minutes.' },
+  'tb.alert2.many': { pt: 'Vá para o mapa! Os bosses {list} irão nascer em 2 minutos.', en: 'Go to the map! Bosses {list} will spawn in 2 minutes.' },
   'tb.alert.and': { pt: 'e', en: 'and' },
 
   // ---- Timer Fury ----
@@ -182,6 +185,10 @@ const DICT: Record<string, Entry> = {
   'mk.published': { pt: 'publicado', en: 'published' },
   // "Marcar como vendido" — anúncio vendido (somente-leitura, privado do dono)
   'mk.sold.badge': { pt: 'VENDIDO', en: 'SOLD' },
+  // edição de classe/clã no próprio perfil
+  'mk.profile.edit': { pt: '✎ Editar classe/clã', en: '✎ Edit class/clan' },
+  'mk.profile.save': { pt: 'Salvar', en: 'Save' },
+  'mk.profile.saved': { pt: 'Perfil atualizado!', en: 'Profile updated!' },
   'mk.created.on': { pt: 'Criado em {date}', en: 'Created on {date}' },
   'mk.sold.on': { pt: 'vendido em {date}', en: 'sold on {date}' },
   'mk.sold.privatenote': { pt: 'Este anúncio está no seu histórico de vendas — visível só para você.', en: 'This listing is in your sales history — visible only to you.' },

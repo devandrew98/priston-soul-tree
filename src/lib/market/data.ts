@@ -21,7 +21,7 @@ export const CATEGORIES: Category[] = [
 
 export const CATEGORY_IDS = CATEGORIES.map((c) => c.id);
 
-export const CLASSES = ['Fighter', 'Mechanician', 'Archer', 'Pikeman', 'Atalanta', 'Knight', 'Magician', 'Priestess'];
+export const CLASSES = ['Fighter', 'Mechanician', 'Archer', 'Pikeman', 'Atalanta', 'Knight', 'Magician', 'Priestess', 'Assassina', 'Shaman'];
 
 export const CURRENCIES = ['gold', 'coins'] as const;
 

@@ -16,13 +16,18 @@ const ALERT_MINS = [10, 5, 2];
 
 function buildAlert(ids: string[], min: number, t: (k: string, v?: Record<string, string | number>) => string): string {
   const names = ids.map((id) => BOSSES[id].name);
-  if (names.length === 1) return t('tb.alert.one', { name: names[0], min });
   const and = t('tb.alert.and');
   const list =
-    names.length === 2
-      ? `${names[0]} ${and} ${names[1]}`
-      : `${names.slice(0, -1).join(', ')} ${and} ${names[names.length - 1]}`;
-  return t('tb.alert.many', { list, min });
+    names.length === 1
+      ? names[0]
+      : names.length === 2
+        ? `${names[0]} ${and} ${names[1]}`
+        : `${names.slice(0, -1).join(', ')} ${and} ${names[names.length - 1]}`;
+  // 2 minutos = chamada URGENTE: manda o jogador pro mapa.
+  if (min === 2) {
+    return names.length === 1 ? t('tb.alert2.one', { name: list }) : t('tb.alert2.many', { list });
+  }
+  return names.length === 1 ? t('tb.alert.one', { name: list, min }) : t('tb.alert.many', { list, min });
 }
 
 const isHardPrimal = (entry: ScheduleEntry, id: string) => id === 'primal-golem' && entry.hardPrimal;

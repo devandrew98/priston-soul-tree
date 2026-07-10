@@ -177,3 +177,9 @@ export async function updateAvatar(userId: string, avatarUrl: string): Promise<v
   const { error } = await must().from('profiles').update({ avatar_url: avatarUrl }).eq('id', userId);
   if (error) throw error;
 }
+
+/** Atualiza classe e/ou clã do PRÓPRIO perfil (o RLS só permite o dono). */
+export async function updateProfileFields(userId: string, fields: { char_class?: string; clan?: string }): Promise<void> {
+  const { error } = await must().from('profiles').update(fields).eq('id', userId);
+  if (error) throw error;
+}

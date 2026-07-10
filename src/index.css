@@ -1292,6 +1292,20 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 }
 .mk-lightbox-close:hover { border-color: var(--gold); color: var(--gold-bright); }
 
+/* Edição de classe/clã no próprio perfil (botão ✎ + formulário inline) */
+.mk-profile-editbtn { margin-left: 8px; font-size: 12px; }
+.mk-profile-editform { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+.mk-profile-editform select, .mk-profile-editform input {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); padding: 7px 9px; font-size: 13px;
+}
+.mk-profile-editform input { width: 140px; }
+.mk-profile-editform select:focus, .mk-profile-editform input:focus { outline: none; border-color: var(--gold); }
+
+/* KPIs do painel clicáveis (levam pra aba correspondente) */
+.mk-kpi.clickable { cursor: pointer; transition: border-color 0.15s, transform 0.15s; }
+.mk-kpi.clickable:hover { border-color: var(--gold); transform: translateY(-2px); }
+
 /* Imagem do anúncio GRANDE ao abrir o item (visualização aproximada, imagem
    inteira sem cortar). O clique ainda amplia em tela cheia (lightbox acima). */
 .mk-detail-hero { align-items: flex-start; flex-wrap: wrap; }

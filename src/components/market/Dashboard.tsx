@@ -57,10 +57,11 @@ export function Dashboard({ onOpen, onSeller, onCreate, onEdit, onLogin }: { onO
       </div>
 
       <div className="mk-dash-stats">
-        <KpiCard v={String(active.length)} l={t('mk.dash.active')} />
-        <KpiCard v={String(reserved.length)} l={t('mk.status.reserved')} />
-        <KpiCard v={String(sold.length)} l={t('mk.dash.sold')} />
-        <KpiCard v={String(favItems.length)} l={t('mk.favorites')} />
+        {/* KPIs clicáveis: levam direto pra aba correspondente. */}
+        <KpiCard v={String(active.length)} l={t('mk.dash.active')} onClick={() => setTab('active')} />
+        <KpiCard v={String(reserved.length)} l={t('mk.status.reserved')} onClick={() => setTab('active')} />
+        <KpiCard v={String(sold.length)} l={t('mk.dash.sold')} onClick={() => setTab('sold')} />
+        <KpiCard v={String(favItems.length)} l={t('mk.favorites')} onClick={() => setTab('favorites')} />
         <KpiCard v={totalViews.toLocaleString('pt-BR')} l={t('mk.dash.views')} />
         <KpiCard v={fmtPrice(profit)} l={t('mk.dash.profit')} gold />
       </div>
@@ -144,9 +145,9 @@ export function Dashboard({ onOpen, onSeller, onCreate, onEdit, onLogin }: { onO
   );
 }
 
-function KpiCard({ v, l, gold }: { v: string; l: string; gold?: boolean }) {
+function KpiCard({ v, l, gold, onClick }: { v: string; l: string; gold?: boolean; onClick?: () => void }) {
   return (
-    <div className={`mk-kpi ${gold ? 'gold' : ''}`}>
+    <div className={`mk-kpi ${gold ? 'gold' : ''} ${onClick ? 'clickable' : ''}`} onClick={onClick}>
       <b>{v}</b>
       <span>{l}</span>
     </div>

@@ -1,8 +1,11 @@
-import { MEDALS } from '../../lib/market/data';
+import { useState } from 'react';
+import { CLASSES, MEDALS } from '../../lib/market/data';
 import { fmtPrice } from '../../lib/market/helpers';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
+import { authErrMsg, updateProfileFields } from '../../lib/market/auth';
 import { useI18n } from '../../lib/i18n';
 import { getSeller, useAuth, useFavSellers } from './store';
+import { refreshProfile } from './session';
 import { useSellerListings, useSellerReputation } from './useMarketData';
 import { AvatarEditor } from './AvatarEditor';
 import { ItemCard } from './ItemCard';
@@ -30,6 +33,15 @@ export function SellerProfile({
 
   // Own-profile avatar editing.
   const own = !!userId && userId === sellerId && BACKEND_ENABLED;
+
+  // Edição de classe/clã do PRÓPRIO perfil (aparece só quando `own`).
+  const [editing, setEditing] = useState(false);
+  const [cls, setCls] = useState('');
+  const [clanTxt, setClanTxt] = useState('');
+  const [busyEdit, setBusyEdit] = useState(false);
+  const [editNote, setEditNote] = useState('');
+  // Override local pra UI refletir a mudança NA HORA (o cache demora a renovar).
+  const [over, setOver] = useState<{ className?: string; clan?: string }>({});
 
   if (!seller) {
     return (
@@ -66,8 +78,47 @@ export function SellerProfile({
             <ContribSeal sellerId={seller.id} />
           </h1>
           <div className="mk-profile-sub">
-            {seller.className} · {t('mk.lvl')} {seller.level} · 🛡 {seller.clan}
+            {over.className ?? seller.className} · {t('mk.lvl')} {seller.level} · 🛡 {over.clan ?? seller.clan}
+            {own && !editing && (
+              <button
+                className="mk-linkbtn mk-profile-editbtn"
+                onClick={() => { setCls(over.className ?? seller.className); setClanTxt((over.clan ?? seller.clan) === '—' ? '' : (over.clan ?? seller.clan)); setEditNote(''); setEditing(true); }}
+              >
+                {t('mk.profile.edit')}
+              </button>
+            )}
           </div>
+          {own && editing && (
+            <div className="mk-profile-editform">
+              <select value={cls} onChange={(e) => setCls(e.target.value)}>
+                {CLASSES.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+              <input value={clanTxt} onChange={(e) => setClanTxt(e.target.value)} placeholder={t('mk.auth.clan')} maxLength={16} />
+              <button
+                className="mk-btn sm primary"
+                disabled={busyEdit}
+                onClick={async () => {
+                  setBusyEdit(true); setEditNote('');
+                  try {
+                    const clan = clanTxt.trim() || '—';
+                    await updateProfileFields(userId!, { char_class: cls, clan });
+                    setOver({ className: cls, clan }); // reflete na hora
+                    refreshProfile(); // renova o perfil da sessão (menu, chips…)
+                    setEditing(false);
+                    setEditNote(t('mk.profile.saved'));
+                  } catch (e) {
+                    setEditNote(authErrMsg(e));
+                  } finally {
+                    setBusyEdit(false);
+                  }
+                }}
+              >
+                {busyEdit ? '…' : `✓ ${t('mk.profile.save')}`}
+              </button>
+              <button className="mk-btn sm" onClick={() => setEditing(false)}>{t('mk.cancel')}</button>
+            </div>
+          )}
+          {editNote && <div className="mk-note">{editNote}</div>}
           <div className="mk-profile-status">
             <OnlineDot online={seller.online} />
             {seller.online ? t('mk.online') : <>{t('mk.lastseen')} <Since at={seller.lastSeen} /></>}
