@@ -1355,3 +1355,69 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .shop-picker-acts { display: flex; gap: 8px; margin-left: auto; }
 
 .shop-view-btn { width: 100%; }
+
+/* ============================================================================
+   Mixing formulas
+   ============================================================================ */
+.mixing { max-width: 1180px; margin: 0 auto; padding: 18px 16px 60px; }
+.mix-head { margin-bottom: 16px; }
+
+.mix-cats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.mix-cats button { display: inline-flex; align-items: center; gap: 6px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; color: var(--text-dim); padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer; transition: border-color 0.12s, color 0.12s; }
+.mix-cats button:hover { border-color: var(--gold); }
+.mix-cats button.on { background: var(--panel2); border-color: var(--gold); color: var(--gold-bright); }
+.mix-cat-count { font-size: 11px; font-weight: 700; color: var(--text-dim); background: rgba(0,0,0,0.35); border-radius: 20px; padding: 1px 7px; }
+
+.mix-tools { display: flex; flex-direction: column; gap: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+.mix-search { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 9px; padding: 0 10px; }
+.mix-search input { flex: 1; background: none; border: none; color: var(--text); padding: 10px 0; font-size: 14px; }
+.mix-search input:focus { outline: none; }
+.mix-clear { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 14px; }
+
+.mix-filter-label { font-size: 12px; color: var(--text-dim); display: block; margin-bottom: 6px; }
+.mix-filter-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.mix-chip { display: inline-flex; align-items: center; gap: 5px; background: var(--bg); border: 1px solid var(--border); border-radius: 20px; color: var(--text-dim); padding: 4px 10px 4px 5px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.mix-chip img { width: 18px; height: 18px; image-rendering: pixelated; }
+.mix-chip:hover { border-color: var(--gold); }
+.mix-chip.on { background: var(--panel2); border-color: var(--gold); color: var(--gold-bright); }
+.mix-chip.clear { color: var(--attack); }
+.mix-filter-hint { font-size: 11px; margin: 6px 0 0; }
+
+.mix-count { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; }
+
+.mix-list { display: flex; flex-direction: column; gap: 8px; }
+.mix-row { position: relative; display: grid; grid-template-columns: 1fr 1.3fr; gap: 16px; width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; background: linear-gradient(180deg, var(--panel), var(--bg2)); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 10px; padding: 12px 14px; transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s, background 0.12s; }
+.mix-row:hover { transform: translateY(-2px); border-color: var(--gold); border-left-color: var(--gold-bright); box-shadow: 0 6px 18px rgba(0,0,0,0.45); background: linear-gradient(180deg, var(--panel2), var(--bg2)); }
+.mix-row:hover .mix-row-open { opacity: 1; }
+.mix-row:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.mix-row-open { position: absolute; top: 10px; right: 12px; font-size: 14px; opacity: 0; transition: opacity 0.12s; pointer-events: none; }
+.mix-col-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-dim); margin-bottom: 5px; }
+.mix-effects ul { margin: 0; padding-left: 16px; }
+.mix-effects li { font-size: 14px; color: var(--gold-bright); font-weight: 600; line-height: 1.5; }
+.mix-shel-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.mix-shel { display: inline-flex; align-items: center; gap: 6px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 4px 9px 4px 5px; }
+.mix-shel img { width: 22px; height: 22px; image-rendering: pixelated; }
+.mix-shel-name { font-size: 12px; color: var(--text-dim); }
+.mix-shel-qty { font-size: 13px; color: var(--text); }
+.mix-shel-hit .mix-shel { border-color: var(--gold); background: rgba(212,175,106,0.12); }
+
+.mix-empty { padding: 20px 0; text-align: center; }
+
+@media (max-width: 720px) {
+  .mix-row { grid-template-columns: 1fr; gap: 10px; }
+}
+
+/* Mixing — formula detail modal */
+.mix-modal { position: relative; width: min(560px, 94vw); max-height: 90vh; overflow: auto; background: linear-gradient(180deg, var(--panel), var(--bg2)); border: 1px solid var(--gold); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 18px; }
+.mix-modal-cat { align-self: flex-start; font-size: 12px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: var(--gold); background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; }
+.mix-modal-block { display: flex; flex-direction: column; gap: 10px; }
+.mix-modal-h { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-dim); font-weight: 700; }
+.mix-modal-effects { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mix-modal-effects li { font-size: 19px; font-weight: 800; color: var(--gold-bright); background: rgba(0,0,0,0.28); border-left: 3px solid var(--gold); border-radius: 8px; padding: 10px 14px; }
+
+.mix-modal-shels { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; }
+.mix-modal-shel { display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 8px 10px; }
+.mix-modal-shel img { width: 40px; height: 40px; image-rendering: pixelated; }
+.mix-modal-shel-qty { font-size: 18px; color: var(--gold-bright); }
+.mix-modal-shel-name { font-size: 12px; color: var(--text-dim); }
+.mix-modal-total { margin: 2px 0 0; font-size: 12px; color: var(--text-dim); text-align: right; }

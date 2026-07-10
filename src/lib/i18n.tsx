@@ -15,6 +15,20 @@ const DICT: Record<string, Entry> = {
   'nav.soultree': { pt: 'Árvore de Souls', en: 'Soul Tree' },
   'nav.streamers': { pt: 'Streamers', en: 'Streamers' },
   'nav.guides': { pt: 'Guias', en: 'Guides' },
+  'nav.mixing': { pt: 'Mixing', en: 'Mixing' },
+
+  // mixing (fórmulas)
+  'mix.title': { pt: 'Fórmulas de Mixing', en: 'Mixing Formulas' },
+  'mix.subtitle': { pt: 'Todas as fórmulas de mixing por categoria, com o efeito e os sheltoms necessários.', en: 'Every mixing formula by category, with its effect and the required sheltoms.' },
+  'mix.effect': { pt: 'Efeito', en: 'Effect' },
+  'mix.required': { pt: 'Sheltoms necessários', en: 'Required sheltoms' },
+  'mix.search.ph': { pt: 'Buscar por efeito (ex.: Critical, HP, Absorb)...', en: 'Search by effect (e.g. Critical, HP, Absorb)...' },
+  'mix.filter.label': { pt: 'Filtrar pelos sheltoms que você tem:', en: 'Filter by the sheltoms you have:' },
+  'mix.filter.clear': { pt: 'Limpar', en: 'Clear' },
+  'mix.filter.hint': { pt: 'Mostrando apenas fórmulas que usam somente os sheltoms selecionados.', en: 'Showing only formulas that use just the selected sheltoms.' },
+  'mix.showing': { pt: 'Mostrando {n} de {total} fórmulas', en: 'Showing {n} of {total} formulas' },
+  'mix.none': { pt: 'Nenhuma fórmula encontrada com esses filtros.', en: 'No formula matches these filters.' },
+  'mix.total': { pt: 'Total: {n} sheltoms', en: 'Total: {n} sheltoms' },
 
   // guias (aba pública)
   'guides.title': { pt: 'Guias', en: 'Guides' },

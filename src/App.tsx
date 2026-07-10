@@ -13,13 +13,14 @@ import { SoD } from './components/SoD';
 import { Marketplace } from './components/market/Marketplace';
 import { Streamers } from './components/Streamers';
 import { Guides } from './components/Guides';
+import { Mixing } from './components/Mixing';
 import { ResetPasswordModal } from './components/market/ResetPasswordModal';
 import { useI18n } from './lib/i18n';
 
-export type Section = 'home' | 'timeboss' | 'timerfury' | 'sod' | 'market' | 'soultree' | 'streamers' | 'guides';
+export type Section = 'home' | 'timeboss' | 'timerfury' | 'sod' | 'market' | 'soultree' | 'streamers' | 'guides' | 'mixing';
 type Tab = 'planner' | 'inventory' | 'optimizer';
 
-const SECTIONS: Section[] = ['home', 'timeboss', 'timerfury', 'sod', 'market', 'soultree', 'streamers', 'guides'];
+const SECTIONS: Section[] = ['home', 'timeboss', 'timerfury', 'sod', 'market', 'soultree', 'streamers', 'guides', 'mixing'];
 
 const NAV: { id: Section; icon: string; key: string }[] = [
   { id: 'home', icon: '🏠', key: 'nav.home' },
@@ -30,6 +31,7 @@ const NAV: { id: Section; icon: string; key: string }[] = [
   { id: 'soultree', icon: '🌳', key: 'nav.soultree' },
   { id: 'streamers', icon: '📺', key: 'nav.streamers' },
   { id: 'guides', icon: '🎬', key: 'nav.guides' },
+  { id: 'mixing', icon: '⚗️', key: 'nav.mixing' },
 ];
 
 export default function App() {
@@ -90,6 +92,8 @@ export default function App() {
         <Streamers />
       ) : section === 'guides' ? (
         <Guides />
+      ) : section === 'mixing' ? (
+        <Mixing />
       ) : (
         <SoulTree />
       )}
