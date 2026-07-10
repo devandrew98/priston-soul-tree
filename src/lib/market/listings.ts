@@ -4,7 +4,7 @@ import { supabase } from './supabase';
 import { categoryIcon } from './marketCategories';
 import { cacheProfiles } from './profileCache';
 import { profileToSeller, type ProfileRow, uploadToBucket } from './auth';
-import type { Currency, Listing, Rarity } from './types';
+import type { Currency, Listing, Rarity, ShopCity, ShopLocation } from './types';
 import type { Filters, SortKey } from './helpers';
 
 // Embed the seller profile so cards can show nick/avatar/contributor.
@@ -30,6 +30,9 @@ export interface ListingRow {
   views: number;
   created_at: string;
   updated_at?: string; // setado quando o status muda (ex.: virar 'sold') → data da venda
+  shop_city?: string | null;
+  shop_x?: number | string | null;
+  shop_y?: number | string | null;
   seller?: ProfileRow | null;
 }
 
@@ -63,6 +66,7 @@ export function rowToListing(row: ListingRow): Listing {
     // Só faz sentido como "data da venda" quando o item está vendido; nesse
     // estado o anúncio fica somente-leitura, então updated_at não muda mais.
     soldAt: row.status === 'sold' && row.updated_at ? new Date(row.updated_at).getTime() : undefined,
+    shop: row.shop_city ? { city: row.shop_city as ShopCity, x: Number(row.shop_x), y: Number(row.shop_y) } : null,
   };
 }
 
@@ -144,6 +148,7 @@ export interface NewListingInput {
   currency: Currency;
   description: string;
   highlighted: boolean;
+  shop?: ShopLocation | null;
   imageFile: File;
 }
 
@@ -163,6 +168,9 @@ export async function createListing(userId: string, input: NewListingInput): Pro
     currency: input.currency,
     description: input.description,
     highlighted: input.highlighted,
+    shop_city: input.shop?.city ?? null,
+    shop_x: input.shop?.x ?? null,
+    shop_y: input.shop?.y ?? null,
   }).select('id').single();
   if (error) throw error;
   return (data as { id: string }).id;
@@ -183,6 +191,9 @@ export async function updateListing(id: string, userId: string, fields: Editable
     currency: fields.currency,
     description: fields.description,
     highlighted: fields.highlighted,
+    shop_city: fields.shop?.city ?? null,
+    shop_x: fields.shop?.x ?? null,
+    shop_y: fields.shop?.y ?? null,
     updated_at: new Date().toISOString(),
   };
   if (newImage) patch.image_url = await uploadToBucket('item-images', userId, newImage);

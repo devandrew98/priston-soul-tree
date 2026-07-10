@@ -342,6 +342,23 @@ const DICT: Record<string, Entry> = {
   'mk.create.imagehint': { pt: 'Clique ou arraste uma imagem aqui', en: 'Click or drag an image here' },
   'mk.create.imagereq': { pt: 'A imagem do item é obrigatória para publicar.', en: 'An item image is required to publish.' },
 
+  // localização da loja in-game
+  'mk.shop.question': { pt: 'Este item está sendo vendido em uma loja dentro do jogo?', en: 'Is this item being sold in an in-game shop?' },
+  'mk.shop.yes': { pt: 'Sim', en: 'Yes' },
+  'mk.shop.no': { pt: 'Não', en: 'No' },
+  'mk.shop.whichcity': { pt: 'Em qual cidade está sua loja?', en: 'Which city is your shop in?' },
+  'mk.shop.clickmap': { pt: 'clique no mapa para marcar sua loja', en: 'click the map to mark your shop' },
+  'mk.shop.clickhint': { pt: 'Clique em qualquer ponto do mapa para posicionar sua loja.', en: 'Click anywhere on the map to place your shop.' },
+  'mk.shop.willmark': { pt: 'Sua loja ficará marcada em:', en: 'Your shop will be marked at:' },
+  'mk.shop.confirm': { pt: 'Confirmar', en: 'Confirm' },
+  'mk.shop.chooseagain': { pt: 'Escolher novamente', en: 'Choose again' },
+  'mk.shop.change': { pt: 'Alterar', en: 'Change' },
+  'mk.shop.remove': { pt: 'Remover', en: 'Remove' },
+  'mk.shop.viewbtn': { pt: 'Ver localização da loja', en: 'View shop location' },
+  'mk.shop.viewtitle': { pt: 'Localização da loja', en: 'Shop location' },
+  'mk.shop.city': { pt: 'Cidade', en: 'City' },
+  'mk.shop.coord': { pt: 'Coordenada', en: 'Coordinate' },
+
   // limites antifraude (Fase 9)
   'mk.limit.active': { pt: 'Você atingiu o limite de 30 anúncios ativos. Marque alguns como vendidos ou remova para publicar novos.', en: 'You reached the limit of 30 active listings. Mark some as sold or remove them to post new ones.' },
   'mk.limit.rate': { pt: 'Você criou muitos anúncios em pouco tempo. Aguarde um pouco e tente novamente.', en: 'You created too many listings in a short time. Please wait a bit and try again.' },

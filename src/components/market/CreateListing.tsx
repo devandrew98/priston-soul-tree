@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { RARITIES } from '../../lib/market/data';
 import { useCategories } from '../../lib/market/marketCategories';
-import type { Currency, Listing, Rarity } from '../../lib/market/types';
+import type { Currency, Listing, Rarity, ShopLocation } from '../../lib/market/types';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { limitErrorKey } from '../../lib/market/helpers';
 import { createListing, updateListing } from '../../lib/market/listings';
 import { useI18n } from '../../lib/i18n';
 import { useAuth, useMyListings } from './store';
 import { useListing } from './useMarketData';
+import { ShopLocationField } from './ShopLocation';
 import { LoginPrompt } from './LoginPrompt';
 
 const CURRENCIES: Currency[] = ['gold', 'coins'];
@@ -33,6 +34,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
   const [image, setImage] = useState<string>('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [highlighted, setHighlighted] = useState(false);
+  const [shop, setShop] = useState<ShopLocation | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [prefilled, setPrefilled] = useState(false);
@@ -51,6 +53,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
     setDescription(editListing.description);
     setImage(editListing.image || '');
     setHighlighted(editListing.highlighted);
+    setShop(editListing.shop ?? null);
     setPrefilled(true);
   }, [editing, prefilled, editListing]);
 
@@ -72,7 +75,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
     const fields = {
       name: name.trim() || t('mk.create.untitled'),
       itemLevel, category, subcategory, rarity, quantity, price, currency,
-      description: description.trim(), highlighted: canContribute && highlighted,
+      description: description.trim(), highlighted: canContribute && highlighted, shop,
     };
     if (BACKEND_ENABLED) {
       if (!editing && !imageFile) return; // new listing requires an image
@@ -83,7 +86,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
         onDone();
       } catch (e) {
         const key = limitErrorKey(e);
-        setError(key ? t(key) : e instanceof Error ? e.message : String(e));
+        setError(key ? t(key) : errText(e));
       } finally {
         setBusy(false);
       }
@@ -107,6 +110,9 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
       <h1 className="mk-h1">📦 {editing ? t('mk.edit.title') : t('mk.create.title')}</h1>
 
       <div className="mk-form">
+        {/* in-game shop location (optional) — asked first */}
+        <ShopLocationField value={shop} onChange={setShop} />
+
         {/* image (required) */}
         <div className="mk-field span2">
           <span>{t('mk.create.image')} *</span>
@@ -204,4 +210,11 @@ function clamp(raw: string, lo: number, hi: number): number {
   const n = Number(raw);
   if (!isFinite(n)) return lo;
   return Math.min(hi, Math.max(lo, Math.floor(n)));
+}
+
+/** Readable message from any thrown value (Error or a Supabase error object). */
+function errText(e: unknown): string {
+  if (e instanceof Error) return e.message;
+  if (e && typeof e === 'object' && 'message' in e) return String((e as { message: unknown }).message);
+  return String(e);
 }

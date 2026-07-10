@@ -10,6 +10,7 @@ import { getSeller, useAuth, useFavorites } from './store';
 import { useItemMarket, useSimilar } from './useMarketData';
 import { ItemCard } from './ItemCard';
 import { PriceChart } from './PriceChart';
+import { ShopLocationModal } from './ShopLocation';
 import { Avatar, ContribSeal, OnlineDot, PriceTag, RarityTag, RepBadge, Since, Stars, StatusPill } from './parts';
 
 const TREND_ICON = { up: '📈', down: '📉', stable: '➖' } as const;
@@ -28,6 +29,7 @@ export function ItemDetail({
   const { isFav, toggleFav } = useFavorites();
   const [note, setNote] = useState('');
   const [zoom, setZoom] = useState(false); // lightbox da imagem do item
+  const [showShop, setShowShop] = useState(false); // modal do mapa da loja in-game
   const seller = getSeller(listing.sellerId);
   const glow = RARITY_COLOR[listing.rarity];
 
@@ -206,7 +208,11 @@ export function ItemDetail({
                 </div>
               </div>
             )}
+            {listing.shop && (
+              <button className="mk-btn shop-view-btn" onClick={() => setShowShop(true)}>📍 {t('mk.shop.viewbtn')}</button>
+            )}
             {note && <div className="mk-note">{note}</div>}
+            {showShop && listing.shop && <ShopLocationModal shop={listing.shop} onClose={() => setShowShop(false)} />}
 
             <div className="mk-sellerstats">
               <div><b>{seller.itemsSold}</b><span>{t('mk.itemssold')}</span></div>

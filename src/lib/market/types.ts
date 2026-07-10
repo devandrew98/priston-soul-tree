@@ -64,6 +64,14 @@ export interface Listing {
   views: number;
   createdAt: number; // epoch ms
   soldAt?: number; // epoch ms — momento em que virou "sold" (vem de updated_at)
+  shop?: ShopLocation | null; // loja in-game do vendedor (opcional)
+}
+
+export type ShopCity = 'ricarten' | 'pillai';
+export interface ShopLocation {
+  city: ShopCity;
+  x: number; // posição relativa 0..1 no mapa (esquerda→direita)
+  y: number; // posição relativa 0..1 no mapa (topo→baixo)
 }
 
 export interface PricePoint {

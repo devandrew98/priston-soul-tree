@@ -657,3 +657,11 @@ drop policy if exists guide_categories_admin on public.guide_categories;
 create policy guide_categories_admin on public.guide_categories for all
   using (public.is_admin()) with check (public.is_admin());
 
+
+-- ============================================================================
+-- Fase 17 — localizacao da loja in-game do anuncio (ver 15_shop_location.sql)
+-- ============================================================================
+alter table public.listings add column if not exists shop_city text
+  check (shop_city is null or shop_city in ('ricarten','pillai'));
+alter table public.listings add column if not exists shop_x real;
+alter table public.listings add column if not exists shop_y real;
