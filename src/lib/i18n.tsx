@@ -8,6 +8,8 @@ type Entry = { pt: string; en: string };
 const DICT: Record<string, Entry> = {
   // ---- shell / nav ----
   'nav.home': { pt: 'Home', en: 'Home' },
+  'nav.timers': { pt: 'Timers', en: 'Timers' },
+  'nav.tools': { pt: 'Ferramentas', en: 'Tools' },
   'nav.timeboss': { pt: 'Timer Boss', en: 'Timer Boss' },
   'nav.timerfury': { pt: 'Timer Fury', en: 'Timer Fury' },
   'nav.sod': { pt: 'SoD', en: 'SoD' },

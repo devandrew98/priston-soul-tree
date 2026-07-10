@@ -17,54 +17,140 @@ import { Mixing } from './components/Mixing';
 import { ResetPasswordModal } from './components/market/ResetPasswordModal';
 import { useI18n } from './lib/i18n';
 
-export type Section = 'home' | 'timeboss' | 'timerfury' | 'sod' | 'market' | 'soultree' | 'streamers' | 'guides' | 'mixing';
+export type Section = 'home' | 'timers' | 'market' | 'streamers' | 'guides' | 'tools';
 type Tab = 'planner' | 'inventory' | 'optimizer';
+type TimerTab = 'boss' | 'fury';
+type ToolTab = 'soultree' | 'mixing' | 'sod';
 
-const SECTIONS: Section[] = ['home', 'timeboss', 'timerfury', 'sod', 'market', 'soultree', 'streamers', 'guides', 'mixing'];
+const SECTIONS: Section[] = ['home', 'timers', 'market', 'streamers', 'guides', 'tools'];
 
-const NAV: { id: Section; icon: string; key: string }[] = [
-  { id: 'home', icon: '🏠', key: 'nav.home' },
-  { id: 'timeboss', icon: '🕐', key: 'nav.timeboss' },
-  { id: 'timerfury', icon: '🔥', key: 'nav.timerfury' },
-  { id: 'sod', icon: '🎯', key: 'nav.sod' },
-  { id: 'market', icon: '🏰', key: 'nav.market' },
-  { id: 'soultree', icon: '🌳', key: 'nav.soultree' },
-  { id: 'streamers', icon: '📺', key: 'nav.streamers' },
-  { id: 'guides', icon: '🎬', key: 'nav.guides' },
-  { id: 'mixing', icon: '⚗️', key: 'nav.mixing' },
+interface SubTab { id: string; icon: string; key: string }
+interface NavItem { id: Section; icon: string; key: string; tabs?: SubTab[] }
+
+const TIMER_TABS: { id: TimerTab; icon: string; key: string }[] = [
+  { id: 'boss', icon: '🕐', key: 'nav.timeboss' },
+  { id: 'fury', icon: '🔥', key: 'nav.timerfury' },
 ];
+
+const TOOL_TABS: { id: ToolTab; icon: string; key: string }[] = [
+  { id: 'soultree', icon: '🌳', key: 'nav.soultree' },
+  { id: 'mixing', icon: '⚗️', key: 'nav.mixing' },
+  { id: 'sod', icon: '🎯', key: 'nav.sod' },
+];
+
+// Tabs with `tabs` open a dropdown (cascade) instead of navigating directly.
+const NAV: NavItem[] = [
+  { id: 'home', icon: '🏠', key: 'nav.home' },
+  { id: 'timers', icon: '⏱️', key: 'nav.timers', tabs: TIMER_TABS },
+  { id: 'tools', icon: '🧰', key: 'nav.tools', tabs: TOOL_TABS },
+  { id: 'market', icon: '🏰', key: 'nav.market' },
+  { id: 'guides', icon: '🎬', key: 'nav.guides' },
+  { id: 'streamers', icon: '📺', key: 'nav.streamers' },
+];
+
+/** Old top-level sections that are now sub-tabs — keep returning visitors put. */
+const LEGACY: Record<string, { section: Section; timer?: TimerTab; tool?: ToolTab }> = {
+  timeboss: { section: 'timers', timer: 'boss' },
+  timerfury: { section: 'timers', timer: 'fury' },
+  soultree: { section: 'tools', tool: 'soultree' },
+  mixing: { section: 'tools', tool: 'mixing' },
+  sod: { section: 'tools', tool: 'sod' },
+};
+
+function initialNav(): { section: Section; timerTab: TimerTab; toolTab: ToolTab } {
+  let timerTab = (localStorage.getItem('timers-tab') as TimerTab) || 'boss';
+  let toolTab = (localStorage.getItem('tools-tab') as ToolTab) || 'soultree';
+  // A shared listing/seller link (#item-… / #seller-…) opens the Marketplace.
+  const h = window.location.hash;
+  if (h.startsWith('#item-') || h.startsWith('#seller-')) return { section: 'market', timerTab, toolTab };
+
+  const saved = localStorage.getItem('site-section') ?? '';
+  if (SECTIONS.includes(saved as Section)) return { section: saved as Section, timerTab, toolTab };
+  const legacy = LEGACY[saved];
+  if (legacy) {
+    if (legacy.timer) timerTab = legacy.timer;
+    if (legacy.tool) toolTab = legacy.tool;
+    return { section: legacy.section, timerTab, toolTab };
+  }
+  return { section: 'home', timerTab, toolTab };
+}
+
+const INIT = initialNav();
 
 export default function App() {
   const { t, lang, setLang } = useI18n();
-  const [section, setSection] = useState<Section>(() => {
-    // A shared listing/seller link (#item-… / #seller-…) opens the Marketplace.
-    const h = window.location.hash;
-    if (h.startsWith('#item-') || h.startsWith('#seller-')) return 'market';
-    const saved = localStorage.getItem('site-section');
-    return saved && SECTIONS.includes(saved as Section) ? (saved as Section) : 'home';
-  });
+  const [section, setSection] = useState<Section>(INIT.section);
+  const [timerTab, setTimerTab] = useState<TimerTab>(INIT.timerTab);
+  const [toolTab, setToolTab] = useState<ToolTab>(INIT.toolTab);
+  const [openMenu, setOpenMenu] = useState<Section | null>(null);
 
   const go = (s: Section) => {
     setSection(s);
     localStorage.setItem('site-section', s);
     window.scrollTo({ top: 0 });
   };
+  const goTimer = (tb: TimerTab) => { setTimerTab(tb); localStorage.setItem('timers-tab', tb); window.scrollTo({ top: 0 }); };
+  const goTool = (tb: ToolTab) => { setToolTab(tb); localStorage.setItem('tools-tab', tb); window.scrollTo({ top: 0 }); };
+
+  // Navigate to a dropdown item (section + its sub-tab), then close the menu.
+  const pickSub = (sectionId: Section, subId: string) => {
+    go(sectionId);
+    if (sectionId === 'timers') goTimer(subId as TimerTab);
+    else if (sectionId === 'tools') goTool(subId as ToolTab);
+    setOpenMenu(null);
+  };
+  const currentSub = (sectionId: Section) => (sectionId === 'timers' ? timerTab : sectionId === 'tools' ? toolTab : '');
+
+  // Close the open dropdown on outside click or Escape.
+  useEffect(() => {
+    if (!openMenu) return;
+    const onDown = (e: MouseEvent) => { if (!(e.target as HTMLElement).closest('.topnav-item')) setOpenMenu(null); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpenMenu(null); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('mousedown', onDown); document.removeEventListener('keydown', onKey); };
+  }, [openMenu]);
 
   return (
     <div className="shell">
       <nav className="topnav">
-        <button className="topnav-brand" onClick={() => go('home')}>
+        <button className="topnav-brand" onClick={() => { setOpenMenu(null); go('home'); }}>
           ⚔️ <span>PristonZONE</span>
         </button>
         <div className="topnav-tabs">
-          {NAV.map((n) => (
-            <button
-              key={n.id}
-              className={`topnav-tab ${section === n.id ? 'active' : ''}`}
-              onClick={() => go(n.id)}
-            >
-              {n.icon} {t(n.key)}
-            </button>
+          {NAV.map((n) => n.tabs ? (
+            <div key={n.id} className="topnav-item">
+              <button
+                className={`topnav-tab has-menu ${section === n.id ? 'active' : ''} ${openMenu === n.id ? 'open' : ''}`}
+                onClick={() => setOpenMenu(openMenu === n.id ? null : n.id)}
+                aria-haspopup="true"
+                aria-expanded={openMenu === n.id}
+              >
+                {n.icon} {t(n.key)} <span className="topnav-caret">▾</span>
+              </button>
+              {openMenu === n.id && (
+                <div className="topnav-menu">
+                  {n.tabs.map((sub) => (
+                    <button
+                      key={sub.id}
+                      className={`topnav-menu-item ${section === n.id && currentSub(n.id) === sub.id ? 'active' : ''}`}
+                      onClick={() => pickSub(n.id, sub.id)}
+                    >
+                      {sub.icon} {t(sub.key)}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div key={n.id} className="topnav-item">
+              <button
+                className={`topnav-tab ${section === n.id ? 'active' : ''}`}
+                onClick={() => { setOpenMenu(null); go(n.id); }}
+              >
+                {n.icon} {t(n.key)}
+              </button>
+            </div>
           ))}
         </div>
         <span className="spacer" />
@@ -80,22 +166,16 @@ export default function App() {
 
       {section === 'home' ? (
         <Home />
-      ) : section === 'timeboss' ? (
-        <TimeBoss />
-      ) : section === 'timerfury' ? (
-        <TimerFury />
-      ) : section === 'sod' ? (
-        <SoD />
+      ) : section === 'timers' ? (
+        timerTab === 'boss' ? <TimeBoss /> : <TimerFury />
       ) : section === 'market' ? (
         <Marketplace />
       ) : section === 'streamers' ? (
         <Streamers />
       ) : section === 'guides' ? (
         <Guides />
-      ) : section === 'mixing' ? (
-        <Mixing />
       ) : (
-        <SoulTree />
+        toolTab === 'soultree' ? <SoulTree /> : toolTab === 'mixing' ? <Mixing /> : <SoD />
       )}
 
       <ResetPasswordModal />
