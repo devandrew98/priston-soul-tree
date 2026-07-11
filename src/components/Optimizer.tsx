@@ -65,7 +65,8 @@ export function Optimizer() {
   const baseline = useMemo(() => {
     const b: Record<string, number> = {};
     for (const [id, s] of Object.entries(activeBuild.slots)) if (s.soulId) b[id] = Math.max(1, s.nodeLevel);
-    for (const id of activeBuild.opened ?? []) if (!b[id]) b[id] = 1;
+    // Nodes vazios abertos também carregam pontos investidos (como no jogo).
+    for (const id of activeBuild.opened ?? []) if (!b[id]) b[id] = Math.max(1, activeBuild.slots[id]?.nodeLevel ?? 1);
     return b;
   }, [activeBuild]);
   const baselineCount = Object.keys(baseline).length;

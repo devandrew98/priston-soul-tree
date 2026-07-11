@@ -200,7 +200,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     clearSlot: (slotId) =>
       updateActive((b) => ({
         ...b,
+        // Como no jogo: tirar a soul NÃO tira os pontos — o node continua
+        // aberto com o nível investido (por isso entra em `opened`).
         slots: { ...b.slots, [slotId]: { soulId: null, soulLevel: 1, nodeLevel: b.slots[slotId].nodeLevel } },
+        opened: [...new Set([...(b.opened ?? []), slotId])],
       })),
     clearBuild: () => updateActive((b) => ({ ...b, slots: emptySlots() })),
     toggleOpen: (nodeId) =>
@@ -208,9 +211,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const active = s.builds.find((b) => b.id === s.activeBuildId) ?? s.builds[0];
         if (active.slots[nodeId]?.soulId) return s; // souled nodes are managed via the soul
         const opened = new Set(active.opened ?? []);
-        if (opened.has(nodeId)) opened.delete(nodeId);
-        else opened.add(nodeId);
-        return { ...s, builds: s.builds.map((b) => (b.id === active.id ? { ...b, opened: [...opened], updatedAt: Date.now() } : b)) };
+        let slots = active.slots;
+        if (opened.has(nodeId)) {
+          // Fechar um node vazio "despinta" ele: os pontos investidos zeram
+          // junto (senão vazariam pro custo como pass-through nivelado).
+          opened.delete(nodeId);
+          slots = { ...slots, [nodeId]: { ...slots[nodeId], nodeLevel: 1 } };
+        } else {
+          opened.add(nodeId);
+        }
+        return { ...s, builds: s.builds.map((b) => (b.id === active.id ? { ...b, slots, opened: [...opened], updatedAt: Date.now() } : b)) };
       }),
     moveSoul: (fromId, toId) =>
       setState((s) => {

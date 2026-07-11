@@ -246,11 +246,18 @@ export function Planner() {
                 ) : (
                   <span className="tnode-lvl">{slot.nodeLevel}</span>
                 ))}
-                {!soul && selected === n.id && (activeBuild.opened ?? []).includes(n.id) && (
+                {/* Node vazio ABERTO: mostra os pontos investidos (como no jogo)
+                    e, selecionado, deixa distribuir pontos sem precisar de soul. */}
+                {!soul && (activeBuild.opened ?? []).includes(n.id) && (selected === n.id ? (
                   <span className="tnode-lvl ctrl" onClick={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
                     <button className="lvl-adj wide" title={t('st.node.addsoul')} onClick={(e) => { e.stopPropagation(); setSelected(n.id); setEditing(n.id); }}>+ soul</button>
+                    <button className="lvl-adj" title={t('st.node.lvldown')} disabled={slot.nodeLevel <= 1} onClick={(e) => { e.stopPropagation(); setSlot(n.id, { nodeLevel: Math.max(1, slot.nodeLevel - 1) }); }}>−</button>
+                    <span className="lvl-num">{slot.nodeLevel}</span>
+                    <button className="lvl-adj" title={t('st.node.lvlup')} disabled={spent + RARITY_POINT_COST[n.rarity] > budget} onClick={(e) => { e.stopPropagation(); setSlot(n.id, { nodeLevel: slot.nodeLevel + 1 }); }}>+</button>
                   </span>
-                )}
+                ) : (
+                  <span className="tnode-lvl">{slot.nodeLevel}</span>
+                ))}
                 {soul && (
                   <div className={`node-tip r-${soul.rarity} ${n.col >= 4 ? 'left' : 'right'}`}>
                     <div className="node-tip-head"><SoulIcon soul={soul} size={24} /><span>{soul.name}</span></div>

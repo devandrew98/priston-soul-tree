@@ -2,6 +2,9 @@
 // Garante: custo conta os pontos presos, níveis nunca abaixam, o filler
 // reaproveita os nodes abertos e a busca respeita tudo dentro do orçamento.
 import { describe, it, expect } from 'vitest';
+import type { Build } from '../lib/types';
+import { pointsSpent } from '../lib/calc';
+import { TREE_NODES } from '../lib/tree';
 import { SearchEngine } from './search';
 import { bestGreedyGenome } from './controller';
 import { fillGenome } from './filler';
@@ -70,6 +73,18 @@ describe('Baseline (nodes já abertas no jogo)', () => {
     const onlyReuse = evaluate(fillGenome({}, mk()).genome, W, BASELINE);
     const best = evaluate(bestGreedyGenome(mk()), W, BASELINE);
     expect(best.score.total).toBeGreaterThanOrEqual(onlyReuse.score.total);
+  });
+
+  it('node vazio ABERTO com pontos distribuídos conta no custo (como no jogo)', () => {
+    const slots: Build['slots'] = {};
+    for (const n of TREE_NODES) slots[n.id] = { soulId: null, soulLevel: 1, nodeLevel: 1 };
+    slots['h1_3'] = { soulId: null, soulLevel: 1, nodeLevel: 29 }; // wildcard rara, 29 pts sem soul
+    const build = { id: 'x', name: 'x', slots, opened: ['h1_3'], createdAt: 0, updatedAt: 0 } as Build;
+    // caminho: t1(1) + t2(1) + h1_3 rara(2×29=58) = 60
+    expect(pointsSpent(build)).toBe(60);
+    // fechado (fora de opened), o mesmo nível residual NÃO conta (vira pass-through 1)
+    const closed = { ...build, opened: [] } as Build;
+    expect(pointsSpent(closed)).toBe(0); // sem terminais, nada aberto
   });
 
   it('sem a opção marcada (baseline undefined) nada muda no comportamento', () => {

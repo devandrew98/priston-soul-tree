@@ -86,10 +86,13 @@ export function pointsSpent(build: Build): number {
     .map(([id]) => id);
   const terminals = [...new Set([...souled, ...(build.opened ?? [])])];
   if (!terminals.length) return 0;
+  const openedSet = new Set(build.opened ?? []);
   let sum = 0;
   for (const id of unlockedFor(terminals)) {
     const slot = build.slots[id];
-    const level = slot && slot.soulId ? Math.max(1, slot.nodeLevel) : 1;
+    // Nodes com soul E nodes vazios ABERTOS contam o nível investido (no jogo
+    // os pontos ficam no node mesmo sem soul); pass-through automático = 1.
+    const level = slot && (slot.soulId || openedSet.has(id)) ? Math.max(1, slot.nodeLevel) : 1;
     sum += RARITY_POINT_COST[slotRarity(id)] * level;
   }
   return sum;
