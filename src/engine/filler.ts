@@ -91,7 +91,9 @@ export function fillGenome(g: Genome, cfg: EngineConfig): { genome: Genome; adde
 
   // 1) A soul on every opened-but-empty node (most restrictive nodes first,
   //    so legendary sockets are not starved by generous common ones).
-  const empty = [...openSetFor(g)]
+  //    Com baseline, os nodes JÁ ABERTOS no jogo entram aqui também — e a soul
+  //    entra direto no nível investido (valor de graça dos pontos presos).
+  const empty = [...openSetFor(g, cfg.baseline)]
     .filter((id) => !filled[id] && TREE_NODE_BY_ID[id])
     .sort((a, b) => RARITY_ORDER[TREE_NODE_BY_ID[b].rarity] - RARITY_ORDER[TREE_NODE_BY_ID[a].rarity]);
   for (const nodeId of empty) {
@@ -106,12 +108,12 @@ export function fillGenome(g: Genome, cfg: EngineConfig): { genome: Genome; adde
     );
     if (idx < 0) continue; // no compatible soul left — node stays empty
     const c = pool.splice(idx, 1)[0];
-    filled[nodeId] = { soulId: c.soulId, soulLevel: c.soulLevel, nodeLevel: 1 };
+    filled[nodeId] = { soulId: c.soulId, soulLevel: c.soulLevel, nodeLevel: cfg.baseline?.[nodeId] ?? 1 };
     added.push({ nodeId, soulId: c.soulId, kind: kindOf(c) });
   }
 
   // 2) Leftover points -> best marginal level-ups (goal ≫ survival ≫ general).
-  let spent = genomeCost(filled);
+  let spent = genomeCost(filled, cfg.baseline);
   for (let guard = 0; guard < 1000; guard++) {
     let bestId: string | null = null;
     let bestEff = 0;

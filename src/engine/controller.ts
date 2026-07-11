@@ -17,6 +17,7 @@ import type {
   WorkerRequest,
 } from './types';
 import { evaluate, slotsToGenome } from './genome';
+import { genomeCost } from './pathfinder';
 import { fillGenome, type FillAdded } from './filler';
 import { SearchEngine } from './search';
 import { KnowledgeBase } from './knowledge';
@@ -127,16 +128,32 @@ async function runInline(cfg: EngineConfig, seeds: Genome[], onProgress?: (p: De
 export function bestGreedyGenome(cfg: EngineConfig): Genome {
   const goal: Goal = { id: 'custom', name: 'custom', weights: cfg.weights, includePvp: cfg.includePvp, custom: true };
   let best: { genome: Genome; total: number } | null = null;
+  const consider = (genome: Genome) => {
+    const ev = evaluate(genome, cfg.weights, cfg.baseline);
+    if (ev.score.points > cfg.budget) return;
+    if (!best || ev.score.total > best.total) best = { genome, total: ev.score.total };
+  };
+
+  // Com baseline, parte do orçamento já está afundada nos nodes abertos — a
+  // escadinha também tenta orçamentos descontados pra guiar o greedy.
+  const baselinePts = cfg.baseline ? genomeCost({}, cfg.baseline) : 0;
+  const budgets = new Set<number>();
   for (const delta of [0, 1, 2, 3]) {
-    const budget = cfg.budget - delta;
-    if (budget <= 0) break;
+    budgets.add(cfg.budget - delta);
+    if (baselinePts > 0) budgets.add(cfg.budget - baselinePts - delta);
+  }
+  for (const budget of budgets) {
+    if (budget <= 0) continue;
     const r = optimize(goal, cfg.inventory as Inventory, { budget, allSouls: cfg.allSouls });
     const { genome } = fillGenome(slotsToGenome(r.slots), cfg); // fill back up to the FULL budget
-    const ev = evaluate(genome, cfg.weights);
-    if (ev.score.points > cfg.budget) continue;
-    if (!best || ev.score.total > best.total) best = { genome, total: ev.score.total };
+    consider(genome);
   }
-  return best?.genome ?? {};
+  // Candidato "só aproveitar o que já está aberto": preenche os nodes do
+  // baseline com as melhores souls e gasta a sobra — sem abrir nada novo.
+  if (baselinePts > 0) consider(fillGenome({}, cfg).genome);
+
+  // (cast: o TS não enxerga as atribuições feitas dentro da closure `consider`)
+  return (best as { genome: Genome; total: number } | null)?.genome ?? {};
 }
 
 /** The public entry: run the whole deep optimization for a config. */
@@ -147,7 +164,7 @@ export async function deepOptimize(rawCfg: EngineConfig, onProgress?: (p: DeepPr
 
   // Seed 1: the budget-monotonic greedy build (strong, instant starting point).
   const seeds: Genome[] = [bestGreedyGenome(cfg)];
-  const seedScore = evaluate(seeds[0], cfg.weights).score.total;
+  const seedScore = evaluate(seeds[0], cfg.weights, cfg.baseline).score.total;
 
   // Seed 2: best build KNOWN for this exact profile (accumulated knowledge).
   const known = kb.load(cfg);
@@ -174,7 +191,7 @@ export async function deepOptimize(rawCfg: EngineConfig, onProgress?: (p: DeepPr
   const seenHash = new Set<string>();
   for (const b of merged.top) {
     const { genome, added } = fillGenome(b.genome, cfg);
-    const ev = evaluate(genome, cfg.weights);
+    const ev = evaluate(genome, cfg.weights, cfg.baseline);
     if (seenHash.has(ev.hash)) continue; // fills can make near-duplicates collapse
     seenHash.add(ev.hash);
     filledTop.push({ ev, added });
@@ -194,6 +211,8 @@ export async function deepOptimize(rawCfg: EngineConfig, onProgress?: (p: DeepPr
     seedScore,
     filled: added0.length,
     filledSurvival: added0.filter((a) => a.kind === 'survival').length,
+    baselineNodes: Object.keys(cfg.baseline ?? {}).length,
+    baselinePoints: cfg.baseline ? genomeCost({}, cfg.baseline) : 0,
   };
 
   if (result.top[0]) {

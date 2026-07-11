@@ -43,6 +43,7 @@ export function explainResult(res: SolverResult): AdviceToken[] {
 
   if (res.filled > 0) tokens.push({ key: 'ai2.ex.filled', vars: { n: res.filled } });
   if (res.filledSurvival > 0) tokens.push({ key: 'ai2.ex.survival', vars: { n: res.filledSurvival } });
+  if (res.baselineNodes > 0) tokens.push({ key: 'ai2.ex.baseline', vars: { n: res.baselineNodes, pts: res.baselinePoints } });
 
   if (res.seedScore > 0) {
     const gain = ((best.score.total - res.seedScore) / res.seedScore) * 100;

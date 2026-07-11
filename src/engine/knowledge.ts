@@ -37,7 +37,8 @@ function djb2(s: string): string {
   return (h >>> 0).toString(36);
 }
 
-/** Stable key for "the same question": weights + inventory + budget + flags. */
+/** Stable key for "the same question": weights + inventory + budget + flags +
+ *  baseline (nodes já abertas mudam completamente a resposta certa). */
 export function profileKey(cfg: EngineConfig): string {
   const w = Object.entries(cfg.weights)
     .filter(([, v]) => v)
@@ -50,7 +51,13 @@ export function profileKey(cfg: EngineConfig): string {
         .map(([k, v]) => `${k}:${v}`)
         .sort()
         .join(',');
-  return djb2(`${w}|${inv}|${cfg.budget}|${cfg.includePvp ? 1 : 0}`);
+  const bl = cfg.baseline
+    ? Object.entries(cfg.baseline)
+        .map(([k, v]) => `${k}:${v}`)
+        .sort()
+        .join(',')
+    : '';
+  return djb2(`${w}|${inv}|${cfg.budget}|${cfg.includePvp ? 1 : 0}|${bl}`);
 }
 
 export interface KnowledgeEntry {

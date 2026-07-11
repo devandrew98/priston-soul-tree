@@ -12,6 +12,15 @@ export interface EngineConfig {
   budget: number; // max fusion points
   timeMs: number; // time budget for the search
   rngSeed: number; // deterministic seed (each worker gets a different one)
+  /**
+   * Nodes the player ALREADY opened in-game: nodeId -> invested node level
+   * (1 = just opened). In-game those points can only be undone with an
+   * expensive reset item, so the engine treats them as SUNK COST + FLOOR:
+   * these nodes stay open, their cost always counts, levels never go below
+   * the floor — and the optimizer reuses the stuck points for free value.
+   * Absent/empty = plan from scratch (default behavior).
+   */
+  baseline?: Record<string, number>;
 }
 
 /** One placed soul in a build. Keyed by node id in a Genome. */
@@ -61,6 +70,8 @@ export interface SolverResult extends SearchOutcome {
   seedScore: number; // score of the greedy seed (to measure the deep search's gain)
   filled: number; // pass-through nodes that received a soul in the fill pass
   filledSurvival: number; // of those, how many got a survivability soul
+  baselineNodes: number; // nodes locked by the in-game baseline (0 = none)
+  baselinePoints: number; // points already sunk into the baseline
 }
 
 // ---- worker protocol ----
