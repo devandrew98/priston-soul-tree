@@ -12,6 +12,15 @@ export function Home() {
         <p className="home-welcome-body">{t('home.welcome.body')}</p>
       </header>
 
+      <a
+        className="home-download"
+        href="/PristonZone-Timer-Boss.exe"
+        download="PristonZone Timer Boss.exe"
+        title={t('home.download.hint')}
+      >
+        <img src="/overlay-download.png" alt={t('home.download.alt')} />
+      </a>
+
       <NewsFeed />
 
       <footer className="home-credits">

@@ -139,6 +139,8 @@ const DICT: Record<string, Entry> = {
   'home.card.soultree': { pt: 'Planejador de builds da Fusion Tier e gerador inteligente.', en: 'Fusion Tier build planner and smart generator.' },
   'home.open': { pt: 'Abrir', en: 'Open' },
   'home.credits': { pt: 'Desenvolvido por {a} e {b}', en: 'Developed by {a} and {b}' },
+  'home.download.alt': { pt: 'Baixar o Overlay Timer Boss', en: 'Download the Overlay Timer Boss' },
+  'home.download.hint': { pt: 'Clique para baixar o Overlay Timer Boss (Windows)', en: 'Click to download the Overlay Timer Boss (Windows)' },
   'home.news.title': { pt: 'Novidades & Eventos', en: 'News & Events' },
   'home.news.pinned': { pt: 'Fixado', en: 'Pinned' },
   'home.news.kind.news': { pt: 'Notícia', en: 'News' },

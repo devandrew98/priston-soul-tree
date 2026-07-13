@@ -1448,3 +1448,9 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 }
 .topnav-menu-item:hover { background: var(--panel2); color: var(--gold-bright); }
 .topnav-menu-item.active { background: linear-gradient(180deg, var(--panel2), var(--bg2)); color: var(--gold-bright); box-shadow: 0 0 0 1px rgba(212,175,106,0.3) inset; }
+
+/* Home — overlay download button */
+.home-download { display: block; width: 100%; max-width: 276px; margin: 8px auto 4px; cursor: pointer; transition: transform 0.15s ease, filter 0.15s ease; filter: drop-shadow(0 6px 18px rgba(0,0,0,0.5)); }
+.home-download img { width: 100%; height: auto; display: block; }
+.home-download:hover { transform: translateY(-3px) scale(1.02); filter: drop-shadow(0 10px 26px rgba(224,102,59,0.45)); }
+.home-download:active { transform: translateY(-1px) scale(1.0); }
