@@ -65,6 +65,7 @@ export interface Listing {
   createdAt: number; // epoch ms
   soldAt?: number; // epoch ms — momento em que virou "sold" (vem de updated_at)
   shop?: ShopLocation | null; // loja in-game do vendedor (opcional)
+  whatsappEnabled?: boolean; // vendedor aceita contato pelo WhatsApp (número fica protegido)
 }
 
 export type ShopCity = 'ricarten' | 'pillai';

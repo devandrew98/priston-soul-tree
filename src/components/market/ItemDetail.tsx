@@ -11,6 +11,7 @@ import { useItemMarket, useSimilar } from './useMarketData';
 import { ItemCard } from './ItemCard';
 import { PriceChart } from './PriceChart';
 import { ShopLocationModal } from './ShopLocation';
+import { InterestModal } from './InterestModal';
 import { Avatar, ContribSeal, OnlineDot, PriceTag, RarityTag, RepBadge, Since, Stars, StatusPill } from './parts';
 
 const TREND_ICON = { up: '📈', down: '📉', stable: '➖' } as const;
@@ -30,6 +31,7 @@ export function ItemDetail({
   const [note, setNote] = useState('');
   const [zoom, setZoom] = useState(false); // lightbox da imagem do item
   const [showShop, setShowShop] = useState(false); // modal do mapa da loja in-game
+  const [showInterest, setShowInterest] = useState(false); // modal de contato via WhatsApp
   const seller = getSeller(listing.sellerId);
   const glow = RARITY_COLOR[listing.rarity];
 
@@ -48,6 +50,10 @@ export function ItemDetail({
   const report = () => {
     if (BACKEND_ENABLED && userId) createReport(userId, 'item', listing.id, 'other', '').catch(() => {});
     flash(t('mk.flash.reported'));
+  };
+  const openWhatsapp = () => {
+    if (!userId) { flash(t('mk.wa.err.login')); return; }
+    setShowInterest(true);
   };
 
   // Vendido + não é o dono → o anúncio some para todo mundo, exceto o vendedor.
@@ -208,11 +214,21 @@ export function ItemDetail({
                 </div>
               </div>
             )}
+            {!isSold && listing.whatsappEnabled && !isOwner && (
+              <div className="wa-contact-block">
+                <p className="wa-contact-text">✅ {t('mk.wa.available')}</p>
+                <button className="mk-btn wa-btn wa-cta" onClick={openWhatsapp}>💚 {t('mk.wa.contactbtn')}</button>
+              </div>
+            )}
+            {!isSold && !listing.whatsappEnabled && (
+              <p className="wa-only-site">{t('mk.wa.onlysite')}</p>
+            )}
             {listing.shop && (
               <button className="mk-btn shop-view-btn" onClick={() => setShowShop(true)}>📍 {t('mk.shop.viewbtn')}</button>
             )}
             {note && <div className="mk-note">{note}</div>}
             {showShop && listing.shop && <ShopLocationModal shop={listing.shop} onClose={() => setShowShop(false)} />}
+            {showInterest && <InterestModal listing={listing} onClose={() => setShowInterest(false)} />}
 
             <div className="mk-sellerstats">
               <div><b>{seller.itemsSold}</b><span>{t('mk.itemssold')}</span></div>

@@ -5,10 +5,12 @@ import type { Currency, Listing, Rarity, ShopLocation } from '../../lib/market/t
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { limitErrorKey } from '../../lib/market/helpers';
 import { createListing, updateListing } from '../../lib/market/listings';
+import { type WhatsappDraft, emptyWhatsappDraft, isWhatsappValid, saveMyWhatsapp } from '../../lib/market/whatsapp';
 import { useI18n } from '../../lib/i18n';
 import { useAuth, useMyListings } from './store';
 import { useListing } from './useMarketData';
 import { ShopLocationField } from './ShopLocation';
+import { WhatsappField } from './WhatsappField';
 import { LoginPrompt } from './LoginPrompt';
 
 const CURRENCIES: Currency[] = ['gold', 'coins'];
@@ -35,6 +37,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [highlighted, setHighlighted] = useState(false);
   const [shop, setShop] = useState<ShopLocation | null>(null);
+  const [wa, setWa] = useState<WhatsappDraft>(emptyWhatsappDraft);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [prefilled, setPrefilled] = useState(false);
@@ -54,6 +57,9 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
     setImage(editListing.image || '');
     setHighlighted(editListing.highlighted);
     setShop(editListing.shop ?? null);
+    // Turn the WhatsApp section on when editing an enabled listing; the number
+    // itself is loaded (owner-only) inside WhatsappField via editId.
+    if (editListing.whatsappEnabled) setWa((w) => ({ ...w, enabled: true }));
     setPrefilled(true);
   }, [editing, prefilled, editListing]);
 
@@ -72,10 +78,13 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
   const submit = async () => {
     if (!userId || !image) return;
     setError('');
+    // WhatsApp opt-in requires a valid number + consent to publish.
+    if (wa.enabled && !isWhatsappValid(wa)) { setError(t('mk.wa.incomplete')); return; }
     const fields = {
       name: name.trim() || t('mk.create.untitled'),
       itemLevel, category, subcategory, rarity, quantity, price, currency,
       description: description.trim(), highlighted: canContribute && highlighted, shop,
+      whatsapp: wa.enabled ? wa.info : null,
     };
     if (BACKEND_ENABLED) {
       if (!editing && !imageFile) return; // new listing requires an image
@@ -83,6 +92,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
       try {
         if (editing) await updateListing(editId!, userId, fields, imageFile);
         else await createListing(userId, { ...fields, imageFile: imageFile! });
+        if (wa.enabled && wa.saveToProfile && wa.info) await saveMyWhatsapp(userId, wa.info).catch(() => {});
         onDone();
       } catch (e) {
         const key = limitErrorKey(e);
@@ -96,7 +106,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
       id: editId || `my-${Date.now()}`,
       icon: cat.icon, image, tier: 0, sockets: 0, classReq: 'Todas', stats: [],
       status: 'available', sellerId: userId, views: 0, createdAt: Date.now(),
-      ...fields,
+      ...fields, whatsappEnabled: wa.enabled,
     };
     addListing(listing);
     onDone();
@@ -112,6 +122,9 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
       <div className="mk-form">
         {/* in-game shop location (optional) — asked first */}
         <ShopLocationField value={shop} onChange={setShop} />
+
+        {/* WhatsApp contact (optional) */}
+        {userId && <WhatsappField userId={userId} editId={editId} value={wa} onChange={setWa} />}
 
         {/* image (required) */}
         <div className="mk-field span2">

@@ -384,6 +384,48 @@ const DICT: Record<string, Entry> = {
   'mk.shop.city': { pt: 'Cidade', en: 'City' },
   'mk.shop.coord': { pt: 'Coordenada', en: 'Coordinate' },
 
+  // contato pelo WhatsApp — formulário de anúncio
+  'mk.wa.question': { pt: 'Deseja permitir contato pelo WhatsApp?', en: 'Allow contact via WhatsApp?' },
+  'mk.wa.yes': { pt: 'Sim, permitir', en: 'Yes, allow it' },
+  'mk.wa.no': { pt: 'Não, só pelo site', en: 'No, site only' },
+  'mk.wa.numberlabel': { pt: 'Número do WhatsApp (com DDD)', en: 'WhatsApp number (with area code)' },
+  'mk.wa.badnumber': { pt: 'Número inválido. Informe DDD + número.', en: 'Invalid number. Enter area code + number.' },
+  'mk.wa.privacy': { pt: 'Seu número não será exibido diretamente no anúncio. Ele será usado somente para abrir uma conversa no WhatsApp quando um usuário autenticado clicar no botão de contato.', en: 'Your number is never shown on the listing. It is only used to open a WhatsApp chat when a logged-in user clicks the contact button.' },
+  'mk.wa.consent': { pt: 'Autorizo o PristonZONE a utilizar este número para permitir que compradores interessados iniciem uma conversa comigo pelo WhatsApp.', en: 'I authorize PristonZONE to use this number so interested buyers can start a WhatsApp chat with me.' },
+  'mk.wa.saveprofile': { pt: 'Salvar este número no meu perfil para os próximos anúncios', en: 'Save this number to my profile for future listings' },
+  'mk.wa.usesaved': { pt: 'Usar meu WhatsApp cadastrado: {num}', en: 'Use my saved WhatsApp: {num}' },
+  'mk.wa.incomplete': { pt: 'Para permitir o WhatsApp, informe um número válido e marque a autorização.', en: 'To allow WhatsApp, enter a valid number and tick the consent box.' },
+
+  // contato pelo WhatsApp — página do anúncio
+  'mk.wa.available': { pt: 'O vendedor aceita contato pelo WhatsApp.', en: 'This seller accepts contact via WhatsApp.' },
+  'mk.wa.contactbtn': { pt: 'Falar pelo WhatsApp', en: 'Contact via WhatsApp' },
+  'mk.wa.onlysite': { pt: 'Este vendedor recebe interesses apenas pelo PristonZONE.', en: 'This seller only takes interest through PristonZONE.' },
+  'mk.wa.err.login': { pt: 'Você precisa entrar em sua conta para demonstrar interesse neste item.', en: 'You need to sign in to show interest in this item.' },
+  'mk.wa.err.sold': { pt: 'Este item não está mais disponível.', en: 'This item is no longer available.' },
+  'mk.wa.err.own': { pt: 'Você não pode demonstrar interesse no seu próprio anúncio.', en: 'You cannot show interest in your own listing.' },
+  'mk.wa.err.unavailable': { pt: 'Este anúncio não está mais disponível.', en: 'This listing is no longer available.' },
+  'mk.wa.err.nowa': { pt: 'Este vendedor não está aceitando contato pelo WhatsApp.', en: 'This seller is not accepting WhatsApp contact.' },
+  'mk.wa.err.blocked': { pt: 'Não foi possível iniciar o contato.', en: 'Could not start the contact.' },
+  'mk.wa.err.rate': { pt: 'Você iniciou muitos contatos em pouco tempo. Aguarde um pouco.', en: 'Too many contacts started recently. Please wait a bit.' },
+
+  // modal de interesse
+  'mk.wa.modal.title': { pt: 'Falar com o vendedor', en: 'Contact the seller' },
+  'mk.wa.modal.msglabel': { pt: 'Mensagem para o vendedor', en: 'Message to the seller' },
+  'mk.wa.modal.optional': { pt: 'opcional', en: 'optional' },
+  'mk.wa.modal.msgph': { pt: 'Escreva uma dúvida, proposta ou informação adicional.', en: 'Write a question, offer or extra detail.' },
+  'mk.wa.modal.continue': { pt: 'Continuar pelo WhatsApp', en: 'Continue on WhatsApp' },
+  'mk.wa.reason.buy': { pt: 'Comprar pelo preço', en: 'Buy at listed price' },
+  'mk.wa.reason.offer': { pt: 'Fazer uma oferta', en: 'Make an offer' },
+  'mk.wa.reason.question': { pt: 'Tirar uma dúvida', en: 'Ask a question' },
+  'mk.wa.reason.trade': { pt: 'Propor uma troca', en: 'Propose a trade' },
+
+  // mensagens prontas do WhatsApp
+  'mk.wa.msg.buy': { pt: 'Olá! Vi seu anúncio no PristonZONE e tenho interesse no item "{item}", anunciado por {price}. O item ainda está disponível?', en: 'Hi! I saw your PristonZONE listing and I\'m interested in "{item}", listed for {price}. Is it still available?' },
+  'mk.wa.msg.offer': { pt: 'Olá! Vi seu anúncio no PristonZONE e gostaria de fazer uma oferta pelo item "{item}", anunciado por {price}. Minha mensagem: {msg}', en: 'Hi! I saw your PristonZONE listing and I\'d like to make an offer for "{item}", listed for {price}. My message: {msg}' },
+  'mk.wa.msg.question': { pt: 'Olá! Vi seu anúncio do item "{item}" no PristonZONE e gostaria de tirar uma dúvida. {msg}', en: 'Hi! I saw your "{item}" listing on PristonZONE and I have a question. {msg}' },
+  'mk.wa.msg.trade': { pt: 'Olá! Vi seu anúncio do item "{item}" no PristonZONE e gostaria de propor uma troca. {msg}', en: 'Hi! I saw your "{item}" listing on PristonZONE and I\'d like to propose a trade. {msg}' },
+  'mk.wa.msg.link': { pt: 'Link do anúncio: {url}', en: 'Listing link: {url}' },
+
   // limites antifraude (Fase 9)
   'mk.limit.active': { pt: 'Você atingiu o limite de 30 anúncios ativos. Marque alguns como vendidos ou remova para publicar novos.', en: 'You reached the limit of 30 active listings. Mark some as sold or remove them to post new ones.' },
   'mk.limit.rate': { pt: 'Você criou muitos anúncios em pouco tempo. Aguarde um pouco e tente novamente.', en: 'You created too many listings in a short time. Please wait a bit and try again.' },
@@ -416,6 +458,11 @@ const DICT: Record<string, Entry> = {
   'mk.dash.tab.sold': { pt: 'Vendidos', en: 'Sold' },
   'mk.dash.tab.favorites': { pt: 'Favoritos', en: 'Favorites' },
   'mk.dash.tab.wishlist': { pt: 'Lista de desejos', en: 'Wishlist' },
+  'mk.dash.tab.interests': { pt: 'Interesses', en: 'Interests' },
+  'mk.interests.received': { pt: 'Interessados nos meus itens', en: 'Interested in my items' },
+  'mk.interests.sent': { pt: 'Itens que demonstrei interesse', en: 'Items I showed interest in' },
+  'mk.interests.noreceived': { pt: 'Ninguém demonstrou interesse ainda.', en: 'No one has shown interest yet.' },
+  'mk.interests.nosent': { pt: 'Você ainda não demonstrou interesse em nenhum item.', en: 'You haven\'t shown interest in any item yet.' },
 
   // wishlist
   'mk.wish.ph': { pt: 'Ex.: Murky +25 por menos de 20kk', en: 'e.g. Murky +25 under 20kk' },

@@ -7,10 +7,11 @@ import { useAuth, useMyListings, useWishlist } from './store';
 import { useFavoriteListings, useSellerListings } from './useMarketData';
 import { AvatarEditor } from './AvatarEditor';
 import { ItemCard } from './ItemCard';
+import { InterestsPanel } from './InterestsPanel';
 import { LoginPrompt } from './LoginPrompt';
 import { Avatar, PriceTag, Since, StatusPill } from './parts';
 
-type Tab = 'active' | 'sold' | 'favorites' | 'wishlist';
+type Tab = 'active' | 'sold' | 'favorites' | 'wishlist' | 'interests';
 
 export function Dashboard({ onOpen, onSeller, onCreate, onEdit, onLogin }: { onOpen: (id: string) => void; onSeller: (id: string) => void; onCreate: () => void; onEdit: (id: string) => void; onLogin: () => void }) {
   const { t } = useI18n();
@@ -67,7 +68,7 @@ export function Dashboard({ onOpen, onSeller, onCreate, onEdit, onLogin }: { onO
       </div>
 
       <div className="mk-dash-tabs">
-        {(['active', 'sold', 'favorites', 'wishlist'] as Tab[]).map((tb) => (
+        {(['active', 'sold', 'favorites', 'wishlist', 'interests'] as Tab[]).map((tb) => (
           <button key={tb} className={tab === tb ? 'on' : ''} onClick={() => setTab(tb)}>
             {t(`mk.dash.tab.${tb}`)}
           </button>
@@ -119,6 +120,8 @@ export function Dashboard({ onOpen, onSeller, onCreate, onEdit, onLogin }: { onO
           {favItems.length === 0 && <p className="mk-muted">{t('mk.dash.nofav')}</p>}
         </div>
       )}
+
+      {tab === 'interests' && <InterestsPanel onOpen={onOpen} onSeller={onSeller} />}
 
       {tab === 'wishlist' && (
         <div className="mk-wishlist">

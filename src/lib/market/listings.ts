@@ -4,6 +4,7 @@ import { supabase } from './supabase';
 import { categoryIcon } from './marketCategories';
 import { cacheProfiles } from './profileCache';
 import { profileToSeller, type ProfileRow, uploadToBucket } from './auth';
+import { clearListingWhatsapp, saveListingWhatsapp, type WhatsappInfo } from './whatsapp';
 import type { Currency, Listing, Rarity, ShopCity, ShopLocation } from './types';
 import type { Filters, SortKey } from './helpers';
 
@@ -33,6 +34,7 @@ export interface ListingRow {
   shop_city?: string | null;
   shop_x?: number | string | null;
   shop_y?: number | string | null;
+  whatsapp_enabled?: boolean;
   seller?: ProfileRow | null;
 }
 
@@ -67,6 +69,7 @@ export function rowToListing(row: ListingRow): Listing {
     // estado o anúncio fica somente-leitura, então updated_at não muda mais.
     soldAt: row.status === 'sold' && row.updated_at ? new Date(row.updated_at).getTime() : undefined,
     shop: row.shop_city ? { city: row.shop_city as ShopCity, x: Number(row.shop_x), y: Number(row.shop_y) } : null,
+    whatsappEnabled: !!row.whatsapp_enabled,
   };
 }
 
@@ -149,6 +152,7 @@ export interface NewListingInput {
   description: string;
   highlighted: boolean;
   shop?: ShopLocation | null;
+  whatsapp?: WhatsappInfo | null; // null/undefined = contato pelo WhatsApp desligado
   imageFile: File;
 }
 
@@ -171,9 +175,12 @@ export async function createListing(userId: string, input: NewListingInput): Pro
     shop_city: input.shop?.city ?? null,
     shop_x: input.shop?.x ?? null,
     shop_y: input.shop?.y ?? null,
+    whatsapp_enabled: !!input.whatsapp,
   }).select('id').single();
   if (error) throw error;
-  return (data as { id: string }).id;
+  const id = (data as { id: string }).id;
+  if (input.whatsapp) await saveListingWhatsapp(id, input.whatsapp);
+  return id;
 }
 
 export type EditableFields = Omit<NewListingInput, 'imageFile'>;
@@ -194,11 +201,15 @@ export async function updateListing(id: string, userId: string, fields: Editable
     shop_city: fields.shop?.city ?? null,
     shop_x: fields.shop?.x ?? null,
     shop_y: fields.shop?.y ?? null,
+    whatsapp_enabled: !!fields.whatsapp,
     updated_at: new Date().toISOString(),
   };
   if (newImage) patch.image_url = await uploadToBucket('item-images', userId, newImage);
   const { error } = await sb().from('listings').update(patch).eq('id', id);
   if (error) throw error;
+  // Desligar remove o número protegido; ligar/alterar grava. (Some na hora.)
+  if (fields.whatsapp) await saveListingWhatsapp(id, fields.whatsapp);
+  else await clearListingWhatsapp(id);
 }
 
 export async function deleteListing(id: string): Promise<void> {

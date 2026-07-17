@@ -1454,3 +1454,45 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .home-download img { width: 100%; height: auto; display: block; }
 .home-download:hover { transform: translateY(-3px) scale(1.02); filter: drop-shadow(0 10px 26px rgba(224,102,59,0.45)); }
 .home-download:active { transform: translateY(-1px) scale(1.0); }
+
+/* ============================================================================
+   WhatsApp seller contact
+   ============================================================================ */
+.wa-field { gap: 8px; }
+.wa-body { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.wa-use-saved { align-self: flex-start; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; color: var(--gold-bright); padding: 8px 12px; font-size: 13px; font-weight: 700; cursor: pointer; }
+.wa-use-saved:hover { border-color: var(--gold); }
+.wa-privacy { font-size: 12px; line-height: 1.5; margin: 0; }
+.wa-consent, .wa-saveprofile { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; line-height: 1.4; }
+.wa-consent input, .wa-saveprofile input { margin-top: 2px; flex: none; }
+
+/* item page */
+.wa-contact-block { display: flex; flex-direction: column; gap: 6px; background: rgba(37,211,102,0.08); border: 1px solid rgba(37,211,102,0.4); border-radius: 10px; padding: 10px 12px; margin-top: 4px; }
+.wa-contact-text { margin: 0; font-size: 13px; color: var(--text); }
+.wa-btn { background: #25d366 !important; color: #06331b !important; border-color: #25d366 !important; font-weight: 800; }
+.wa-btn:hover { background: #2ee06f !important; }
+.wa-cta { width: 100%; }
+.wa-only-site { font-size: 12px; color: var(--text-dim); margin: 4px 0 0; }
+
+/* interest modal */
+.wa-modal { max-width: 460px; }
+.wa-modal-item { margin: -4px 0 4px; font-size: 13px; }
+.wa-reasons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
+.wa-reason { background: var(--bg); border: 1px solid var(--border); border-radius: 9px; color: var(--text-dim); padding: 10px; font-size: 13px; font-weight: 700; cursor: pointer; }
+.wa-reason:hover { border-color: var(--gold); }
+.wa-reason.on { background: var(--panel2); border-color: var(--gold); color: var(--gold-bright); box-shadow: 0 0 0 1px rgba(212,175,106,0.3) inset; }
+.wa-charcount { align-self: flex-end; font-size: 11px; color: var(--text-dim); }
+.wa-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+
+/* dashboard interests */
+.mk-interests { display: flex; flex-direction: column; gap: 20px; }
+.mk-interests-sec { display: flex; flex-direction: column; gap: 8px; }
+.mk-interest-row { display: flex; gap: 12px; align-items: flex-start; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.mk-interest-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
+.mk-interest-item { align-self: flex-start; background: none; border: none; color: var(--gold-bright); font-weight: 700; font-size: 14px; cursor: pointer; padding: 0; text-align: left; }
+.mk-interest-item:hover { text-decoration: underline; }
+.mk-interest-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; }
+.mk-interest-who { display: inline-flex; align-items: center; gap: 5px; background: none; border: none; color: var(--text); cursor: pointer; padding: 0; font-size: 12px; }
+.mk-interest-who:hover { color: var(--gold-bright); }
+.mk-interest-reason { background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 20px; padding: 1px 9px; color: var(--gold); font-weight: 700; }
+.mk-interest-msg { margin: 2px 0 0; font-size: 13px; color: var(--text-dim); font-style: italic; }
