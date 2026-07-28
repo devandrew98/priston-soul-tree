@@ -1,4 +1,4 @@
--- Fase 19 — download do app gerenciável pelo painel admin. SQL Editor -> Run.
+-- Fase 19 — download do app gerenciável pelo painel admin. SQL Editor -> Run
 -- O executável fica no Storage (não no repositório) e o admin troca pelo painel.
 
 -- Bucket público para os instaladores. file_size_limit em 100 MB (o upload real
