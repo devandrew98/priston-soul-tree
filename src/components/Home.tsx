@@ -4,14 +4,10 @@ import { BACKEND_ENABLED } from '../lib/market/supabase';
 import { OVERLAY_KEY, downloadUrl, fetchAppDownload } from '../lib/market/downloads';
 import { NewsFeed } from './NewsFeed';
 
-// Fallback used until an admin uploads an installer to Storage.
-const FALLBACK_HREF = '/PristonZone-Timer-Boss.exe';
-const FALLBACK_NAME = 'PristonZone Timer Boss.exe';
-
 export function Home() {
   const { t } = useI18n();
-  const [href, setHref] = useState(FALLBACK_HREF);
-  const [filename, setFilename] = useState(FALLBACK_NAME);
+  const [href, setHref] = useState('');
+  const [filename, setFilename] = useState('');
 
   useEffect(() => {
     if (!BACKEND_ENABLED) return;
@@ -32,9 +28,11 @@ export function Home() {
         <p className="home-welcome-body">{t('home.welcome.body')}</p>
       </header>
 
-      <a className="home-download" href={href} download={filename} title={t('home.download.hint')}>
-        <img src="/overlay-download.png" alt={t('home.download.alt')} />
-      </a>
+      {href && (
+        <a className="home-download" href={href} download={filename} title={t('home.download.hint')}>
+          <img src="/overlay-download.png" alt={t('home.download.alt')} />
+        </a>
+      )}
 
       <NewsFeed />
 
