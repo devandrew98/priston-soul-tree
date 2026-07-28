@@ -745,3 +745,50 @@ begin
 end;
 $$;
 grant execute on function public.whatsapp_contact(uuid, text, text) to authenticated;
+
+-- ============================================================================
+-- Fase 15 — download gerenciado pelo admin (Storage) (ver 17_downloads.sql)
+-- ============================================================================
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('downloads', 'downloads', true, 104857600)
+on conflict (id) do update set public = true, file_size_limit = 104857600;
+
+drop policy if exists "public read downloads" on storage.objects;
+create policy "public read downloads" on storage.objects for select using (bucket_id = 'downloads');
+drop policy if exists "admin write downloads" on storage.objects;
+create policy "admin write downloads" on storage.objects for insert to authenticated
+  with check (bucket_id = 'downloads' and public.is_admin());
+drop policy if exists "admin update downloads" on storage.objects;
+create policy "admin update downloads" on storage.objects for update to authenticated
+  using (bucket_id = 'downloads' and public.is_admin());
+drop policy if exists "admin delete downloads" on storage.objects;
+create policy "admin delete downloads" on storage.objects for delete to authenticated
+  using (bucket_id = 'downloads' and public.is_admin());
+
+create table if not exists public.app_downloads (
+  key        text primary key,
+  path       text not null,
+  filename   text not null default 'download.exe',
+  size       bigint,
+  version    text,
+  updated_at timestamptz not null default now()
+);
+alter table public.app_downloads enable row level security;
+drop policy if exists ad_read on public.app_downloads;
+create policy ad_read on public.app_downloads for select using (true);
+drop policy if exists ad_admin on public.app_downloads;
+create policy ad_admin on public.app_downloads for all
+  using (public.is_admin()) with check (public.is_admin());
+
+-- ============================================================================
+-- Fase 16 — admin pode sobrescrever/apagar imagens já existentes, para a
+-- ferramenta de recompressão em lote (ver 18_image_admin.sql)
+-- ============================================================================
+drop policy if exists "admin update images" on storage.objects;
+create policy "admin update images" on storage.objects for update to authenticated
+  using (bucket_id in ('item-images','avatars','streamer-covers') and public.is_admin())
+  with check (bucket_id in ('item-images','avatars','streamer-covers') and public.is_admin());
+
+drop policy if exists "admin delete images" on storage.objects;
+create policy "admin delete images" on storage.objects for delete to authenticated
+  using (bucket_id in ('item-images','avatars','streamer-covers') and public.is_admin());

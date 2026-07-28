@@ -1,6 +1,7 @@
 // DB layer for the Streamers tab (Supabase). Public read; admin-only writes.
 import { supabase } from './supabase';
 import { uploadToBucket } from './auth';
+import { squareThumbnail } from './image';
 
 export type Platform = 'twitch' | 'youtube';
 
@@ -85,7 +86,8 @@ export async function deleteStreamer(id: string): Promise<void> {
 
 /** Upload a square cover image; returns its public URL. */
 export async function uploadStreamerCover(userId: string, file: File): Promise<string> {
-  return uploadToBucket('streamer-covers', userId, file);
+  const square = await squareThumbnail(file, 480, 0.85);
+  return uploadToBucket('streamer-covers', userId, square);
 }
 
 // Demo data for local dev without a backend (BACKEND_ENABLED === false).

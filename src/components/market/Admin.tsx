@@ -7,9 +7,11 @@ import { RepTiersAdmin } from './RepTiersAdmin';
 import { NewsAdmin } from './NewsAdmin';
 import { MarketCategoriesAdmin } from './MarketCategoriesAdmin';
 import { GuidesAdmin } from './GuidesAdmin';
+import { DownloadAdmin } from './DownloadAdmin';
+import { ImageOptimizer } from './ImageOptimizer';
 import { Avatar, PriceTag, Since, StatusPill } from './parts';
 
-type Section = 'listings' | 'users' | 'tiers' | 'itemcats' | 'reports' | 'streamers' | 'news' | 'guides' | 'global' | 'logs';
+type Section = 'listings' | 'users' | 'tiers' | 'itemcats' | 'reports' | 'streamers' | 'news' | 'guides' | 'download' | 'imgopt' | 'global' | 'logs';
 
 const SECTIONS: { id: Section; icon: string; key: string }[] = [
   { id: 'listings', icon: '📦', key: 'mk.admin.listings' },
@@ -20,6 +22,8 @@ const SECTIONS: { id: Section; icon: string; key: string }[] = [
   { id: 'streamers', icon: '📺', key: 'mk.admin.streamers' },
   { id: 'news', icon: '📰', key: 'mk.admin.news' },
   { id: 'guides', icon: '🎬', key: 'mk.admin.guides' },
+  { id: 'download', icon: '📥', key: 'mk.admin.download' },
+  { id: 'imgopt', icon: '🗜️', key: 'mk.admin.imgopt' },
   { id: 'global', icon: '📢', key: 'mk.admin.global' },
   { id: 'logs', icon: '📜', key: 'mk.admin.logs' },
 ];
@@ -173,6 +177,12 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
 
       {/* GUIDES */}
       {sec === 'guides' && <GuidesAdmin />}
+
+      {/* APP DOWNLOAD */}
+      {sec === 'download' && <DownloadAdmin />}
+
+      {/* IMAGE OPTIMIZER */}
+      {sec === 'imgopt' && <ImageOptimizer />}
 
       {/* GLOBAL NOTIFICATION */}
       {sec === 'global' && (

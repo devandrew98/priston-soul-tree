@@ -4,6 +4,7 @@ import { supabase } from './supabase';
 import { categoryIcon } from './marketCategories';
 import { cacheProfiles } from './profileCache';
 import { profileToSeller, type ProfileRow, uploadToBucket } from './auth';
+import { compressPhoto } from './image';
 import { clearListingWhatsapp, saveListingWhatsapp, type WhatsappInfo } from './whatsapp';
 import type { Currency, Listing, Rarity, ShopCity, ShopLocation } from './types';
 import type { Filters, SortKey } from './helpers';
@@ -158,7 +159,8 @@ export interface NewListingInput {
 
 /** Upload the item image then insert the listing; returns the created id. */
 export async function createListing(userId: string, input: NewListingInput): Promise<string> {
-  const imageUrl = await uploadToBucket('item-images', userId, input.imageFile);
+  const compressed = await compressPhoto(input.imageFile, 1280, 0.82);
+  const imageUrl = await uploadToBucket('item-images', userId, compressed);
   const { data, error } = await sb().from('listings').insert({
     seller_id: userId,
     name: input.name,
@@ -204,7 +206,7 @@ export async function updateListing(id: string, userId: string, fields: Editable
     whatsapp_enabled: !!fields.whatsapp,
     updated_at: new Date().toISOString(),
   };
-  if (newImage) patch.image_url = await uploadToBucket('item-images', userId, newImage);
+  if (newImage) patch.image_url = await uploadToBucket('item-images', userId, await compressPhoto(newImage, 1280, 0.82));
   const { error } = await sb().from('listings').update(patch).eq('id', id);
   if (error) throw error;
   // Desligar remove o número protegido; ligar/alterar grava. (Some na hora.)
