@@ -423,6 +423,8 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
   color: var(--gold-bright); border-color: var(--gold);
   box-shadow: 0 0 0 1px rgba(212,175,106,0.25) inset;
 }
+.topnav-admin { background: transparent; border: 1px solid transparent; border-radius: 8px; color: var(--text-dim); font-size: 15px; padding: 6px 8px; margin-right: 6px; opacity: 0.55; transition: opacity 0.15s ease, border-color 0.15s ease, background 0.15s ease; }
+.topnav-admin:hover { opacity: 1; border-color: var(--border); background: var(--panel); }
 .lang-toggle { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
 .lang-toggle button { background: var(--panel); border: none; color: var(--text-dim); padding: 6px 10px; font-weight: 700; font-size: 12px; }
 .lang-toggle button.on { background: var(--gold); color: #1a1206; }
@@ -954,8 +956,6 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 
 /* --- header tools + notification bell --- */
 .mk-head-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
-.mk-subtab.admin { border-color: #7a4a2a; color: #e0966b; }
-.mk-subtab.admin.active { background: linear-gradient(180deg, #3a2412, #241408); border-color: #e0663b; color: #f0a06b; box-shadow: 0 0 16px -4px #e0663b; }
 .mk-bell { position: relative; }
 .mk-bell-btn { position: relative; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; width: 40px; height: 38px; font-size: 18px; color: var(--text); }
 .mk-bell-btn:hover, .mk-bell-btn.has { border-color: var(--gold); }
@@ -1449,11 +1449,15 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .topnav-menu-item:hover { background: var(--panel2); color: var(--gold-bright); }
 .topnav-menu-item.active { background: linear-gradient(180deg, var(--panel2), var(--bg2)); color: var(--gold-bright); box-shadow: 0 0 0 1px rgba(212,175,106,0.3) inset; }
 
-/* Home — overlay download button */
-.home-download { display: block; width: 100%; max-width: 276px; margin: 8px auto 4px; cursor: pointer; transition: transform 0.15s ease, filter 0.15s ease; filter: drop-shadow(0 6px 18px rgba(0,0,0,0.5)); }
+/* Home — overlay download button + update notes */
+.home-download-row { display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap; margin: 8px auto 4px; }
+.home-download { display: block; width: 100%; max-width: 304px; flex: none; margin: 0; cursor: pointer; transition: transform 0.15s ease, filter 0.15s ease; filter: drop-shadow(0 6px 18px rgba(0,0,0,0.5)); }
 .home-download img { width: 100%; height: auto; display: block; }
 .home-download:hover { transform: translateY(-3px) scale(1.02); filter: drop-shadow(0 10px 26px rgba(224,102,59,0.45)); }
 .home-download:active { transform: translateY(-1px) scale(1.0); }
+.home-download-notes { max-width: 320px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; }
+.home-download-notes h3 { margin: 0 0 6px; font-size: 14px; color: var(--gold); }
+.home-download-notes p { margin: 0; font-size: 13px; color: var(--text-dim); white-space: pre-line; line-height: 1.5; }
 
 /* ============================================================================
    WhatsApp seller contact
@@ -1508,6 +1512,7 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .mk-dl-input { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 10px; font-size: 13px; flex: 1; min-width: 200px; }
 .mk-dl-input:focus { outline: none; border-color: var(--gold); }
 .mk-dl-version { min-width: 140px; flex: none; }
+.mk-dl-notes { resize: vertical; font-family: inherit; }
 .mk-dl-picked { font-size: 12px; }
 .mk-dl-warn { font-size: 12px; margin: 8px 0 0; color: var(--attack); }
 .mk-dl-ok { color: #25d366; font-size: 13px; margin: 8px 0 0; }

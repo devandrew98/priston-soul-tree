@@ -12,13 +12,14 @@ export interface AppDownload {
   filename: string;
   size: number | null;
   version: string | null;
+  notes: string | null;
   updatedAt: number;
 }
 
 function sb() { if (!supabase) throw new Error('backend_not_configured'); return supabase; }
 
-interface Row { key: string; path: string; filename: string; size: number | null; version: string | null; updated_at: string }
-const toDownload = (r: Row): AppDownload => ({ key: r.key, path: r.path, filename: r.filename, size: r.size, version: r.version, updatedAt: new Date(r.updated_at).getTime() });
+interface Row { key: string; path: string; filename: string; size: number | null; version: string | null; notes: string | null; updated_at: string }
+const toDownload = (r: Row): AppDownload => ({ key: r.key, path: r.path, filename: r.filename, size: r.size, version: r.version, notes: r.notes, updatedAt: new Date(r.updated_at).getTime() });
 
 export async function fetchAppDownload(key: string): Promise<AppDownload | null> {
   const { data, error } = await sb().from('app_downloads').select('*').eq('key', key).maybeSingle();
@@ -31,11 +32,12 @@ export function downloadUrl(path: string): string {
   return path;
 }
 
-/** Admin: point the download at a GitHub Release asset URL. */
-export async function setAppDownload(key: string, input: { url: string; filename: string; version: string; size: number | null }): Promise<void> {
+/** Admin: point the download at a GitHub Release asset URL, with optional changelog notes. */
+export async function setAppDownload(key: string, input: { url: string; filename: string; version: string; size: number | null; notes: string }): Promise<void> {
   const { error } = await sb().from('app_downloads').upsert({
     key, path: input.url.trim(), filename: input.filename.trim() || 'download.exe',
-    size: input.size, version: input.version.trim() || null, updated_at: new Date().toISOString(),
+    size: input.size, version: input.version.trim() || null, notes: input.notes.trim() || null,
+    updated_at: new Date().toISOString(),
   });
   if (error) throw error;
 }

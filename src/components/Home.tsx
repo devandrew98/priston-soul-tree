@@ -8,6 +8,7 @@ export function Home() {
   const { t } = useI18n();
   const [href, setHref] = useState('');
   const [filename, setFilename] = useState('');
+  const [notes, setNotes] = useState('');
 
   useEffect(() => {
     if (!BACKEND_ENABLED) return;
@@ -16,6 +17,7 @@ export function Home() {
       if (cancelled || !d) return;
       setHref(downloadUrl(d.path));
       setFilename(d.filename);
+      setNotes(d.notes ?? '');
     }).catch(() => {});
     return () => { cancelled = true; };
   }, []);
@@ -29,9 +31,17 @@ export function Home() {
       </header>
 
       {href && (
-        <a className="home-download" href={href} download={filename} title={t('home.download.hint')}>
-          <img src="/overlay-download.png" alt={t('home.download.alt')} />
-        </a>
+        <div className="home-download-row">
+          <a className="home-download" href={href} download={filename} title={t('home.download.hint')}>
+            <img src="/overlay-download.png" alt={t('home.download.alt')} />
+          </a>
+          {notes && (
+            <div className="home-download-notes">
+              <h3>{t('home.download.notes.title')}</h3>
+              <p>{notes}</p>
+            </div>
+          )}
+        </div>
       )}
 
       <NewsFeed />

@@ -28,22 +28,25 @@ type View =
   | { name: 'messages'; seller?: string }
   | { name: 'admin' };
 
-const TABS: { name: View['name']; icon: string; key: string; admin?: boolean }[] = [
+const TABS: { name: View['name']; icon: string; key: string }[] = [
   { name: 'browse', icon: '🏪', key: 'mk.tab.browse' },
   { name: 'stats', icon: '📈', key: 'mk.tab.stats' },
   { name: 'messages', icon: '💬', key: 'mk.tab.messages' },
   { name: 'dashboard', icon: '📊', key: 'mk.tab.dashboard' },
   { name: 'create', icon: '📦', key: 'mk.tab.create' },
-  { name: 'admin', icon: '🛡️', key: 'mk.tab.admin', admin: true },
 ];
 
-export function Marketplace() {
+export function Marketplace({ openAdminAt, onAdminOpened }: { openAdminAt?: number; onAdminOpened?: () => void }) {
   const { t } = useI18n();
   const { totalUnread, startConversation } = useChats();
-  const { isAdmin } = useAuth();
   const [view, setView] = useState<View>({ name: 'browse' });
   const [showAuth, setShowAuth] = useState(false);
   const [adminUnlocked, setAdminUnlocked] = useState(false);
+
+  // Opened from the discreet top-right admin icon (App.tsx), even if already mounted.
+  useEffect(() => {
+    if (openAdminAt) { setView({ name: 'admin' }); onAdminOpened?.(); }
+  }, [openAdminAt]);
 
   // Load the (DB-backed) reputation tiers + item categories when the marketplace opens.
   useEffect(() => { void loadRepTiers(); void loadCategories(); }, []);
@@ -72,7 +75,6 @@ export function Marketplace() {
     window.scrollTo({ top: 0 });
   };
 
-  const tabs = TABS.filter((tb) => !tb.admin || isAdmin);
   const openLogin = () => setShowAuth(true);
 
   return (
@@ -84,10 +86,10 @@ export function Marketplace() {
         </div>
         <div className="mk-head-tools">
           <nav className="mk-subnav">
-            {tabs.map((tb) => (
+            {TABS.map((tb) => (
               <button
                 key={tb.name}
-                className={`mk-subtab ${view.name === tb.name ? 'active' : ''} ${tb.admin ? 'admin' : ''}`}
+                className={`mk-subtab ${view.name === tb.name ? 'active' : ''}`}
                 onClick={() => go(tb.name)}
               >
                 {tb.icon} {t(tb.key)}

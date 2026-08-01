@@ -14,11 +14,19 @@ export function DownloadAdmin() {
   const [filename, setFilename] = useState('');
   const [version, setVersion] = useState('');
   const [sizeMb, setSizeMb] = useState('');
+  const [notes, setNotes] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [ok, setOk] = useState('');
 
-  const load = () => fetchAppDownload(OVERLAY_KEY).then(setCurrent).catch(() => {}).finally(() => setLoading(false));
+  const load = () => fetchAppDownload(OVERLAY_KEY).then((d) => {
+    setCurrent(d);
+    if (d) {
+      setUrl(d.path); setFilename(d.filename); setVersion(d.version ?? '');
+      setSizeMb(d.size != null ? String(Math.round((d.size / 1048576) * 10) / 10) : '');
+      setNotes(d.notes ?? '');
+    }
+  }).catch(() => {}).finally(() => setLoading(false));
   useEffect(() => { load(); }, []);
 
   const save = async () => {
@@ -29,9 +37,8 @@ export function DownloadAdmin() {
       await setAppDownload(OVERLAY_KEY, {
         url: url.trim(),
         filename: filename.trim() || url.trim().split('/').pop() || 'download.exe',
-        version, size,
+        version, size, notes,
       });
-      setUrl(''); setFilename(''); setVersion(''); setSizeMb('');
       setOk(t('mk.admin.dl.done'));
       load();
     } catch (e) {
@@ -66,6 +73,7 @@ export function DownloadAdmin() {
             <input className="mk-dl-input mk-dl-version" value={version} onChange={(e) => setVersion(e.target.value)} placeholder={t('mk.admin.dl.versionph')} />
             <input className="mk-dl-input mk-dl-version" value={sizeMb} onChange={(e) => setSizeMb(e.target.value)} placeholder={t('mk.admin.dl.sizeph')} inputMode="decimal" />
           </div>
+          <textarea className="mk-dl-input mk-dl-notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t('mk.admin.dl.notesph')} rows={3} />
           <button className="mk-btn primary" onClick={save} disabled={!url.trim() || busy}>{busy ? '⏳' : '✓'} {t('mk.admin.dl.send')}</button>
         </div>
         {error && <p className="mk-auth-err">✕ {error}</p>}

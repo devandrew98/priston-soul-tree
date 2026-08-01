@@ -15,6 +15,7 @@ import { Streamers } from './components/Streamers';
 import { Guides } from './components/Guides';
 import { Mixing } from './components/Mixing';
 import { ResetPasswordModal } from './components/market/ResetPasswordModal';
+import { useAuth } from './components/market/store';
 import { useI18n } from './lib/i18n';
 
 export type Section = 'home' | 'timers' | 'market' | 'streamers' | 'guides' | 'tools';
@@ -79,10 +80,12 @@ const INIT = initialNav();
 
 export default function App() {
   const { t, lang, setLang } = useI18n();
+  const { isAdmin } = useAuth();
   const [section, setSection] = useState<Section>(INIT.section);
   const [timerTab, setTimerTab] = useState<TimerTab>(INIT.timerTab);
   const [toolTab, setToolTab] = useState<ToolTab>(INIT.toolTab);
   const [openMenu, setOpenMenu] = useState<Section | null>(null);
+  const [openAdminAt, setOpenAdminAt] = useState(0);
 
   const go = (s: Section) => {
     setSection(s);
@@ -100,6 +103,9 @@ export default function App() {
     setOpenMenu(null);
   };
   const currentSub = (sectionId: Section) => (sectionId === 'timers' ? timerTab : sectionId === 'tools' ? toolTab : '');
+
+  // Discreet admin entry (top-right, near the language toggle) instead of a Marketplace tab.
+  const openAdmin = () => { setOpenMenu(null); setOpenAdminAt((n) => n + 1); go('market'); };
 
   // Close the open dropdown on outside click or Escape.
   useEffect(() => {
@@ -154,6 +160,11 @@ export default function App() {
           ))}
         </div>
         <span className="spacer" />
+        {isAdmin && (
+          <button className="topnav-admin" title={t('nav.admin')} onClick={openAdmin}>
+            🔒
+          </button>
+        )}
         <div className="lang-toggle" title={t('lang.switch')}>
           <button className={lang === 'pt' ? 'on' : ''} onClick={() => setLang('pt')}>
             🇧🇷 PT
@@ -169,7 +180,7 @@ export default function App() {
       ) : section === 'timers' ? (
         timerTab === 'boss' ? <TimeBoss /> : <TimerFury />
       ) : section === 'market' ? (
-        <Marketplace />
+        <Marketplace openAdminAt={openAdminAt} onAdminOpened={() => setOpenAdminAt(0)} />
       ) : section === 'streamers' ? (
         <Streamers />
       ) : section === 'guides' ? (

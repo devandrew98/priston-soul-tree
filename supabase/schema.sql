@@ -780,6 +780,9 @@ drop policy if exists ad_admin on public.app_downloads;
 create policy ad_admin on public.app_downloads for all
   using (public.is_admin()) with check (public.is_admin());
 
+-- Fase 20 — notas de atualização ao lado do botão de download (ver 19_download_notes.sql)
+alter table public.app_downloads add column if not exists notes text;
+
 -- ============================================================================
 -- Fase 16 — admin pode sobrescrever/apagar imagens já existentes, para a
 -- ferramenta de recompressão em lote (ver 18_image_admin.sql)
