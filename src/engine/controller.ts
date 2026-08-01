@@ -158,7 +158,7 @@ export function bestGreedyGenome(cfg: EngineConfig): Genome {
 
 /** The public entry: run the whole deep optimization for a config. */
 export async function deepOptimize(rawCfg: EngineConfig, onProgress?: (p: DeepProgress) => void): Promise<SolverResult> {
-  // Hard game cap: never optimize beyond 217 fusion points.
+  // Hard game cap: never optimize beyond MAX_FUSION_POINTS fusion points.
   const cfg: EngineConfig = { ...rawCfg, budget: Math.min(rawCfg.budget, MAX_FUSION_POINTS) };
   const kb = new KnowledgeBase();
 

@@ -82,7 +82,7 @@ export function Optimizer() {
   // fill puts a soul on every opened pass-through node and spends any
   // leftover points, and the ladder guarantees more budget never yields a
   // WORSE build (the raw greedy is myopic and could lose Attack Power when
-  // given 3 extra points). Hard-capped at 217 points by the engine.
+  // given 3 extra points). Hard-capped at MAX_FUSION_POINTS by the engine.
   const quick = useMemo(() => {
     const cfg: EngineConfig = {
       weights: goal.weights,

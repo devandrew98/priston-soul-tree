@@ -101,7 +101,7 @@ function scoreAt(stats: WStat[], rarity: Rarity, level: number): number {
  * whichever buys the most score per point.
  */
 export function optimize(goal: Goal, inv: Inventory, opt: OptimizeOptions): OptimizeResult {
-  // Hard game cap: no build may ever spend more than 217 fusion points.
+  // Hard game cap: no build may ever spend more than MAX_FUSION_POINTS fusion points.
   const budget = Math.min(opt.budget ?? MAX_FUSION_POINTS, MAX_FUSION_POINTS);
 
   const candidates: Candidate[] = [];

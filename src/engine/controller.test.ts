@@ -36,13 +36,13 @@ describe('bestGreedyGenome (budget-monotonic quick build)', () => {
   });
 });
 
-describe('hard fusion caps (level 201 / 217 points)', () => {
-  it('the greedy optimizer never spends beyond 217 even with an absurd budget', () => {
+describe('hard fusion caps (level 204 / 220 points)', () => {
+  it('the greedy optimizer never spends beyond MAX_FUSION_POINTS even with an absurd budget', () => {
     const r = optimize({ id: 'c', name: 'c', weights: W, custom: true }, {}, { budget: 99999, allSouls: true });
     expect(r.pointsSpent).toBeLessThanOrEqual(MAX_FUSION_POINTS);
   });
 
-  it('no budget given means the 217 cap, not infinity', () => {
+  it('no budget given means the MAX_FUSION_POINTS cap, not infinity', () => {
     const r = optimize({ id: 'c', name: 'c', weights: W, custom: true }, {}, { allSouls: true });
     expect(r.pointsSpent).toBeLessThanOrEqual(MAX_FUSION_POINTS);
   });
