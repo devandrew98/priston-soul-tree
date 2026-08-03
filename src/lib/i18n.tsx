@@ -187,6 +187,7 @@ const DICT: Record<string, Entry> = {
   'mk.tab.messages': { pt: 'Mensagens', en: 'Messages' },
   'mk.tab.dashboard': { pt: 'Meu Painel', en: 'Dashboard' },
   'mk.tab.create': { pt: 'Vender', en: 'Sell' },
+  'mk.tab.create.want': { pt: 'Comprar', en: 'Buy' },
   'mk.back': { pt: 'Voltar', en: 'Back' },
   'mk.notfound': { pt: 'Item não encontrado.', en: 'Item not found.' },
   'mk.loading': { pt: 'Carregando...', en: 'Loading...' },

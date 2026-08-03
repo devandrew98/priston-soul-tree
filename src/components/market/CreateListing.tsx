@@ -15,7 +15,7 @@ import { LoginPrompt } from './LoginPrompt';
 
 const CURRENCIES: Currency[] = ['gold', 'coins'];
 
-export function CreateListing({ editId, onDone, onLogin }: { editId?: string; onDone: () => void; onLogin: () => void }) {
+export function CreateListing({ editId, initialKind = 'sell', onDone, onLogin }: { editId?: string; initialKind?: ListingKind; onDone: () => void; onLogin: () => void }) {
   const { t, lang } = useI18n();
   const { userId, isContributor } = useAuth();
   const { addListing } = useMyListings();
@@ -24,7 +24,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
   const editing = !!editId;
   const { listing: editListing } = useListing(editId || '');
 
-  const [kind, setKind] = useState<ListingKind>('sell');
+  const [kind, setKind] = useState<ListingKind>(initialKind);
   const [name, setName] = useState('');
   const [category, setCategory] = useState(categories[0].key);
   const [subcategory, setSubcategory] = useState(categories[0].subs[0] ?? '');
@@ -125,13 +125,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
       <button className="mk-back" onClick={onDone}>← {t('mk.back')}</button>
       <h1 className="mk-h1">{kind === 'want' ? '🛒' : '📦'} {editing ? t('mk.edit.title') : kind === 'want' ? t('mk.create.title.want') : t('mk.create.title')}</h1>
 
-      {!editing && (
-        <div className="mk-kindtabs">
-          <button type="button" className={`sell ${kind === 'sell' ? 'on' : ''}`} onClick={() => setKind('sell')}>🏷️ {t('mk.kind.sell')}</button>
-          <button type="button" className={`want ${kind === 'want' ? 'on' : ''}`} onClick={() => setKind('want')}>🛒 {t('mk.kind.want')}</button>
-        </div>
-      )}
-      {editing && <p className="mk-muted mk-create-kindnote">{kind === 'want' ? `🛒 ${t('mk.kind.want')}` : `🏷️ ${t('mk.kind.sell')}`}</p>}
+      <p className="mk-muted mk-create-kindnote">{kind === 'want' ? `🛒 ${t('mk.kind.want')}` : `🏷️ ${t('mk.kind.sell')}`}</p>
 
       <div className="mk-form">
         {/* in-game shop location (optional) — asked first */}

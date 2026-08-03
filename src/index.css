@@ -646,6 +646,7 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .mk-subtab { background: var(--panel); border: 1px solid var(--border); color: var(--text-dim); padding: 8px 14px; border-radius: 9px; font-weight: 700; font-size: 13px; transition: 0.15s; }
 .mk-subtab:hover { color: var(--gold-bright); border-color: var(--gold); }
 .mk-subtab.active { background: linear-gradient(180deg, #3a2c12, #241a0c); color: var(--gold-bright); border-color: var(--gold); box-shadow: 0 0 16px -4px var(--gold); }
+.mk-subtab.want.active { background: linear-gradient(180deg, color-mix(in srgb, var(--defense) 30%, #241a0c), #1a1c24); color: #8fc1f0; border-color: var(--defense); box-shadow: 0 0 16px -4px var(--defense); }
 
 /* --- search + category chips --- */
 .mk-searchbar { display: flex; align-items: center; gap: 10px; background: linear-gradient(180deg, var(--panel2), var(--bg2)); border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; margin-bottom: 12px; box-shadow: inset 0 0 22px rgba(0,0,0,0.35); }

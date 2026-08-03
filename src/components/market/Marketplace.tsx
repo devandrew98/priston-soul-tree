@@ -14,6 +14,7 @@ import { type NotifLink, useAuth, useChats } from './store';
 import { useListing } from './useMarketData';
 import { loadRepTiers } from '../../lib/market/repTiers';
 import { loadCategories } from '../../lib/market/marketCategories';
+import type { ListingKind } from '../../lib/market/types';
 import { Avatar, RepBadge } from './parts';
 
 const PANEL_PASSWORD = 'painel159753';
@@ -22,7 +23,7 @@ type View =
   | { name: 'browse' }
   | { name: 'item'; id: string }
   | { name: 'seller'; id: string }
-  | { name: 'create'; editId?: string }
+  | { name: 'create'; editId?: string; kind?: ListingKind }
   | { name: 'dashboard' }
   | { name: 'stats' }
   | { name: 'messages'; seller?: string }
@@ -33,7 +34,6 @@ const TABS: { name: View['name']; icon: string; key: string }[] = [
   { name: 'stats', icon: '📈', key: 'mk.tab.stats' },
   { name: 'messages', icon: '💬', key: 'mk.tab.messages' },
   { name: 'dashboard', icon: '📊', key: 'mk.tab.dashboard' },
-  { name: 'create', icon: '📦', key: 'mk.tab.create' },
 ];
 
 export function Marketplace({ openAdminAt, onAdminOpened }: { openAdminAt?: number; onAdminOpened?: () => void }) {
@@ -62,6 +62,7 @@ export function Marketplace({ openAdminAt, onAdminOpened }: { openAdminAt?: numb
   const openItem = (id: string) => { setView({ name: 'item', id }); window.scrollTo({ top: 0 }); };
   const openSeller = (id: string) => { setView({ name: 'seller', id }); window.scrollTo({ top: 0 }); };
   const openEdit = (id: string) => { setView({ name: 'create', editId: id }); window.scrollTo({ top: 0 }); };
+  const openCreate = (kind: ListingKind) => { setView({ name: 'create', kind }); window.scrollTo({ top: 0 }); };
   const go = (name: View['name']) => { setView({ name } as View); window.scrollTo({ top: 0 }); };
   const openChat = (sellerId: string, seed?: string) => {
     startConversation(sellerId, seed);
@@ -96,6 +97,18 @@ export function Marketplace({ openAdminAt, onAdminOpened }: { openAdminAt?: numb
                 {tb.name === 'messages' && totalUnread > 0 && <span className="mk-chat-badge sm">{totalUnread}</span>}
               </button>
             ))}
+            <button
+              className={`mk-subtab sell ${view.name === 'create' && view.kind !== 'want' ? 'active' : ''}`}
+              onClick={() => openCreate('sell')}
+            >
+              📦 {t('mk.tab.create')}
+            </button>
+            <button
+              className={`mk-subtab want ${view.name === 'create' && view.kind === 'want' ? 'active' : ''}`}
+              onClick={() => openCreate('want')}
+            >
+              🛒 {t('mk.tab.create.want')}
+            </button>
           </nav>
           <NotificationBell onNavigate={onNotifNav} />
           <UserMenu onLogin={openLogin} onDashboard={() => go('dashboard')} />
@@ -105,8 +118,16 @@ export function Marketplace({ openAdminAt, onAdminOpened }: { openAdminAt?: numb
       {view.name === 'browse' && <Browse onOpen={openItem} onSeller={openSeller} />}
       {view.name === 'stats' && <Stats onOpen={openItem} onSeller={openSeller} />}
       {view.name === 'messages' && <Chat initialSeller={view.seller} onSeller={openSeller} />}
-      {view.name === 'dashboard' && <Dashboard onOpen={openItem} onSeller={openSeller} onCreate={() => go('create')} onEdit={openEdit} onLogin={openLogin} />}
-      {view.name === 'create' && <CreateListing editId={view.editId} onDone={() => go('dashboard')} onLogin={openLogin} />}
+      {view.name === 'dashboard' && <Dashboard onOpen={openItem} onSeller={openSeller} onCreate={() => openCreate('sell')} onEdit={openEdit} onLogin={openLogin} />}
+      {view.name === 'create' && (
+        <CreateListing
+          key={view.editId ?? view.kind ?? 'sell'}
+          editId={view.editId}
+          initialKind={view.kind}
+          onDone={() => go('dashboard')}
+          onLogin={openLogin}
+        />
+      )}
       {view.name === 'admin' && (adminUnlocked ? <Admin onOpen={openItem} onSeller={openSeller} /> : <AdminGate onUnlock={() => setAdminUnlocked(true)} />)}
       {view.name === 'item' && <ItemView id={view.id} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} />}
       {view.name === 'seller' && <SellerProfile sellerId={view.id} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} />}
