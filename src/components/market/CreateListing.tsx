@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { RARITIES } from '../../lib/market/data';
 import { useCategories } from '../../lib/market/marketCategories';
-import type { Currency, Listing, Rarity, ShopLocation } from '../../lib/market/types';
+import type { Currency, Listing, ListingKind, Rarity, ShopLocation } from '../../lib/market/types';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { limitErrorKey } from '../../lib/market/helpers';
 import { createListing, updateListing } from '../../lib/market/listings';
@@ -24,6 +24,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
   const editing = !!editId;
   const { listing: editListing } = useListing(editId || '');
 
+  const [kind, setKind] = useState<ListingKind>('sell');
   const [name, setName] = useState('');
   const [category, setCategory] = useState(categories[0].key);
   const [subcategory, setSubcategory] = useState(categories[0].subs[0] ?? '');
@@ -45,6 +46,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
   // Prefill the form once when editing an existing listing.
   useEffect(() => {
     if (!editing || prefilled || !editListing) return;
+    setKind(editListing.kind);
     setName(editListing.name);
     setCategory(editListing.category);
     setSubcategory(editListing.subcategory);
@@ -75,23 +77,27 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
     reader.readAsDataURL(file);
   };
 
+  const imageRequired = kind === 'sell';
+
   const submit = async () => {
-    if (!userId || !image) return;
+    if (!userId) return;
+    if (imageRequired && !image) return;
     setError('');
     // WhatsApp opt-in requires a valid number + consent to publish.
     if (wa.enabled && !isWhatsappValid(wa)) { setError(t('mk.wa.incomplete')); return; }
     const fields = {
+      kind,
       name: name.trim() || t('mk.create.untitled'),
       itemLevel, category, subcategory, rarity, quantity, price, currency,
       description: description.trim(), highlighted: canContribute && highlighted, shop,
       whatsapp: wa.enabled ? wa.info : null,
     };
     if (BACKEND_ENABLED) {
-      if (!editing && !imageFile) return; // new listing requires an image
+      if (!editing && imageRequired && !imageFile) return; // sell listings require an image
       setBusy(true);
       try {
         if (editing) await updateListing(editId!, userId, fields, imageFile);
-        else await createListing(userId, { ...fields, imageFile: imageFile! });
+        else await createListing(userId, { ...fields, imageFile });
         if (wa.enabled && wa.saveToProfile && wa.info) await saveMyWhatsapp(userId, wa.info).catch(() => {});
         onDone();
       } catch (e) {
@@ -117,7 +123,15 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
   return (
     <div className="mk-create">
       <button className="mk-back" onClick={onDone}>← {t('mk.back')}</button>
-      <h1 className="mk-h1">📦 {editing ? t('mk.edit.title') : t('mk.create.title')}</h1>
+      <h1 className="mk-h1">{kind === 'want' ? '🛒' : '📦'} {editing ? t('mk.edit.title') : kind === 'want' ? t('mk.create.title.want') : t('mk.create.title')}</h1>
+
+      {!editing && (
+        <div className="mk-kindtabs">
+          <button type="button" className={`sell ${kind === 'sell' ? 'on' : ''}`} onClick={() => setKind('sell')}>🏷️ {t('mk.kind.sell')}</button>
+          <button type="button" className={`want ${kind === 'want' ? 'on' : ''}`} onClick={() => setKind('want')}>🛒 {t('mk.kind.want')}</button>
+        </div>
+      )}
+      {editing && <p className="mk-muted mk-create-kindnote">{kind === 'want' ? `🛒 ${t('mk.kind.want')}` : `🏷️ ${t('mk.kind.sell')}`}</p>}
 
       <div className="mk-form">
         {/* in-game shop location (optional) — asked first */}
@@ -126,9 +140,9 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
         {/* WhatsApp contact (optional) */}
         {userId && <WhatsappField userId={userId} editId={editId} value={wa} onChange={setWa} />}
 
-        {/* image (required) */}
+        {/* image (required for sell, optional for want) */}
         <div className="mk-field span2">
-          <span>{t('mk.create.image')} *</span>
+          <span>{t('mk.create.image')} {imageRequired && '*'}</span>
           <div
             className={`mk-imgdrop ${image ? 'has' : ''}`}
             onClick={() => fileRef.current?.click()}
@@ -141,7 +155,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
                 <button className="mk-imgdrop-remove" onClick={(e) => { e.stopPropagation(); setImage(''); setImageFile(null); }}>✕</button>
               </>
             ) : (
-              <span className="mk-imgdrop-hint">🖼️ {t('mk.create.imagehint')}</span>
+              <span className="mk-imgdrop-hint">🖼️ {imageRequired ? t('mk.create.imagehint') : t('mk.create.imagehint.want')}</span>
             )}
           </div>
           <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => onFile(e.target.files?.[0])} />
@@ -183,7 +197,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
           <input type="number" min={1} value={quantity} onChange={(e) => setQuantity(clamp(e.target.value, 1, 9999))} />
         </label>
         <label className="mk-field">
-          <span>{t('mk.price')}</span>
+          <span>{kind === 'want' ? t('mk.create.price.want') : t('mk.price')}</span>
           <input type="number" min={0} value={price} onChange={(e) => setPrice(Math.max(0, Number(e.target.value) || 0))} />
         </label>
 
@@ -196,7 +210,7 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
 
         <label className="mk-field span2">
           <span>{t('mk.description')}</span>
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} placeholder={t('mk.create.descph')} />
+          <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} placeholder={kind === 'want' ? t('mk.create.descph.want') : t('mk.create.descph')} />
         </label>
 
         {canContribute && (
@@ -207,12 +221,12 @@ export function CreateListing({ editId, onDone, onLogin }: { editId?: string; on
         )}
 
         <div className="mk-field span2 mk-form-actions">
-          <button className="mk-btn primary" onClick={submit} disabled={!image || busy}>
-            {busy ? `⏳ ${t('mk.loading')}` : editing ? `✓ ${t('mk.edit.save')}` : `✓ ${t('mk.create.publish')}`}
+          <button className="mk-btn primary" onClick={submit} disabled={(imageRequired && !image) || busy}>
+            {busy ? `⏳ ${t('mk.loading')}` : editing ? `✓ ${t('mk.edit.save')}` : `✓ ${kind === 'want' ? t('mk.create.publish.want') : t('mk.create.publish')}`}
           </button>
           <button className="mk-btn" onClick={onDone} disabled={busy}>{t('mk.cancel')}</button>
         </div>
-        {!image && !editing && <p className="mk-muted mk-create-imgreq">⚠ {t('mk.create.imagereq')}</p>}
+        {imageRequired && !image && !editing && <p className="mk-muted mk-create-imgreq">⚠ {t('mk.create.imagereq')}</p>}
         {error && <p className="mk-auth-err">✕ {error}</p>}
       </div>
     </div>

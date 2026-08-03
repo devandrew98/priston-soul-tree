@@ -66,6 +66,7 @@ export async function createReport(reporterId: string, targetType: 'item' | 'use
 // ---- listings moderation ----------------------------------------------------
 export interface AdminListing {
   id: string;
+  kind: string;
   name: string;
   icon: string;
   image: string | null;
@@ -81,16 +82,16 @@ export interface AdminListing {
 export async function fetchAdminListings(): Promise<AdminListing[]> {
   const { data, error } = await sb()
     .from('listings')
-    .select('id,name,category,image_url,price,currency,status,removed,highlighted,seller_id, seller:profiles!seller_id(nick)')
+    .select('id,kind,name,category,image_url,price,currency,status,removed,highlighted,seller_id, seller:profiles!seller_id(nick)')
     .order('created_at', { ascending: false })
     .limit(200);
   if (error) throw error;
   return ((data as unknown as {
-    id: string; name: string; category: string; image_url: string | null; price: number | string;
+    id: string; kind: string; name: string; category: string; image_url: string | null; price: number | string;
     currency: string; status: string; removed: boolean; highlighted: boolean; seller_id: string;
     seller: { nick: string } | null;
   }[]) ?? []).map((r) => ({
-    id: r.id, name: r.name, icon: '📦', image: r.image_url, sellerId: r.seller_id,
+    id: r.id, kind: r.kind, name: r.name, icon: '📦', image: r.image_url, sellerId: r.seller_id,
     sellerNick: r.seller?.nick ?? '?', price: Number(r.price), currency: r.currency,
     status: r.status, removed: r.removed, highlighted: r.highlighted,
   }));

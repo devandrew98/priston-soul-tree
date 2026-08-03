@@ -2,7 +2,7 @@
 // authenticated RPC that validates, records interest and returns the number.
 import { supabase } from './supabase';
 
-export type InterestReason = 'buy' | 'offer' | 'question' | 'trade';
+export type InterestReason = 'buy' | 'have' | 'offer' | 'question' | 'trade';
 
 export interface WhatsappInfo {
   number: string;        // national digits only, e.g. 11999999999

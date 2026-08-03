@@ -6,7 +6,7 @@ import { cacheProfiles } from './profileCache';
 import { profileToSeller, type ProfileRow, uploadToBucket } from './auth';
 import { compressPhoto } from './image';
 import { clearListingWhatsapp, saveListingWhatsapp, type WhatsappInfo } from './whatsapp';
-import type { Currency, Listing, Rarity, ShopCity, ShopLocation } from './types';
+import type { Currency, Listing, ListingKind, Rarity, ShopCity, ShopLocation } from './types';
 import type { Filters, SortKey } from './helpers';
 
 // Embed the seller profile so cards can show nick/avatar/contributor.
@@ -17,9 +17,10 @@ const SELECT = LISTING_SELECT;
 export interface ListingRow {
   id: string;
   seller_id: string;
+  kind: ListingKind;
   name: string;
   item_level: number;
-  image_url: string;
+  image_url: string | null;
   category: string;
   subcategory: string;
   rarity: Rarity;
@@ -46,10 +47,11 @@ export function rowToListing(row: ListingRow): Listing {
   }
   return {
     id: row.id,
+    kind: row.kind,
     name: row.name,
     itemLevel: row.item_level,
     icon: categoryIcon(row.category),
-    image: row.image_url,
+    image: row.image_url ?? undefined,
     category: row.category,
     subcategory: row.subcategory,
     rarity: row.rarity,
@@ -92,7 +94,7 @@ const SORT_COL: Record<SortKey, { col: string; asc: boolean }> = {
 /** Vitrine query: server-side filters + sort. Só mostra anúncios ATIVOS —
  *  vendidos ('sold') nunca aparecem no marketplace público nem em pesquisas. */
 export async function fetchListings(f: Filters, sort: SortKey, limit = 60): Promise<Listing[]> {
-  let q = sb().from('listings').select(SELECT).eq('removed', false).neq('status', 'sold');
+  let q = sb().from('listings').select(SELECT).eq('removed', false).neq('status', 'sold').eq('kind', f.kind);
   if (f.q.trim()) q = q.ilike('name', `%${f.q.trim()}%`);
   if (f.category) q = q.eq('category', f.category);
   if (f.rarity) q = q.eq('rarity', f.rarity);
@@ -136,12 +138,13 @@ export async function fetchFavoriteListings(userId: string): Promise<Listing[]> 
 export async function fetchSimilar(listing: Listing, limit = 4): Promise<Listing[]> {
   // Recomendações só trazem anúncios ativos (não recomenda item já vendido).
   const { data, error } = await sb().from('listings').select(SELECT)
-    .eq('category', listing.category).eq('removed', false).neq('status', 'sold').neq('id', listing.id).limit(limit + 2);
+    .eq('category', listing.category).eq('kind', listing.kind).eq('removed', false).neq('status', 'sold').neq('id', listing.id).limit(limit + 2);
   if (error) throw error;
   return (data as ListingRow[]).map(rowToListing).slice(0, limit);
 }
 
 export interface NewListingInput {
+  kind: ListingKind;
   name: string;
   itemLevel: number;
   category: string;
@@ -154,15 +157,19 @@ export interface NewListingInput {
   highlighted: boolean;
   shop?: ShopLocation | null;
   whatsapp?: WhatsappInfo | null; // null/undefined = contato pelo WhatsApp desligado
-  imageFile: File;
+  imageFile: File | null; // obrigatório para 'sell', opcional para 'want'
 }
 
-/** Upload the item image then insert the listing; returns the created id. */
+/** Upload the item image (if any) then insert the listing; returns the created id. */
 export async function createListing(userId: string, input: NewListingInput): Promise<string> {
-  const compressed = await compressPhoto(input.imageFile, 1280, 0.82);
-  const imageUrl = await uploadToBucket('item-images', userId, compressed);
+  let imageUrl: string | null = null;
+  if (input.imageFile) {
+    const compressed = await compressPhoto(input.imageFile, 1280, 0.82);
+    imageUrl = await uploadToBucket('item-images', userId, compressed);
+  }
   const { data, error } = await sb().from('listings').insert({
     seller_id: userId,
+    kind: input.kind,
     name: input.name,
     item_level: input.itemLevel,
     image_url: imageUrl,

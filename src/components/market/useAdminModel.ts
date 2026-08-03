@@ -8,7 +8,7 @@ import { setMemberTier as dbSetMemberTier } from '../../lib/market/repTiers';
 import { useAdmin, useAuth, useMyListings } from './store';
 
 export interface MReport { id: string; reporterNick: string; targetType: 'item' | 'user'; targetId: string; targetName: string; reason: string; note: string; at: number }
-export interface MListing { id: string; name: string; icon: string; image: string | null; sellerId: string; sellerNick: string; price: number; currency: string; status: string; removed: boolean; featured: boolean }
+export interface MListing { id: string; kind: string; name: string; icon: string; image: string | null; sellerId: string; sellerNick: string; price: number; currency: string; status: string; removed: boolean; featured: boolean }
 export interface MUser { id: string; nick: string; avatar: string; className: string; level: number; itemsSold: number; reports: number; banned: boolean; suspended: boolean; contributor: boolean; verified: boolean; repTierOverride: string | null; banReason: string | null; createdAt: number; lastSeen: number }
 export interface MLog { id: string; text: string; at: number }
 
@@ -85,7 +85,7 @@ export function useAdminModel(): AdminModel {
     reason: r.reason, note: r.note, at: r.at,
   }));
   const mListings: MListing[] = [...myListings, ...LISTINGS].map((l) => ({
-    id: l.id, name: l.name, icon: l.icon, image: l.image ?? null, sellerId: l.sellerId,
+    id: l.id, kind: l.kind, name: l.name, icon: l.icon, image: l.image ?? null, sellerId: l.sellerId,
     sellerNick: SELLER_BY_ID[l.sellerId]?.nick ?? '?', price: l.price, currency: l.currency, status: l.status,
     removed: mock.adminRemoved.includes(l.id), featured: mock.adminFeatured[l.id] ?? l.highlighted,
   }));

@@ -9,7 +9,8 @@ import { MarketCategoriesAdmin } from './MarketCategoriesAdmin';
 import { GuidesAdmin } from './GuidesAdmin';
 import { DownloadAdmin } from './DownloadAdmin';
 import { ImageOptimizer } from './ImageOptimizer';
-import { Avatar, PriceTag, Since, StatusPill } from './parts';
+import type { ListingKind } from '../../lib/market/types';
+import { Avatar, KindTag, PriceTag, Since, StatusPill } from './parts';
 
 type Section = 'listings' | 'users' | 'tiers' | 'itemcats' | 'reports' | 'streamers' | 'news' | 'guides' | 'download' | 'imgopt' | 'global' | 'logs';
 
@@ -76,6 +77,7 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
             {filtered.map((l) => (
               <div key={l.id} className={`mk-admin-row ${l.removed ? 'removed' : ''}`}>
                 <span className="mk-icon sm" style={{ ['--rar' as string]: 'var(--gold)' }}>{l.image ? <img src={l.image} alt="" className="mk-icon-img" /> : l.icon}</span>
+                <KindTag kind={l.kind as ListingKind} />
                 <button className="mk-admin-name" onClick={() => onOpen(l.id)}>{l.name}</button>
                 <button className="mk-admin-sub" onClick={() => onSeller(l.sellerId)}>{l.sellerNick}</button>
                 <PriceTag value={l.price} currency={l.currency as 'gold' | 'coins'} />

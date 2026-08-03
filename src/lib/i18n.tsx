@@ -294,7 +294,15 @@ const DICT: Record<string, Entry> = {
   'mk.reco.cheaper': { pt: 'Alternativas mais baratas', en: 'Cheaper alternatives' },
   'mk.reco.similar': { pt: 'Itens semelhantes', en: 'Similar items' },
   'mk.reco.sameseller': { pt: 'Mais deste vendedor', en: 'More from this seller' },
+  'mk.reco.sameuser.want': { pt: 'Mais pedidos deste comprador', en: 'More requests from this buyer' },
   'mk.interest': { pt: 'Tenho interesse', en: "I'm interested" },
+  'mk.interest.want': { pt: 'Tenho esse item', en: 'I have this item' },
+
+  // venda × compra — divisão principal do Marketplace
+  'mk.kind.sell': { pt: 'Vendendo', en: 'Selling' },
+  'mk.kind.want': { pt: 'Comprando', en: 'Buying' },
+  'mk.kind.sell.badge': { pt: 'Venda', en: 'Sell' },
+  'mk.kind.want.badge': { pt: 'Compra', en: 'Buy' },
   'mk.message': { pt: 'Enviar mensagem', en: 'Send message' },
   'mk.favorite': { pt: 'Favoritar', en: 'Favorite' },
   'mk.share': { pt: 'Compartilhar', en: 'Share' },
@@ -354,6 +362,7 @@ const DICT: Record<string, Entry> = {
 
   // create listing
   'mk.create.title': { pt: 'Criar anúncio', en: 'Create listing' },
+  'mk.create.title.want': { pt: 'Criar pedido de compra', en: 'Create want-to-buy post' },
   'mk.create.name': { pt: 'Nome do item', en: 'Item name' },
   'mk.create.untitled': { pt: 'Item sem nome', en: 'Untitled item' },
   'mk.create.suggest': { pt: 'Sugestão de preço', en: 'Suggested price' },
@@ -362,10 +371,14 @@ const DICT: Record<string, Entry> = {
   'mk.create.statvalue': { pt: 'Valor', en: 'Value' },
   'mk.create.addstat': { pt: 'Adicionar atributo', en: 'Add stat' },
   'mk.create.descph': { pt: 'Descreva o item, condições da negociação, etc.', en: 'Describe the item, trade conditions, etc.' },
+  'mk.create.descph.want': { pt: 'Descreva o item que procura, condições, etc.', en: "Describe the item you're looking for, conditions, etc." },
+  'mk.create.price.want': { pt: 'Valor que topo pagar', en: "Price I'm willing to pay" },
   'mk.create.highlight': { pt: 'Destacar anúncio', en: 'Highlight listing' },
   'mk.create.publish': { pt: 'Publicar anúncio', en: 'Publish listing' },
+  'mk.create.publish.want': { pt: 'Publicar pedido', en: 'Publish request' },
   'mk.create.image': { pt: 'Imagem do item', en: 'Item image' },
   'mk.create.imagehint': { pt: 'Clique ou arraste uma imagem aqui', en: 'Click or drag an image here' },
+  'mk.create.imagehint.want': { pt: 'Clique ou arraste uma imagem aqui (opcional)', en: 'Click or drag an image here (optional)' },
   'mk.create.imagereq': { pt: 'A imagem do item é obrigatória para publicar.', en: 'An item image is required to publish.' },
 
   // localização da loja in-game
@@ -399,8 +412,10 @@ const DICT: Record<string, Entry> = {
 
   // contato pelo WhatsApp — página do anúncio
   'mk.wa.available': { pt: 'O vendedor aceita contato pelo WhatsApp.', en: 'This seller accepts contact via WhatsApp.' },
+  'mk.wa.available.want': { pt: 'O comprador aceita contato pelo WhatsApp.', en: 'This buyer accepts contact via WhatsApp.' },
   'mk.wa.contactbtn': { pt: 'Falar pelo WhatsApp', en: 'Contact via WhatsApp' },
   'mk.wa.onlysite': { pt: 'Este vendedor recebe interesses apenas pelo PristonZONE.', en: 'This seller only takes interest through PristonZONE.' },
+  'mk.wa.onlysite.want': { pt: 'Este comprador recebe interesses apenas pelo PristonZONE.', en: 'This buyer only takes interest through PristonZONE.' },
   'mk.wa.err.login': { pt: 'Você precisa entrar em sua conta para demonstrar interesse neste item.', en: 'You need to sign in to show interest in this item.' },
   'mk.wa.err.sold': { pt: 'Este item não está mais disponível.', en: 'This item is no longer available.' },
   'mk.wa.err.own': { pt: 'Você não pode demonstrar interesse no seu próprio anúncio.', en: 'You cannot show interest in your own listing.' },
@@ -411,7 +426,9 @@ const DICT: Record<string, Entry> = {
 
   // modal de interesse
   'mk.wa.modal.title': { pt: 'Falar com o vendedor', en: 'Contact the seller' },
+  'mk.wa.modal.title.want': { pt: 'Falar com o comprador', en: 'Contact the buyer' },
   'mk.wa.modal.msglabel': { pt: 'Mensagem para o vendedor', en: 'Message to the seller' },
+  'mk.wa.modal.msglabel.want': { pt: 'Mensagem para o comprador', en: 'Message to the buyer' },
   'mk.wa.modal.optional': { pt: 'opcional', en: 'optional' },
   'mk.wa.modal.msgph': { pt: 'Escreva uma dúvida, proposta ou informação adicional.', en: 'Write a question, offer or extra detail.' },
   'mk.wa.modal.continue': { pt: 'Continuar pelo WhatsApp', en: 'Continue on WhatsApp' },
@@ -419,12 +436,14 @@ const DICT: Record<string, Entry> = {
   'mk.wa.reason.offer': { pt: 'Fazer uma oferta', en: 'Make an offer' },
   'mk.wa.reason.question': { pt: 'Tirar uma dúvida', en: 'Ask a question' },
   'mk.wa.reason.trade': { pt: 'Propor uma troca', en: 'Propose a trade' },
+  'mk.wa.reason.have': { pt: 'Tenho esse item', en: 'I have this item' },
 
   // mensagens prontas do WhatsApp
   'mk.wa.msg.buy': { pt: 'Olá! Vi seu anúncio no PristonZONE e tenho interesse no item "{item}", anunciado por {price}. O item ainda está disponível?', en: 'Hi! I saw your PristonZONE listing and I\'m interested in "{item}", listed for {price}. Is it still available?' },
   'mk.wa.msg.offer': { pt: 'Olá! Vi seu anúncio no PristonZONE e gostaria de fazer uma oferta pelo item "{item}", anunciado por {price}. Minha mensagem: {msg}', en: 'Hi! I saw your PristonZONE listing and I\'d like to make an offer for "{item}", listed for {price}. My message: {msg}' },
   'mk.wa.msg.question': { pt: 'Olá! Vi seu anúncio do item "{item}" no PristonZONE e gostaria de tirar uma dúvida. {msg}', en: 'Hi! I saw your "{item}" listing on PristonZONE and I have a question. {msg}' },
   'mk.wa.msg.trade': { pt: 'Olá! Vi seu anúncio do item "{item}" no PristonZONE e gostaria de propor uma troca. {msg}', en: 'Hi! I saw your "{item}" listing on PristonZONE and I\'d like to propose a trade. {msg}' },
+  'mk.wa.msg.have': { pt: 'Olá! Vi seu pedido de compra no PristonZONE — tenho o item "{item}" que você está procurando, por {price}. Ainda tem interesse?', en: 'Hi! I saw your want-to-buy post on PristonZONE — I have the item "{item}" you\'re looking for, for {price}. Still interested?' },
   'mk.wa.msg.link': { pt: 'Link do anúncio: {url}', en: 'Listing link: {url}' },
 
   // limites antifraude (Fase 9)
@@ -451,6 +470,7 @@ const DICT: Record<string, Entry> = {
   'mk.dash.active': { pt: 'Ativos', en: 'Active' },
   'mk.dash.sold': { pt: 'Vendidos', en: 'Sold' },
   'mk.dash.marksold': { pt: '✓ Vendido', en: '✓ Sold' },
+  'mk.dash.marksold.want': { pt: '✓ Consegui', en: '✓ Got it' },
   'mk.dash.views': { pt: 'Visualizações', en: 'Views' },
   'mk.dash.profit': { pt: 'Lucro total', en: 'Total profit' },
   'mk.dash.empty': { pt: 'Nada por aqui ainda.', en: 'Nothing here yet.' },
@@ -479,6 +499,7 @@ const DICT: Record<string, Entry> = {
   'mk.chat.ph': { pt: 'Escreva uma mensagem...', en: 'Write a message...' },
   'mk.chat.send': { pt: 'Enviar', en: 'Send' },
   'mk.chat.seed': { pt: 'Olá! Tenho interesse no seu item "{item}" por {price}. Ainda está disponível?', en: 'Hi! I\'m interested in your item "{item}" for {price}. Is it still available?' },
+  'mk.chat.seed.want': { pt: 'Olá! Vi seu pedido de compra e tenho o item "{item}" que você procura, por {price}. Ainda tem interesse?', en: 'Hi! I saw your want-to-buy post and I have the item "{item}" you\'re looking for, for {price}. Still interested?' },
 
   // market statistics
   'mk.stats.totallistings': { pt: 'Anúncios ativos', en: 'Active listings' },

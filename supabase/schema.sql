@@ -795,3 +795,21 @@ create policy "admin update images" on storage.objects for update to authenticat
 drop policy if exists "admin delete images" on storage.objects;
 create policy "admin delete images" on storage.objects for delete to authenticated
   using (bucket_id in ('item-images','avatars','streamer-covers') and public.is_admin());
+
+-- ============================================================================
+-- Fase 17 — Marketplace "quero comprar" (want-to-buy) posts (ver 20_want_listings.sql)
+-- ============================================================================
+alter table public.listings add column if not exists kind text not null default 'sell' check (kind in ('sell', 'want'));
+alter table public.listings alter column image_url drop not null;
+create index if not exists listings_kind_idx on public.listings(kind);
+
+create or replace function public.record_sale()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if new.status = 'sold' and (old.status is distinct from 'sold') and new.kind = 'sell' then
+    insert into public.sales (listing_id, category, name, price, currency)
+    values (new.id, new.category, new.name, new.price, new.currency);
+  end if;
+  return new;
+end;
+$$;

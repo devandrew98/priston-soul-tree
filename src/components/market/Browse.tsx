@@ -26,6 +26,16 @@ export function Browse({ onOpen, onSeller }: { onOpen: (id: string) => void; onS
 
   return (
     <div className="mk-browse">
+      {/* venda × compra — bem separado, é a divisão principal do Marketplace */}
+      <div className="mk-kindtabs">
+        <button className={`sell ${f.kind === 'sell' ? 'on' : ''}`} onClick={() => set('kind', 'sell')}>
+          🏷️ {t('mk.kind.sell')}
+        </button>
+        <button className={`want ${f.kind === 'want' ? 'on' : ''}`} onClick={() => set('kind', 'want')}>
+          🛒 {t('mk.kind.want')}
+        </button>
+      </div>
+
       {/* search bar */}
       <div className="mk-searchbar">
         <span className="mk-search-ic">🔍</span>

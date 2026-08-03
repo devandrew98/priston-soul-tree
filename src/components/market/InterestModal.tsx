@@ -8,7 +8,8 @@ import { fmtPrice } from '../../lib/market/helpers';
 import type { Listing } from '../../lib/market/types';
 import { type InterestReason, buildWhatsappUrl, whatsappContact } from '../../lib/market/whatsapp';
 
-const REASONS: InterestReason[] = ['buy', 'offer', 'question', 'trade'];
+const REASONS_SELL: InterestReason[] = ['buy', 'offer', 'question', 'trade'];
+const REASONS_WANT: InterestReason[] = ['have', 'offer', 'question', 'trade'];
 const MAX = 250;
 
 function waErr(e: unknown, t: (k: string) => string): string {
@@ -25,7 +26,9 @@ function waErr(e: unknown, t: (k: string) => string): string {
 
 export function InterestModal({ listing, onClose }: { listing: Listing; onClose: () => void }) {
   const { t } = useI18n();
-  const [reason, setReason] = useState<InterestReason>('buy');
+  const isWant = listing.kind === 'want';
+  const REASONS = isWant ? REASONS_WANT : REASONS_SELL;
+  const [reason, setReason] = useState<InterestReason>(isWant ? 'have' : 'buy');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -55,7 +58,7 @@ export function InterestModal({ listing, onClose }: { listing: Listing; onClose:
     <div className="mk-modal-backdrop" onClick={onClose}>
       <div className="mk-modal wa-modal" onClick={(e) => e.stopPropagation()}>
         <button className="mk-modal-close" onClick={onClose} aria-label={t('mk.close')}>✕</button>
-        <h2 className="mk-modal-title">💚 {t('mk.wa.modal.title')}</h2>
+        <h2 className="mk-modal-title">💚 {t(isWant ? 'mk.wa.modal.title.want' : 'mk.wa.modal.title')}</h2>
         <p className="mk-muted wa-modal-item">{listing.name} · {fmtPrice(listing.price, listing.currency)}</p>
 
         <div className="wa-reasons">
@@ -67,7 +70,7 @@ export function InterestModal({ listing, onClose }: { listing: Listing; onClose:
         </div>
 
         <label className="mk-field">
-          <span>{t('mk.wa.modal.msglabel')} {reason !== 'buy' && <em className="mk-muted">({t('mk.wa.modal.optional')})</em>}</span>
+          <span>{t(isWant ? 'mk.wa.modal.msglabel.want' : 'mk.wa.modal.msglabel')} {reason !== 'buy' && reason !== 'have' && <em className="mk-muted">({t('mk.wa.modal.optional')})</em>}</span>
           <textarea value={message} maxLength={MAX} rows={3} placeholder={t('mk.wa.modal.msgph')} onChange={(e) => setMessage(e.target.value)} />
           <span className="wa-charcount">{message.length}/{MAX}</span>
         </label>

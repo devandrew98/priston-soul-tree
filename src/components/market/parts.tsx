@@ -2,7 +2,7 @@
 import { RARITY_COLOR } from '../../lib/market/data';
 import { currencyIcon, fmtPrice, sinceParts } from '../../lib/market/helpers';
 import { repTier, useRepTiers } from '../../lib/market/repTiers';
-import type { Currency, ListingStatus, Rarity, Seller } from '../../lib/market/types';
+import type { Currency, ListingKind, ListingStatus, Rarity, Seller } from '../../lib/market/types';
 import { useI18n } from '../../lib/i18n';
 import { isCachedContributor } from '../../lib/market/profileCache';
 import { useContributors } from './store';
@@ -55,6 +55,17 @@ export function RarityTag({ rarity }: { rarity: Rarity }) {
   return (
     <span className="mk-rarity" style={{ color: RARITY_COLOR[rarity], borderColor: RARITY_COLOR[rarity] }}>
       {t(`mk.rarity.${rarity}`)}
+    </span>
+  );
+}
+
+/** "🏷️ Venda" / "🛒 Procura" — the main visual split between the two listing kinds.
+ *  `corner` pins it to the top-left of a `position: relative` card. */
+export function KindTag({ kind, corner }: { kind: ListingKind; corner?: boolean }) {
+  const { t } = useI18n();
+  return (
+    <span className={`mk-kindtag ${kind} ${corner ? 'corner' : ''}`}>
+      {kind === 'want' ? '🛒' : '🏷️'} {t(`mk.kind.${kind}.badge`)}
     </span>
   );
 }

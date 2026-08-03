@@ -1,7 +1,7 @@
 import { RARITY_COLOR } from '../../lib/market/data';
 import { getSeller } from './store';
 import type { Listing } from '../../lib/market/types';
-import { Avatar, ContribSeal, OnlineDot, PriceTag, RarityTag, Since, StatusPill } from './parts';
+import { Avatar, ContribSeal, KindTag, OnlineDot, PriceTag, RarityTag, Since, StatusPill } from './parts';
 import { useI18n } from '../../lib/i18n';
 
 export function ItemCard({ listing, onOpen, onSeller }: { listing: Listing; onOpen: (id: string) => void; onSeller: (id: string) => void }) {
@@ -15,6 +15,7 @@ export function ItemCard({ listing, onOpen, onSeller }: { listing: Listing; onOp
       style={{ ['--rar' as string]: glow }}
       onClick={() => onOpen(listing.id)}
     >
+      <KindTag kind={listing.kind} corner />
       {listing.highlighted && <span className="mk-featured-tag">★ {t('mk.featured')}</span>}
       <div className="mk-card-top">
         <span className="mk-icon" style={{ ['--rar' as string]: glow }}>

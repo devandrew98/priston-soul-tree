@@ -662,6 +662,21 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .mk-cats button:hover { color: var(--gold-bright); border-color: var(--gold); }
 .mk-cats button.on { background: var(--gold); color: #1a1206; border-color: var(--gold); }
 
+/* Venda × Compra — a divisão principal do Marketplace (Browse + CreateListing) */
+.mk-kindtabs { display: flex; gap: 10px; margin-bottom: 16px; }
+.mk-kindtabs button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px; background: var(--panel); border: 1px solid var(--border); color: var(--text-dim); padding: 12px 16px; border-radius: 12px; font-size: 14.5px; font-weight: 800; transition: 0.15s; }
+.mk-kindtabs button:hover { color: var(--text); border-color: color-mix(in srgb, var(--gold) 40%, var(--border)); }
+.mk-kindtabs button.sell.on { background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 22%, var(--panel)), var(--panel)); border-color: var(--gold); color: var(--gold-bright); box-shadow: 0 0 18px -6px var(--gold); }
+.mk-kindtabs button.want.on { background: linear-gradient(180deg, color-mix(in srgb, var(--defense) 26%, var(--panel)), var(--panel)); border-color: var(--defense); color: #8fc1f0; box-shadow: 0 0 18px -6px var(--defense); }
+.mk-create-kindnote { margin: -4px 0 14px; font-size: 13px; }
+
+/* Selo compacto "🏷️ Venda" / "🛒 Procura" — em cards (canto), detalhe, dashboard e admin */
+.mk-kindtag { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 800; padding: 3px 8px; border-radius: 20px; letter-spacing: 0.3px; white-space: nowrap; }
+.mk-kindtag.sell { background: color-mix(in srgb, var(--gold) 20%, var(--bg2)); color: var(--gold-bright); border: 1px solid color-mix(in srgb, var(--gold) 50%, var(--border)); }
+.mk-kindtag.want { background: color-mix(in srgb, var(--defense) 20%, var(--bg2)); color: #8fc1f0; border: 1px solid color-mix(in srgb, var(--defense) 55%, var(--border)); }
+.mk-kindtag.corner { position: absolute; top: 10px; left: 10px; z-index: 2; }
+.mk-detail-headinfo .mk-kindtag { margin-bottom: 6px; }
+
 .mk-browse-body { display: block; }
 .mk-browse-body.with-filters { display: grid; grid-template-columns: 240px 1fr; gap: 16px; align-items: start; }
 .mk-filters { background: linear-gradient(180deg, var(--panel), var(--bg2)); border: 1px solid var(--border); border-radius: 12px; padding: 14px; position: sticky; top: 12px; }

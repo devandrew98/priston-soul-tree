@@ -168,6 +168,7 @@ export const LISTINGS: Listing[] = SEEDS.map((s, i) => {
   const seller = SELLERS[i % SELLERS.length];
   return {
     id: `it-${i + 1}`,
+    kind: 'sell',
     name: s.name,
     itemLevel: s.lvl,
     icon: CAT_ICON[s.cat] || '📦',

@@ -12,7 +12,7 @@ import { ItemCard } from './ItemCard';
 import { PriceChart } from './PriceChart';
 import { ShopLocationModal } from './ShopLocation';
 import { InterestModal } from './InterestModal';
-import { Avatar, ContribSeal, OnlineDot, PriceTag, RarityTag, RepBadge, Since, Stars, StatusPill } from './parts';
+import { Avatar, ContribSeal, KindTag, OnlineDot, PriceTag, RarityTag, RepBadge, Since, Stars, StatusPill } from './parts';
 
 const TREND_ICON = { up: '📈', down: '📉', stable: '➖' } as const;
 
@@ -34,6 +34,7 @@ export function ItemDetail({
   const [showInterest, setShowInterest] = useState(false); // modal de contato via WhatsApp
   const seller = getSeller(listing.sellerId);
   const glow = RARITY_COLOR[listing.rarity];
+  const isWant = listing.kind === 'want';
 
   // Um item VENDIDO é privado do dono e somente-leitura.
   const isOwner = !!userId && userId === listing.sellerId;
@@ -103,6 +104,7 @@ export function ItemDetail({
               {listing.image ? <img src={listing.image} alt={listing.name} className="mk-icon-img" /> : listing.icon}
             </span>
             <div className="mk-detail-headinfo">
+              <KindTag kind={listing.kind} />
               {listing.highlighted && <span className="mk-featured-tag inline">★ {t('mk.featured')}</span>}
               <h1 className="mk-detail-name">{listing.name}</h1>
               <div className="mk-detail-tags">
@@ -139,38 +141,42 @@ export function ItemDetail({
             <p className="mk-desc">{listing.description}</p>
           </section>
 
-          {/* market intelligence */}
-          <section className="mk-block">
-            <h2 className="mk-h2">{t('mk.market')} <span className={`mk-trend ${stats.trend}`}>{TREND_ICON[stats.trend]} {stats.trendPct >= 0 ? '+' : ''}{stats.trendPct.toFixed(1)}%</span></h2>
-            <div className="mk-marketgrid">
-              <MStat label={t('mk.min')} value={fmtPrice(stats.min, listing.currency)} />
-              <MStat label={t('mk.max')} value={fmtPrice(stats.max, listing.currency)} />
-              <MStat label={t('mk.avg')} value={fmtPrice(stats.avg, listing.currency)} />
-              <MStat label={t('mk.median')} value={fmtPrice(stats.median, listing.currency)} />
-              <MStat label={t('mk.listed')} value={String(stats.listed)} />
-              <MStat label={t('mk.soldcount')} value={String(stats.sold)} />
-              <MStat label={t('mk.lastsale')} value={fmtPrice(stats.lastSale, listing.currency)} />
-              <MStat label={t('mk.vslowest')} value={`${diffToLowest >= 0 ? '+' : ''}${diffToLowest.toFixed(0)}%`} tone={diffToLowest <= 0 ? 'good' : 'bad'} />
-            </div>
-          </section>
+          {/* market intelligence — só faz sentido para anúncios de venda */}
+          {!isWant && (
+            <section className="mk-block">
+              <h2 className="mk-h2">{t('mk.market')} <span className={`mk-trend ${stats.trend}`}>{TREND_ICON[stats.trend]} {stats.trendPct >= 0 ? '+' : ''}{stats.trendPct.toFixed(1)}%</span></h2>
+              <div className="mk-marketgrid">
+                <MStat label={t('mk.min')} value={fmtPrice(stats.min, listing.currency)} />
+                <MStat label={t('mk.max')} value={fmtPrice(stats.max, listing.currency)} />
+                <MStat label={t('mk.avg')} value={fmtPrice(stats.avg, listing.currency)} />
+                <MStat label={t('mk.median')} value={fmtPrice(stats.median, listing.currency)} />
+                <MStat label={t('mk.listed')} value={String(stats.listed)} />
+                <MStat label={t('mk.soldcount')} value={String(stats.sold)} />
+                <MStat label={t('mk.lastsale')} value={fmtPrice(stats.lastSale, listing.currency)} />
+                <MStat label={t('mk.vslowest')} value={`${diffToLowest >= 0 ? '+' : ''}${diffToLowest.toFixed(0)}%`} tone={diffToLowest <= 0 ? 'good' : 'bad'} />
+              </div>
+            </section>
+          )}
 
           {/* price history */}
-          <section className="mk-block">
-            <h2 className="mk-h2">{t('mk.hist.title')}</h2>
-            {series.length > 1 ? (
-              <PriceChart series={series} currency={listing.currency} />
-            ) : (
-              <p className="mk-muted">{t('mk.hist.none')}</p>
-            )}
-          </section>
+          {!isWant && (
+            <section className="mk-block">
+              <h2 className="mk-h2">{t('mk.hist.title')}</h2>
+              {series.length > 1 ? (
+                <PriceChart series={series} currency={listing.currency} />
+              ) : (
+                <p className="mk-muted">{t('mk.hist.none')}</p>
+              )}
+            </section>
+          )}
 
           {/* recommendations */}
-          {cheaper.length > 0 && (
+          {!isWant && cheaper.length > 0 && (
             <RecoRow title={t('mk.reco.cheaper')} items={cheaper} onOpen={onOpen} onSeller={onSeller} />
           )}
           <RecoRow title={t('mk.reco.similar')} items={similar} onOpen={onOpen} onSeller={onSeller} />
           {fromSeller.length > 0 && (
-            <RecoRow title={t('mk.reco.sameseller')} items={fromSeller} onOpen={onOpen} onSeller={onSeller} />
+            <RecoRow title={isWant ? t('mk.reco.sameuser.want') : t('mk.reco.sameseller')} items={fromSeller} onOpen={onOpen} onSeller={onSeller} />
           )}
         </div>
 
@@ -203,7 +209,7 @@ export function ItemDetail({
               </div>
             ) : (
               <div className="mk-actions">
-                <button className="mk-btn primary" onClick={() => onChat(seller.id, t('mk.chat.seed', { item: listing.name, price: fmtPrice(listing.price, listing.currency) }))}>💬 {t('mk.interest')}</button>
+                <button className="mk-btn primary" onClick={() => onChat(seller.id, t(isWant ? 'mk.chat.seed.want' : 'mk.chat.seed', { item: listing.name, price: fmtPrice(listing.price, listing.currency) }))}>💬 {isWant ? t('mk.interest.want') : t('mk.interest')}</button>
                 <button className="mk-btn" onClick={() => onChat(seller.id)}>✉ {t('mk.message')}</button>
                 <div className="mk-actions-row">
                   <button className={`mk-btn sm ${isFav(listing.id) ? 'active' : ''}`} onClick={() => toggleFav(listing.id)}>
@@ -216,12 +222,12 @@ export function ItemDetail({
             )}
             {!isSold && listing.whatsappEnabled && !isOwner && (
               <div className="wa-contact-block">
-                <p className="wa-contact-text">✅ {t('mk.wa.available')}</p>
+                <p className="wa-contact-text">✅ {t(isWant ? 'mk.wa.available.want' : 'mk.wa.available')}</p>
                 <button className="mk-btn wa-btn wa-cta" onClick={openWhatsapp}>💚 {t('mk.wa.contactbtn')}</button>
               </div>
             )}
             {!isSold && !listing.whatsappEnabled && (
-              <p className="wa-only-site">{t('mk.wa.onlysite')}</p>
+              <p className="wa-only-site">{t(isWant ? 'mk.wa.onlysite.want' : 'mk.wa.onlysite')}</p>
             )}
             {listing.shop && (
               <button className="mk-btn shop-view-btn" onClick={() => setShowShop(true)}>📍 {t('mk.shop.viewbtn')}</button>

@@ -9,7 +9,7 @@ import { AvatarEditor } from './AvatarEditor';
 import { ItemCard } from './ItemCard';
 import { InterestsPanel } from './InterestsPanel';
 import { LoginPrompt } from './LoginPrompt';
-import { Avatar, PriceTag, Since, StatusPill } from './parts';
+import { Avatar, KindTag, PriceTag, Since, StatusPill } from './parts';
 
 type Tab = 'active' | 'sold' | 'favorites' | 'wishlist' | 'interests';
 
@@ -35,7 +35,7 @@ export function Dashboard({ onOpen, onSeller, onCreate, onEdit, onLogin }: { onO
   const reserved = owned.filter((l) => l.status === 'reserved');
   const sold = owned.filter((l) => l.status === 'sold');
   const totalViews = owned.reduce((a, l) => a + l.views, 0);
-  const profit = sold.reduce((a, l) => a + l.price, 0);
+  const profit = sold.filter((l) => l.kind === 'sell').reduce((a, l) => a + l.price, 0);
 
   if (!user) return <LoginPrompt onLogin={onLogin} />;
 
@@ -80,6 +80,7 @@ export function Dashboard({ onOpen, onSeller, onCreate, onEdit, onLogin }: { onO
           {active.map((l) => (
             <div key={l.id} className="mk-dashrow">
               <span className="mk-icon" style={{ ['--rar' as string]: 'var(--gold)' }}>{l.image ? <img src={l.image} alt="" className="mk-icon-img" /> : l.icon}</span>
+              <KindTag kind={l.kind} />
               <button className="mk-dashrow-name" onClick={() => onOpen(l.id)}>{l.name}</button>
               <StatusPill status={l.status} />
               <span className="mk-muted">👁 {l.views}</span>
@@ -87,7 +88,7 @@ export function Dashboard({ onOpen, onSeller, onCreate, onEdit, onLogin }: { onO
               <span className="mk-dashrow-actions">
                 {BACKEND_ENABLED ? (
                   <>
-                    <button className="mk-btn sm primary" onClick={() => markSold(l.id)}>{t('mk.dash.marksold')}</button>
+                    <button className="mk-btn sm primary" onClick={() => markSold(l.id)}>{t(l.kind === 'want' ? 'mk.dash.marksold.want' : 'mk.dash.marksold')}</button>
                     <button className="mk-btn sm" onClick={() => onEdit(l.id)}>{t('mk.edit')}</button>
                     <button className="mk-btn sm danger" onClick={() => del(l.id)}>{t('mk.delete')}</button>
                   </>

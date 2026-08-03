@@ -2,7 +2,7 @@
 // price series, reputation tiers, recommendations, reviews and formatting.
 import { LISTINGS, REVIEW_TAGS, SELLERS, SELLER_BY_ID } from './data';
 import { priceHistory } from './data';
-import type { Currency, Listing, MarketStats, PricePoint, Review, Seller, Trend } from './types';
+import type { Currency, Listing, ListingKind, MarketStats, PricePoint, Review, Seller, Trend } from './types';
 
 export type SortKey = 'price_asc' | 'price_desc' | 'newest' | 'oldest' | 'views' | 'rating' | 'sold';
 
@@ -18,6 +18,7 @@ export function limitErrorKey(err: unknown): string | null {
 }
 
 export interface Filters {
+  kind: ListingKind;
   q: string;
   category: string; // '' = all
   rarity: string; // '' = all
@@ -31,13 +32,14 @@ export interface Filters {
 }
 
 export const EMPTY_FILTERS: Filters = {
-  q: '', category: '', rarity: '', minLevel: 0,
+  kind: 'sell', q: '', category: '', rarity: '', minLevel: 0,
   minPrice: null, maxPrice: null, seller: '', onlineOnly: false, verifiedOnly: false, highlightedOnly: false,
 };
 
 export function filterListings(listings: Listing[], f: Filters): Listing[] {
   const q = f.q.trim().toLowerCase();
   return listings.filter((l) => {
+    if (l.kind !== f.kind) return false;
     const seller = SELLER_BY_ID[l.sellerId];
     if (q) {
       const hay = `${l.name} ${l.subcategory} ${seller?.nick ?? ''}`.toLowerCase();

@@ -83,7 +83,7 @@ export async function fetchMarketOverview(): Promise<DbOverview> {
 export async function fetchItemMarket(listing: Listing): Promise<{ series: PricePoint[]; stats: MarketStats }> {
   const [salesRes, listedRes] = await Promise.all([
     sb().from('sales').select('price,sold_at').eq('category', listing.category).order('sold_at', { ascending: true }).limit(500),
-    sb().from('listings').select('price').eq('category', listing.category).eq('removed', false),
+    sb().from('listings').select('price').eq('category', listing.category).eq('kind', listing.kind).eq('removed', false),
   ]);
   const sales = (salesRes.data as { price: number | string; sold_at: string }[]) ?? [];
   const listedPrices = ((listedRes.data as { price: number | string }[]) ?? []).map((l) => Number(l.price));

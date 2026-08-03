@@ -8,6 +8,8 @@ export type Rarity = 'common' | 'rare' | 'epic' | 'legendary';
 
 export type ListingStatus = 'available' | 'reserved' | 'sold';
 
+export type ListingKind = 'sell' | 'want';
+
 export type Trend = 'up' | 'down' | 'stable';
 
 export type RepLevel = 'bronze' | 'silver' | 'gold' | 'diamond' | 'legendary';
@@ -43,6 +45,7 @@ export interface Seller {
 
 export interface Listing {
   id: string;
+  kind: ListingKind; // 'sell' = anúncio de venda; 'want' = pedido de compra
   name: string;
   itemLevel: number;
   icon: string; // emoji fallback icon
