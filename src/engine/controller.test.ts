@@ -36,7 +36,7 @@ describe('bestGreedyGenome (budget-monotonic quick build)', () => {
   });
 });
 
-describe('hard fusion caps (level 204 / 220 points)', () => {
+describe('sanity fusion cap (MAX_FUSION_POINTS guardrail)', () => {
   it('the greedy optimizer never spends beyond MAX_FUSION_POINTS even with an absurd budget', () => {
     const r = optimize({ id: 'c', name: 'c', weights: W, custom: true }, {}, { budget: 99999, allSouls: true });
     expect(r.pointsSpent).toBeLessThanOrEqual(MAX_FUSION_POINTS);

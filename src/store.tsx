@@ -7,7 +7,8 @@ import { getPlayerCode, setPlayerCode, createPlayer, savePlayer, loadPlayer } fr
 import { MAX_FUSION_LEVEL, MAX_FUSION_POINTS } from './lib/formula';
 
 const LS_KEY = 'priston-soul-tree-v2';
-// Nível de fusão padrão = cap atual do servidor (Ago/2026 = 204). Sobe ~3/mês.
+// Nível de fusão INICIAL de um jogador novo (valor do servidor em Ago/2026).
+// O jogador ajusta pro nível real dele no painel; a árvore recalcula sozinha.
 const DEFAULT_FUSION_LEVEL = 204;
 
 interface PersistShape {
@@ -73,7 +74,7 @@ function load(): PersistShape {
 }
 
 /** Total fusion points available: 16 (levels 1-80) + 1 per fusion level.
- *  Hard-capped at the game maximum (level 204 -> 220 points). */
+ *  Definido pelo nível que o jogador digita; só há um teto de sanidade. */
 export function totalFusionPoints(fusionLevel: number): number {
   return Math.min(MAX_FUSION_POINTS, 16 + Math.max(0, Math.min(MAX_FUSION_LEVEL, fusionLevel)));
 }

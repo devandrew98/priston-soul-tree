@@ -1,11 +1,12 @@
 import type { Rarity } from './types';
 
-/** Hard game caps: fusion level tops out at 204, which yields 220 fusion
- *  points (16 for levels 1-80 + 1 per fusion level). NOTHING in the app —
- *  UI, generators or the deep-search engine — may ever exceed these.
- *  O cap sobe ~3 por mês; atualize aqui quando virar o mês (Ago/2026 = 204). */
-export const MAX_FUSION_LEVEL = 204;
-export const MAX_FUSION_POINTS = 220;
+/** Limite de SANIDADE (guarda-corpo) — NÃO é o cap atual do servidor.
+ *  Quem manda no nível de fusão é o jogador: ele digita o próprio nível no
+ *  painel e a árvore recalcula os pontos (16 + nível) e tudo mais sozinha.
+ *  Este teto só existe pra barrar valores absurdos (erro de digitação) que
+ *  fariam o gerador travar. Deixe bem alto — não precisa mexer todo mês. */
+export const MAX_FUSION_LEVEL = 400;
+export const MAX_FUSION_POINTS = 16 + MAX_FUSION_LEVEL; // 416
 
 /** Rarity multipliers for the Fusion Tier node formula. */
 export const RARITY_MULT: Record<Rarity, number> = {
