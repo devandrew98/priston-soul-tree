@@ -780,6 +780,7 @@ const DICT: Record<string, Entry> = {
   'st.totals.filled': { pt: '{filled} / {total} nodes preenchidos', en: '{filled} / {total} nodes filled' },
   'st.totals.fusionpts': { pt: 'Pontos de Fusão', en: 'Fusion Points' },
   'st.totals.fusionlvl': { pt: 'Nível de Fusão (Soul Level)', en: 'Fusion Level (Soul Level)' },
+  'st.totals.fusionlvl.hint': { pt: 'Coloque o nível de fusão atual do seu personagem — a árvore calcula os pontos sozinha.', en: "Enter your character's current fusion level — the tree computes the points for you." },
   'st.totals.spent': { pt: 'Gasto', en: 'Spent' },
   'st.totals.available': { pt: 'Disponível', en: 'Available' },
   'st.totals.total': { pt: 'Total', en: 'Total' },

@@ -81,6 +81,9 @@ export function TotalsPanel() {
           onChange={(e) => setFusionLevel(Number(e.target.value))}
         />
       </div>
+      <p className="muted" style={{ fontSize: 11, margin: '4px 0 0' }}>
+        {t('st.totals.fusionlvl.hint')}
+      </p>
       <div className="points-bar">
         <div className={`points-fill ${over ? 'over' : ''}`} style={{ width: `${pct}%` }} />
       </div>
