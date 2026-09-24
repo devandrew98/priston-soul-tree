@@ -15,7 +15,10 @@ import { Streamers } from './components/Streamers';
 import { Guides } from './components/Guides';
 import { Mixing } from './components/Mixing';
 import { ResetPasswordModal } from './components/market/ResetPasswordModal';
+import { AuthModal } from './components/market/AuthModal';
 import { useAuth } from './components/market/store';
+import { BACKEND_ENABLED } from './lib/market/supabase';
+import { fetchSiteFlag } from './lib/market/siteSettings';
 import { useI18n } from './lib/i18n';
 
 export type Section = 'home' | 'timers' | 'market' | 'streamers' | 'guides' | 'tools';
@@ -80,12 +83,23 @@ const INIT = initialNav();
 
 export default function App() {
   const { t, lang, setLang } = useI18n();
-  const { isAdmin } = useAuth();
+  const { isAdmin, isLoggedIn } = useAuth();
   const [section, setSection] = useState<Section>(INIT.section);
   const [timerTab, setTimerTab] = useState<TimerTab>(INIT.timerTab);
   const [toolTab, setToolTab] = useState<ToolTab>(INIT.toolTab);
   const [openMenu, setOpenMenu] = useState<Section | null>(null);
   const [openAdminAt, setOpenAdminAt] = useState(0);
+  const [marketplaceEnabled, setMarketplaceEnabled] = useState(true);
+  const [showAuth, setShowAuth] = useState(false);
+
+  // Hides the Marketplace nav entry entirely while it's disabled (Admin -> Global) —
+  // even for admins; getting back in to re-enable it goes through the 🔒 icon instead.
+  useEffect(() => {
+    if (!BACKEND_ENABLED) return;
+    fetchSiteFlag('marketplace').then(setMarketplaceEnabled).catch(() => {});
+  }, []);
+
+  const nav = NAV.filter((n) => n.id !== 'market' || marketplaceEnabled);
 
   const go = (s: Section) => {
     setSection(s);
@@ -124,7 +138,7 @@ export default function App() {
           ⚔️ <span>PristonZONE</span>
         </button>
         <div className="topnav-tabs">
-          {NAV.map((n) => n.tabs ? (
+          {nav.map((n) => n.tabs ? (
             <div key={n.id} className="topnav-item">
               <button
                 className={`topnav-tab has-menu ${section === n.id ? 'active' : ''} ${openMenu === n.id ? 'open' : ''}`}
@@ -160,6 +174,11 @@ export default function App() {
           ))}
         </div>
         <span className="spacer" />
+        {!isLoggedIn && (
+          <button className="topnav-admin" title={t('mk.auth.login')} onClick={() => setShowAuth(true)}>
+            👤
+          </button>
+        )}
         {isAdmin && (
           <button className="topnav-admin" title={t('nav.admin')} onClick={openAdmin}>
             🔒
@@ -190,6 +209,7 @@ export default function App() {
       )}
 
       <ResetPasswordModal />
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
     </div>
   );
 }
