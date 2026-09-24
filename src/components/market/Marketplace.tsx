@@ -14,6 +14,8 @@ import { type NotifLink, useAuth, useChats } from './store';
 import { useListing } from './useMarketData';
 import { loadRepTiers } from '../../lib/market/repTiers';
 import { loadCategories } from '../../lib/market/marketCategories';
+import { BACKEND_ENABLED } from '../../lib/market/supabase';
+import { fetchSiteFlag } from '../../lib/market/siteSettings';
 import type { ListingKind } from '../../lib/market/types';
 import { Avatar, RepBadge } from './parts';
 
@@ -38,10 +40,18 @@ const TABS: { name: View['name']; icon: string; key: string }[] = [
 
 export function Marketplace({ openAdminAt, onAdminOpened }: { openAdminAt?: number; onAdminOpened?: () => void }) {
   const { t } = useI18n();
+  const { isAdmin } = useAuth();
   const { totalUnread, startConversation } = useChats();
   const [view, setView] = useState<View>({ name: 'browse' });
   const [showAuth, setShowAuth] = useState(false);
   const [adminUnlocked, setAdminUnlocked] = useState(false);
+  const [enabled, setEnabled] = useState(true);
+
+  // Whole-Marketplace kill switch (Admin -> Global). Fails open on error.
+  useEffect(() => {
+    if (!BACKEND_ENABLED) return;
+    fetchSiteFlag('marketplace').then(setEnabled).catch(() => {});
+  }, []);
 
   // Opened from the discreet top-right admin icon (App.tsx), even if already mounted.
   useEffect(() => {
@@ -78,8 +88,26 @@ export function Marketplace({ openAdminAt, onAdminOpened }: { openAdminAt?: numb
 
   const openLogin = () => setShowAuth(true);
 
+  // Disabled for the public (Admin -> Global): non-admins see a placeholder;
+  // admins still get the full Marketplace (with a banner) so they can flip it
+  // back on themselves.
+  if (!enabled && !isAdmin) {
+    return (
+      <div className="mk">
+        <div className="mk-disabled">
+          <span className="mk-disabled-ic">🏰</span>
+          <h1 className="mk-h1">{t('mk.disabled.title')}</h1>
+          <p className="mk-muted">{t('mk.disabled.body')}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mk">
+      {!enabled && isAdmin && (
+        <div className="mk-disabled-banner">⚠ {t('mk.disabled.adminnote')}</div>
+      )}
       <header className="mk-head">
         <div className="mk-head-title">
           <h1 className="mk-title">🏰 {t('mk.title')}</h1>

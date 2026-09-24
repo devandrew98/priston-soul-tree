@@ -1021,6 +1021,19 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .mk-admin-global textarea { background: var(--bg); border: 1px solid var(--border); border-radius: 9px; color: var(--text); padding: 10px 12px; font-size: 14px; font-family: inherit; resize: vertical; }
 .mk-admin-global textarea:focus { outline: none; border-color: var(--gold); }
 .mk-admin-global .mk-btn { align-self: flex-start; }
+
+/* Admin — Marketplace kill switch */
+.mk-mktoggle { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+.mk-mktoggle-info { display: flex; flex-direction: column; gap: 4px; }
+.mk-mktoggle-info p { margin: 0; font-size: 13px; max-width: 420px; }
+.mk-mktoggle-status { font-size: 12.5px; font-weight: 700; margin-top: 2px; }
+.mk-mktoggle-status.on { color: var(--green); }
+.mk-mktoggle-status.off { color: var(--attack); }
+
+/* Marketplace disabled placeholder + admin-only banner */
+.mk-disabled { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 80px 20px; margin: 0 auto; max-width: 480px; }
+.mk-disabled-ic { font-size: 48px; }
+.mk-disabled-banner { background: color-mix(in srgb, var(--attack) 18%, var(--bg2)); border: 1px solid var(--attack); color: #f0b3af; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-weight: 700; margin-bottom: 14px; }
 .mk-admin-logs { display: flex; flex-direction: column; gap: 4px; }
 .mk-log { display: flex; gap: 12px; padding: 8px 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 8px; font-size: 13px; color: var(--text); font-family: ui-monospace, monospace; }
 .mk-log-time { color: var(--text-dim); white-space: nowrap; }

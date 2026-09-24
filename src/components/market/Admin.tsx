@@ -9,6 +9,7 @@ import { MarketCategoriesAdmin } from './MarketCategoriesAdmin';
 import { GuidesAdmin } from './GuidesAdmin';
 import { DownloadAdmin } from './DownloadAdmin';
 import { ImageOptimizer } from './ImageOptimizer';
+import { MarketplaceToggle } from './MarketplaceToggle';
 import type { ListingKind } from '../../lib/market/types';
 import { Avatar, KindTag, PriceTag, Since, StatusPill } from './parts';
 
@@ -189,6 +190,7 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
       {/* GLOBAL NOTIFICATION */}
       {sec === 'global' && (
         <div className="mk-admin-global">
+          <MarketplaceToggle />
           <p className="mk-muted">{t('mk.admin.globalhint')}</p>
           <textarea value={globalText} onChange={(e) => setGlobalText(e.target.value)} rows={3} placeholder={t('mk.admin.globalph')} />
           <button className="mk-btn primary" disabled={!globalText.trim()} onClick={() => { m.sendGlobal(globalText.trim()); setGlobalText(''); }}>📢 {t('mk.admin.send')}</button>
