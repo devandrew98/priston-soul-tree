@@ -169,7 +169,7 @@ export function WardrobeBuilder({ editId, onDone }: { editId?: string; onDone: (
           <div className="wd-souls-block">
             <h2 className="mk-h2">✨ {t('wd.souls.title')}</h2>
             <p className="mk-muted">{t('wd.souls.count', { n: souls.length })}</p>
-            <button className="mk-btn sm" onClick={() => setShowSouls(true)}>+ {t('wd.souls.manage')}</button>
+            <button className="mk-btn primary wd-souls-managebtn" onClick={() => setShowSouls(true)}>✨ {t('wd.souls.manage')}</button>
           </div>
         </div>
       </div>

@@ -2,13 +2,19 @@
 // as the body of the public share page (`full` adds notes/price/contact/listed).
 import { useI18n } from '../../lib/i18n';
 import { SOULS_BY_ID, CATEGORY_ICON, CATEGORY_LABEL } from '../../lib/souls';
+import type { Category } from '../../lib/types';
 import { SoulIcon } from '../SoulIcon';
 import { CLASS_PORTRAIT, fmtWardrobeNumber, type WardrobeCharacter, type WardrobeItem } from '../../lib/wardrobe/types';
 import { EquipmentDoll } from './EquipmentDoll';
 
+const SOUL_CATEGORIES: Category[] = ['attack', 'defense', 'support', 'pvp'];
+
 export function CharacterSummary({ character, itemsById, full }: { character: WardrobeCharacter; itemsById: Map<number, WardrobeItem>; full?: boolean }) {
   const { t, lang } = useI18n();
   const souls = character.souls.map((cs) => ({ soul: SOULS_BY_ID[cs.id], level: cs.level })).filter((x) => x.soul);
+  const soulsByCat = SOUL_CATEGORIES
+    .map((cat) => ({ cat, list: souls.filter((s) => s.soul.category === cat) }))
+    .filter((g) => g.list.length > 0);
   const fmtDate = (ms: number) => new Date(ms).toLocaleDateString(lang === 'pt' ? 'pt-BR' : 'en-US');
 
   return (
@@ -36,18 +42,23 @@ export function CharacterSummary({ character, itemsById, full }: { character: Wa
 
           <EquipmentDoll equipment={character.equipment} itemsById={itemsById} readOnly />
 
-          {souls.length > 0 && (
+          {soulsByCat.length > 0 && (
             <div className="wd-summary-souls">
               <h2 className="mk-h2">✨ {t('wd.souls.title')}</h2>
-              <div className="wd-souls-grid">
-                {souls.map(({ soul: s, level }) => (
-                  <div key={s.id} className="wd-soul-chip" title={s.name}>
-                    <SoulIcon soul={s} size={32} />
-                    <span>{s.name}</span>
-                    <span className="mk-muted">{CATEGORY_ICON[s.category]} {CATEGORY_LABEL[s.category]} · Lv{level}</span>
+              {soulsByCat.map(({ cat, list }) => (
+                <div key={cat} className="wd-summary-soulcat">
+                  <h3 className="wd-summary-soulcat-head">{CATEGORY_ICON[cat]} {CATEGORY_LABEL[cat]}</h3>
+                  <div className="wd-souls-grid">
+                    {list.map(({ soul: s, level }) => (
+                      <div key={s.id} className="wd-soul-chip" title={s.name}>
+                        <SoulIcon soul={s} size={32} />
+                        <span>{s.name}</span>
+                        <span className="mk-muted">Lv{level}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           )}
 

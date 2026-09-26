@@ -1622,7 +1622,11 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .wd-souls-block { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; margin-top: 10px; }
 .wd-souls-block .mk-h2 { margin: 0; }
 .wd-souls-block p { margin: 0; }
+.wd-souls-managebtn { margin-top: 4px; padding: 12px 22px; font-size: 14.5px; border-radius: 11px; box-shadow: 0 0 18px -4px var(--gold); }
 .wd-souls-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.wd-summary-soulcat { margin-bottom: 16px; }
+.wd-summary-soulcat:last-child { margin-bottom: 0; }
+.wd-summary-soulcat-head { margin: 0 0 8px; font-size: 13px; color: var(--gold-bright); }
 .wd-souls-scroll { max-height: 420px; overflow-y: auto; padding-right: 4px; }
 .wd-souls-cattabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
 .wd-souls-cattabs button { display: flex; align-items: center; gap: 6px; background: var(--panel); border: 1px solid var(--border); color: var(--text-dim); padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 700; }
