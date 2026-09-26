@@ -9,7 +9,7 @@ import {
 import { fetchWardrobeItems } from '../../lib/wardrobe/items';
 import { applyEquip, patchEquipped } from '../../lib/wardrobe/logic';
 import {
-  EMPTY_EQUIPMENT, SLOT_TO_ITEM_SLOT, WARDROBE_CLASSES,
+  EMPTY_EQUIPMENT, SLOT_TO_ITEM_SLOT, WARDROBE_CLASSES, fmtWardrobeNumber,
   type CharacterSoul, type Equipment, type EquipSlotKey, type ItemSlot, type WardrobeCharacter,
   type WardrobeClass, type WardrobeItem,
 } from '../../lib/wardrobe/types';
@@ -130,10 +130,20 @@ export function WardrobeBuilder({ editId, onDone }: { editId?: string; onDone: (
 
           <h2 className="mk-h2">{t('wd.sale.title')}</h2>
           <label className="mk-field"><span>{t('wd.sale.pricecoins')}</span>
-            <input type="number" min={0} value={priceCoins} onChange={(e) => setPriceCoins(e.target.value)} placeholder="0" />
+            <input
+              type="text" inputMode="numeric"
+              value={priceCoins ? fmtWardrobeNumber(Number(priceCoins)) : ''}
+              onChange={(e) => setPriceCoins(e.target.value.replace(/\D/g, ''))}
+              placeholder="0"
+            />
           </label>
           <label className="mk-field"><span>{t('wd.sale.pricegold')}</span>
-            <input type="number" min={0} value={priceGold} onChange={(e) => setPriceGold(e.target.value)} placeholder="0" />
+            <input
+              type="text" inputMode="numeric"
+              value={priceGold ? fmtWardrobeNumber(Number(priceGold)) : ''}
+              onChange={(e) => setPriceGold(e.target.value.replace(/\D/g, ''))}
+              placeholder="0"
+            />
           </label>
           <label className="mk-field"><span>{t('wd.sale.contactwhatsapp')}</span>
             <input value={contactWhatsapp} onChange={(e) => setContactWhatsapp(e.target.value)} placeholder={t('wd.sale.contactwhatsappph')} />
