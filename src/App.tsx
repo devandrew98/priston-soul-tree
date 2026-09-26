@@ -14,6 +14,8 @@ import { Marketplace } from './components/market/Marketplace';
 import { Streamers } from './components/Streamers';
 import { Guides } from './components/Guides';
 import { Mixing } from './components/Mixing';
+import { Wardrobe } from './components/wardrobe/Wardrobe';
+import { CharacterPublicPage } from './components/wardrobe/CharacterPublicPage';
 import { ResetPasswordModal } from './components/market/ResetPasswordModal';
 import { AuthModal } from './components/market/AuthModal';
 import { useAuth } from './components/market/store';
@@ -24,7 +26,7 @@ import { useI18n } from './lib/i18n';
 export type Section = 'home' | 'timers' | 'market' | 'streamers' | 'guides' | 'tools';
 type Tab = 'planner' | 'inventory' | 'optimizer';
 type TimerTab = 'boss' | 'fury';
-type ToolTab = 'soultree' | 'mixing' | 'sod';
+type ToolTab = 'soultree' | 'mixing' | 'sod' | 'wardrobe';
 
 const SECTIONS: Section[] = ['home', 'timers', 'market', 'streamers', 'guides', 'tools'];
 
@@ -40,6 +42,7 @@ const TOOL_TABS: { id: ToolTab; icon: string; key: string }[] = [
   { id: 'soultree', icon: '🌳', key: 'nav.soultree' },
   { id: 'mixing', icon: '⚗️', key: 'nav.mixing' },
   { id: 'sod', icon: '🎯', key: 'nav.sod' },
+  { id: 'wardrobe', icon: '🧥', key: 'nav.wardrobe' },
 ];
 
 // Tabs with `tabs` open a dropdown (cascade) instead of navigating directly.
@@ -82,6 +85,13 @@ function initialNav(): { section: Section; timerTab: TimerTab; toolTab: ToolTab 
 const INIT = initialNav();
 
 export default function App() {
+  // Public character page (pristonzone.com/char/<slug>) is a standalone page,
+  // no topnav/shell — matches its own share-link URL, not a client-side route.
+  if (window.location.pathname.startsWith('/char/')) {
+    const slug = decodeURIComponent(window.location.pathname.slice('/char/'.length).replace(/\/$/, ''));
+    return <CharacterPublicPage slug={slug} />;
+  }
+
   const { t, lang, setLang } = useI18n();
   const { isAdmin, isLoggedIn } = useAuth();
   const [section, setSection] = useState<Section>(INIT.section);
@@ -205,7 +215,7 @@ export default function App() {
       ) : section === 'guides' ? (
         <Guides />
       ) : (
-        toolTab === 'soultree' ? <SoulTree /> : toolTab === 'mixing' ? <Mixing /> : <SoD />
+        toolTab === 'soultree' ? <SoulTree /> : toolTab === 'mixing' ? <Mixing /> : toolTab === 'sod' ? <SoD /> : <Wardrobe onLogin={() => setShowAuth(true)} />
       )}
 
       <ResetPasswordModal />

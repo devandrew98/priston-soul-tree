@@ -1552,3 +1552,107 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .mk-imgopt-progress { display: flex; flex-direction: column; gap: 6px; }
 .mk-imgopt-bar { height: 8px; border-radius: 4px; background: var(--bg2); border: 1px solid var(--border); overflow: hidden; }
 .mk-imgopt-bar > div { height: 100%; background: var(--gold); transition: width 0.2s; }
+
+/* ============================================================================
+   Armário de Personagem (Wardrobe)
+   ============================================================================ */
+.wd-list { max-width: 1000px; margin: 0 auto; padding: 20px; }
+.wd-list-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+.wd-list-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.wd-list-card { display: flex; flex-direction: column; gap: 6px; background: linear-gradient(180deg, var(--panel), var(--bg2)); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+.wd-list-card b { color: var(--gold-bright); font-size: 15px; }
+.wd-list-card-acts { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+
+.wd-builder { max-width: 1100px; margin: 0 auto; padding: 20px; }
+.wd-builder-grid { display: grid; grid-template-columns: minmax(260px, 360px) 1fr; gap: 24px; margin-top: 12px; align-items: start; }
+.wd-builder-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; align-content: start; }
+.wd-builder-form .mk-h2 { grid-column: 1 / -1; margin-top: 6px; }
+.wd-builder-doll { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.wd-builder-actions { display: flex; gap: 10px; margin: 18px 0 8px; }
+@media (max-width: 820px) {
+  .wd-builder-grid { grid-template-columns: 1fr; }
+  .wd-builder-form { grid-template-columns: 1fr; }
+}
+
+.wd-expbar { height: 10px; border-radius: 6px; background: var(--bg); border: 1px solid var(--border); overflow: hidden; grid-column: 1 / -1; }
+.wd-expbar > div { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); transition: width 0.2s; }
+
+.wd-doll { display: flex; gap: 22px; justify-content: center; padding: 14px; background: radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--gold) 8%, var(--bg2)), var(--bg)); border: 1px solid var(--border); border-radius: 16px; }
+.wd-doll-col { display: flex; flex-direction: column; gap: 12px; }
+.wd-doll-col.center { align-items: center; justify-content: flex-start; gap: 18px; }
+.wd-doll-weapons { display: flex; gap: 12px; }
+
+.wd-slot { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.wd-slot-btn { width: 62px; height: 62px; border-radius: 12px; background: var(--panel); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; padding: 4px; transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; }
+.wd-slot-btn:hover:not(:disabled) { border-color: var(--gold); transform: translateY(-2px); }
+.wd-slot.filled .wd-slot-btn { border-color: var(--rar, var(--border)); box-shadow: 0 0 14px -4px var(--rar, transparent); background: color-mix(in srgb, var(--rar, var(--border)) 12%, var(--panel)); }
+.wd-slot-icon { width: 100%; height: 100%; object-fit: contain; }
+.wd-slot-empty { font-size: 22px; opacity: 0.35; }
+.wd-slot-aging { position: absolute; bottom: -4px; right: -4px; background: var(--gold); color: #1a1206; font-size: 10px; font-weight: 800; padding: 1px 5px; border-radius: 8px; }
+.wd-slot-label { font-size: 10.5px; color: var(--text-dim); text-align: center; max-width: 70px; }
+.wd-slot-clear { position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%; background: var(--attack); color: #fff; font-size: 10px; line-height: 1; display: flex; align-items: center; justify-content: center; border: none; }
+.wd-slot-aginput { width: 64px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 11px; padding: 2px 4px; text-align: center; }
+.wd-slot-controls { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+.wd-slot-rarity { width: 90px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; font-size: 10.5px; padding: 2px 3px; font-weight: 700; }
+.wd-slot-textarea { width: 130px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 10.5px; padding: 4px 6px; resize: vertical; font-family: inherit; margin-top: 2px; }
+.wd-slot-fieldlabel { display: flex; flex-direction: column; font-size: 9.5px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+.wd-tooltip-detail { white-space: pre-line; max-width: 220px; }
+.wd-picker-hint { font-size: 11.5px; margin: -4px 0 10px; }
+
+.wd-tooltip { display: none; position: absolute; z-index: 20; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: var(--panel2, var(--panel)); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; min-width: 160px; flex-direction: column; gap: 2px; font-size: 12px; box-shadow: 0 10px 24px rgba(0,0,0,0.5); white-space: nowrap; }
+.wd-slot:hover .wd-tooltip { display: flex; }
+.wd-tooltip-aging { color: var(--gold); font-weight: 700; }
+
+.wd-picker { max-width: 640px; }
+.wd-picker-search { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 9px; color: var(--text); padding: 9px 12px; font-size: 14px; margin: 10px 0; }
+.wd-picker-search:focus { outline: none; border-color: var(--gold); }
+.wd-picker-rarities { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.wd-picker-rarities button { background: var(--panel); border: 1px solid var(--border); color: var(--text-dim); padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+.wd-picker-rarities button.on { background: color-mix(in srgb, var(--rar, var(--gold)) 25%, var(--panel)); border-color: var(--rar, var(--gold)); color: var(--text); }
+.wd-picker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; max-height: 360px; overflow-y: auto; padding-right: 4px; }
+.wd-picker-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 10px 6px; text-align: center; transition: 0.15s; }
+.wd-picker-card:hover { border-color: var(--rar, var(--gold)); transform: translateY(-2px); box-shadow: 0 8px 18px -6px var(--rar, transparent); }
+.wd-picker-card img { width: 40px; height: 40px; object-fit: contain; }
+.wd-picker-card-name { font-size: 11.5px; color: var(--text); line-height: 1.25; }
+.wd-picker-card-meta { font-size: 10px; color: var(--text-dim); }
+.wd-picker-card.soul.on { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 14%, var(--panel)); }
+.wd-picker-check { position: absolute; top: 4px; right: 6px; color: var(--gold-bright); font-weight: 800; }
+.wd-modal-actions { display: flex; justify-content: flex-end; margin-top: 14px; }
+
+.wd-souls-block { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; margin-top: 10px; }
+.wd-souls-block .mk-h2 { margin: 0; }
+.wd-souls-block p { margin: 0; }
+.wd-souls-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.wd-souls-scroll { max-height: 420px; overflow-y: auto; padding-right: 4px; }
+.wd-souls-cattabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+.wd-souls-cattabs button { display: flex; align-items: center; gap: 6px; background: var(--panel); border: 1px solid var(--border); color: var(--text-dim); padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 700; }
+.wd-souls-cattabs button.on { background: color-mix(in srgb, var(--gold) 22%, var(--panel)); border-color: var(--gold); color: var(--gold-bright); }
+.wd-souls-cattabs-badge { background: var(--gold); color: #1a1206; border-radius: 10px; padding: 0 6px; font-size: 11px; }
+.wd-soul-levels { display: flex; gap: 4px; margin-top: 4px; }
+.wd-soul-levels button { width: 20px; height: 20px; border-radius: 5px; background: var(--bg); border: 1px solid var(--border); color: var(--text-dim); font-size: 10.5px; font-weight: 800; }
+.wd-soul-levels button.on { background: var(--gold); border-color: var(--gold); color: #1a1206; }
+.wd-soul-chip { display: flex; flex-direction: column; align-items: center; gap: 3px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 8px; text-align: center; font-size: 11.5px; }
+
+.wd-sharebox { margin-top: 16px; background: var(--bg2); border: 1px solid var(--gold); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.wd-sharebox-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.wd-sharebox-row input { flex: 1; min-width: 200px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 10px; font-size: 13px; }
+
+.wd-summary { max-width: 920px; }
+.wd-summary-body { display: flex; gap: 20px; align-items: flex-start; }
+.wd-summary-portrait { flex: none; width: 180px; border-radius: 12px; border: 1px solid var(--border); }
+.wd-summary-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+@media (max-width: 640px) {
+  .wd-summary-body { flex-direction: column; align-items: center; }
+  .wd-summary-portrait { width: 140px; }
+}
+.wd-summary-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.wd-summary-nick { margin: 0; color: var(--gold-bright); }
+.wd-summary-class { color: var(--text-dim); font-weight: 700; }
+.wd-summary-level { display: flex; flex-direction: column; gap: 4px; min-width: 180px; font-size: 13px; font-weight: 700; }
+.wd-summary-notes p { white-space: pre-line; color: var(--text-dim); }
+.wd-summary-price { display: flex; gap: 14px; }
+.wd-summary-contact { display: flex; gap: 16px; font-size: 13px; color: var(--text-dim); flex-wrap: wrap; }
+.wd-summary-updated { font-size: 12px; }
+
+.wd-public-page { max-width: 760px; margin: 0 auto; padding: 28px 20px 60px; }
+.wd-public-brand { display: inline-block; margin-bottom: 20px; color: var(--gold-bright); font-weight: 800; text-decoration: none; font-size: 16px; }
