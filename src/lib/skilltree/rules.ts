@@ -63,47 +63,61 @@ export function splitUsedPoints(classSlug: ClassSlug, skillLevels: SkillLevels):
 }
 
 /**
+ * The two independent prerequisite chains: Tier 1-3 share one continuous
+ * chain (they all spend Skill Points), while Tier 4 is its own separate
+ * chain (it spends Elite Points). A skill can only keep points if every
+ * skill before it in its chain already has at least 1 point.
+ */
+function getSkillChain(cls: ReturnType<typeof getSkillClass>, elite: boolean): Skill[] {
+  return cls.tiers
+    .filter((t) => (t.tier === 4) === elite)
+    .flatMap((t) => t.skills);
+}
+
+/**
  * Clamps every invested skill level down to what's actually affordable and
- * level-legal, walking each tier in unlock order so the result is
- * deterministic. Within a tier, a skill can only keep points if every skill
- * before it already has at least 1 point — so a broken prerequisite (e.g. the
- * character level dropped, or a build was decoded from a manipulated URL)
- * cascades down and clears everything that depended on it. This never grants
- * points that weren't already requested — it only ever removes or clamps —
- * which is what makes it safe to run on shared/manipulated build URLs.
+ * level-legal, walking each prerequisite chain in order so the result is
+ * deterministic. A broken prerequisite (e.g. the character level dropped, or
+ * a build was decoded from a manipulated URL) cascades down and clears
+ * everything that depended on it. This never grants points that weren't
+ * already requested — it only ever removes or clamps — which is what makes
+ * it safe to run on shared/manipulated build URLs.
  */
 export function sanitizeBuild(classSlug: ClassSlug, level: number, questIds: string[], skillLevels: SkillLevels): SkillLevels {
   const cls = getSkillClass(classSlug);
   const validQuestIds = questIds.filter((id) => SKILL_POINT_QUESTS.some((q) => q.id === id));
-  let spBudget = getAvailableSkillPoints(level, validQuestIds);
-  let epBudget = getAvailableElitePoints(level);
 
   const next: SkillLevels = {};
-  for (const tier of cls.tiers) {
+
+  const runChain = (chain: Skill[], budget: number): void => {
+    let remaining = budget;
     let chainOk = true; // the skill before this one (if any) still has >=1 point
-    for (const skill of tier.skills) {
+    for (const skill of chain) {
       const requested = Math.max(0, Math.floor(skillLevels[skill.id] ?? 0));
       const levelCap = getMaxAllowedSkillLevel(skill, level);
-      const elite = usesElitePoints(skill);
-      const budget = elite ? epBudget : spBudget;
-      const finalLevel: number = chainOk ? Math.min(requested, levelCap, budget) : 0;
+      const finalLevel: number = chainOk ? Math.min(requested, levelCap, remaining) : 0;
       if (finalLevel > 0) {
         next[skill.id] = finalLevel;
-        if (elite) epBudget -= finalLevel; else spBudget -= finalLevel;
+        remaining -= finalLevel;
       }
       chainOk = finalLevel > 0;
     }
-  }
+  };
+
+  runChain(getSkillChain(cls, false), getAvailableSkillPoints(level, validQuestIds));
+  runChain(getSkillChain(cls, true), getAvailableElitePoints(level));
+
   return next;
 }
 
 /**
  * Applies a single skill +/-/MAX change and returns the resulting sanitized
  * build. Investing further into a skill (not removing points) auto-invests
- * the minimum 1 point into every earlier skill of the same tier that's still
- * at 0 — already-invested earlier skills are left untouched. Removing the
- * last point from a skill relies on sanitizeBuild's chain check to cascade
- * the removal to whatever depended on it.
+ * the minimum 1 point into every earlier skill in the same prerequisite
+ * chain (Tier 1-3 combined, or Tier 4 on its own) that's still at 0 —
+ * already-invested earlier skills are left untouched. Removing the last
+ * point from a skill relies on sanitizeBuild's chain check to cascade the
+ * removal to whatever depended on it.
  */
 export function applySkillChange(
   classSlug: ClassSlug,
@@ -118,14 +132,14 @@ export function applySkillChange(
 
   if (desiredLevel > currentLevel) {
     const cls = getSkillClass(classSlug);
-    for (const tier of cls.tiers) {
-      const idx = tier.skills.findIndex((s) => s.id === skillId);
-      if (idx === -1) continue;
+    const targetSkill = cls.tiers.flatMap((t) => t.skills).find((s) => s.id === skillId);
+    if (targetSkill) {
+      const chain = getSkillChain(cls, usesElitePoints(targetSkill));
+      const idx = chain.findIndex((s) => s.id === skillId);
       for (let i = 0; i < idx; i++) {
-        const priorId = tier.skills[i].id;
+        const priorId = chain[i].id;
         if ((candidate[priorId] ?? 0) < 1) candidate[priorId] = 1;
       }
-      break;
     }
   }
 
