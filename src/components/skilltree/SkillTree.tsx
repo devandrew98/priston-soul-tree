@@ -13,8 +13,13 @@ import { SkillCard } from './SkillCard';
 import { BuildSummary } from './BuildSummary';
 
 const STORAGE_KEY = 'skilltree-build';
+const BUILD_NAME_MAX_LENGTH = 40;
 
-interface StoredBuild { classSlug: ClassSlug; level: number; questIds: string[]; skillLevels: SkillLevels }
+function sanitizeBuildName(raw: string): string {
+  return raw.trim().slice(0, BUILD_NAME_MAX_LENGTH);
+}
+
+interface StoredBuild { classSlug: ClassSlug; level: number; questIds: string[]; skillLevels: SkillLevels; buildName?: string }
 
 function readInitial(): StoredBuild {
   // 1) A shared link (/skill-tree/<slug>?level=&build=) always wins.
@@ -25,9 +30,10 @@ function readInitial(): StoredBuild {
       const params = new URLSearchParams(window.location.search);
       const level = Number(params.get('level')) || 1;
       const encoded = params.get('build') || '';
+      const buildName = sanitizeBuildName(params.get('name') || '');
       const { questIds, skillLevels } = encoded ? decodeBuild(slugRaw, encoded) : { questIds: [], skillLevels: {} };
       const validated = validateBuild({ classSlug: slugRaw, level, questIds, skillLevels });
-      return validated;
+      return { ...validated, buildName };
     }
   }
   // 2) Otherwise, resume whatever was being built locally last time.
@@ -35,10 +41,11 @@ function readInitial(): StoredBuild {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as StoredBuild;
-      return validateBuild(parsed);
+      const validated = validateBuild(parsed);
+      return { ...validated, buildName: sanitizeBuildName(parsed.buildName || '') };
     }
   } catch { /* ignore */ }
-  return { classSlug: 'fighter', level: 1, questIds: [], skillLevels: {} };
+  return { classSlug: 'fighter', level: 1, questIds: [], skillLevels: {}, buildName: '' };
 }
 
 export function SkillTree() {
@@ -48,6 +55,7 @@ export function SkillTree() {
   const [level, setLevel] = useState(init.level);
   const [questIds, setQuestIds] = useState<string[]>(init.questIds);
   const [skillLevels, setSkillLevels] = useState<SkillLevels>(init.skillLevels);
+  const [buildName, setBuildName] = useState(init.buildName ?? '');
   const [notice, setNotice] = useState('');
   const [shareUrl, setShareUrl] = useState('');
   const [copied, setCopied] = useState(false);
@@ -63,8 +71,8 @@ export function SkillTree() {
   // so re-opening the same tool later doesn't fight with someone else's build).
   useEffect(() => {
     if (window.location.pathname.startsWith('/skill-tree/')) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ classSlug, level, questIds, skillLevels }));
-  }, [classSlug, level, questIds, skillLevels]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ classSlug, level, questIds, skillLevels, buildName }));
+  }, [classSlug, level, questIds, skillLevels, buildName]);
 
   // Re-sanitize whenever level/quests/class change (e.g. lowering the level
   // can make some invested skills illegal) — auto-fix instead of blocking.
@@ -92,11 +100,11 @@ export function SkillTree() {
   const toggleQuest = (id: string) => setQuestIds((cur) => (cur.includes(id) ? cur.filter((q) => q !== id) : [...cur, id]));
 
   const doShare = () => {
-    const url = buildShareUrl(classSlug, level, questIds, skillLevels);
+    const url = buildShareUrl(classSlug, level, questIds, skillLevels, buildName);
     setShareUrl(url);
     window.history.replaceState(null, '', url);
   };
-  const copyLink = () => { navigator.clipboard?.writeText(shareUrl || buildShareUrl(classSlug, level, questIds, skillLevels)); setCopied(true); window.setTimeout(() => setCopied(false), 2000); };
+  const copyLink = () => { navigator.clipboard?.writeText(shareUrl || buildShareUrl(classSlug, level, questIds, skillLevels, buildName)); setCopied(true); window.setTimeout(() => setCopied(false), 2000); };
 
   const encoded = encodeBuild(classSlug, questIds, skillLevels);
   const displayCode = buildDisplayCode(classSlug, level, encoded);
@@ -109,6 +117,16 @@ export function SkillTree() {
       </header>
 
       <div className="sk-topbar">
+        <label className="mk-field">
+          <span>{t('sk.buildname')}</span>
+          <input
+            type="text"
+            value={buildName}
+            maxLength={BUILD_NAME_MAX_LENGTH}
+            placeholder={t('sk.buildname.placeholder')}
+            onChange={(e) => setBuildName(e.target.value)}
+          />
+        </label>
         <label className="mk-field">
           <span>{t('sk.class')}</span>
           <select value={classSlug} onChange={(e) => setClassSlug(e.target.value as ClassSlug)}>
@@ -200,6 +218,7 @@ export function SkillTree() {
       ))}
 
       <BuildSummary
+        buildName={buildName}
         className={cls.name}
         level={level}
         skillPoints={{ used: skillPointsUsed, total: spAvailable }}

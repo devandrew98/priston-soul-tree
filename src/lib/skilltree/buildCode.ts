@@ -61,8 +61,10 @@ export function buildDisplayCode(classSlug: ClassSlug, level: number, encoded: s
   return `${abbr}-${level}-${short}`;
 }
 
-export function buildShareUrl(classSlug: ClassSlug, level: number, questIds: string[], skillLevels: SkillLevels): string {
+export function buildShareUrl(classSlug: ClassSlug, level: number, questIds: string[], skillLevels: SkillLevels, buildName?: string): string {
   const encoded = encodeBuild(classSlug, questIds, skillLevels);
   const params = new URLSearchParams({ level: String(level), build: encoded });
+  const trimmedName = buildName?.trim();
+  if (trimmedName) params.set('name', trimmedName);
   return `${location.origin}/skill-tree/${classSlug}?${params.toString()}`;
 }

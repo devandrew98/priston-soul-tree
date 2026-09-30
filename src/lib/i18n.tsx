@@ -25,6 +25,8 @@ const DICT: Record<string, Entry> = {
   // Árvore de Skills (skill builder)
   'sk.title': { pt: 'Árvore de Skills', en: 'Skill Tree' },
   'sk.subtitle': { pt: 'Monte sua build de skills, distribua Skill Points e Elite Points, e compartilhe com um link.', en: 'Build your skill loadout, spend Skill Points and Elite Points, and share it with a link.' },
+  'sk.buildname': { pt: 'Nome da Build', en: 'Build Name' },
+  'sk.buildname.placeholder': { pt: 'Ex: Build PvP', en: 'e.g. PvP Build' },
   'sk.class': { pt: 'Classe', en: 'Class' },
   'sk.level': { pt: 'Level', en: 'Level' },
   'sk.quests.title': { pt: 'Skill Points de Quests', en: 'Skill Point quests' },

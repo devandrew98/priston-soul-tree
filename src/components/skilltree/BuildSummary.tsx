@@ -3,8 +3,9 @@ import { SKILL_POINT_QUESTS } from '../../lib/skilltree/config';
 import type { SkillClass, SkillLevels } from '../../lib/skilltree/types';
 
 export function BuildSummary({
-  className, level, skillPoints, elitePoints, questIds, cls, skillLevels,
+  buildName, className, level, skillPoints, elitePoints, questIds, cls, skillLevels,
 }: {
+  buildName?: string;
   className: string;
   level: number;
   skillPoints: { used: number; total: number };
@@ -20,7 +21,7 @@ export function BuildSummary({
 
   return (
     <section className="sk-summary">
-      <h2 className="mk-h2">📋 {t('sk.summary.title')}</h2>
+      <h2 className="mk-h2">📋 {buildName ? buildName : t('sk.summary.title')}</h2>
       <div className="sk-summary-head">
         <b>{className} — {t('sk.level')} {level}</b>
       </div>
