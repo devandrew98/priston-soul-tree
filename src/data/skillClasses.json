@@ -1,0 +1,2222 @@
+{
+  "fighter": {
+    "slug": "fighter",
+    "name": "Fighter",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Fighter",
+        "skills": [
+          {
+            "id": "fighter-raving",
+            "name": "Raving",
+            "tier": 1,
+            "unlockLevel": 4,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Strike with a flurry of attacks at the cost of your HP.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF14_raving.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "fighter-resilience",
+            "name": "Resilience",
+            "tier": 1,
+            "unlockLevel": 8,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Permanently increases your HP and HP Regen.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF70_B_Health.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "fighter-cyclone-strike",
+            "name": "Cyclone Strike",
+            "tier": 1,
+            "unlockLevel": 12,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Spin viciously with the axe to hit all the enemies around you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF66_C_Strike.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "fighter-concentration",
+            "name": "Concentration",
+            "tier": 1,
+            "unlockLevel": 16,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Muster your inner strength to boost your attack speed and rating temporarily.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF40_Concentration.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 2,
+        "name": "Warrior",
+        "skills": [
+          {
+            "id": "fighter-brutal-swing",
+            "name": "Brutal Swing",
+            "tier": 2,
+            "unlockLevel": 20,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Swipe diagonally up at the target with boosted critical chance and critical damage, at the cost of your HP. Boosts Brutal Swing and Destroyer.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF23_B_Swing.png",
+            "isPrimal": true,
+            "isUltimate": false
+          },
+          {
+            "id": "fighter-double-impact",
+            "name": "Double Impact",
+            "tier": 2,
+            "unlockLevel": 23,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Attack a single target twice with boosted precision.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF17_impact.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "fighter-war-cry",
+            "name": "War Cry",
+            "tier": 2,
+            "unlockLevel": 26,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Scream furiously, stunning all enemies around you while also regenerating your HP and STM.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF26_Roar.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "fighter-triple-impact",
+            "name": "Triple Impact",
+            "tier": 2,
+            "unlockLevel": 30,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Slash your enemy furiously three times. This skill is boosted by Double Impact.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF20_T_Impact.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 3,
+        "name": "Champion",
+        "skills": [
+          {
+            "id": "fighter-avenging-crash",
+            "name": "Avenging Crash",
+            "tier": 3,
+            "unlockLevel": 40,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Attack a single target with two swift uppercuts at the cost of your HP. Boosts Destroyer.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF43_A_Crash.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "fighter-demon-s-bane",
+            "name": "Demon's Bane",
+            "tier": 3,
+            "unlockLevel": 43,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Imbue your party's weapons with Tempritos power, increasing your damage against Demons.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF46_S_Axe.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "fighter-bone-crash",
+            "name": "Bone Crash",
+            "tier": 3,
+            "unlockLevel": 46,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Strike the target as you launch into the air and come crashing down delivering a second blow. Bonus damage to Demons.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF50_B_Crash.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "fighter-melee-mastery",
+            "name": "Melee Mastery",
+            "tier": 3,
+            "unlockLevel": 50,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Permanently increases your Attack Power according to your weapon's AP.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF10_M_mastery.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 4,
+        "name": "Immortal Warrior",
+        "skills": [
+          {
+            "id": "fighter-rage-of-zecram",
+            "name": "Rage of Zecram",
+            "tier": 4,
+            "unlockLevel": 60,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Crash down on a target with an explosive hit that does splash damage and burn to all enemies nearby.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF30_R_Zecram.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "fighter-recuperation",
+            "name": "Recuperation",
+            "tier": 4,
+            "unlockLevel": 63,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Permanently increases your HP Regeneration.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF100_Survival_Instinct.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "fighter-berserker",
+            "name": "Berserker",
+            "tier": 4,
+            "unlockLevel": 66,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Sacrifice your damage Absorption capacity to gain Lifesteal and Attack Power.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF63_Berserker.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "fighter-destroyer",
+            "name": "Destroyer",
+            "tier": 4,
+            "unlockLevel": 70,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Unleash a furious triple-blow to break your foes' bones.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/fighter/TF60_Destoryer.png",
+            "isPrimal": false,
+            "isUltimate": true
+          }
+        ]
+      }
+    ]
+  },
+  "archer": {
+    "slug": "archer",
+    "name": "Archer",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Archer",
+        "skills": [
+          {
+            "id": "archer-elemental-shot",
+            "name": "Elemental Shot",
+            "tier": 1,
+            "unlockLevel": 4,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Fire two arrows randomly imbued with either fire or lightning at the target. Lightning electrifies nearby enemies.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA40_E_Shot.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "archer-evasion-mastery",
+            "name": "Evasion Mastery",
+            "tier": 1,
+            "unlockLevel": 8,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Permanently increase your Evasion whenever using two-handed bows.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA63_E_Mastery.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "archer-perforation",
+            "name": "Perforation",
+            "tier": 1,
+            "unlockLevel": 12,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Shoots a swift arrow that creates deadly shockwaves as it flies, perforating all enemies in front of you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA50_Perforation.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "archer-falcon",
+            "name": "Falcon",
+            "tier": 1,
+            "unlockLevel": 16,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Call upon a vicious falcon that strikes the enemies you hit.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA23_Falcon.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 2,
+        "name": "Huntress Master",
+        "skills": [
+          {
+            "id": "archer-arrow-of-rage",
+            "name": "Arrow of Rage",
+            "tier": 2,
+            "unlockLevel": 20,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Fire off an arrow into the air that rains down in a volley, hitting all enemies in the target area.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA26_A_Rage.png",
+            "isPrimal": true,
+            "isUltimate": false
+          },
+          {
+            "id": "archer-dion-s-eye",
+            "name": "Dion's Eye",
+            "tier": 2,
+            "unlockLevel": 23,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Unlock Dion's holy vision, boosting your bow's Attack Rating. Does not apply to other Attack Rating boosts.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA20_D_Eye.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "archer-wind-arrow",
+            "name": "Wind Arrow",
+            "tier": 2,
+            "unlockLevel": 26,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Shoot a wind-imbued arrow. Bonus damage to Normal monsters.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA14_W_arrow.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "archer-wolverine",
+            "name": "Wolverine",
+            "tier": 2,
+            "unlockLevel": 30,
+            "maxLevel": 10,
+            "type": "summon",
+            "description": "Summon a Wolverine to aid you in battle. Scales power based on player stats.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA60_R_Wolverin.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 3,
+        "name": "Dion's Disciple",
+        "skills": [
+          {
+            "id": "archer-perfect-aim",
+            "name": "Perfect Aim",
+            "tier": 3,
+            "unlockLevel": 40,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Shoot your enemies with a deadly accurate shot. Bonus damage to Demons.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA17_P_aim.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "archer-phoenix-shot",
+            "name": "Phoenix Shot",
+            "tier": 3,
+            "unlockLevel": 43,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Charge Dion's legendary phoenix's spirit into your bow, shooting a winged flame wave that damages and burns all enemies in front of you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA66_P_Shot.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "archer-shooting-mastery",
+            "name": "Shooting Mastery",
+            "tier": 3,
+            "unlockLevel": 46,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Permanently increases your Attack Power according to your bow's AP.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA12_S_mastery.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "archer-golden-falcon",
+            "name": "Golden Falcon",
+            "tier": 3,
+            "unlockLevel": 50,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Call upon a golden falcon to strike all the enemies you target. His presence also increases your HP Regeneration.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA43_G_Falcon.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 4,
+        "name": "Sagittarius",
+        "skills": [
+          {
+            "id": "archer-bomb-shot",
+            "name": "Bomb Shot",
+            "tier": 4,
+            "unlockLevel": 60,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Shoot an explosive arrow that decimates targets in an area. Bonus damage to Demons.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA46_B_Shot.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "archer-scout-hawk",
+            "name": "Scout Hawk",
+            "tier": 4,
+            "unlockLevel": 63,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Call upon a hawk to be your eyes in the battlefield, increasing your precision via your Attack Rating.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA10_S_hawk.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "archer-force-of-nature",
+            "name": "Force of Nature",
+            "tier": 4,
+            "unlockLevel": 66,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Cast Dion's blessing on you and your entire party, increasing everyone's offensive power.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA70_F_O_Nature.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "archer-avalanche",
+            "name": "Avalanche",
+            "tier": 4,
+            "unlockLevel": 70,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Bombard your enemy with a flurry of swift, deadly arrows.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/archer/TA30_Avalanchie.png",
+            "isPrimal": false,
+            "isUltimate": true
+          }
+        ]
+      }
+    ]
+  },
+  "mechanician": {
+    "slug": "mechanician",
+    "name": "Mechanician",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Mechanician",
+        "skills": [
+          {
+            "id": "mechanician-great-smash",
+            "name": "Great Smash",
+            "tier": 1,
+            "unlockLevel": 4,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Smash your enemy with a powerful hit.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM20_G_Smash.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "mechanician-extreme-shield",
+            "name": "Extreme Shield",
+            "tier": 1,
+            "unlockLevel": 8,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Amplify your shield's Block rate.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM10_Ex_shield.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "mechanician-impulsion",
+            "name": "Impulsion",
+            "tier": 1,
+            "unlockLevel": 12,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Attack the target twice with an electrically charged weapon causing a chain reaction that damages foes around you. Bonus damage to Normal type.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM60_Impulsion.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "mechanician-physical-absorption",
+            "name": "Physical Absorption",
+            "tier": 1,
+            "unlockLevel": 16,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Gear up your armour's materials, greatly boosting your Absorption capacity. Boosts Metal Armor.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM17_Ph_absorb.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 2,
+        "name": "Mechanic Master",
+        "skills": [
+          {
+            "id": "mechanician-mechanic-bomb",
+            "name": "Mechanic Bomb",
+            "tier": 2,
+            "unlockLevel": 20,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "PRIMAL: throw a makeshift bomb that explodes at enemies in a small area.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM12_M_bomb.png",
+            "isPrimal": true,
+            "isUltimate": false
+          },
+          {
+            "id": "mechanician-automation",
+            "name": "Automation",
+            "tier": 2,
+            "unlockLevel": 23,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Learn the art of shooting, greatly multiplying your Attack Power and Attack Speed with bows and Javelins, Javelins at 50% Attack power.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM26_Automation.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "mechanician-maximize",
+            "name": "Maximize",
+            "tier": 2,
+            "unlockLevel": 26,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Unleash your mechanic expertise to greatly boost your Attack Power, Attack Rate, and Attack Speed.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM23_Maximize.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "mechanician-spark",
+            "name": "Spark",
+            "tier": 2,
+            "unlockLevel": 30,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Concentrate your magnetic powers to shoot a powerful electric sphere that deals area damage.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM30_Spark.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 3,
+        "name": "Metal Leader",
+        "skills": [
+          {
+            "id": "mechanician-grand-smash",
+            "name": "Grand Smash",
+            "tier": 3,
+            "unlockLevel": 40,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Strike the enemy with two devastating attacks. Bonus damage to Normal type.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM43_Grand_Smash.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "mechanician-metal-armor",
+            "name": "Metal Armor",
+            "tier": 3,
+            "unlockLevel": 43,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Use your mechanic expertise to amplify the Absorption capacity of Mech-Spec armours.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM40_M_Armor.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "mechanician-mechanic-weapon-mastery",
+            "name": "Mechanic Weapon Mastery",
+            "tier": 3,
+            "unlockLevel": 46,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Master a selection of weapons, permanently boosting your Attack Power with them.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM44_M_Weapon.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "mechanician-compulsion",
+            "name": "Compulsion",
+            "tier": 3,
+            "unlockLevel": 50,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Unlock your armour's magnetism to pull all enemies around you while boosting your Absorption capacity.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM63_Compulsion.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 4,
+        "name": "Heavy Metal",
+        "skills": [
+          {
+            "id": "mechanician-magnetic-sphere",
+            "name": "Magnetic Sphere",
+            "tier": 4,
+            "unlockLevel": 60,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Manipulate the air around you to summon electric spheres to electrocute your enemies.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM66_M_Sphere.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "mechanician-spark-shield",
+            "name": "Spark Shield",
+            "tier": 4,
+            "unlockLevel": 63,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Liberate your shield's magnetic powers, electrocuting enemies that hit you while also boosting your Defense Rate.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM50_S_Shield.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "mechanician-metal-golem",
+            "name": "Metal Golem",
+            "tier": 4,
+            "unlockLevel": 66,
+            "maxLevel": 10,
+            "type": "summon",
+            "description": "Summon a massive metallic golem that fights by your side. Scales power based on player stats.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM70_M_Golem.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "mechanician-electrical-overload",
+            "name": "Electrical Overload",
+            "tier": 4,
+            "unlockLevel": 70,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Unleash your magnetic powers to go into an electrifying frenzy, increasing your Attack Speed dramatically.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/mechanician/TM14_P_attribute.png",
+            "isPrimal": false,
+            "isUltimate": true
+          }
+        ]
+      }
+    ]
+  },
+  "assassin": {
+    "slug": "assassin",
+    "name": "Assassin",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Assassin",
+        "skills": [
+          {
+            "id": "assassin-stinger",
+            "name": "Stinger",
+            "tier": 1,
+            "unlockLevel": 4,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Strike the enemy with both daggers at once. Bonus damage to Normal & Mutant monsters.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA10_Stingger.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "assassin-venom-thorn",
+            "name": "Venom Thorn",
+            "tier": 1,
+            "unlockLevel": 8,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Imbue your weapon with Sopphetio's legendary poison, draining your enemies HP the more you hit them.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA20_V_Throne.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "assassin-gust-slash",
+            "name": "Gust Slash",
+            "tier": 1,
+            "unlockLevel": 12,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Cut the air swiftly to release two slashing gusts that damage all enemies around you. Boosts Polluted.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA43_B_Up.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "assassin-spectral-precision",
+            "name": "Spectral Precision",
+            "tier": 1,
+            "unlockLevel": 16,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Permanently increase your Attack Rate thanks to shadowy powers.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA30_A_Mastery.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 2,
+        "name": "Rogue",
+        "skills": [
+          {
+            "id": "assassin-running-hit",
+            "name": "Running Hit",
+            "tier": 2,
+            "unlockLevel": 20,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Rotate in the air while striking the enemy with two powerful slashes. Boosts Ninja Shadow.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA12_R_Hit.png",
+            "isPrimal": true,
+            "isUltimate": false
+          },
+          {
+            "id": "assassin-brisk-shadow",
+            "name": "Brisk Shadow",
+            "tier": 2,
+            "unlockLevel": 23,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Summon Phallanxis' shadow powers to boost your Attack Speed and Evasion. Party mates get 50% of the Evasion.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA30_A_Mastery.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "assassin-inpes",
+            "name": "Inpes",
+            "tier": 2,
+            "unlockLevel": 26,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Temporarily boost movement speed for you and your party. This effect is halved on other players.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA46_Inpes.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "assassin-wisp",
+            "name": "Wisp",
+            "tier": 2,
+            "unlockLevel": 30,
+            "maxLevel": 10,
+            "type": "debuff",
+            "description": "Jinx the enemy with Midranda's curse, reducing their Attack Power and Attack Speed. Boosts Cripple.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA17_Wisp.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 3,
+        "name": "Hermit",
+        "skills": [
+          {
+            "id": "assassin-sore-blade",
+            "name": "Sore Blade",
+            "tier": 3,
+            "unlockLevel": 40,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Dash forward slashing and piercing your enemies' with two deadly hits.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA40_S_Sword.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "assassin-conceal",
+            "name": "Conceal",
+            "tier": 3,
+            "unlockLevel": 43,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Hide in your shadow powers, greatly reducing your enemies' ability to see you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA50_Blind.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "assassin-soul-shock",
+            "name": "Soul Shock",
+            "tier": 3,
+            "unlockLevel": 46,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Strike the ground with both daggers to release a shockwave that stuns all enemies around you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA26_S_Shock.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "assassin-dual-wield-mastery",
+            "name": "Dual Wield Mastery",
+            "tier": 3,
+            "unlockLevel": 50,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Master the use of daggers to permanently increase their Attack Power and Attack Rate",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA14_D_Mastery.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 4,
+        "name": "Shadower",
+        "skills": [
+          {
+            "id": "assassin-polluted",
+            "name": "Polluted",
+            "tier": 4,
+            "unlockLevel": 60,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Jump into the air releasing a poisonous cloud that poisons all enemies around you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA66_Polluted.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "assassin-cripple",
+            "name": "Cripple",
+            "tier": 4,
+            "unlockLevel": 63,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Attack the enemy twice with the chance to apply poison.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA60_F_Wind.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "assassin-assassin-mastery",
+            "name": "Assassin Mastery",
+            "tier": 4,
+            "unlockLevel": 66,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Earn Phallanxis' blessing to permanently increase your Attack Speed and Critical chance.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA63_F_Mastery.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "assassin-ninja-shadow",
+            "name": "Ninja Shadow",
+            "tier": 4,
+            "unlockLevel": 70,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Unleash your ninja skills jump in the air dealing two deadly slashes to your enemy.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/assassin/TA70_P_Shadow.png",
+            "isPrimal": false,
+            "isUltimate": true
+          }
+        ]
+      }
+    ]
+  },
+  "pikeman": {
+    "slug": "pikeman",
+    "name": "Pikeman",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Pikeman",
+        "skills": [
+          {
+            "id": "pikeman-expansion",
+            "name": "Expansion",
+            "tier": 1,
+            "unlockLevel": 4,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Enlarge your scythe to strike enemies in a small area. Bonus damage to Mutants.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP30_Expasion.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "pikeman-weapon-block-mastery",
+            "name": "Weapon Block Mastery",
+            "tier": 1,
+            "unlockLevel": 8,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Permanently increase your Block rate with polearms.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP26_W_D_Mastery.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "pikeman-tornado",
+            "name": "Tornado",
+            "tier": 1,
+            "unlockLevel": 12,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Spins with your scythe slashing all enemies around you. Boosts Ground Pike.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP23_Tornado.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "pikeman-precise-hit",
+            "name": "Precise Hit",
+            "tier": 1,
+            "unlockLevel": 16,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Strike the enemy twice for an increased Critical chance.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP14_Cri_hit.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 2,
+        "name": "Combatant",
+        "skills": [
+          {
+            "id": "pikeman-jumping-crash",
+            "name": "Jumping Crash",
+            "tier": 2,
+            "unlockLevel": 20,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Leap into the air before hitting the target with boosted Attack Rating, dealing bonus damage to Demons.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP17_J_Crash.png",
+            "isPrimal": true,
+            "isUltimate": false
+          },
+          {
+            "id": "pikeman-pike-wind",
+            "name": "Pike Wind",
+            "tier": 2,
+            "unlockLevel": 23,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Toss your scythe into the air releasing a strong gust that pushes enemies away.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP10_P_wind.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "pikeman-vanish",
+            "name": "Vanish",
+            "tier": 2,
+            "unlockLevel": 26,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Hide in a magic cloud to decrease enemies' vision of you while boosting your next hit's Attack Power.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP43_Vanish.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "pikeman-polearm-mastery",
+            "name": "Polearm Mastery",
+            "tier": 2,
+            "unlockLevel": 30,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Increases your area of effect range for Tornado, Ground Pike and Venom Spear.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP12_I_attribute.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 3,
+        "name": "Lancer",
+        "skills": [
+          {
+            "id": "pikeman-chain-lance",
+            "name": "Chain Lance",
+            "tier": 3,
+            "unlockLevel": 40,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Jump into the air while furiously striking your enemy three times.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP50_C_Lance.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "pikeman-venom-spear",
+            "name": "Venom Spear",
+            "tier": 3,
+            "unlockLevel": 43,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Thrust your spear into the ground poisoning all enemies around you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP40_V_Spear.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "pikeman-critical-mastery",
+            "name": "Critical Mastery",
+            "tier": 3,
+            "unlockLevel": 46,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Earn Phallanxis' deadly strength, dramatically increasing your weapon's Critical chance.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP46_C_Mastery.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "pikeman-vague",
+            "name": "Vague",
+            "tier": 3,
+            "unlockLevel": 50,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Hide in Phallanxis' to increase your Evasion with polearms.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP66_Vague.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 4,
+        "name": "Lancelot",
+        "skills": [
+          {
+            "id": "pikeman-ground-pike",
+            "name": "Ground Pike",
+            "tier": 4,
+            "unlockLevel": 60,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Thrust your spear into the ground to unleash a freezing shockwave that damages all enemies around you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP20_G_Pike.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "pikeman-assassin-s-eye",
+            "name": "Assassin's Eye",
+            "tier": 4,
+            "unlockLevel": 63,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Mark the enemy with Phallanxis' eye, dramatically increasing your Critical Damage against them.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP60_A_Eye.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "pikeman-shadow-master",
+            "name": "Shadow Master",
+            "tier": 4,
+            "unlockLevel": 66,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Embrance Phallanxis' shadow to strike the enemy with a flurry of deadly hits.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP70_S_Master.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "pikeman-charging-strike",
+            "name": "Charging Strike",
+            "tier": 4,
+            "unlockLevel": 70,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Charge all your strength to unleash a flurry of devastating blows against the enemy.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/pikeman/TP63_C_Strike.png",
+            "isPrimal": false,
+            "isUltimate": true
+          }
+        ]
+      }
+    ]
+  },
+  "knight": {
+    "slug": "knight",
+    "name": "Knight",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Knight",
+        "skills": [
+          {
+            "id": "knight-double-crash",
+            "name": "Double Crash",
+            "tier": 1,
+            "unlockLevel": 4,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Dash forward to strike your enemy twice for an increased Critical chance.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN17_D_Crash.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "knight-physical-training",
+            "name": "Physical Training",
+            "tier": 1,
+            "unlockLevel": 8,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Boost your muscles to permanently increase your STM.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN14_P_Traning.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "knight-sword-blast",
+            "name": "Sword Blast",
+            "tier": 1,
+            "unlockLevel": 12,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Fire a beam of energy from your sword. Bonus damage to Normal & Mutant monsters.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN10_S_Blast.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "knight-holy-body",
+            "name": "Holy Body",
+            "tier": 1,
+            "unlockLevel": 16,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Imbue your weapon with your holy spirit to give it Lifesteal, healing you and your party as you attack. Applies half to AOE attacks and party members.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN12_H_Body.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 2,
+        "name": "Paladin",
+        "skills": [
+          {
+            "id": "knight-piercing",
+            "name": "Piercing",
+            "tier": 2,
+            "unlockLevel": 20,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Stab with your sword creating a magical blade that damages enemies afar, dealing bonus damage to Mutants. Boosts Divine Piercing.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN26_Piercing.png",
+            "isPrimal": true,
+            "isUltimate": false
+          },
+          {
+            "id": "knight-holy-incantation",
+            "name": "Holy Incantation",
+            "tier": 2,
+            "unlockLevel": 23,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Bend the mind of an Undead monster, forcing it to fight at your side.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN46_H_Incantation.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "knight-brandish",
+            "name": "Brandish",
+            "tier": 2,
+            "unlockLevel": 26,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Jump and strike the target with a fiery force that damages enemies in front of you. Boosts Sword of Justice.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN23_Brandish.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "knight-divine-shield",
+            "name": "Divine Shield",
+            "tier": 2,
+            "unlockLevel": 30,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Temporarily enchant your shield, increasing your Block rate and draining the HP from Undeads on each successful block. Boosts Godly Shield.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN43_D_Inhalation.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 3,
+        "name": "Holy Knight",
+        "skills": [
+          {
+            "id": "knight-grand-cross",
+            "name": "Grand Cross",
+            "tier": 3,
+            "unlockLevel": 40,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Strike the enemy furiously twice, casting Thales' cross onto the enemy. Bonus damage to Undeads.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN50_G_Cross.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "knight-holy-valor",
+            "name": "Holy Valor",
+            "tier": 3,
+            "unlockLevel": 43,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Cast Thales' rightful spirit onto you and your party, increase your damage against Undead monsters.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN20_H_Valor.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "knight-sword-mastery",
+            "name": "Sword Mastery",
+            "tier": 3,
+            "unlockLevel": 46,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Permanently boost your sword's Attack Power.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN40_S_Mastery.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "knight-drastic-spirit",
+            "name": "Drastic Spirit",
+            "tier": 3,
+            "unlockLevel": 50,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Cast Thales' sacred armour onto yourself, greatly boosting your Defence.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN30_D_Spirit.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 4,
+        "name": "Saint Knight",
+        "skills": [
+          {
+            "id": "knight-sword-of-justice",
+            "name": "Sword of Justice",
+            "tier": 4,
+            "unlockLevel": 60,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Elevate your sword to strike down with a devastating blow that hits all enemies in front of you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN60_S_O_Justice.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "knight-godly-shield",
+            "name": "Godly Shield",
+            "tier": 4,
+            "unlockLevel": 63,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Summon Thales' sacred shield, greatly boosting your Absorption capacity.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN63_G_Shield.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "knight-god-s-blessing",
+            "name": "God's Blessing",
+            "tier": 4,
+            "unlockLevel": 66,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Imbue your weapon with Thales' holy strength, greatly boosting your Attack Power.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN66_G_Bless.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "knight-divine-piercing",
+            "name": "Divine Piercing",
+            "tier": 4,
+            "unlockLevel": 70,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Channel Thales' secret sword into yours to unleash a flurry of holy hits.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/knight/MN70_D_Piercing.png",
+            "isPrimal": false,
+            "isUltimate": true
+          }
+        ]
+      }
+    ]
+  },
+  "shaman": {
+    "slug": "shaman",
+    "name": "Shaman",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Shaman",
+        "skills": [
+          {
+            "id": "shaman-dark-bolt",
+            "name": "Dark Bolt",
+            "tier": 1,
+            "unlockLevel": 4,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Attack the target with a projectile made up of dark magic.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS10_Darkbolt.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "shaman-inner-peace",
+            "name": "Inner Peace",
+            "tier": 1,
+            "unlockLevel": 8,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Muster your spiritual powers to boost your Mana and Mana Regeneration capacity.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS17_I_peace.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "shaman-dark-wave",
+            "name": "Dark Wave",
+            "tier": 1,
+            "unlockLevel": 12,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Fire two dark magic bolts at the target to deal area damage.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS12_Darkwave.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "shaman-inertia",
+            "name": "Inertia",
+            "tier": 1,
+            "unlockLevel": 16,
+            "maxLevel": 10,
+            "type": "debuff",
+            "description": "Curse enemies around you with dark mage, decreasing their Speed.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS14_Curselazy.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 2,
+        "name": "Clairvoyant",
+        "skills": [
+          {
+            "id": "shaman-haunt",
+            "name": "Haunt",
+            "tier": 2,
+            "unlockLevel": 20,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Summon Phalanxis' spirit to strike the enemy with a Lifestsealing hit. Boosts Judgement.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS46_Haunt.png",
+            "isPrimal": true,
+            "isUltimate": false
+          },
+          {
+            "id": "shaman-spiritual-manacle",
+            "name": "Spiritual Manacle",
+            "tier": 2,
+            "unlockLevel": 23,
+            "maxLevel": 10,
+            "type": "debuff",
+            "description": "Summon Midranda's shackles to stun your enemy in place.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS23_S_Manacle.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "shaman-phantom-call",
+            "name": "Phantom Call",
+            "tier": 2,
+            "unlockLevel": 26,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Summon cursed spirits to damage all the enemies around you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS43_L_Ghost.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "shaman-rainmaker",
+            "name": "Rainmaker",
+            "tier": 2,
+            "unlockLevel": 30,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Pray to the gods to bathe you in holy waters that boost your Evasion and damage Absorption.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS40_R_Maker.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 3,
+        "name": "Conjurer",
+        "skills": [
+          {
+            "id": "shaman-scratch",
+            "name": "Scratch",
+            "tier": 3,
+            "unlockLevel": 40,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Summon Gallantia's claws to viciously slash your enemies twice.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS50_Scratch.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "shaman-chasing-hunt",
+            "name": "Chasing Hunt",
+            "tier": 3,
+            "unlockLevel": 43,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Summon the ancient Sopphetio spirits to boost your Attack Power.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS26_C_Hunt.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "shaman-advent-midranda",
+            "name": "Advent Midranda",
+            "tier": 3,
+            "unlockLevel": 46,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Summon Midranda's spirit to greatly boost your Attack Speed.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS66_A_Midranda.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "shaman-summon-hestian",
+            "name": "Summon Hestian",
+            "tier": 3,
+            "unlockLevel": 50,
+            "maxLevel": 10,
+            "type": "summon",
+            "description": "Summon a Hestian that fights by your side. Scales power based on player stats.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS60_R_Knight.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 4,
+        "name": "Necromancer",
+        "skills": [
+          {
+            "id": "shaman-spiritual-flare",
+            "name": "Spiritual Flare",
+            "tier": 4,
+            "unlockLevel": 60,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Cast an interdimensional warp that flares the enemies with the force of ancient Sopphetio spirits.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS20_S_Flare.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "shaman-mourning-pray",
+            "name": "Mourning Pray",
+            "tier": 4,
+            "unlockLevel": 63,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Summon Thale's holy light to unleash a deadly explosion around you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS70_M_pray.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "shaman-advent-migal",
+            "name": "Advent Migal",
+            "tier": 4,
+            "unlockLevel": 66,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Draw Migal's holy power to boost your entire party's Attack Power.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS30_A_Migal.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "shaman-judgement",
+            "name": "Judgement",
+            "tier": 4,
+            "unlockLevel": 70,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Summon your ancient powers to shoot a deadly beam.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/shaman/MS63_Judge.png",
+            "isPrimal": false,
+            "isUltimate": true
+          }
+        ]
+      }
+    ]
+  },
+  "priestess": {
+    "slug": "priestess",
+    "name": "Priestess",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Priestess",
+        "skills": [
+          {
+            "id": "priestess-holy-bolt",
+            "name": "Holy Bolt",
+            "tier": 1,
+            "unlockLevel": 4,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Shoot a divine bolt at the target.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP12_HolyBolt.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "priestess-holy-mind",
+            "name": "Holy Mind",
+            "tier": 1,
+            "unlockLevel": 8,
+            "maxLevel": 10,
+            "type": "debuff",
+            "description": "Jinx the enemy with Awell's curse to reduce their damage.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP17_HolyMind.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "priestess-divine-lightning",
+            "name": "Divine Lightning",
+            "tier": 1,
+            "unlockLevel": 12,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Cast a series of lightnings to all enemies around you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP23_D_Lightning.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "priestess-meditation",
+            "name": "Meditation",
+            "tier": 1,
+            "unlockLevel": 16,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Permanently increase your Mana and Mana Regeneration.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP20_Meditation.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 2,
+        "name": "Saintess",
+        "skills": [
+          {
+            "id": "priestess-vigor-ball",
+            "name": "Vigor Ball",
+            "tier": 2,
+            "unlockLevel": 20,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Strike the enemy with two holy spheres. Deals bonus damage to Undead monsters. Boosts Glacial Spike.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP40_V_Ball.png",
+            "isPrimal": true,
+            "isUltimate": false
+          },
+          {
+            "id": "priestess-healing",
+            "name": "Healing",
+            "tier": 2,
+            "unlockLevel": 23,
+            "maxLevel": 10,
+            "type": "healing",
+            "description": "Cast Migal's healing spirit to recover an ally's HP. Boosts Grand Healing.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP10_Healing.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "priestess-holy-reflection",
+            "name": "Holy Reflection",
+            "tier": 2,
+            "unlockLevel": 26,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Surround yourself with holy energy to reflect damage caused by Undead monsters.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP26_H_Reflection.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "priestess-virtual-life",
+            "name": "Virtual Life",
+            "tier": 2,
+            "unlockLevel": 30,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Casts Migal's blessing on your entire party, boosting everyone's HP and MP.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP50_V_Life.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 3,
+        "name": "Bishop",
+        "skills": [
+          {
+            "id": "priestess-multi-spark",
+            "name": "Multi Spark",
+            "tier": 3,
+            "unlockLevel": 40,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Fire a multitude of sparks at the target enemy.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP14_M_Spark.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "priestess-extinction",
+            "name": "Extinction",
+            "tier": 3,
+            "unlockLevel": 43,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Pray to Migal to eliminate all the evil around you, draining the HP of all Undeads and Demons nearby.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP46_Extinction.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "priestess-resurrection",
+            "name": "Resurrection",
+            "tier": 3,
+            "unlockLevel": 46,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Summon Migal's merciful spirit to ressurrect all allies around.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP43_Resurrection.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "priestess-grand-healing",
+            "name": "Grand Healing",
+            "tier": 3,
+            "unlockLevel": 50,
+            "maxLevel": 10,
+            "type": "healing",
+            "description": "Heal the HP of all allies around you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP30_G_Healing.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 4,
+        "name": "Celestial",
+        "skills": [
+          {
+            "id": "priestess-chain-lightning",
+            "name": "Chain Lightning",
+            "tier": 4,
+            "unlockLevel": 60,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Channels a deadly lightning on a target that spreads and electrocutes all enemies nearby.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP66_C_Lightning.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "priestess-virtual-regeneration",
+            "name": "Virtual Regeneration",
+            "tier": 4,
+            "unlockLevel": 63,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Release your healing powers to raise the HP and MP Regeneration of your entire party.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP63_V_Regen.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "priestess-summon-muspell",
+            "name": "Summon Muspell",
+            "tier": 4,
+            "unlockLevel": 66,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Summon your protector Muspell to strike your foes. Her presence boosts your Attack Power as well as your defensive abilities.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP70_S_Muspell.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "priestess-glacial-spike",
+            "name": "Glacial Spike",
+            "tier": 4,
+            "unlockLevel": 70,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Cast a wave of deadly frozen spikes to strike an enemy, dealing deadly damage and slow their movements.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/priestess/MP60_G_Spike.png",
+            "isPrimal": false,
+            "isUltimate": true
+          }
+        ]
+      }
+    ]
+  },
+  "magician": {
+    "slug": "magician",
+    "name": "Magician",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Magician",
+        "skills": [
+          {
+            "id": "magician-fire-bolt",
+            "name": "Fire Bolt",
+            "tier": 1,
+            "unlockLevel": 4,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Shoots a small fire ball at the target.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM12_FireBolt.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "magician-agony",
+            "name": "Agony",
+            "tier": 1,
+            "unlockLevel": 8,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Sacrifice part of your HP to recover MP.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM10_Agony.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "magician-fire-ball",
+            "name": "Fire Ball",
+            "tier": 1,
+            "unlockLevel": 12,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Hurl a large ball of fire towards target enemy and enemies in the area. Boosts Flame Wave.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM17_FireBall.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "magician-mental-mastery",
+            "name": "Mental Mastery",
+            "tier": 1,
+            "unlockLevel": 16,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Elevate your spirit to permanently increase your MP and Mana Potion Regeneration. Reduces Energy Shield's MP cost.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM20_M_Mastery.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 2,
+        "name": "Wizard",
+        "skills": [
+          {
+            "id": "magician-watornado",
+            "name": "Watornado",
+            "tier": 2,
+            "unlockLevel": 20,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Send off a devastating water tornado to drown your enemies to death.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM23_Watornado.png",
+            "isPrimal": true,
+            "isUltimate": false
+          },
+          {
+            "id": "magician-energy-shield",
+            "name": "Energy Shield",
+            "tier": 2,
+            "unlockLevel": 23,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Cast a magic shield around you that reduces any damage dealt to you in exchange for your MP.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM40_E_Shield.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "magician-enchant-weapon",
+            "name": "Enchant Weapon",
+            "tier": 2,
+            "unlockLevel": 26,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Enchant your entire party's weapons with either holy fire, ice or lightning. Boosts Dancing Sword and Death Ray.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM26_E_Weapon.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "magician-zenith",
+            "name": "Zenith",
+            "tier": 2,
+            "unlockLevel": 30,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Summon Awell's runes to boost your damage Absorption and Resistance.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM14_Zenith.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 3,
+        "name": "Royal Wizard",
+        "skills": [
+          {
+            "id": "magician-death-ray",
+            "name": "Death Ray",
+            "tier": 3,
+            "unlockLevel": 40,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Draw your arcane powers to shoot a deadly ray at your target.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM30_D_Ray.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "magician-diastrophism",
+            "name": "Diastrophism",
+            "tier": 3,
+            "unlockLevel": 43,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Strike the ground with your staff to unleash a shockwave that damages all enemies around you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM43_Diastrophism.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "magician-dancing-sword",
+            "name": "Dancing Sword",
+            "tier": 3,
+            "unlockLevel": 46,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Summon a magic sword imbued with either your fire, ice, or lightning powers.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM50_D_Sword.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "magician-spirit-elemental",
+            "name": "Spirit Elemental",
+            "tier": 3,
+            "unlockLevel": 50,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Summon Awell's arcane spirit to greatly boost your Attack Power. Boosts Fire Elemental.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM46_S_Elemental.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 4,
+        "name": "Arch Mage",
+        "skills": [
+          {
+            "id": "magician-flame-wave",
+            "name": "Flame Wave",
+            "tier": 4,
+            "unlockLevel": 60,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Fire off a massive wave of fire that damages and burns all enemies in front of you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM63_F_Wave.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "magician-distortion",
+            "name": "Distortion",
+            "tier": 4,
+            "unlockLevel": 63,
+            "maxLevel": 10,
+            "type": "debuff",
+            "description": "Cast Awell's curse on all enemies around you, reducing their speed, attack, and defensive abilities. Boosts Meteorite.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM66_Distortion.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "magician-fire-elemental",
+            "name": "Fire Elemental",
+            "tier": 4,
+            "unlockLevel": 66,
+            "maxLevel": 10,
+            "type": "summon",
+            "description": "Channel you fire powers into an destructive spirit to fight at your side. Scales power based on player stats.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM60_F_Elemental.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "magician-meteorite",
+            "name": "Meteorite",
+            "tier": 4,
+            "unlockLevel": 70,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Bombard targeted enemies with a flurry of deadly meteorites.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/magician/MM70_Meteo.png",
+            "isPrimal": false,
+            "isUltimate": true
+          }
+        ]
+      }
+    ]
+  },
+  "atalanta": {
+    "slug": "atalanta",
+    "name": "Atalanta",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Atalanta",
+        "skills": [
+          {
+            "id": "atalanta-bigger-spear",
+            "name": "Bigger Spear",
+            "tier": 1,
+            "unlockLevel": 4,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Hurl an enlarged javelin at the target. Bonus damage to Normal monsters.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA17_V_Spear.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "atalanta-shield-strike",
+            "name": "Shield Strike",
+            "tier": 1,
+            "unlockLevel": 8,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Fling your shield at the target, briefly stunning all enemies in its path.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA10_S_Strike.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "atalanta-lightning-javelin",
+            "name": "Lightning Javelin",
+            "tier": 1,
+            "unlockLevel": 12,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Shoots a lightning-infused javelin that deals area damage. Bonus damage to Undead monsters.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA46_L_Javelin.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "atalanta-windy",
+            "name": "Windy",
+            "tier": 1,
+            "unlockLevel": 16,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Temporarily increase your Attack Rating and Range with javelins.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA20_Windy.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 2,
+        "name": "Valkyrie",
+        "skills": [
+          {
+            "id": "atalanta-storm-javelin",
+            "name": "Storm Javelin",
+            "tier": 2,
+            "unlockLevel": 20,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Shoot two perforating javelins that pierce the air, hitting all the enemies in front of you.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA50_Storm_Javelin.png",
+            "isPrimal": true,
+            "isUltimate": false
+          },
+          {
+            "id": "atalanta-farina",
+            "name": "Farina",
+            "tier": 2,
+            "unlockLevel": 23,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Toss a javelin at the target with boosted attack rating and speed. Bonus damage to Normal monsters.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA12_Farina.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "atalanta-wind-javelin",
+            "name": "Wind Javelin",
+            "tier": 2,
+            "unlockLevel": 26,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Lob a javelin in a twisting motion with boosted attack rating. Bonus damage to Demons.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA23_T_Javelin.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "atalanta-fire-javelin",
+            "name": "Fire Javelin",
+            "tier": 2,
+            "unlockLevel": 30,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Toss a fiery javelin at the target. Bonus damage to Mutants.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA30_F_Javelin.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 3,
+        "name": "Brynhild",
+        "skills": [
+          {
+            "id": "atalanta-vengeance",
+            "name": "Vengeance",
+            "tier": 3,
+            "unlockLevel": 40,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Unleash your Ultimate power to spin and shoot the enemies with two deadly javelins.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA70_Vengeance.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "atalanta-hall-of-valhalla",
+            "name": "Hall of Valhalla",
+            "tier": 3,
+            "unlockLevel": 43,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Summon Gallantia's protective spirit, increasing your and your party's Block rate.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA60_H_O_Valhalla.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "atalanta-javelin-mastery",
+            "name": "Javelin Mastery",
+            "tier": 3,
+            "unlockLevel": 46,
+            "maxLevel": 10,
+            "type": "passive",
+            "description": "Permanently boost your javelin's Attack Power.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA14_T_Mastery.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "atalanta-frost-javelin",
+            "name": "Frost Javelin",
+            "tier": 3,
+            "unlockLevel": 50,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Infuse your javelin with Awell's icy spirit, causing your hits to reduce the enemy's Attack Speed and Movement Speed.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA66_F_Javelin.png",
+            "isPrimal": false,
+            "isUltimate": false
+          }
+        ]
+      },
+      {
+        "tier": 4,
+        "name": "Valhalla",
+        "skills": [
+          {
+            "id": "atalanta-extreme-rage",
+            "name": "Extreme Rage",
+            "tier": 4,
+            "unlockLevel": 60,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Jump straight up into the air and throw three explosive javelins at your enemy.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA63_X_Rage.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "atalanta-soul-sucker",
+            "name": "Soul Sucker",
+            "tier": 4,
+            "unlockLevel": 63,
+            "maxLevel": 10,
+            "type": "attack",
+            "description": "Infuse and hurl your shield with an ancient Wyzen spirit, Lifestealing all enemies it hits.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA26_S_Sucker.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "atalanta-triumph-of-valhalla",
+            "name": "Triumph of Valhalla",
+            "tier": 4,
+            "unlockLevel": 66,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Summon Gallantia's fighting spirit, increasing your and your party's Attack Power.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA43_T_Of_Valhalla.png",
+            "isPrimal": false,
+            "isUltimate": false
+          },
+          {
+            "id": "atalanta-split-javelin",
+            "name": "Split Javelin",
+            "tier": 4,
+            "unlockLevel": 70,
+            "maxLevel": 10,
+            "type": "buff",
+            "description": "Hurl a javelin at the target that splits into three pieces before it strikes.",
+            "icon": "https://pristontale.eu/public/img/pristontale/icons/skills/atalanta/MA40_Split_Javelin.png",
+            "isPrimal": false,
+            "isUltimate": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1659,4 +1659,77 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .wd-summary-updated { font-size: 12px; }
 
 .wd-public-page { max-width: 760px; margin: 0 auto; padding: 28px 20px 60px; }
+
+/* Árvore de Skills (skill builder) */
+.sk-tool { max-width: 1100px; margin: 0 auto; padding-bottom: 40px; }
+.sk-head { margin-bottom: 18px; }
+
+.sk-topbar { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 16px; }
+.sk-topbar .mk-field { min-width: 160px; }
+.sk-topbar .mk-field input { width: 100px; }
+.sk-quests { display: flex; flex-direction: column; gap: 6px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; }
+.sk-quests-title { font-size: 12px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.sk-quest-check { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.sk-quest-check input { accent-color: var(--gold); cursor: pointer; }
+
+.sk-points-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+.sk-points-panel { flex: 1; min-width: 200px; background: linear-gradient(180deg, var(--panel) 0%, var(--bg2) 100%); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.sk-points-panel b { color: var(--gold-bright); font-size: 14px; margin-bottom: 2px; }
+.sk-points-panel.sp { border-left: 3px solid var(--gold); }
+.sk-points-panel.ep { border-left: 3px solid var(--support); }
+
+.sk-notice { background: rgba(224,169,59,0.12); border: 1px solid var(--support); color: var(--support); border-radius: 8px; padding: 8px 12px; font-size: 12.5px; margin-bottom: 12px; animation: tbrise 0.3s both; }
+
+.sk-actions { display: flex; gap: 10px; margin-bottom: 16px; }
+
+.sk-buildcode { display: flex; align-items: center; gap: 10px; font-size: 13px; flex-wrap: wrap; }
+.sk-buildcode b { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; color: var(--gold-bright); background: rgba(0,0,0,0.35); border: 1px solid var(--gold); border-radius: 6px; padding: 3px 8px; letter-spacing: 1px; }
+
+.sk-tier { margin-bottom: 24px; }
+.sk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+
+.sk-card { position: relative; background: var(--bg2); border: 2px solid var(--border); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; transition: border-color 0.15s, opacity 0.15s; }
+.sk-card.available { border-color: var(--border); }
+.sk-card.invested { border-color: var(--gold); box-shadow: 0 0 14px -6px var(--gold); }
+.sk-card.maxed { border-color: var(--green); box-shadow: 0 0 14px -6px var(--green); }
+.sk-card.locked { opacity: 0.4; filter: grayscale(0.85); }
+
+.sk-card-top { position: relative; width: 100%; display: flex; justify-content: center; }
+.sk-card-icon { width: 48px; height: 48px; object-fit: contain; border-radius: 8px; background: var(--panel); border: 1px solid var(--border); }
+.sk-tag { position: absolute; top: -6px; right: 6px; font-size: 8.5px; font-weight: 800; letter-spacing: 0.5px; padding: 1px 5px; border-radius: 6px; }
+.sk-tag.primal { background: rgba(92,184,92,0.15); border: 1px solid var(--green); color: var(--green); }
+.sk-tag.ultimate { background: rgba(224,169,59,0.15); border: 1px solid var(--support); color: var(--support); }
+
+.sk-card-name { font-size: 12.5px; color: var(--gold-bright); line-height: 1.2; }
+.sk-card-unlock { font-size: 10.5px; color: var(--text-dim); }
+
+.sk-card-controls { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+.sk-stepper { width: 26px; height: 24px; border-radius: 6px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font-weight: 700; }
+.sk-stepper:hover:not(:disabled) { border-color: var(--gold); color: var(--gold-bright); }
+.sk-stepper:disabled { opacity: 0.35; cursor: default; }
+.sk-card-count { font-size: 12px; font-weight: 700; color: var(--text); min-width: 40px; }
+
+.sk-maxbtn { margin-top: 4px; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--panel); color: var(--text-dim); }
+.sk-maxbtn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold-bright); }
+.sk-maxbtn:disabled { opacity: 0.35; cursor: default; }
+
+.sk-tooltip { display: none; position: absolute; z-index: 20; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: var(--panel2, var(--panel)); border: 1px solid var(--gold); border-radius: 10px; padding: 10px 14px; min-width: 200px; max-width: 240px; flex-direction: column; gap: 3px; font-size: 12px; text-align: left; box-shadow: 0 10px 24px rgba(0,0,0,0.5); white-space: normal; pointer-events: none; }
+.sk-card:hover .sk-tooltip { display: flex; }
+.sk-tooltip b { color: var(--gold-bright); }
+.sk-tooltip span { color: var(--text-dim); }
+.sk-tooltip p { margin: 4px 0 0; color: var(--text); font-size: 11.5px; line-height: 1.35; }
+.sk-tooltip-warn { color: var(--attack) !important; font-weight: 700; }
+
+.sk-summary { max-width: 720px; margin-top: 8px; }
+.sk-summary-head { margin-bottom: 8px; }
+.sk-summary-head b { color: var(--gold-bright); }
+.sk-summary-points { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; margin-bottom: 8px; }
+.sk-summary-quests { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; margin-bottom: 12px; }
+.sk-summary-quests .done { color: var(--green); }
+.sk-summary-quests .pending { color: var(--text-dim); }
+.sk-summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+.sk-summary-item { display: flex; align-items: center; gap: 8px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 12.5px; }
+.sk-summary-item img { width: 24px; height: 24px; object-fit: contain; border-radius: 5px; background: var(--panel); }
+.sk-summary-item span { flex: 1; color: var(--text); }
+.sk-summary-item b { color: var(--gold-bright); }
 .wd-public-brand { display: inline-block; margin-bottom: 20px; color: var(--gold-bright); font-weight: 800; text-decoration: none; font-size: 16px; }

@@ -16,6 +16,7 @@ import { Guides } from './components/Guides';
 import { Mixing } from './components/Mixing';
 import { Wardrobe } from './components/wardrobe/Wardrobe';
 import { CharacterPublicPage } from './components/wardrobe/CharacterPublicPage';
+import { SkillTree as SkillTreeTool } from './components/skilltree/SkillTree';
 import { ResetPasswordModal } from './components/market/ResetPasswordModal';
 import { AuthModal } from './components/market/AuthModal';
 import { useAuth } from './components/market/store';
@@ -26,7 +27,7 @@ import { useI18n } from './lib/i18n';
 export type Section = 'home' | 'timers' | 'market' | 'streamers' | 'guides' | 'tools';
 type Tab = 'planner' | 'inventory' | 'optimizer';
 type TimerTab = 'boss' | 'fury';
-type ToolTab = 'soultree' | 'mixing' | 'sod' | 'wardrobe';
+type ToolTab = 'soultree' | 'mixing' | 'sod' | 'wardrobe' | 'skilltree';
 
 const SECTIONS: Section[] = ['home', 'timers', 'market', 'streamers', 'guides', 'tools'];
 
@@ -40,6 +41,7 @@ const TIMER_TABS: { id: TimerTab; icon: string; key: string }[] = [
 
 const TOOL_TABS: { id: ToolTab; icon: string; key: string }[] = [
   { id: 'soultree', icon: '🌳', key: 'nav.soultree' },
+  { id: 'skilltree', icon: '🌟', key: 'nav.skilltree' },
   { id: 'mixing', icon: '⚗️', key: 'nav.mixing' },
   { id: 'sod', icon: '🎯', key: 'nav.sod' },
   { id: 'wardrobe', icon: '🧥', key: 'nav.wardrobe' },
@@ -70,6 +72,8 @@ function initialNav(): { section: Section; timerTab: TimerTab; toolTab: ToolTab 
   // A shared listing/seller link (#item-… / #seller-…) opens the Marketplace.
   const h = window.location.hash;
   if (h.startsWith('#item-') || h.startsWith('#seller-')) return { section: 'market', timerTab, toolTab };
+  // A shared Skill Tree build link (/skill-tree/<class>?...) opens that tool directly.
+  if (window.location.pathname.startsWith('/skill-tree/')) return { section: 'tools', timerTab, toolTab: 'skilltree' };
 
   const saved = localStorage.getItem('site-section') ?? '';
   if (SECTIONS.includes(saved as Section)) return { section: saved as Section, timerTab, toolTab };
@@ -215,7 +219,11 @@ export default function App() {
       ) : section === 'guides' ? (
         <Guides />
       ) : (
-        toolTab === 'soultree' ? <SoulTree /> : toolTab === 'mixing' ? <Mixing /> : toolTab === 'sod' ? <SoD /> : <Wardrobe onLogin={() => setShowAuth(true)} />
+        toolTab === 'soultree' ? <SoulTree />
+          : toolTab === 'skilltree' ? <SkillTreeTool />
+          : toolTab === 'mixing' ? <Mixing />
+          : toolTab === 'sod' ? <SoD />
+          : <Wardrobe onLogin={() => setShowAuth(true)} />
       )}
 
       <ResetPasswordModal />
