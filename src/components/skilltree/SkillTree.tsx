@@ -8,9 +8,11 @@ import { buildDisplayCode, buildShareUrl, decodeBuild, encodeBuild } from '../..
 import {
   applySkillChange, getAvailableElitePoints, getAvailableSkillPoints, getMaxAllowedSkillLevel, sanitizeBuild, splitUsedPoints, validateBuild,
 } from '../../lib/skilltree/rules';
-import type { ClassSlug, SkillLevels } from '../../lib/skilltree/types';
-import { SkillCard } from './SkillCard';
+import type { ClassSlug, Skill, SkillLevels } from '../../lib/skilltree/types';
+import { SkillBook } from './SkillBook';
+import { SkillDetail } from './SkillDetail';
 import { BuildSummary } from './BuildSummary';
+import { classIcon } from './classIcon';
 
 const STORAGE_KEY = 'skilltree-build';
 const BUILD_NAME_MAX_LENGTH = 40;
@@ -59,11 +61,15 @@ export function SkillTree() {
   const [notice, setNotice] = useState('');
   const [shareUrl, setShareUrl] = useState('');
   const [copied, setCopied] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const cls = getSkillClass(classSlug);
   const spAvailable = getAvailableSkillPoints(level, questIds);
   const epAvailable = getAvailableElitePoints(level);
   const { skillPointsUsed, elitePointsUsed } = splitUsedPoints(classSlug, skillLevels);
+  const spLeft = Math.max(0, spAvailable - skillPointsUsed);
+  const epLeft = Math.max(0, epAvailable - elitePointsUsed);
+  const selectedSkill = cls.tiers.flatMap((tier) => tier.skills).find((s) => s.id === selectedId) ?? null;
 
   const flash = (msg: string) => { setNotice(msg); window.setTimeout(() => setNotice(''), 3200); };
 
@@ -94,6 +100,15 @@ export function SkillTree() {
     );
     if (filledPrereq) flash(t('sk.chainfilled'));
     setSkillLevels(result);
+  };
+
+  // Every +/−/MAX goes through here: clamp to what the level allows and
+  // refuse to go up when the skill's pool (SP or EP) is empty.
+  const changeSkill = (skill: Skill, next: number) => {
+    const lvl = skillLevels[skill.id] ?? 0;
+    const remaining = skill.tier === 4 ? epLeft : spLeft;
+    if (next > lvl && remaining <= 0) return;
+    setSkillLevel(skill.id, Math.max(0, Math.min(next, getMaxAllowedSkillLevel(skill, level))));
   };
 
   const resetBuild = () => setSkillLevels({});
@@ -127,11 +142,14 @@ export function SkillTree() {
             onChange={(e) => setBuildName(e.target.value)}
           />
         </label>
-        <label className="mk-field">
+        <label className="mk-field sk-class-field">
           <span>{t('sk.class')}</span>
-          <select value={classSlug} onChange={(e) => setClassSlug(e.target.value as ClassSlug)}>
-            {ALL_CLASSES.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
-          </select>
+          <span className="sk-class-select">
+            <img src={classIcon(classSlug)} alt="" className="sk-class-icon" />
+            <select value={classSlug} onChange={(e) => { setClassSlug(e.target.value as ClassSlug); setSelectedId(null); }}>
+              {ALL_CLASSES.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
+            </select>
+          </span>
         </label>
         <label className="mk-field">
           <span>{t('sk.level')}</span>
@@ -152,13 +170,13 @@ export function SkillTree() {
         <div className="sk-points-panel sp">
           <b>{t('sk.points.skill')}</b>
           <span>{t('sk.points.used')}: {skillPointsUsed}</span>
-          <span>{t('sk.points.available')}: {Math.max(0, spAvailable - skillPointsUsed)}</span>
+          <span>{t('sk.points.available')}: {spLeft}</span>
           <span>{t('sk.points.total')}: {spAvailable}</span>
         </div>
         <div className="sk-points-panel ep">
           <b>{t('sk.points.elite')}</b>
           <span>{t('sk.points.used')}: {elitePointsUsed}</span>
-          <span>{t('sk.points.available')}: {Math.max(0, epAvailable - elitePointsUsed)}</span>
+          <span>{t('sk.points.available')}: {epLeft}</span>
           <span>{t('sk.points.total')}: {epAvailable}</span>
         </div>
       </div>
@@ -190,34 +208,48 @@ export function SkillTree() {
         </div>
       )}
 
-      {cls.tiers.map((tier) => (
-        <section key={tier.tier} className="sk-tier">
-          <h2 className="mk-h2">{t('sk.tierlabel', { n: tier.tier })} — {tier.name}</h2>
-          <div className="sk-grid">
-            {tier.skills.map((skill) => {
-              const lvl = skillLevels[skill.id] ?? 0;
-              const elite = skill.tier === 4;
-              const remaining = elite ? epAvailable - elitePointsUsed : spAvailable - skillPointsUsed;
-              return (
-                <SkillCard
-                  key={skill.id}
-                  skill={skill}
-                  level={lvl}
-                  characterLevel={level}
-                  hasBudget={remaining > 0}
-                  onChange={(next) => {
-                    const cap = getMaxAllowedSkillLevel(skill, level);
-                    if (next > lvl && remaining <= 0) return; // no points left
-                    setSkillLevel(skill.id, Math.min(next, cap));
-                  }}
-                />
-              );
-            })}
-          </div>
-        </section>
-      ))}
+      <section className="sk-book-wrap">
+        <h2 className="mk-h2 sk-book-class">
+          <img src={classIcon(classSlug)} alt="" className="sk-class-icon" />
+          {cls.name}
+          <span className="sk-book-tiers">{cls.tiers.map((tier) => tier.name).join(' · ')}</span>
+        </h2>
+        <SkillBook
+          cls={cls}
+          skillLevels={skillLevels}
+          characterLevel={level}
+          spLeft={spLeft}
+          epLeft={epLeft}
+          selectedId={selectedId}
+          onSelect={(skill) => setSelectedId(skill.id)}
+          onStep={(skill, delta) => changeSkill(skill, (skillLevels[skill.id] ?? 0) + delta)}
+          onMax={(skill) => changeSkill(skill, skill.maxLevel)}
+        />
+        <div className="sk-tips" role="note">
+          <b className="sk-tips-title">💡 {t('sk.tips.title')}</b>
+          <ul>
+            <li><kbd>{t('sk.tips.click')}</kbd> <span>+1 {t('sk.tips.point')}</span></li>
+            <li><kbd>{t('sk.tips.rightclick')}</kbd> <span>−1 {t('sk.tips.point')}</span></li>
+            <li><kbd>Shift</kbd> + <kbd>{t('sk.tips.click')}</kbd> <span>{t('sk.tips.max')}</span></li>
+          </ul>
+          <p>{t('sk.tips.prereq')}</p>
+          <p>{t('sk.tips.points')}</p>
+        </div>
+        {selectedSkill ? (
+          <SkillDetail
+            skill={selectedSkill}
+            level={skillLevels[selectedSkill.id] ?? 0}
+            characterLevel={level}
+            hasBudget={(selectedSkill.tier === 4 ? epLeft : spLeft) > 0}
+            onChange={(next) => changeSkill(selectedSkill, next)}
+          />
+        ) : (
+          <p className="sk-detail-empty mk-muted">{t('sk.book.pick')}</p>
+        )}
+      </section>
 
       <BuildSummary
+        classSlug={classSlug}
         buildName={buildName}
         className={cls.name}
         level={level}

@@ -1,10 +1,12 @@
 import { useI18n } from '../../lib/i18n';
 import { SKILL_POINT_QUESTS } from '../../lib/skilltree/config';
-import type { SkillClass, SkillLevels } from '../../lib/skilltree/types';
+import type { ClassSlug, SkillClass, SkillLevels } from '../../lib/skilltree/types';
+import { classIcon } from './classIcon';
 
 export function BuildSummary({
-  buildName, className, level, skillPoints, elitePoints, questIds, cls, skillLevels,
+  classSlug, buildName, className, level, skillPoints, elitePoints, questIds, cls, skillLevels,
 }: {
+  classSlug: ClassSlug;
   buildName?: string;
   className: string;
   level: number;
@@ -23,6 +25,7 @@ export function BuildSummary({
     <section className="sk-summary">
       <h2 className="mk-h2">📋 {buildName ? buildName : t('sk.summary.title')}</h2>
       <div className="sk-summary-head">
+        <img src={classIcon(classSlug)} alt="" className="sk-class-icon" />
         <b>{className} — {t('sk.level')} {level}</b>
       </div>
       <div className="sk-summary-points">

@@ -63,10 +63,11 @@ export function splitUsedPoints(classSlug: ClassSlug, skillLevels: SkillLevels):
 }
 
 /**
- * The two independent prerequisite chains: Tier 1-3 share one continuous
- * chain (they all spend Skill Points), while Tier 4 is its own separate
- * chain (it spends Elite Points). A skill can only keep points if every
- * skill before it in its chain already has at least 1 point.
+ * The two prerequisite chains: Tier 1-3 share one continuous chain (they all
+ * spend Skill Points), while Tier 4 is its own chain (it spends Elite
+ * Points). A skill can only keep points if every skill before it in its
+ * chain already has at least 1 point — and the Tier 4 chain only opens once
+ * every Tier 1-3 skill has at least 1 point (different pools, same gate).
  */
 function getSkillChain(cls: ReturnType<typeof getSkillClass>, elite: boolean): Skill[] {
   return cls.tiers
@@ -89,9 +90,9 @@ export function sanitizeBuild(classSlug: ClassSlug, level: number, questIds: str
 
   const next: SkillLevels = {};
 
-  const runChain = (chain: Skill[], budget: number): void => {
+  const runChain = (chain: Skill[], budget: number, unlocked = true): void => {
     let remaining = budget;
-    let chainOk = true; // the skill before this one (if any) still has >=1 point
+    let chainOk = unlocked; // the skill before this one (if any) still has >=1 point
     for (const skill of chain) {
       const requested = Math.max(0, Math.floor(skillLevels[skill.id] ?? 0));
       const levelCap = getMaxAllowedSkillLevel(skill, level);
@@ -104,8 +105,10 @@ export function sanitizeBuild(classSlug: ClassSlug, level: number, questIds: str
     }
   };
 
-  runChain(getSkillChain(cls, false), getAvailableSkillPoints(level, validQuestIds));
-  runChain(getSkillChain(cls, true), getAvailableElitePoints(level));
+  const baseChain = getSkillChain(cls, false);
+  runChain(baseChain, getAvailableSkillPoints(level, validQuestIds));
+  const tier4Unlocked = baseChain.every((s) => (next[s.id] ?? 0) > 0);
+  runChain(getSkillChain(cls, true), getAvailableElitePoints(level), tier4Unlocked);
 
   return next;
 }
@@ -114,8 +117,10 @@ export function sanitizeBuild(classSlug: ClassSlug, level: number, questIds: str
  * Applies a single skill +/-/MAX change and returns the resulting sanitized
  * build. Investing further into a skill (not removing points) auto-invests
  * the minimum 1 point into every earlier skill in the same prerequisite
- * chain (Tier 1-3 combined, or Tier 4 on its own) that's still at 0 —
- * already-invested earlier skills are left untouched. Removing the last
+ * chain (Tier 1-3 combined, or Tier 4 on its own) that's still at 0 — and a
+ * Tier 4 skill also fills every Tier 1-3 skill that's still at 0, since Tier 4
+ * stays closed until they all have a point. Already-invested earlier skills
+ * are left untouched. Removing the last
  * point from a skill relies on sanitizeBuild's chain check to cascade the
  * removal to whatever depended on it.
  */
@@ -134,11 +139,12 @@ export function applySkillChange(
     const cls = getSkillClass(classSlug);
     const targetSkill = cls.tiers.flatMap((t) => t.skills).find((s) => s.id === skillId);
     if (targetSkill) {
-      const chain = getSkillChain(cls, usesElitePoints(targetSkill));
+      const elite = usesElitePoints(targetSkill);
+      const chain = getSkillChain(cls, elite);
       const idx = chain.findIndex((s) => s.id === skillId);
-      for (let i = 0; i < idx; i++) {
-        const priorId = chain[i].id;
-        if ((candidate[priorId] ?? 0) < 1) candidate[priorId] = 1;
+      const prereqs = [...(elite ? getSkillChain(cls, false) : []), ...chain.slice(0, idx)];
+      for (const prior of prereqs) {
+        if ((candidate[prior.id] ?? 0) < 1) candidate[prior.id] = 1;
       }
     }
   }
