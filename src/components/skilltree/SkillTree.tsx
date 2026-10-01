@@ -9,7 +9,11 @@ import {
   applySkillChange, getAvailableElitePoints, getAvailableSkillPoints, getMaxAllowedSkillLevel, sanitizeBuild, splitUsedPoints, validateBuild,
 } from '../../lib/skilltree/rules';
 import type { ClassSlug, Skill, SkillLevels } from '../../lib/skilltree/types';
+import {
+  decodeSkillBar, emptySkillBar, encodeSkillBar, sanitizeSkillBar, type SkillBar as Bar,
+} from '../../lib/skilltree/skillBar';
 import { SkillBook } from './SkillBook';
+import { SkillBar } from './SkillBar';
 import { SkillDetail } from './SkillDetail';
 import { BuildSummary } from './BuildSummary';
 import { classIcon } from './classIcon';
@@ -21,7 +25,7 @@ function sanitizeBuildName(raw: string): string {
   return raw.trim().slice(0, BUILD_NAME_MAX_LENGTH);
 }
 
-interface StoredBuild { classSlug: ClassSlug; level: number; questIds: string[]; skillLevels: SkillLevels; buildName?: string }
+interface StoredBuild { classSlug: ClassSlug; level: number; questIds: string[]; skillLevels: SkillLevels; buildName?: string; skillBar?: Bar }
 
 function readInitial(): StoredBuild {
   // 1) A shared link (/skill-tree/<slug>?level=&build=) always wins.
@@ -35,7 +39,8 @@ function readInitial(): StoredBuild {
       const buildName = sanitizeBuildName(params.get('name') || '');
       const { questIds, skillLevels } = encoded ? decodeBuild(slugRaw, encoded) : { questIds: [], skillLevels: {} };
       const validated = validateBuild({ classSlug: slugRaw, level, questIds, skillLevels });
-      return { ...validated, buildName };
+      const skillBar = sanitizeSkillBar(validated.classSlug, validated.skillLevels, decodeSkillBar(validated.classSlug, params.get('bar') || ''));
+      return { ...validated, buildName, skillBar };
     }
   }
   // 2) Otherwise, resume whatever was being built locally last time.
@@ -44,7 +49,8 @@ function readInitial(): StoredBuild {
     if (raw) {
       const parsed = JSON.parse(raw) as StoredBuild;
       const validated = validateBuild(parsed);
-      return { ...validated, buildName: sanitizeBuildName(parsed.buildName || '') };
+      const skillBar = sanitizeSkillBar(validated.classSlug, validated.skillLevels, Array.isArray(parsed.skillBar) ? parsed.skillBar : emptySkillBar());
+      return { ...validated, buildName: sanitizeBuildName(parsed.buildName || ''), skillBar };
     }
   } catch { /* ignore */ }
   return { classSlug: 'fighter', level: 1, questIds: [], skillLevels: {}, buildName: '' };
@@ -62,6 +68,7 @@ export function SkillTree() {
   const [shareUrl, setShareUrl] = useState('');
   const [copied, setCopied] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [skillBar, setSkillBar] = useState<Bar>(init.skillBar ?? emptySkillBar());
 
   const cls = getSkillClass(classSlug);
   const spAvailable = getAvailableSkillPoints(level, questIds);
@@ -77,8 +84,16 @@ export function SkillTree() {
   // so re-opening the same tool later doesn't fight with someone else's build).
   useEffect(() => {
     if (window.location.pathname.startsWith('/skill-tree/')) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ classSlug, level, questIds, skillLevels, buildName }));
-  }, [classSlug, level, questIds, skillLevels, buildName]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ classSlug, level, questIds, skillLevels, buildName, skillBar }));
+  }, [classSlug, level, questIds, skillLevels, buildName, skillBar]);
+
+  // A skill that loses its last point (or belongs to another class) leaves the bar.
+  useEffect(() => {
+    setSkillBar((cur) => {
+      const fixed = sanitizeSkillBar(classSlug, skillLevels, cur);
+      return fixed.every((id, i) => id === cur[i]) ? cur : fixed;
+    });
+  }, [classSlug, skillLevels]);
 
   // Re-sanitize whenever level/quests/class change (e.g. lowering the level
   // can make some invested skills illegal) — auto-fix instead of blocking.
@@ -114,12 +129,13 @@ export function SkillTree() {
   const resetBuild = () => setSkillLevels({});
   const toggleQuest = (id: string) => setQuestIds((cur) => (cur.includes(id) ? cur.filter((q) => q !== id) : [...cur, id]));
 
+  const barCode = encodeSkillBar(classSlug, skillBar);
   const doShare = () => {
-    const url = buildShareUrl(classSlug, level, questIds, skillLevels, buildName);
+    const url = buildShareUrl(classSlug, level, questIds, skillLevels, buildName, barCode);
     setShareUrl(url);
     window.history.replaceState(null, '', url);
   };
-  const copyLink = () => { navigator.clipboard?.writeText(shareUrl || buildShareUrl(classSlug, level, questIds, skillLevels, buildName)); setCopied(true); window.setTimeout(() => setCopied(false), 2000); };
+  const copyLink = () => { navigator.clipboard?.writeText(shareUrl || buildShareUrl(classSlug, level, questIds, skillLevels, buildName, barCode)); setCopied(true); window.setTimeout(() => setCopied(false), 2000); };
 
   const encoded = encodeBuild(classSlug, questIds, skillLevels);
   const displayCode = buildDisplayCode(classSlug, level, encoded);
@@ -247,6 +263,8 @@ export function SkillTree() {
           <p className="sk-detail-empty mk-muted">{t('sk.book.pick')}</p>
         )}
       </section>
+
+      <SkillBar bar={skillBar} skillLevels={skillLevels} selectedSkill={selectedSkill} onChange={setSkillBar} />
 
       <BuildSummary
         classSlug={classSlug}

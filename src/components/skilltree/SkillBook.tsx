@@ -3,6 +3,7 @@
 // the twin bars beside it. Every position below is in that artwork's pixels.
 import type { CSSProperties } from 'react';
 import { getMaxAllowedSkillLevel } from '../../lib/skilltree/rules';
+import { canPlaceOnBar, startSkillDrag } from '../../lib/skilltree/skillBar';
 import type { Skill, SkillClass, SkillLevels } from '../../lib/skilltree/types';
 
 const BOOK_W = 800;
@@ -57,6 +58,8 @@ export function SkillBook({
                 aria-label={`${skill.name} ${lvl}/${skill.maxLevel}`}
                 onClick={(e) => { onSelect(skill); if (e.shiftKey) onMax(skill); else onStep(skill, 1); }}
                 onContextMenu={(e) => { e.preventDefault(); onSelect(skill); onStep(skill, -1); }}
+                draggable={canPlaceOnBar(skill, skillLevels)}
+                onDragStart={(e) => startSkillDrag(e, skill.id, null, e.currentTarget.querySelector('img'))}
               >
                 <img src={skill.icon} alt="" draggable={false} />
               </button>

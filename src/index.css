@@ -1736,6 +1736,18 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .sk-detail-controls { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .sk-detail-empty { margin: 0; }
 
+/* Sugestão da Barra de Skill — the in-game hotkey bar, built from one slot frame tile. */
+.sk-bar-wrap { margin-bottom: 24px; }
+.sk-bar-sub { margin: -4px 0 10px; font-size: 12.5px; }
+.sk-bar-scroll { overflow-x: auto; padding-bottom: 4px; }
+.sk-bar { display: inline-flex; flex-direction: column; gap: 6px; padding: 10px 12px; background: radial-gradient(ellipse at 30% 20%, #4a463e 0%, #2f2c26 55%, #24221d 100%); border: 1px solid #5a4a36; border-radius: 6px; box-shadow: inset 0 0 18px rgba(0,0,0,0.6), 0 8px 22px rgba(0,0,0,0.4); }
+.sk-bar-row { display: flex; gap: 6px; }
+.sk-bar-slot { position: relative; width: 50px; height: 50px; flex: none; background: rgba(10,9,8,0.55); border-radius: 4px; cursor: default; }
+.sk-bar-slot::after { content: ""; position: absolute; inset: 0; background: url("/skilltree/skillbar-slot.png") center / 100% 100% no-repeat; pointer-events: none; }
+.sk-bar-slot img { position: absolute; inset: 4px; width: calc(100% - 8px); height: calc(100% - 8px); object-fit: cover; border-radius: 2px; cursor: grab; }
+.sk-bar-slot.over { box-shadow: 0 0 0 2px var(--gold-bright), 0 0 12px var(--gold); }
+.sk-bar-key { position: absolute; top: 3px; left: 5px; z-index: 1; font: 700 11px/1 "Trebuchet MS", Verdana, sans-serif; color: #fff; text-shadow: 0 0 2px #000, 1px 1px 1px #000; pointer-events: none; }
+
 .sk-tag { font-size: 8.5px; font-weight: 800; letter-spacing: 0.5px; padding: 1px 5px; border-radius: 6px; }
 .sk-tag.primal { background: rgba(92,184,92,0.15); border: 1px solid var(--green); color: var(--green); }
 .sk-tag.ultimate { background: rgba(224,169,59,0.15); border: 1px solid var(--support); color: var(--support); }
