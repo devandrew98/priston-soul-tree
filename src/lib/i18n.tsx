@@ -266,6 +266,14 @@ const DICT: Record<string, Entry> = {
     en: 'A set of community-made tools for Priston Tale EU: track boss and Fury spawn times, measure your Survive or Die performance and plan your Soul Tree — all in one place.',
   },
   'home.welcome.title': { pt: 'Sejam bem vindos(as) ao site PristonZONE.', en: 'Welcome to the PristonZONE site.' },
+  'home.pix.title': { pt: 'Apoie o PristonZONE', en: 'Support PristonZONE' },
+  'home.pix.body': {
+    pt: 'O PristonZONE é um projeto feito com carinho por jogadores, para jogadores! 💜 Manter tudo funcionando envolve custos mensais, e sua ajuda pode fazer toda a diferença. Se você gosta do nosso trabalho e deseja contribuir com qualquer valor, abaixo está a chave PIX para doação. Toda contribuição é muito bem-vinda e nos ajuda a manter esse projeto vivo. Muito obrigado pelo apoio!',
+    en: 'PristonZONE is a project made with love by players, for players! 💜 Keeping everything running involves monthly costs, and your help can make all the difference. If you enjoy our work and would like to contribute any amount, the PIX key for donations is below. Every contribution is very welcome and helps keep this project alive. Thank you so much for your support!',
+  },
+  'home.pix.keylabel': { pt: 'Chave PIX:', en: 'PIX key:' },
+  'home.pix.copy': { pt: 'Copiar', en: 'Copy' },
+  'home.pix.copied': { pt: 'Copiado!', en: 'Copied!' },
   'home.welcome.body': {
     pt: 'Um site feito por jogadores com ferramentas para te acompanhar na sua jornada no PristonTale EU!',
     en: 'A site made by players, with tools to accompany you on your PristonTale EU journey!',
