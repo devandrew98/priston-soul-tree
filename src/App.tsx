@@ -29,8 +29,6 @@ type Tab = 'planner' | 'inventory' | 'optimizer';
 type TimerTab = 'boss' | 'fury';
 type ToolTab = 'soultree' | 'mixing' | 'sod' | 'wardrobe' | 'skilltree';
 
-const SECTIONS: Section[] = ['home', 'timers', 'market', 'streamers', 'guides', 'tools'];
-
 interface SubTab { id: string; icon: string; key: string }
 interface NavItem { id: Section; icon: string; key: string; tabs?: SubTab[] }
 
@@ -57,32 +55,16 @@ const NAV: NavItem[] = [
   { id: 'streamers', icon: '📺', key: 'nav.streamers' },
 ];
 
-/** Old top-level sections that are now sub-tabs — keep returning visitors put. */
-const LEGACY: Record<string, { section: Section; timer?: TimerTab; tool?: ToolTab }> = {
-  timeboss: { section: 'timers', timer: 'boss' },
-  timerfury: { section: 'timers', timer: 'fury' },
-  soultree: { section: 'tools', tool: 'soultree' },
-  mixing: { section: 'tools', tool: 'mixing' },
-  sod: { section: 'tools', tool: 'sod' },
-};
-
 function initialNav(): { section: Section; timerTab: TimerTab; toolTab: ToolTab } {
-  let timerTab = (localStorage.getItem('timers-tab') as TimerTab) || 'boss';
-  let toolTab = (localStorage.getItem('tools-tab') as ToolTab) || 'soultree';
+  const timerTab = (localStorage.getItem('timers-tab') as TimerTab) || 'boss';
+  const toolTab = (localStorage.getItem('tools-tab') as ToolTab) || 'soultree';
   // A shared listing/seller link (#item-… / #seller-…) opens the Marketplace.
   const h = window.location.hash;
   if (h.startsWith('#item-') || h.startsWith('#seller-')) return { section: 'market', timerTab, toolTab };
   // A shared Skill Tree build link (/skill-tree/<class>?...) opens that tool directly.
   if (window.location.pathname.startsWith('/skill-tree/')) return { section: 'tools', timerTab, toolTab: 'skilltree' };
 
-  const saved = localStorage.getItem('site-section') ?? '';
-  if (SECTIONS.includes(saved as Section)) return { section: saved as Section, timerTab, toolTab };
-  const legacy = LEGACY[saved];
-  if (legacy) {
-    if (legacy.timer) timerTab = legacy.timer;
-    if (legacy.tool) toolTab = legacy.tool;
-    return { section: legacy.section, timerTab, toolTab };
-  }
+  // Every other visit (new tab, F5, coming back) lands on Home — the section is never remembered.
   return { section: 'home', timerTab, toolTab };
 }
 
@@ -117,7 +99,6 @@ export default function App() {
 
   const go = (s: Section) => {
     setSection(s);
-    localStorage.setItem('site-section', s);
     window.scrollTo({ top: 0 });
   };
   const goTimer = (tb: TimerTab) => { setTimerTab(tb); localStorage.setItem('timers-tab', tb); window.scrollTo({ top: 0 }); };
