@@ -5,6 +5,7 @@ import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import {
   MAX_VIEWERS, NAME_MAX_LENGTH, PASSWORD_MAX_LENGTH, RoomHost, RoomViewer, cleanName, normalizeRoomCode, type ViewerInfo, type ViewerStatus,
 } from '../../lib/screenshare/p2p';
+import { LobbyListing, watchLobby, type LobbyRoom } from '../../lib/screenshare/lobby';
 
 const NAME_KEY = 'screenshare-name';
 const ROOM_PATH = '/sala/';
@@ -30,7 +31,7 @@ function codeFromUrl(): string | null {
 
 type Mode =
   | { kind: 'menu' }
-  | { kind: 'host'; host: RoomHost; stream: MediaStream; quality: Quality; password: string }
+  | { kind: 'host'; host: RoomHost; listing: LobbyListing | null; stream: MediaStream; quality: Quality; password: string }
   | { kind: 'viewer'; code: string; password: string };
 
 export function ScreenRooms() {
@@ -42,6 +43,9 @@ export function ScreenRooms() {
   const [roomPassword, setRoomPassword] = useState(''); // host: password to create the room with
   const [joinPassword, setJoinPassword] = useState(''); // viewer: password to try when joining
   const [audio, setAudio] = useState(true);
+  const [listed, setListed] = useState(true); // host: show the room in the public list
+  const [rooms, setRooms] = useState<LobbyRoom[] | null>(null); // null = still loading
+  const [lobbyError, setLobbyError] = useState(false);
   const [codeInput, setCodeInput] = useState('');
   const [error, setError] = useState('');
   const [starting, setStarting] = useState(false);
@@ -53,6 +57,15 @@ export function ScreenRooms() {
     try { localStorage.setItem(NAME_KEY, cleanName(value)); } catch { /* ignore */ }
   };
   const finalName = cleanName(name);
+
+  // The live-room list is only needed while the menu is showing.
+  const onMenu = mode.kind === 'menu';
+  useEffect(() => {
+    if (!onMenu || !BACKEND_ENABLED) return;
+    setRooms(null);
+    setLobbyError(false);
+    return watchLobby(setRooms, () => setLobbyError(true));
+  }, [onMenu]);
 
   const backToMenu = () => {
     if (window.location.pathname.startsWith(ROOM_PATH)) window.history.replaceState(null, '', '/');
@@ -80,7 +93,10 @@ export function ScreenRooms() {
       const password = roomPassword.trim();
       const host = new RoomHost(stream, { bitrate: q.bitrate, password });
       await host.start();
-      setMode({ kind: 'host', host, stream, quality: q, password });
+      // Listing is a bonus: if it fails the room still works (people can use the link).
+      const listing = listed ? new LobbyListing({ code: host.code, title: finalName, locked: host.locked }) : null;
+      listing?.start().catch(() => {});
+      setMode({ kind: 'host', host, listing, stream, quality: q, password });
     } catch {
       stream.getTracks().forEach((track) => track.stop());
       setError(t('sc.err.backend'));
@@ -88,13 +104,17 @@ export function ScreenRooms() {
     setStarting(false);
   };
 
-  const joinRoom = () => {
+  const enterRoom = (code: string, password: string) => {
     setError('');
-    if (!finalName) { setError(t('sc.err.name')); return; }
+    if (!finalName) { setError(t('sc.err.name')); window.scrollTo({ top: 0 }); return; }
+    setViewerStarted(true);
+    setMode({ kind: 'viewer', code, password });
+  };
+
+  const joinRoom = () => {
     const code = normalizeRoomCode(codeInput);
     if (!code) { setError(t('sc.err.code')); return; }
-    setViewerStarted(true);
-    setMode({ kind: 'viewer', code, password: joinPassword.trim() });
+    enterRoom(code, joinPassword.trim());
   };
 
   return (
@@ -114,6 +134,37 @@ export function ScreenRooms() {
           </label>
           {error && <p className="sk-notice">{error}</p>}
 
+          {BACKEND_ENABLED && (
+            <section className="sr-live-list">
+              <h2 className="mk-h2">📺 {t('sc.list.title')}</h2>
+              {lobbyError ? (
+                <p className="mk-muted">{t('sc.list.error')}</p>
+              ) : rooms === null ? (
+                <p className="mk-muted">{t('sc.list.loading')}</p>
+              ) : rooms.length === 0 ? (
+                <p className="mk-muted">{t('sc.list.empty')}</p>
+              ) : (
+                <ul className="sr-rooms">
+                  {rooms.map((room) => {
+                    const full = room.viewers >= MAX_VIEWERS;
+                    return (
+                      <li key={room.code} className="sr-room">
+                        <span className="sr-room-icon" title={room.locked ? t('sc.list.locked') : t('sc.list.open')}>{room.locked ? '🔒' : '🔓'}</span>
+                        <span className="sr-room-info">
+                          <b>{room.title || t('sc.list.untitled')}</b>
+                          <em>{room.viewers}/{MAX_VIEWERS} {t('sc.list.watching')}{room.locked ? ` · ${t('sc.list.locked')}` : ''}</em>
+                        </span>
+                        <button className="mk-btn sm primary" disabled={full} onClick={() => enterRoom(room.code, '')}>
+                          {full ? t('sc.v.full') : `▶ ${t('sc.join.go')}`}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </section>
+          )}
+
           <div className="sr-cards">
             <section className="sr-card">
               <h2 className="mk-h2">📡 {t('sc.share.title')}</h2>
@@ -128,6 +179,10 @@ export function ScreenRooms() {
                   <label className="sr-check">
                     <input type="checkbox" checked={audio} onChange={(e) => setAudio(e.target.checked)} />
                     {t('sc.audio')}
+                  </label>
+                  <label className="sr-check">
+                    <input type="checkbox" checked={listed} onChange={(e) => setListed(e.target.checked)} />
+                    {t('sc.list.publish')}
                   </label>
                   <label className="mk-field">
                     <span>🔒 {t('sc.pw.label')}</span>
@@ -175,7 +230,7 @@ export function ScreenRooms() {
         </>
       )}
 
-      {mode.kind === 'host' && <HostView host={mode.host} stream={mode.stream} quality={mode.quality} password={mode.password} onExit={backToMenu} />}
+      {mode.kind === 'host' && <HostView host={mode.host} listing={mode.listing} stream={mode.stream} quality={mode.quality} password={mode.password} onExit={backToMenu} />}
 
       {mode.kind === 'viewer' && !viewerStarted && (
         <div className="sr-card sr-prejoin">
@@ -202,22 +257,26 @@ export function ScreenRooms() {
   );
 }
 
-function HostView({ host, stream, quality, password, onExit }: { host: RoomHost; stream: MediaStream; quality: Quality; password: string; onExit: () => void }) {
+function HostView({ host, listing, stream, quality, password, onExit }: { host: RoomHost; listing: LobbyListing | null; stream: MediaStream; quality: Quality; password: string; onExit: () => void }) {
   const { t } = useI18n();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [viewers, setViewers] = useState<ViewerInfo[]>([]);
   const [copied, setCopied] = useState(false);
   const link = `${window.location.origin}${ROOM_PATH}${host.code}`;
+  const endRoom = () => { host.stop(); listing?.stop(); };
 
   useEffect(() => {
     if (videoRef.current) videoRef.current.srcObject = stream;
   }, [stream]);
 
+  // The public list shows how many people are watching right now.
+  useEffect(() => { listing?.setViewers(viewers.length); }, [listing, viewers.length]);
+
   const mounted = useRef(false);
   useEffect(() => {
     mounted.current = true;
     host.onViewersChange(setViewers);
-    const onEnded = () => { host.stop(); onExit(); };
+    const onEnded = () => { endRoom(); onExit(); };
     const track = stream.getVideoTracks()[0];
     track?.addEventListener('ended', onEnded); // the browser's own "Stop sharing" button
     return () => {
@@ -225,7 +284,7 @@ function HostView({ host, stream, quality, password, onExit }: { host: RoomHost;
       track?.removeEventListener('ended', onEnded);
       // Deferred so React StrictMode's dev-only unmount/remount doesn't kill a live room;
       // a real unmount (leaving the tab) stays mounted=false and stops the room a tick later.
-      window.setTimeout(() => { if (!mounted.current) host.stop(); }, 0);
+      window.setTimeout(() => { if (!mounted.current) endRoom(); }, 0);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -275,7 +334,7 @@ function HostView({ host, stream, quality, password, onExit }: { host: RoomHost;
           </ul>
         )}
         <p className="mk-muted sr-upload">{t('sc.host.upload', { mbps: needMbps })}</p>
-        <button className="mk-btn" onClick={() => { host.stop(); onExit(); }}>⏹ {t('sc.host.stop')}</button>
+        <button className="mk-btn" onClick={() => { endRoom(); onExit(); }}>⏹ {t('sc.host.stop')}</button>
       </div>
     </div>
   );

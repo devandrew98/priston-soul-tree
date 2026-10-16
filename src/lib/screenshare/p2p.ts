@@ -92,7 +92,7 @@ interface Link {
 // Opening/closing a room topic must never overlap: leaving one channel on a topic can
 // tear down another that just joined the same topic on the shared socket.
 let linkQueue: Promise<unknown> = Promise.resolve();
-function serialized<T>(task: () => Promise<T>): Promise<T> {
+export function serialized<T>(task: () => Promise<T>): Promise<T> {
   const run = linkQueue.then(task, task);
   linkQueue = run.catch(() => {});
   return run;
