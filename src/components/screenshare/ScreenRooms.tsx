@@ -110,7 +110,7 @@ export function ScreenRooms() {
         <>
           <label className="mk-field sr-name">
             <span>{t('sc.name')}</span>
-            <input type="text" value={name} maxLength={NAME_MAX_LENGTH} placeholder={t('sc.name.placeholder')} onChange={(e) => saveName(e.target.value)} />
+            <input type="text" name="screen-display-name" autoComplete="off" data-1p-ignore data-lpignore="true" value={name} maxLength={NAME_MAX_LENGTH} placeholder={t('sc.name.placeholder')} onChange={(e) => saveName(e.target.value)} />
           </label>
           {error && <p className="sk-notice">{error}</p>}
 
@@ -147,7 +147,7 @@ export function ScreenRooms() {
               <label className="mk-field">
                 <span>{t('sc.join.code')}</span>
                 <input
-                  type="text"
+                  type="text" name="screen-room-code" autoComplete="off" data-1p-ignore data-lpignore="true"
                   value={codeInput}
                   maxLength={40}
                   placeholder="ABCD2345"
@@ -157,7 +157,7 @@ export function ScreenRooms() {
               </label>
               <label className="mk-field">
                 <span>🔒 {t('sc.pw.join')}</span>
-                <input type="password" value={joinPassword} maxLength={PASSWORD_MAX_LENGTH} autoComplete="off" onChange={(e) => setJoinPassword(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') joinRoom(); }} />
+                <input type="password" value={joinPassword} maxLength={PASSWORD_MAX_LENGTH} autoComplete="new-password" name="screen-room-password" onChange={(e) => setJoinPassword(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') joinRoom(); }} />
               </label>
               <button className="mk-btn primary" disabled={!BACKEND_ENABLED} onClick={joinRoom}>👀 {t('sc.join.go')}</button>
             </section>
@@ -182,11 +182,11 @@ export function ScreenRooms() {
           <h2 className="mk-h2">👀 {t('sc.join.title')} — <code>{mode.code}</code></h2>
           <label className="mk-field sr-name">
             <span>{t('sc.name')}</span>
-            <input type="text" value={name} maxLength={NAME_MAX_LENGTH} placeholder={t('sc.name.placeholder')} onChange={(e) => saveName(e.target.value)} />
+            <input type="text" name="screen-display-name" autoComplete="off" data-1p-ignore data-lpignore="true" value={name} maxLength={NAME_MAX_LENGTH} placeholder={t('sc.name.placeholder')} onChange={(e) => saveName(e.target.value)} />
           </label>
           <label className="mk-field sr-name">
             <span>🔒 {t('sc.pw.join')}</span>
-            <input type="password" value={joinPassword} maxLength={PASSWORD_MAX_LENGTH} autoComplete="off" onChange={(e) => setJoinPassword(e.target.value)} />
+            <input type="password" value={joinPassword} maxLength={PASSWORD_MAX_LENGTH} autoComplete="new-password" name="screen-room-password" onChange={(e) => setJoinPassword(e.target.value)} />
           </label>
           {error && <p className="sk-notice">{error}</p>}
           <div className="sk-actions">
@@ -337,7 +337,7 @@ function ViewerView({ code, name, password, onExit }: { code: string; name: stri
               type="password"
               value={pwInput}
               maxLength={PASSWORD_MAX_LENGTH}
-              autoComplete="off"
+              autoComplete="new-password" name="screen-room-password"
               autoFocus
               onChange={(e) => setPwInput(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') submitPw(); }}

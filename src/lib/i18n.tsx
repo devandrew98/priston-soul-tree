@@ -25,7 +25,7 @@ const DICT: Record<string, Entry> = {
   'sc.title': { pt: 'Compartilhamento de Tela', en: 'Screen Sharing' },
   'sc.subtitle': { pt: 'Compartilhe a tela do seu jogo com os amigos direto pelo navegador — grátis, sem instalar nada e sem passar por servidor.', en: 'Share your game screen with friends right from the browser — free, nothing to install, no video server.' },
   'sc.name': { pt: 'Seu nome na sala', en: 'Your name in the room' },
-  'sc.name.placeholder': { pt: 'Ex: HaDDeR', en: 'e.g. HaDDeR' },
+  'sc.name.placeholder': { pt: 'Ex: PristonTale EU Stream', en: 'e.g. PristonTale EU Stream' },
   'sc.share.title': { pt: 'Compartilhar minha tela', en: 'Share my screen' },
   'sc.share.start': { pt: 'Iniciar transmissão', en: 'Start sharing' },
   'sc.starting': { pt: 'Iniciando…', en: 'Starting…' },
