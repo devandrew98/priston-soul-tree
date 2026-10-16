@@ -24,11 +24,9 @@ import { useAuth } from './components/market/store';
 import { BACKEND_ENABLED } from './lib/market/supabase';
 import { fetchSiteFlag } from './lib/market/siteSettings';
 import { useI18n } from './lib/i18n';
+import { DEFAULT_ROUTE, pathFor, routeFromPath, type Route, type Section, type TimerTab, type ToolTab } from './lib/routes';
 
-export type Section = 'home' | 'timers' | 'market' | 'streamers' | 'guides' | 'tools';
 type Tab = 'planner' | 'inventory' | 'optimizer';
-type TimerTab = 'boss' | 'fury';
-type ToolTab = 'soultree' | 'mixing' | 'sod' | 'wardrobe' | 'skilltree' | 'screenshare';
 
 interface SubTab { id: string; icon: string; key: string }
 interface NavItem { id: Section; icon: string; key: string; tabs?: SubTab[] }
@@ -57,22 +55,26 @@ const NAV: NavItem[] = [
   { id: 'streamers', icon: '📺', key: 'nav.streamers' },
 ];
 
-function initialNav(): { section: Section; timerTab: TimerTab; toolTab: ToolTab } {
-  const timerTab = (localStorage.getItem('timers-tab') as TimerTab) || 'boss';
-  const toolTab = (localStorage.getItem('tools-tab') as ToolTab) || 'soultree';
-  // A shared listing/seller link (#item-… / #seller-…) opens the Marketplace.
-  const h = window.location.hash;
-  if (h.startsWith('#item-') || h.startsWith('#seller-')) return { section: 'market', timerTab, toolTab };
-  // A shared Skill Tree build link (/skill-tree/<class>?...) opens that tool directly.
-  if (window.location.pathname.startsWith('/skill-tree/')) return { section: 'tools', timerTab, toolTab: 'skilltree' };
-  // A shared screen-room link (/sala/<code>) opens the viewer directly.
-  if (window.location.pathname.startsWith('/sala/')) return { section: 'tools', timerTab, toolTab: 'screenshare' };
-
-  // Every other visit (new tab, F5, coming back) lands on Home — the section is never remembered.
-  return { section: 'home', timerTab, toolTab };
+/** The page the URL points at. The address is the only thing remembered: typing the bare
+ *  domain is Home, while F5 / a shared link / Back land on the page in the address bar. */
+function initialRoute(): Route {
+  const { pathname, search, hash } = window.location;
+  const fromPath = routeFromPath(pathname);
+  // Older share links put their data in the hash of "/": send them to the page that reads it.
+  if (!fromPath || fromPath.section === 'home') {
+    if (hash.startsWith('#item-') || hash.startsWith('#seller-')) {
+      window.history.replaceState(null, '', `/marketplace${search}${hash}`);
+      return { ...DEFAULT_ROUTE, section: 'market' };
+    }
+    if (/^#[bc]=/.test(hash)) {
+      window.history.replaceState(null, '', `/souls${search}${hash}`);
+      return { ...DEFAULT_ROUTE, section: 'tools', toolTab: 'soultree' };
+    }
+  }
+  return fromPath ?? DEFAULT_ROUTE;
 }
 
-const INIT = initialNav();
+const INIT = initialRoute();
 
 export default function App() {
   // Public character page (pristonzone.com/char/<slug>) is a standalone page,
@@ -84,9 +86,8 @@ export default function App() {
 
   const { t, lang, setLang } = useI18n();
   const { isAdmin, isLoggedIn } = useAuth();
-  const [section, setSection] = useState<Section>(INIT.section);
-  const [timerTab, setTimerTab] = useState<TimerTab>(INIT.timerTab);
-  const [toolTab, setToolTab] = useState<ToolTab>(INIT.toolTab);
+  const [route, setRoute] = useState<Route>(INIT);
+  const { section, timerTab, toolTab } = route;
   const [openMenu, setOpenMenu] = useState<Section | null>(null);
   const [openAdminAt, setOpenAdminAt] = useState(0);
   const [marketplaceEnabled, setMarketplaceEnabled] = useState(true);
@@ -101,18 +102,39 @@ export default function App() {
 
   const nav = NAV.filter((n) => n.id !== 'market' || marketplaceEnabled);
 
-  const go = (s: Section) => {
-    setSection(s);
+  // Every page change also changes the address bar (so F5 and Back stay on the page).
+  const navigate = (patch: Partial<Route>) => {
+    const next = { ...route, ...patch };
+    setRoute(next);
+    const path = pathFor(next);
+    if (window.location.pathname !== path || window.location.search || window.location.hash) {
+      window.history.pushState(null, '', path);
+    }
     window.scrollTo({ top: 0 });
   };
-  const goTimer = (tb: TimerTab) => { setTimerTab(tb); localStorage.setItem('timers-tab', tb); window.scrollTo({ top: 0 }); };
-  const goTool = (tb: ToolTab) => { setToolTab(tb); localStorage.setItem('tools-tab', tb); window.scrollTo({ top: 0 }); };
+  const go = (s: Section) => navigate({ section: s });
+
+  // The Back/Forward buttons: show whatever page the address bar now says.
+  useEffect(() => {
+    const onPop = () => setRoute(routeFromPath(window.location.pathname) ?? DEFAULT_ROUTE);
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  // Browser tab title follows the page (and the language).
+  useEffect(() => {
+    const labelKey = section === 'timers' ? TIMER_TABS.find((x) => x.id === timerTab)?.key
+      : section === 'tools' ? TOOL_TABS.find((x) => x.id === toolTab)?.key
+      : section === 'home' ? undefined
+      : NAV.find((x) => x.id === section)?.key;
+    document.title = labelKey ? `${t(labelKey)} — PristonZONE` : 'PristonZONE';
+  }, [section, timerTab, toolTab, lang, t]);
 
   // Navigate to a dropdown item (section + its sub-tab), then close the menu.
   const pickSub = (sectionId: Section, subId: string) => {
-    go(sectionId);
-    if (sectionId === 'timers') goTimer(subId as TimerTab);
-    else if (sectionId === 'tools') goTool(subId as ToolTab);
+    if (sectionId === 'timers') navigate({ section: sectionId, timerTab: subId as TimerTab });
+    else if (sectionId === 'tools') navigate({ section: sectionId, toolTab: subId as ToolTab });
+    else go(sectionId);
     setOpenMenu(null);
   };
   const currentSub = (sectionId: Section) => (sectionId === 'timers' ? timerTab : sectionId === 'tools' ? toolTab : '');

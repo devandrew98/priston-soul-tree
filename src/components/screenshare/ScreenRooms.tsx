@@ -6,6 +6,7 @@ import {
   MAX_VIEWERS, NAME_MAX_LENGTH, PASSWORD_MAX_LENGTH, RoomHost, RoomViewer, cleanName, normalizeRoomCode, type ViewerInfo, type ViewerStatus,
 } from '../../lib/screenshare/p2p';
 import { LobbyListing, watchLobby, type LobbyRoom } from '../../lib/screenshare/lobby';
+import { TOOL_PATHS } from '../../lib/routes';
 
 const NAME_KEY = 'screenshare-name';
 const ROOM_PATH = '/sala/';
@@ -68,7 +69,7 @@ export function ScreenRooms() {
   }, [onMenu]);
 
   const backToMenu = () => {
-    if (window.location.pathname.startsWith(ROOM_PATH)) window.history.replaceState(null, '', '/');
+    if (window.location.pathname.startsWith(ROOM_PATH)) window.history.replaceState(null, '', TOOL_PATHS.screenshare);
     setViewerStarted(false);
     setMode({ kind: 'menu' });
   };
