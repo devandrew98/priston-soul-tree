@@ -17,6 +17,7 @@ import { Mixing } from './components/Mixing';
 import { Wardrobe } from './components/wardrobe/Wardrobe';
 import { CharacterPublicPage } from './components/wardrobe/CharacterPublicPage';
 import { SkillTree as SkillTreeTool } from './components/skilltree/SkillTree';
+import { ScreenRooms } from './components/screenshare/ScreenRooms';
 import { ResetPasswordModal } from './components/market/ResetPasswordModal';
 import { AuthModal } from './components/market/AuthModal';
 import { useAuth } from './components/market/store';
@@ -27,7 +28,7 @@ import { useI18n } from './lib/i18n';
 export type Section = 'home' | 'timers' | 'market' | 'streamers' | 'guides' | 'tools';
 type Tab = 'planner' | 'inventory' | 'optimizer';
 type TimerTab = 'boss' | 'fury';
-type ToolTab = 'soultree' | 'mixing' | 'sod' | 'wardrobe' | 'skilltree';
+type ToolTab = 'soultree' | 'mixing' | 'sod' | 'wardrobe' | 'skilltree' | 'screenshare';
 
 interface SubTab { id: string; icon: string; key: string }
 interface NavItem { id: Section; icon: string; key: string; tabs?: SubTab[] }
@@ -43,6 +44,7 @@ const TOOL_TABS: { id: ToolTab; icon: string; key: string }[] = [
   { id: 'mixing', icon: '⚗️', key: 'nav.mixing' },
   { id: 'sod', icon: '🎯', key: 'nav.sod' },
   { id: 'wardrobe', icon: '🧥', key: 'nav.wardrobe' },
+  { id: 'screenshare', icon: '🖥️', key: 'nav.screenshare' },
 ];
 
 // Tabs with `tabs` open a dropdown (cascade) instead of navigating directly.
@@ -63,6 +65,8 @@ function initialNav(): { section: Section; timerTab: TimerTab; toolTab: ToolTab 
   if (h.startsWith('#item-') || h.startsWith('#seller-')) return { section: 'market', timerTab, toolTab };
   // A shared Skill Tree build link (/skill-tree/<class>?...) opens that tool directly.
   if (window.location.pathname.startsWith('/skill-tree/')) return { section: 'tools', timerTab, toolTab: 'skilltree' };
+  // A shared screen-room link (/sala/<code>) opens the viewer directly.
+  if (window.location.pathname.startsWith('/sala/')) return { section: 'tools', timerTab, toolTab: 'screenshare' };
 
   // Every other visit (new tab, F5, coming back) lands on Home — the section is never remembered.
   return { section: 'home', timerTab, toolTab };
@@ -202,6 +206,7 @@ export default function App() {
       ) : (
         toolTab === 'soultree' ? <SoulTree />
           : toolTab === 'skilltree' ? <SkillTreeTool />
+          : toolTab === 'screenshare' ? <ScreenRooms />
           : toolTab === 'mixing' ? <Mixing />
           : toolTab === 'sod' ? <SoD />
           : <Wardrobe onLogin={() => setShowAuth(true)} />
