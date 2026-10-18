@@ -423,6 +423,14 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
   color: var(--gold-bright); border-color: var(--gold);
   box-shadow: 0 0 0 1px rgba(212,175,106,0.25) inset;
 }
+/* Visit counter: a plain read-out (small caption + big number), deliberately not button-shaped. */
+.topnav-stat {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 2px; line-height: 1;
+  padding: 2px 14px 2px 14px; margin-right: 2px; border-left: 1px solid var(--border);
+  cursor: default; user-select: none; white-space: nowrap;
+}
+.topnav-stat-label { font-size: 10px; font-weight: 700; letter-spacing: 0.9px; text-transform: uppercase; color: var(--text-dim); }
+.topnav-stat-num { font-size: 21px; font-weight: 800; color: var(--gold-bright); font-variant-numeric: tabular-nums; text-shadow: 0 1px 2px #000, 0 0 12px rgba(240,210,138,0.25); }
 .topnav-admin { background: transparent; border: 1px solid transparent; border-radius: 8px; color: var(--text-dim); font-size: 15px; padding: 6px 8px; margin-right: 6px; opacity: 0.55; transition: opacity 0.15s ease, border-color 0.15s ease, background 0.15s ease; }
 .topnav-admin:hover { opacity: 1; border-color: var(--border); background: var(--panel); }
 .lang-toggle { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }

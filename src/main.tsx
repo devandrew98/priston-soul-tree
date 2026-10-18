@@ -4,6 +4,9 @@ import './index.css';
 import App from './App';
 import { StoreProvider } from './store';
 import { LanguageProvider } from './lib/i18n';
+import { initVisits } from './lib/visits';
+
+void initVisits(); // counts this visit (once per day) whatever page the person lands on
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

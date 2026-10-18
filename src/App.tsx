@@ -24,6 +24,7 @@ import { useAuth } from './components/market/store';
 import { BACKEND_ENABLED } from './lib/market/supabase';
 import { fetchSiteFlag } from './lib/market/siteSettings';
 import { useI18n } from './lib/i18n';
+import { initVisits } from './lib/visits';
 import { DEFAULT_ROUTE, pathFor, routeFromPath, type Route, type Section, type TimerTab, type ToolTab } from './lib/routes';
 
 type Tab = 'planner' | 'inventory' | 'optimizer';
@@ -92,6 +93,12 @@ export default function App() {
   const [openAdminAt, setOpenAdminAt] = useState(0);
   const [marketplaceEnabled, setMarketplaceEnabled] = useState(true);
   const [showAuth, setShowAuth] = useState(false);
+  const [visits, setVisits] = useState<number | null>(null); // null = counter unavailable -> hidden
+  useEffect(() => {
+    let cancelled = false;
+    initVisits().then((n) => { if (!cancelled) setVisits(n); });
+    return () => { cancelled = true; };
+  }, []);
 
   // Hides the Marketplace nav entry entirely while it's disabled (Admin -> Global) —
   // even for admins; getting back in to re-enable it goes through the 🔒 icon instead.
@@ -195,6 +202,12 @@ export default function App() {
           ))}
         </div>
         <span className="spacer" />
+        {visits !== null && (
+          <div className="topnav-stat" title={t('home.visits', { n: visits.toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US') })}>
+            <span className="topnav-stat-label">👁 {t('nav.visits')}</span>
+            <b className="topnav-stat-num">{visits.toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US')}</b>
+          </div>
+        )}
         {!isLoggedIn && (
           <button className="topnav-admin" title={t('mk.auth.login')} onClick={() => setShowAuth(true)}>
             👤
