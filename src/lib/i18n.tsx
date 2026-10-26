@@ -442,8 +442,8 @@ const DICT: Record<string, Entry> = {
   'home.pix.copy': { pt: 'Copiar', en: 'Copy' },
   'home.pix.copied': { pt: 'Copiado!', en: 'Copied!' },
   'home.welcome.body': {
-    pt: 'Um site feito por jogadores com ferramentas para te acompanhar na sua jornada no PristonTale EU!',
-    en: 'A site made by players, with tools to accompany you on your PristonTale EU journey!',
+    pt: 'Um site feito por jogadores, para jogadores do PristonTale EU',
+    en: 'A site made by players, for PristonTale EU players',
   },
   'home.cards.title': { pt: 'O que você encontra aqui', en: 'What you find here' },
   'home.card.timeboss': { pt: 'Contagem regressiva para cada boss nascer, no horário oficial do jogo (GMT 0).', en: 'Countdown to every boss spawn, on the game official time (GMT 0).' },
