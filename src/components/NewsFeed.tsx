@@ -2,9 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useI18n } from '../lib/i18n';
 import { BACKEND_ENABLED } from '../lib/market/supabase';
-import { MOCK_NEWS, type NewsItem, type NewsKind, fetchPublishedNews } from '../lib/market/news';
-
-const KIND_ICON: Record<NewsKind, string> = { news: '📰', event: '🎉', maintenance: '🛠️' };
+import { MOCK_NEWS, type NewsItem, fetchPublishedNews } from '../lib/market/news';
 
 export function NewsFeed() {
   const { t, lang } = useI18n();
@@ -23,13 +21,13 @@ export function NewsFeed() {
 
   return (
     <section className="home-news">
-      <h2 className="home-news-title">📢 {t('home.news.title')}</h2>
+      <h2 className="home-news-title">{t('home.news.title')}</h2>
       <div className="home-news-list">
         {items.map((n) => (
           <article key={n.id} className={`home-news-card ${n.kind} ${n.pinned ? 'pinned' : ''}`}>
             <div className="home-news-head">
-              <span className="home-news-kind">{KIND_ICON[n.kind]} {t(`home.news.kind.${n.kind}`)}</span>
-              {n.pinned && <span className="home-news-pin" title={t('home.news.pinned')}>📌</span>}
+              <span className="home-news-kind">{t(`home.news.kind.${n.kind}`)}</span>
+              {n.pinned && <span className="home-news-pin" title={t('home.news.pinned')}>◆</span>}
               <span className="home-news-date">{fmt(n.createdAt)}</span>
             </div>
             <h3 className="home-news-h">{n.title[lang]}</h3>

@@ -174,7 +174,7 @@ export default function App() {
                 aria-haspopup="true"
                 aria-expanded={openMenu === n.id}
               >
-                {n.icon} {t(n.key)} <span className="topnav-caret">▾</span>
+                <span className="topnav-ico">{n.icon}</span> {t(n.key)} <span className="topnav-caret">▾</span>
               </button>
               {openMenu === n.id && (
                 <div className="topnav-menu">
@@ -184,7 +184,7 @@ export default function App() {
                       className={`topnav-menu-item ${section === n.id && currentSub(n.id) === sub.id ? 'active' : ''}`}
                       onClick={() => pickSub(n.id, sub.id)}
                     >
-                      {sub.icon} {t(sub.key)}
+                      <span className="topnav-ico">{sub.icon}</span> {t(sub.key)}
                     </button>
                   ))}
                 </div>
@@ -196,7 +196,7 @@ export default function App() {
                 className={`topnav-tab ${section === n.id ? 'active' : ''}`}
                 onClick={() => { setOpenMenu(null); go(n.id); }}
               >
-                {n.icon} {t(n.key)}
+                <span className="topnav-ico">{n.icon}</span> {t(n.key)}
               </button>
             </div>
           ))}
@@ -229,7 +229,7 @@ export default function App() {
       </nav>
 
       {section === 'home' ? (
-        <Home />
+        <Home onOpen={navigate} marketplaceEnabled={marketplaceEnabled} />
       ) : section === 'timers' ? (
         timerTab === 'boss' ? <TimeBoss /> : <TimerFury />
       ) : section === 'market' ? (

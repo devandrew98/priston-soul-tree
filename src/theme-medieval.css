@@ -1,0 +1,161 @@
+/* ============================================================================
+   Medieval / dark-fantasy theme — top bar + Home page.
+   Loaded after index.css (see main.tsx), so everything here overrides it.
+   To go back to the old look: remove the import of this file in main.tsx.
+   ============================================================================ */
+:root {
+  --mv-gold: #a88a4a;
+  --mv-gold-hi: #d3b676;
+  --mv-bone: #d9ccb0;
+  --mv-ash: #8f8676;
+  --mv-blood: #6e1d17;
+  --mv-blood-hi: #9a2a21;
+  --mv-ink: #1a1108;
+  --mv-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .2  0 0 0 0 .1  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --mv-title: 'IM Fell English SC', Georgia, serif;
+  --mv-text: 'IM Fell English', Georgia, serif;
+  --mv-brand: 'Cinzel', Georgia, serif;
+}
+
+/* ---- page: near-black with grain, a faint red haze at the top and dark corners ---- */
+body {
+  background: radial-gradient(ellipse at 50% 0, rgba(110, 29, 23, 0.16), transparent 52%), var(--mv-grain), linear-gradient(#0f0c0a, #070605);
+  background-attachment: fixed;
+}
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+/* ---- top bar: dark iron strip with a double gold rule ---- */
+.topnav {
+  gap: 18px; margin-bottom: 18px; padding: 12px 16px;
+  background: linear-gradient(#1d1814, #0e0b09);
+  border-bottom: 1px solid #000;
+  box-shadow: 0 1px 0 var(--mv-gold), 0 5px 0 #000, 0 6px 0 rgba(168, 138, 74, 0.45), 0 14px 26px rgba(0, 0, 0, 0.7);
+}
+.topnav-brand { font-family: var(--mv-brand); font-weight: 800; font-size: 18px; letter-spacing: 0.2em; color: var(--mv-gold-hi); text-shadow: none; }
+.topnav-tabs { gap: 6px; }
+.topnav-tab {
+  font-family: var(--mv-title); font-weight: 400; font-size: 18px; letter-spacing: 0.1em; color: var(--mv-bone);
+  padding: 8px 14px; border-radius: 0; white-space: nowrap; position: relative;
+  border: 1px solid rgba(168, 138, 74, 0.28);
+  background: linear-gradient(rgba(255, 235, 190, 0.05), rgba(0, 0, 0, 0.25));
+  text-shadow: 0 1px 0 #000, 0 0 8px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 235, 190, 0.08);
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.topnav-tab:hover, .topnav-tab.open {
+  color: var(--mv-gold-hi); border-color: var(--mv-gold);
+  background: linear-gradient(rgba(168, 138, 74, 0.16), rgba(0, 0, 0, 0.2));
+}
+.topnav-tab.active {
+  color: var(--mv-gold-hi); border-color: var(--mv-gold);
+  background: linear-gradient(rgba(154, 42, 33, 0.5), rgba(70, 14, 10, 0.65));
+  box-shadow: inset 0 1px 0 rgba(255, 200, 160, 0.2), 0 0 14px rgba(154, 42, 33, 0.45);
+}
+.topnav-tab.active::after {
+  content: ""; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--mv-gold-hi), transparent);
+}
+.topnav-menu {
+  background: linear-gradient(#1d1814, #0e0b09); border: 1px solid var(--mv-gold); border-radius: 0;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.75), 0 0 0 3px #000;
+}
+.topnav-menu-item { font-family: var(--mv-title); font-weight: 400; font-size: 17px; letter-spacing: 0.08em; color: var(--mv-bone); border-radius: 0; }
+.topnav-menu-item:hover { background: rgba(168, 138, 74, 0.16); color: var(--mv-gold-hi); }
+.topnav-menu-item.active { background: rgba(154, 42, 33, 0.45); color: var(--mv-gold-hi); box-shadow: inset 0 0 0 1px rgba(168, 138, 74, 0.5); }
+
+.topnav-stat { border-left: 1px solid #3a3027; }
+.topnav-stat-label { font-family: var(--mv-title); font-size: 11.5px; font-weight: 400; letter-spacing: 0.16em; color: var(--mv-ash); }
+.topnav-stat-num { font-family: var(--mv-brand); font-weight: 600; font-size: 21px; letter-spacing: 0.08em; color: var(--mv-gold-hi); text-shadow: none; }
+.lang-toggle { border-radius: 0; border-color: rgba(168, 138, 74, 0.35); }
+.lang-toggle button { font-family: var(--mv-title); letter-spacing: 0.12em; font-size: 14px; background: rgba(0, 0, 0, 0.35); color: var(--mv-bone); border-radius: 0; }
+.lang-toggle button.on { background: rgba(154, 42, 33, 0.55); color: var(--mv-gold-hi); }
+.topnav-admin { border-radius: 0; }
+
+/* ---- aged paper: a torn / burnt layer behind the content, text stays sharp ---- */
+.home-pix, .home-registry-page, .home-news-card, .home-download-notes {
+  position: relative; color: var(--mv-ink); background: none; border: none; border-radius: 0; box-shadow: none;
+}
+.home-pix::before, .home-registry-page::before, .home-news-card::before, .home-download-notes::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  filter: url(#rough) drop-shadow(0 12px 16px rgba(0, 0, 0, 0.75));
+  background:
+    radial-gradient(ellipse at 12% 18%, rgba(80, 45, 10, 0.38), transparent 38%),
+    radial-gradient(ellipse at 88% 82%, rgba(60, 30, 6, 0.45), transparent 42%),
+    radial-gradient(ellipse at 70% 12%, rgba(255, 235, 190, 0.16), transparent 40%),
+    var(--mv-grain), linear-gradient(#a99567, #86724b);
+  box-shadow: inset 0 0 0 1px rgba(20, 10, 0, 0.5), inset 0 0 46px 12px rgba(28, 14, 2, 0.9);
+}
+.home-pix > *, .home-registry-page > *, .home-news-card > *, .home-download-notes > * { position: relative; z-index: 1; }
+
+/* ---- hero ---- */
+.home { padding-top: 6px; }
+.home-hero { background: none; border-bottom: none; padding: 34px 18px 10px; }
+.home-hero-top { gap: 46px; max-width: 1060px; margin-bottom: 38px; }
+.home-logo-frame {
+  position: relative; flex: none; width: 100%; max-width: 430px; padding: 12px; background: #0b0908; border: 1px solid #4a3a1d;
+  box-shadow: 0 0 0 5px #0b0908, 0 0 0 6px #4a3a1d, 0 20px 40px rgba(0, 0, 0, 0.8), inset 0 0 40px #000;
+}
+.home-logo-frame::before, .home-logo-frame::after { content: ""; position: absolute; width: 26px; height: 26px; border: 2px solid var(--mv-gold); }
+.home-logo-frame::before { left: -9px; top: -9px; border-right: 0; border-bottom: 0; }
+.home-logo-frame::after { right: -9px; bottom: -9px; border-left: 0; border-top: 0; }
+.home-logo { max-width: none; width: 100%; border-radius: 0; box-shadow: none; display: block; }
+
+.home-pix { padding: 30px 38px 26px; max-width: 600px; }
+.home-pix-head b { font-family: var(--mv-title); font-weight: 400; font-size: 25px; letter-spacing: 0.07em; color: #3d0f0b; }
+.home-pix-mark { width: 32px; height: 32px; }
+.home-pix p { font-family: var(--mv-text); font-size: 18px; line-height: 1.5; color: var(--mv-ink); }
+.home-pix-key { font-family: var(--mv-text); font-size: 16px; color: #2c1a0a; }
+.home-pix-key code { background: rgba(14, 8, 2, 0.9); color: var(--mv-gold-hi); border: 1px solid #5b4420; border-radius: 0; font-size: 13px; }
+.home-pix .mk-btn {
+  font-family: var(--mv-title); font-weight: 400; letter-spacing: 0.14em; font-size: 14.5px; color: var(--mv-gold-hi);
+  background: linear-gradient(#7d241c, #4c120d); border: 1px solid var(--mv-gold); border-radius: 0; box-shadow: 0 0 0 2px #1a0604, 0 3px 6px rgba(0, 0, 0, 0.6);
+}
+
+.home-welcome-title { font-family: var(--mv-title); font-weight: 400; font-size: 34px; letter-spacing: 0.12em; color: var(--mv-gold-hi); text-shadow: 0 3px 8px #000; }
+.home-welcome-body { font-family: var(--mv-text); font-style: italic; font-size: 20px; color: var(--mv-ash); }
+
+/* ---- section titles + ornament ---- */
+.home-news-title { font-family: var(--mv-title); font-weight: 400; font-size: 24px; letter-spacing: 0.2em; color: var(--mv-gold-hi); text-shadow: 0 2px 6px #000; margin-bottom: 26px; }
+.home-registry, .home-news { max-width: 1060px; margin: 0 auto 56px; }
+.home-news { margin-top: 40px; }
+
+/* ---- tools registry: one big page, roman numerals ---- */
+.home-registry-page { padding: 40px 52px 34px; }
+.home-registry-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 60px; }
+@media (max-width: 760px) { .home-registry-grid { grid-template-columns: 1fr; } .home-registry-page { padding: 34px 26px; } }
+.home-entry {
+  display: flex; gap: 18px; padding: 14px 0; text-align: left; background: none; border: none; border-bottom: 1px solid rgba(40, 22, 6, 0.42);
+  border-radius: 0; color: var(--mv-ink); cursor: pointer; font: inherit;
+}
+.home-entry-num { font-family: var(--mv-title); font-size: 22px; color: #4a1a10; min-width: 44px; text-align: right; padding-top: 1px; }
+.home-entry b { display: block; font-family: var(--mv-title); font-weight: 400; font-size: 19px; letter-spacing: 0.07em; color: #2a0d08; transition: color 0.15s; }
+.home-entry em { display: block; font-family: var(--mv-text); font-size: 16.5px; color: #3a2a14; line-height: 1.35; }
+.home-entry:hover b { color: var(--mv-blood-hi); }
+
+/* ---- news ---- */
+.home-news-list { gap: 22px; }
+.home-news-card { padding: 22px 30px 20px 36px; }
+.home-news-card::after { content: ""; position: absolute; left: 14px; top: 16px; bottom: 16px; width: 3px; background: var(--mv-blood); z-index: 1; }
+.home-news-card.event::after { background: #2f5a2a; }
+.home-news-card.maintenance::after { background: #8a3a14; }
+.home-news-card.pinned::after { background: var(--mv-gold); width: 4px; }
+.home-news-head { color: #5a1a12; font-family: var(--mv-title); font-size: 14px; letter-spacing: 0.16em; }
+.home-news-kind { color: #5a1a12; font-weight: 400; text-transform: none; letter-spacing: 0.16em; }
+.home-news-pin { color: var(--mv-blood); }
+.home-news-date { color: #5a4220; font-family: var(--mv-text); letter-spacing: 0; font-style: italic; font-size: 15px; }
+.home-news-h { font-family: var(--mv-title); font-weight: 400; font-size: 21px; letter-spacing: 0.04em; color: #1f0e06; margin: 4px 0 6px; }
+.home-news-body { font-family: var(--mv-text); font-size: 17.5px; line-height: 1.45; color: var(--mv-ink); }
+
+/* ---- download + notes ---- */
+.home-download-notes { padding: 20px 26px; max-width: 360px; }
+.home-download-notes h3 { font-family: var(--mv-title); font-weight: 400; font-size: 17px; letter-spacing: 0.1em; color: #3d0f0b; }
+.home-download-notes p { font-family: var(--mv-text); font-size: 16px; color: var(--mv-ink); }
+
+/* ---- footer ---- */
+.home-credits { font-family: var(--mv-text); font-size: 16px; color: var(--mv-ash); max-width: none; border-top: 1px solid rgba(168, 138, 74, 0.4); padding-top: 24px; }
+
+/* The medieval look is text-only: the little emoji in front of the tabs are hidden (still in the markup). */
+.topnav-ico { display: none; }
