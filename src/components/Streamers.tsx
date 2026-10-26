@@ -1,6 +1,7 @@
 import { useI18n } from '../lib/i18n';
 import { channelUrl, type Streamer } from '../lib/market/streamers';
 import { useStreamers } from './market/useStreamers';
+import { Loading } from './Loading';
 
 const PLAT: Record<Streamer['platform'], { icon: string; label: string }> = {
   twitch: { icon: '🟣', label: 'Twitch' },
@@ -39,7 +40,7 @@ export function Streamers() {
         <p className="mk-muted">{t('strm.subtitle')}</p>
       </div>
 
-      {loading && streamers.length === 0 && <p className="mk-muted">⏳ {t('mk.loading')}</p>}
+      {loading && streamers.length === 0 && <Loading />}
 
       <section className="strm-section">
         <h2 className="strm-sec-title live">

@@ -183,7 +183,7 @@ export function TimeBoss() {
       {/* just spawned (kept ~3 min) */}
       {spawned.length > 0 && (
         <section className="tb-section">
-          <h2 className="tb-h2 spawn">⚔️ {t('tb.justspawned')}</h2>
+          <h2 className="tb-h2 spawn">⚔ {t('tb.justspawned')}</h2>
           <div className="tb-next-grid big">
             {spawned.map((ev) => (
               <div className="tb-next-card spawned" key={ev.entry.hm}>

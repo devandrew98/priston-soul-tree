@@ -166,7 +166,7 @@ const EDGE_PAIRS: [string, string][] = [
   // right vertical rail (col 6)
   ['h1_6', 'rv_3'], ['rv_3', 'rv_4'], ['rv_4', 'rv_5'],
   ['rv_5', 'rv_6'], ['rv_6', 'h2_6'], ['h2_6', 'bv6_8'],
-  // bottom bar (row 7) — ⚠️ NO jogo ela é PARTIDA: a esquerda (lado do ataque)
+  // bottom bar (row 7) — ⚠ NO jogo ela é PARTIDA: a esquerda (lado do ataque)
   // e a direita (lado da defesa) NÃO se conectam à coluna do meio embaixo.
   // Só existe: col0—col1—col2 e col4—col5—col6. O meio (h2_3) é alcançado
   // apenas pela espinha vertical (cv_6 → h2_3 → bv3_8 → bv3_9).

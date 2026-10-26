@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { type NewsInput, type NewsItem, type NewsKind, createNews, deleteNews, fetchAllNews, updateNews } from '../../lib/market/news';
+import { Loading } from '../Loading';
 
 const KINDS: NewsKind[] = ['news', 'event', 'maintenance'];
 const empty: NewsInput = { titlePt: '', titleEn: '', bodyPt: '', bodyEn: '', kind: 'news', pinned: false, published: true, sort: 0 };
@@ -59,7 +60,7 @@ export function NewsAdmin() {
       </div>
 
       <div className="mk-news-list">
-        {loading && <p className="mk-muted">⏳ {t('mk.loading')}</p>}
+        {loading && <Loading />}
         {!loading && rows.length === 0 && <p className="mk-muted">{t('mk.admin.news.empty')}</p>}
         {rows.map((n) => <NewsRow key={n.id} item={n} onChange={reload} />)}
       </div>

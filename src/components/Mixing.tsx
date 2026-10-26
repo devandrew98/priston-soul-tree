@@ -109,7 +109,7 @@ export function Mixing() {
   return (
     <div className="mk mixing">
       <div className="mix-head">
-        <h1 className="mk-h1">⚗️ {t('mix.title')}</h1>
+        <h1 className="mk-h1">⚗ {t('mix.title')}</h1>
         <p className="mk-muted">{t('mix.subtitle')}</p>
       </div>
 

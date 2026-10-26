@@ -12,6 +12,7 @@ import { ImageOptimizer } from './ImageOptimizer';
 import { MarketplaceToggle } from './MarketplaceToggle';
 import type { ListingKind } from '../../lib/market/types';
 import { Avatar, KindTag, PriceTag, Since, StatusPill } from './parts';
+import { Loading } from '../Loading';
 
 type Section = 'listings' | 'users' | 'tiers' | 'itemcats' | 'reports' | 'streamers' | 'news' | 'guides' | 'download' | 'imgopt' | 'global' | 'logs';
 
@@ -19,13 +20,13 @@ const SECTIONS: { id: Section; icon: string; key: string }[] = [
   { id: 'listings', icon: '📦', key: 'mk.admin.listings' },
   { id: 'users', icon: '👤', key: 'mk.admin.users' },
   { id: 'tiers', icon: '🏅', key: 'mk.admin.tiers' },
-  { id: 'itemcats', icon: '🗂️', key: 'mk.admin.itemcats' },
+  { id: 'itemcats', icon: '🗂', key: 'mk.admin.itemcats' },
   { id: 'reports', icon: '⚑', key: 'mk.admin.reports' },
   { id: 'streamers', icon: '📺', key: 'mk.admin.streamers' },
   { id: 'news', icon: '📰', key: 'mk.admin.news' },
   { id: 'guides', icon: '🎬', key: 'mk.admin.guides' },
   { id: 'download', icon: '📥', key: 'mk.admin.download' },
-  { id: 'imgopt', icon: '🗜️', key: 'mk.admin.imgopt' },
+  { id: 'imgopt', icon: '🗜', key: 'mk.admin.imgopt' },
   { id: 'global', icon: '📢', key: 'mk.admin.global' },
   { id: 'logs', icon: '📜', key: 'mk.admin.logs' },
 ];
@@ -56,9 +57,9 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
   return (
     <div className="mk-admin">
       <div className="mk-admin-head">
-        <h1 className="mk-h1">🛡️ {t('mk.admin.title')}</h1>
+        <h1 className="mk-h1">🛡 {t('mk.admin.title')}</h1>
         <span className="mk-admin-badge">ADMIN</span>
-        {m.loading && <span className="mk-muted">⏳ {t('mk.loading')}</span>}
+        {m.loading && <Loading inline />}
       </div>
 
       <div className="mk-dash-tabs">

@@ -18,6 +18,7 @@ import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { fetchSiteFlag } from '../../lib/market/siteSettings';
 import type { ListingKind } from '../../lib/market/types';
 import { Avatar, RepBadge } from './parts';
+import { Loading } from '../Loading';
 
 const PANEL_PASSWORD = 'painel159753';
 
@@ -232,7 +233,7 @@ function AdminGate({ onUnlock }: { onUnlock: () => void }) {
 function ItemView({ id, onOpen, onSeller, onChat, onBack }: { id: string; onOpen: (id: string) => void; onSeller: (id: string) => void; onChat: (sellerId: string, seed?: string) => void; onBack: () => void }) {
   const { t } = useI18n();
   const { listing, loading } = useListing(id);
-  if (loading) return <div className="mk-detail"><button className="mk-back" onClick={onBack}>← {t('mk.back')}</button><p className="mk-empty">⏳ {t('mk.loading')}</p></div>;
+  if (loading) return <div className="mk-detail"><button className="mk-back" onClick={onBack}>← {t('mk.back')}</button><Loading className="mk-empty" /></div>;
   if (!listing) return <NotFound onBack={onBack} />;
   return <ItemDetail listing={listing} onOpen={onOpen} onSeller={onSeller} onChat={onChat} onBack={onBack} />;
 }

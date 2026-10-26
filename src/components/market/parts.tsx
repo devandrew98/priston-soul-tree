@@ -59,13 +59,13 @@ export function RarityTag({ rarity }: { rarity: Rarity }) {
   );
 }
 
-/** "🏷️ Venda" / "🛒 Procura" — the main visual split between the two listing kinds.
+/** "🏷 Venda" / "🛒 Procura" — the main visual split between the two listing kinds.
  *  `corner` pins it to the top-left of a `position: relative` card. */
 export function KindTag({ kind, corner }: { kind: ListingKind; corner?: boolean }) {
   const { t } = useI18n();
   return (
     <span className={`mk-kindtag ${kind} ${corner ? 'corner' : ''}`}>
-      {kind === 'want' ? '🛒' : '🏷️'} {t(`mk.kind.${kind}.badge`)}
+      {kind === 'want' ? '🛒' : '🏷'} {t(`mk.kind.${kind}.badge`)}
     </span>
   );
 }

@@ -7,6 +7,7 @@ import {
   createGuide, createGuideCategory, deleteGuide, deleteGuideCategory,
   extractYoutubeId, fetchGuideCategories, fetchGuides, updateGuide, updateGuideCategory, youtubeThumbnail,
 } from '../../lib/market/guides';
+import { Loading } from '../Loading';
 
 export function GuidesAdmin() {
   const { t } = useI18n();
@@ -43,7 +44,7 @@ export function GuidesAdmin() {
         </div>
       </div>
 
-      {loading && <p className="mk-muted">⏳ {t('mk.loading')}</p>}
+      {loading && <Loading />}
       {!loading && categories.length === 0 && <p className="mk-muted">{t('guides.empty')}</p>}
 
       {categories.map((cat) => (

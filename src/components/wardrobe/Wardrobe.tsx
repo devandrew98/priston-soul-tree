@@ -7,6 +7,7 @@ import { fetchMyCharacters } from '../../lib/wardrobe/characters';
 import type { WardrobeCharacter } from '../../lib/wardrobe/types';
 import { LoginPrompt } from '../market/LoginPrompt';
 import { WardrobeBuilder } from './WardrobeBuilder';
+import { Loading } from '../Loading';
 
 type View = { name: 'list' } | { name: 'create' } | { name: 'edit'; id: string };
 
@@ -50,7 +51,7 @@ export function Wardrobe({ onLogin }: { onLogin: () => void }) {
       </div>
 
       {loading ? (
-        <p className="mk-empty">⏳ {t('mk.loading')}</p>
+        <Loading className="mk-empty" />
       ) : characters.length === 0 ? (
         <p className="mk-empty">{t('wd.list.empty')}</p>
       ) : (

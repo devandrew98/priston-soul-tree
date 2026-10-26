@@ -69,10 +69,11 @@ type Signal =
   | { t: 'ice'; from: string; to: string; candidate: RTCIceCandidateInit }
   | { t: 'full'; from: string; to: string }
   | { t: 'denied'; from: string; to: string }
+  | { t: 'kicked'; from: string; to: string }
   | { t: 'end'; from: string }
   | { t: 'leave'; from: string };
 
-const SIGNAL_TYPES = ['join', 'offer', 'answer', 'ice', 'full', 'denied', 'end', 'leave'];
+const SIGNAL_TYPES = ['join', 'offer', 'answer', 'ice', 'full', 'denied', 'kicked', 'end', 'leave'];
 
 /** Anything on the channel comes from other people's browsers — shape-check it. */
 function isSignal(value: unknown): value is Signal {
@@ -155,6 +156,41 @@ async function openLinkNow(
   };
 }
 
+// ---- chat (travels over the WebRTC data channel, so only people who really joined can read it) ----
+
+export const CHAT_MAX_LENGTH = 300;
+const CHAT_MIN_INTERVAL_MS = 800;
+const CHAT_HISTORY = 30;
+
+export interface ChatMessage {
+  id: string;
+  fromId: string; // viewer id, or 'host'
+  name: string;
+  text: string;
+  ts: number;
+  fromHost: boolean;
+}
+
+export function cleanChatText(raw: unknown): string {
+  return typeof raw === 'string' ? raw.replace(/[\u0000-\u001f\u007f]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, CHAT_MAX_LENGTH) : '';
+}
+
+/** Chat messages arrive from other people's browsers — rebuild them field by field. */
+export function parseChatMessage(raw: unknown): ChatMessage | null {
+  if (typeof raw !== 'object' || raw === null) return null;
+  const m = raw as Record<string, unknown>;
+  const text = cleanChatText(m.text);
+  if (!text || typeof m.id !== 'string' || typeof m.fromId !== 'string') return null;
+  return {
+    id: m.id.slice(0, 32),
+    fromId: m.fromId.slice(0, 32),
+    name: typeof m.name === 'string' ? cleanName(m.name) || 'Visitante' : 'Visitante',
+    text,
+    ts: Number(m.ts) || Date.now(),
+    fromHost: m.fromHost === true,
+  };
+}
+
 // ---- host ------------------------------------------------------------------
 
 export interface ViewerInfo { id: string; name: string; state: RTCPeerConnectionState }
@@ -164,6 +200,8 @@ interface HostPeer {
   name: string;
   createdAt: number;
   pendingIce: RTCIceCandidateInit[];
+  dc: RTCDataChannel | null;
+  lastChatAt: number;
 }
 
 export class RoomHost {
@@ -176,10 +214,13 @@ export class RoomHost {
   private readonly password: string;
   private readonly salt: string;
   private wrongAttempts = new Map<string, number>();
+  private banned = new Set<string>();
+  private history: ChatMessage[] = [];
+  private chatListener: (message: ChatMessage) => void = () => {};
 
   constructor(
     private readonly stream: MediaStream,
-    private readonly opts: { bitrate: number; maxViewers?: number; password?: string },
+    private readonly opts: { bitrate: number; maxViewers?: number; password?: string; name?: string },
   ) {
     for (const track of stream.getVideoTracks()) track.contentHint = 'motion'; // games: keep fps over sharpness
     this.password = (opts.password ?? '').slice(0, PASSWORD_MAX_LENGTH);
@@ -193,6 +234,47 @@ export class RoomHost {
   /** Called with the current viewer list whenever someone joins, leaves or changes state. */
   onViewersChange(fn: (viewers: ViewerInfo[]) => void): void {
     this.listener = fn;
+  }
+
+  /** Called for every chat message in the room (including the host's own). */
+  onChat(fn: (message: ChatMessage) => void): void {
+    this.chatListener = fn;
+  }
+
+  /** The host writes to everyone. */
+  sendChat(text: string): void {
+    const clean = cleanChatText(text);
+    if (!clean || this.stopped) return;
+    this.pushChat({ id: newId(), fromId: 'host', name: cleanName(this.opts.name ?? '') || 'Anfitrião', text: clean, ts: Date.now(), fromHost: true });
+  }
+
+  /** Removes a viewer and refuses them if they try to come back. */
+  kick(viewerId: string): void {
+    this.banned.add(viewerId);
+    this.link?.send({ t: 'kicked', from: this.selfId, to: viewerId });
+    this.removePeer(viewerId);
+  }
+
+  private pushChat(message: ChatMessage): void {
+    this.history.push(message);
+    if (this.history.length > CHAT_HISTORY) this.history.shift();
+    const payload = JSON.stringify({ t: 'chat', message });
+    for (const peer of this.peers.values()) {
+      if (peer.dc?.readyState === 'open') peer.dc.send(payload);
+    }
+    this.chatListener(message);
+  }
+
+  private onViewerChat(viewerId: string, data: unknown): void {
+    const peer = this.peers.get(viewerId);
+    if (!peer || typeof data !== 'string') return;
+    let parsed: unknown;
+    try { parsed = JSON.parse(data); } catch { return; }
+    const text = cleanChatText((parsed as { text?: unknown } | null)?.text);
+    const now = Date.now();
+    if (!text || now - peer.lastChatAt < CHAT_MIN_INTERVAL_MS) return; // flood control
+    peer.lastChatAt = now;
+    this.pushChat({ id: newId(), fromId: viewerId, name: peer.name, text, ts: now, fromHost: false });
   }
 
   async start(): Promise<void> {
@@ -263,6 +345,7 @@ export class RoomHost {
   }
 
   private async handleJoin(viewerId: string, name: string, proof?: string): Promise<void> {
+    if (this.banned.has(viewerId)) { this.link?.send({ t: 'kicked', from: this.selfId, to: viewerId }); return; }
     if (this.peers.get(viewerId)?.pc.connectionState === 'connected') return;
     if (!(await this.authorized(viewerId, proof))) {
       if ((this.wrongAttempts.get(viewerId) ?? 0) < 5) this.link?.send({ t: 'denied', from: this.selfId, to: viewerId });
@@ -280,8 +363,13 @@ export class RoomHost {
     }
 
     const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
-    const peer: HostPeer = { pc, name, createdAt: Date.now(), pendingIce: [] };
+    const peer: HostPeer = { pc, name, createdAt: Date.now(), pendingIce: [], dc: null, lastChatAt: 0 };
     this.peers.set(viewerId, peer);
+    // Created before the offer so it is negotiated together with the video.
+    const dc = pc.createDataChannel('chat');
+    peer.dc = dc;
+    dc.onopen = () => dc.send(JSON.stringify({ t: 'history', messages: this.history }));
+    dc.onmessage = (e) => this.onViewerChat(viewerId, e.data);
     for (const track of this.stream.getTracks()) pc.addTrack(track, this.stream);
     pc.onicecandidate = (e) => {
       if (e.candidate) this.link?.send({ t: 'ice', from: this.selfId, to: viewerId, candidate: e.candidate.toJSON() });
@@ -323,7 +411,7 @@ export class RoomHost {
 
 // ---- viewer ----------------------------------------------------------------
 
-export type ViewerStatus = 'connecting' | 'waiting-host' | 'watching' | 'ended' | 'full' | 'failed' | 'error' | 'need-password' | 'denied';
+export type ViewerStatus = 'connecting' | 'waiting-host' | 'watching' | 'ended' | 'full' | 'failed' | 'error' | 'need-password' | 'denied' | 'kicked';
 
 export class RoomViewer {
   private readonly selfId = newId();
@@ -336,11 +424,29 @@ export class RoomViewer {
   private status: ViewerStatus = 'connecting';
   private hostLock: { locked: boolean; salt: string } | null = null;
   private password: string;
+  private dc: RTCDataChannel | null = null;
+
+  get id(): string {
+    return this.selfId;
+  }
+
+  /** Sends a chat line to the host (who relays it to everyone). False when the chat isn't connected. */
+  sendChat(text: string): boolean {
+    const clean = cleanChatText(text);
+    if (!clean || this.dc?.readyState !== 'open') return false;
+    this.dc.send(JSON.stringify({ t: 'chat', text: clean }));
+    return true;
+  }
 
   constructor(
     private readonly code: string,
     private readonly name: string,
-    private readonly cb: { onStatus: (status: ViewerStatus) => void; onStream: (stream: MediaStream) => void },
+    private readonly cb: {
+      onStatus: (status: ViewerStatus) => void;
+      onStream: (stream: MediaStream) => void;
+      onChat?: (message: ChatMessage) => void;
+      onChatReady?: (ready: boolean) => void;
+    },
     password = '',
   ) {
     this.password = password.slice(0, PASSWORD_MAX_LENGTH);
@@ -368,7 +474,7 @@ export class RoomViewer {
     this.sendJoin();
     // The host may not be there yet, or the first "join" may be missed — keep asking until video arrives.
     this.retry = window.setInterval(() => {
-      if (['watching', 'full', 'ended', 'need-password', 'denied'].includes(this.status)) return;
+      if (['watching', 'full', 'ended', 'need-password', 'denied', 'kicked'].includes(this.status)) return;
       this.sendJoin();
     }, 4000);
   }
@@ -406,6 +512,7 @@ export class RoomViewer {
   }
 
   private closePc(): void {
+    if (this.dc) { this.dc = null; this.cb.onChatReady?.(false); }
     if (!this.pc) return;
     this.pc.onconnectionstatechange = null;
     this.pc.close();
@@ -419,7 +526,7 @@ export class RoomViewer {
     if (!host && !this.hostId && this.status === 'connecting') this.setStatus('waiting-host');
     if (host && this.status === 'waiting-host') this.setStatus('connecting');
     // (A wrong password must not be re-sent on every presence update — the host counts guesses.)
-    if (host && !this.hostId && !['need-password', 'denied', 'full'].includes(this.status)) this.sendJoin();
+    if (host && !this.hostId && !['need-password', 'denied', 'full', 'kicked'].includes(this.status)) this.sendJoin();
     if (!host && (this.status === 'watching' || this.hostId)) {
       // Host presence vanished: ended (or their tab died).
       this.closePc();
@@ -434,6 +541,7 @@ export class RoomViewer {
     else if (sig.t === 'ice' && sig.to === this.selfId && sig.from === this.hostId) this.handleIce(sig.candidate);
     else if (sig.t === 'full' && sig.to === this.selfId) this.setStatus('full');
     else if (sig.t === 'denied' && sig.to === this.selfId) this.setStatus(this.password ? 'denied' : 'need-password');
+    else if (sig.t === 'kicked' && sig.to === this.selfId) { this.closePc(); this.setStatus('kicked'); }
     else if (sig.t === 'end' && sig.from === this.hostId) { this.closePc(); this.setStatus('ended'); }
   }
 
@@ -442,6 +550,28 @@ export class RoomViewer {
     this.hostId = hostId;
     const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
     this.pc = pc;
+    pc.ondatachannel = (e) => {
+      if (e.channel.label !== 'chat') return;
+      const dc = e.channel;
+      this.dc = dc;
+      dc.onopen = () => this.cb.onChatReady?.(true);
+      dc.onclose = () => { if (this.dc === dc) this.cb.onChatReady?.(false); };
+      dc.onmessage = (ev) => {
+        if (typeof ev.data !== 'string') return;
+        let data: { t?: unknown; message?: unknown; messages?: unknown };
+        try { data = JSON.parse(ev.data); } catch { return; }
+        if (data.t === 'chat') {
+          const m = parseChatMessage(data.message);
+          if (m) this.cb.onChat?.(m);
+        } else if (data.t === 'history' && Array.isArray(data.messages)) {
+          for (const raw of data.messages.slice(-CHAT_HISTORY)) {
+            const m = parseChatMessage(raw);
+            if (m) this.cb.onChat?.(m);
+          }
+        }
+      };
+      if (dc.readyState === 'open') this.cb.onChatReady?.(true);
+    };
     pc.ontrack = (e) => {
       const stream = e.streams[0];
       if (stream) { this.cb.onStream(stream); this.setStatus('watching'); }

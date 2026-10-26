@@ -5,8 +5,8 @@ import type { EquippedItem, Equipment, EquipSlotKey, WardrobeItem } from '../../
 import { EquipSlot } from './EquipSlot';
 
 const SLOT_ICON: Record<EquipSlotKey, string> = {
-  amulet: '📿', ring1: '💍', ring2: '💍', sheltom: '💠', bracelet: '⛓️', gauntlet: '🧤',
-  boot: '👢', armor: '👕', weapon1h: '🗡️', weapon2h: '⚔️', offhand: '🛡️',
+  amulet: '📿', ring1: '💍', ring2: '💍', sheltom: '💠', bracelet: '⛓', gauntlet: '🧤',
+  boot: '👢', armor: '👕', weapon1h: '🗡', weapon2h: '⚔', offhand: '🛡',
 };
 
 export function EquipmentDoll({

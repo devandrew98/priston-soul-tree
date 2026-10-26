@@ -6,6 +6,7 @@ import {
   MOCK_CATEGORIES, MOCK_GUIDES, type GuideCategory, type GuideVideo,
   fetchGuideCategories, fetchGuides, youtubeEmbedUrl, youtubeThumbnail, youtubeWatchUrl,
 } from '../lib/market/guides';
+import { Loading } from './Loading';
 
 function VideoLightbox({ video, onClose }: { video: GuideVideo; onClose: () => void }) {
   const { t } = useI18n();
@@ -55,7 +56,7 @@ export function Guides() {
         <p className="mk-muted">{t('guides.subtitle')}</p>
       </div>
 
-      {loading && <p className="mk-muted">⏳ {t('mk.loading')}</p>}
+      {loading && <Loading />}
       {!loading && categories.length === 0 && <p className="mk-muted">{t('guides.empty')}</p>}
 
       {categories.map((cat) => {

@@ -17,6 +17,7 @@ import { EquipmentDoll } from './EquipmentDoll';
 import { ItemPicker } from './ItemPicker';
 import { SoulsPicker } from './SoulsPicker';
 import { CharacterSummary } from './CharacterSummary';
+import { Loading } from '../Loading';
 
 const pickerSlotsFor = (key: EquipSlotKey): ItemSlot[] => (key === 'offhand' ? ['orb', 'shield'] : [SLOT_TO_ITEM_SLOT[key] as ItemSlot]);
 
@@ -98,7 +99,7 @@ export function WardrobeBuilder({ editId, onDone }: { editId?: string; onDone: (
   const [copied, setCopied] = useState(false);
   const copyLink = () => { navigator.clipboard?.writeText(shareUrl); setCopied(true); window.setTimeout(() => setCopied(false), 2000); };
 
-  if (!loaded) return <p className="mk-empty">⏳ {t('mk.loading')}</p>;
+  if (!loaded) return <Loading className="mk-empty" />;
 
   return (
     <div className="wd-builder">

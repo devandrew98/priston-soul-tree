@@ -6,6 +6,7 @@ import {
   createStreamer, deleteStreamer, fetchStreamers, updateStreamer, uploadStreamerCover,
 } from '../../lib/market/streamers';
 import { useAuth } from './store';
+import { Loading } from '../Loading';
 
 const PLATFORMS: Platform[] = ['twitch', 'youtube'];
 const emptyDraft: StreamerInput = { name: '', platform: 'twitch', handle: '', url: '', sort: 0 };
@@ -53,7 +54,7 @@ export function StreamersAdmin() {
         <h3 className="mk-h3">➕ {t('mk.admin.strm.add')}</h3>
         <div className="strm-admin-form">
           <div className="strm-admin-cover" onClick={() => fileRef.current?.click()}>
-            {preview ? <img src={preview} alt="" /> : <span>🖼️<br />{t('mk.admin.strm.cover')}</span>}
+            {preview ? <img src={preview} alt="" /> : <span>🖼<br />{t('mk.admin.strm.cover')}</span>}
             <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => onFile(e.target.files?.[0], setPreview, setFile)} />
           </div>
           <div className="strm-admin-fields">
@@ -79,7 +80,7 @@ export function StreamersAdmin() {
 
       {/* existing */}
       <div className="strm-admin-list">
-        {loading && <p className="mk-muted">⏳ {t('mk.loading')}</p>}
+        {loading && <Loading />}
         {!loading && rows.length === 0 && <p className="mk-muted">{t('mk.admin.strm.empty')}</p>}
         {rows.map((s) => <StreamerRow key={s.id} s={s} userId={userId} onChange={load} onFilePick={onFile} />)}
       </div>
@@ -115,7 +116,7 @@ function StreamerRow({ s, userId, onChange, onFilePick }: {
   return (
     <div className={`strm-admin-item ${s.live ? 'live' : ''}`}>
       <div className="strm-admin-thumb" onClick={() => fileRef.current?.click()} title={t('mk.admin.strm.changecover')}>
-        {preview || s.coverUrl ? <img src={preview || s.coverUrl} alt="" /> : <span>🖼️</span>}
+        {preview || s.coverUrl ? <img src={preview || s.coverUrl} alt="" /> : <span>🖼</span>}
         <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => onFilePick(e.target.files?.[0], setPreview, setFile)} />
       </div>
       <input value={d.name} onChange={(e) => setD({ ...d, name: e.target.value })} />

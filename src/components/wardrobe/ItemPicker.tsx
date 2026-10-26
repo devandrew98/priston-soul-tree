@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom';
 import { useI18n } from '../../lib/i18n';
 import { fetchWardrobeItems } from '../../lib/wardrobe/items';
 import { WARDROBE_RARITY_COLOR, type ItemSlot, type WardrobeItem } from '../../lib/wardrobe/types';
+import { Loading } from '../Loading';
 
 export function ItemPicker({
   slots, title, onPick, onClose,
@@ -45,7 +46,7 @@ export function ItemPicker({
         <p className="mk-muted wd-picker-hint">{t('wd.picker.rarityhint')}</p>
 
         <div className="wd-picker-grid">
-          {all === null && <p className="mk-muted">⏳ {t('mk.loading')}</p>}
+          {all === null && <Loading />}
           {all !== null && list.length === 0 && <p className="mk-muted">{t('wd.picker.empty')}</p>}
           {list.map((it) => (
             <button key={it.id} className="wd-picker-card" style={{ ['--rar' as string]: WARDROBE_RARITY_COLOR[it.rarity] }} onClick={() => onPick(it)}>

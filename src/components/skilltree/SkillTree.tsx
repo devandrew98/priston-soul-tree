@@ -14,6 +14,10 @@ import {
 } from '../../lib/skilltree/skillBar';
 import { SkillBook } from './SkillBook';
 import { SkillBar } from './SkillBar';
+import { SkillPlan } from './SkillPlan';
+import { SkillCompare } from './SkillCompare';
+import { SaveBuild } from '../builds/SaveBuild';
+import { skillBuildPayload, skillBuildSummary } from '../../lib/builds/userBuilds';
 import { SkillDetail } from './SkillDetail';
 import { BuildSummary } from './BuildSummary';
 import { classIcon } from './classIcon';
@@ -200,6 +204,14 @@ export function SkillTree() {
 
       <div className="sk-actions">
         <button className="mk-btn" onClick={resetBuild}>↺ {t('sk.reset')}</button>
+        <SaveBuild
+          kind="skills"
+          defaultName={buildName || `${cls.name} ${level}`}
+          classSlug={classSlug}
+          level={level}
+          empty={skillPointsUsed + elitePointsUsed === 0}
+          getPayload={() => ({ payload: skillBuildPayload(classSlug, level, questIds, skillLevels, skillBar), summary: skillBuildSummary(classSlug, skillLevels) })}
+        />
         <button className="mk-btn primary" onClick={doShare}>🔗 {t('sk.share')}</button>
       </div>
 
@@ -264,7 +276,10 @@ export function SkillTree() {
         )}
       </section>
 
-      <SkillBar bar={skillBar} skillLevels={skillLevels} selectedSkill={selectedSkill} onChange={setSkillBar} />
+      <SkillBar bar={skillBar} skillLevels={skillLevels} selectedSkill={selectedSkill} exportInfo={{ classSlug, className: cls.name, level, buildName }} onChange={setSkillBar} />
+
+      <SkillPlan classSlug={classSlug} skillLevels={skillLevels} level={level} />
+      <SkillCompare classSlug={classSlug} level={level} skillLevels={skillLevels} buildName={buildName} />
 
       <BuildSummary
         classSlug={classSlug}

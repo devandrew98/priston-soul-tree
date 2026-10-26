@@ -34,6 +34,7 @@ const REGISTRY: RegistryEntry[] = [
   { id: 'mixing', nameKey: 'nav.mixing', route: { section: 'tools', toolTab: 'mixing' } },
   { id: 'sod', nameKey: 'nav.sod', route: { section: 'tools', toolTab: 'sod' } },
   { id: 'wardrobe', nameKey: 'nav.wardrobe', route: { section: 'tools', toolTab: 'wardrobe' } },
+  { id: 'builds', nameKey: 'nav.builds', route: { section: 'tools', toolTab: 'builds' } },
   { id: 'market', nameKey: 'nav.market', route: { section: 'market' } },
   { id: 'guides', nameKey: 'nav.guides', route: { section: 'guides' } },
   { id: 'streamers', nameKey: 'nav.streamers', route: { section: 'streamers' } },

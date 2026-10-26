@@ -5,6 +5,7 @@ import { EMPTY_FILTERS, type Filters, type SortKey } from '../../lib/market/help
 import { useI18n } from '../../lib/i18n';
 import { ItemCard } from './ItemCard';
 import { useBrowseListings } from './useMarketData';
+import { Loading } from '../Loading';
 
 const SORTS: SortKey[] = ['price_asc', 'price_desc', 'newest', 'oldest', 'views', 'rating', 'sold'];
 
@@ -29,7 +30,7 @@ export function Browse({ onOpen, onSeller }: { onOpen: (id: string) => void; onS
       {/* venda × compra — bem separado, é a divisão principal do Marketplace */}
       <div className="mk-kindtabs">
         <button className={`sell ${f.kind === 'sell' ? 'on' : ''}`} onClick={() => set('kind', 'sell')}>
-          🏷️ {t('mk.kind.sell')}
+          🏷 {t('mk.kind.sell')}
         </button>
         <button className={`want ${f.kind === 'want' ? 'on' : ''}`} onClick={() => set('kind', 'want')}>
           🛒 {t('mk.kind.want')}
@@ -117,7 +118,7 @@ export function Browse({ onOpen, onSeller }: { onOpen: (id: string) => void; onS
           <div className="mk-grid">
             {results.map((l) => <ItemCard key={l.id} listing={l} onOpen={onOpen} onSeller={onSeller} />)}
           </div>
-          {loading && <p className="mk-empty">⏳ {t('mk.loading')}</p>}
+          {loading && <Loading className="mk-empty" />}
           {!loading && results.length === 0 && <p className="mk-empty">🔍 {t('mk.noresults')}</p>}
         </div>
       </div>

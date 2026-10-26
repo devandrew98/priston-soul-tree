@@ -5,13 +5,14 @@ import { useI18n } from '../../lib/i18n';
 import { getSeller } from './store';
 import { useMarketOverview } from './useMarketData';
 import { Avatar, OnlineDot, PriceTag, Stars } from './parts';
+import { Loading } from '../Loading';
 
 export function Stats({ onOpen, onSeller }: { onOpen: (id: string) => void; onSeller: (id: string) => void }) {
   const { t } = useI18n();
   const { overview: o, loading } = useMarketOverview();
 
   if (loading || !o) {
-    return <div className="mk-stats"><p className="mk-empty">⏳ {t('mk.loading')}</p></div>;
+    return <div className="mk-stats"><Loading className="mk-empty" /></div>;
   }
   const maxVol = Math.max(...o.volumeByDay.map((d) => d.value), 1);
   const noSales = o.totalSold === 0;

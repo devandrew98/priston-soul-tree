@@ -125,7 +125,7 @@ export function CreateListing({ editId, initialKind = 'sell', onDone, onLogin }:
       <button className="mk-back" onClick={onDone}>← {t('mk.back')}</button>
       <h1 className="mk-h1">{kind === 'want' ? '🛒' : '📦'} {editing ? t('mk.edit.title') : kind === 'want' ? t('mk.create.title.want') : t('mk.create.title')}</h1>
 
-      <p className="mk-muted mk-create-kindnote">{kind === 'want' ? `🛒 ${t('mk.kind.want')}` : `🏷️ ${t('mk.kind.sell')}`}</p>
+      <p className="mk-muted mk-create-kindnote">{kind === 'want' ? `🛒 ${t('mk.kind.want')}` : `🏷 ${t('mk.kind.sell')}`}</p>
 
       <div className="mk-form">
         {/* in-game shop location (optional) — asked first */}
@@ -149,7 +149,7 @@ export function CreateListing({ editId, initialKind = 'sell', onDone, onLogin }:
                 <button className="mk-imgdrop-remove" onClick={(e) => { e.stopPropagation(); setImage(''); setImageFile(null); }}>✕</button>
               </>
             ) : (
-              <span className="mk-imgdrop-hint">🖼️ {imageRequired ? t('mk.create.imagehint') : t('mk.create.imagehint.want')}</span>
+              <span className="mk-imgdrop-hint">🖼 {imageRequired ? t('mk.create.imagehint') : t('mk.create.imagehint.want')}</span>
             )}
           </div>
           <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => onFile(e.target.files?.[0])} />

@@ -9,7 +9,7 @@
 //   - STAT_META / ALL_STATS : metadados de cada atributo (derivados das souls)
 //   - helpers de filtro por categoria/atributo
 //
-// ⚠️ Para AJUSTAR o valor de uma soul (ex.: o fix do Crios Soul), edite o
+// ⚠ Para AJUSTAR o valor de uma soul (ex.: o fix do Crios Soul), edite o
 //    `src/data/souls.json`, NÃO este arquivo. Cada soul referencia por `id`,
 //    então builds salvas continuam válidas mesmo que o `name` mude.
 // =============================================================================
@@ -35,8 +35,8 @@ export const CATEGORY_LABEL: Record<Category, string> = {
 
 /** Emoji de cada categoria (usado em chips/legendas). */
 export const CATEGORY_ICON: Record<Category, string> = {
-  attack: '⚔️',
-  defense: '🛡️',
+  attack: '⚔',
+  defense: '🛡',
   support: '⏳',
   pvp: '⚔',
 };

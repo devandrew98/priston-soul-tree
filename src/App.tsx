@@ -18,6 +18,8 @@ import { Wardrobe } from './components/wardrobe/Wardrobe';
 import { CharacterPublicPage } from './components/wardrobe/CharacterPublicPage';
 import { SkillTree as SkillTreeTool } from './components/skilltree/SkillTree';
 import { ScreenRooms } from './components/screenshare/ScreenRooms';
+import { Builds } from './components/builds/Builds';
+import { LOGIN_EVENT } from './lib/builds/account';
 import { ResetPasswordModal } from './components/market/ResetPasswordModal';
 import { AuthModal } from './components/market/AuthModal';
 import { useAuth } from './components/market/store';
@@ -40,16 +42,17 @@ const TIMER_TABS: { id: TimerTab; icon: string; key: string }[] = [
 const TOOL_TABS: { id: ToolTab; icon: string; key: string }[] = [
   { id: 'soultree', icon: '🌳', key: 'nav.soultree' },
   { id: 'skilltree', icon: '🌟', key: 'nav.skilltree' },
-  { id: 'mixing', icon: '⚗️', key: 'nav.mixing' },
+  { id: 'mixing', icon: '⚗', key: 'nav.mixing' },
   { id: 'sod', icon: '🎯', key: 'nav.sod' },
   { id: 'wardrobe', icon: '🧥', key: 'nav.wardrobe' },
-  { id: 'screenshare', icon: '🖥️', key: 'nav.screenshare' },
+  { id: 'builds', icon: '🏆', key: 'nav.builds' },
+  { id: 'screenshare', icon: '🖥', key: 'nav.screenshare' },
 ];
 
 // Tabs with `tabs` open a dropdown (cascade) instead of navigating directly.
 const NAV: NavItem[] = [
   { id: 'home', icon: '🏠', key: 'nav.home' },
-  { id: 'timers', icon: '⏱️', key: 'nav.timers', tabs: TIMER_TABS },
+  { id: 'timers', icon: '⏱', key: 'nav.timers', tabs: TIMER_TABS },
   { id: 'tools', icon: '🧰', key: 'nav.tools', tabs: TOOL_TABS },
   { id: 'market', icon: '🏰', key: 'nav.market' },
   { id: 'guides', icon: '🎬', key: 'nav.guides' },
@@ -86,10 +89,12 @@ export default function App() {
   }
 
   const { t, lang, setLang } = useI18n();
-  const { isAdmin, isLoggedIn } = useAuth();
+  const { isAdmin, isLoggedIn, user, logout } = useAuth();
   const [route, setRoute] = useState<Route>(INIT);
   const { section, timerTab, toolTab } = route;
   const [openMenu, setOpenMenu] = useState<Section | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false); // the phone-sized menu drawer
+  const [accountOpen, setAccountOpen] = useState(false); // the signed-in user's little menu
   const [openAdminAt, setOpenAdminAt] = useState(0);
   const [marketplaceEnabled, setMarketplaceEnabled] = useState(true);
   const [showAuth, setShowAuth] = useState(false);
@@ -113,6 +118,7 @@ export default function App() {
   const navigate = (patch: Partial<Route>) => {
     const next = { ...route, ...patch };
     setRoute(next);
+    setMobileOpen(false);
     const path = pathFor(next);
     if (window.location.pathname !== path || window.location.search || window.location.hash) {
       window.history.pushState(null, '', path);
@@ -149,6 +155,31 @@ export default function App() {
   // Discreet admin entry (top-right, near the language toggle) instead of a Marketplace tab.
   const openAdmin = () => { setOpenMenu(null); setOpenAdminAt((n) => n + 1); go('market'); };
 
+  // Other parts of the site (e.g. "save build") can ask for the login window.
+  useEffect(() => {
+    const open = () => setShowAuth(true);
+    window.addEventListener(LOGIN_EVENT, open);
+    return () => window.removeEventListener(LOGIN_EVENT, open);
+  }, []);
+
+  // The account menu closes on outside click or Escape.
+  useEffect(() => {
+    if (!accountOpen) return;
+    const onDown = (e: MouseEvent) => { if (!(e.target as HTMLElement).closest('.topnav-account')) setAccountOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setAccountOpen(false); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('mousedown', onDown); document.removeEventListener('keydown', onKey); };
+  }, [accountOpen]);
+
+  // Escape closes the phone menu too.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMobileOpen(false); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [mobileOpen]);
+
   // Close the open dropdown on outside click or Escape.
   useEffect(() => {
     if (!openMenu) return;
@@ -163,7 +194,7 @@ export default function App() {
     <div className="shell">
       <nav className="topnav">
         <button className="topnav-brand" onClick={() => { setOpenMenu(null); go('home'); }}>
-          ⚔️ <span>PristonZONE</span>
+          ⚔ <span>PristonZONE</span>
         </button>
         <div className="topnav-tabs">
           {nav.map((n) => n.tabs ? (
@@ -208,10 +239,29 @@ export default function App() {
             <b className="topnav-stat-num">{visits.toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US')}</b>
           </div>
         )}
-        {!isLoggedIn && (
-          <button className="topnav-admin" title={t('mk.auth.login')} onClick={() => setShowAuth(true)}>
-            👤
+        {!isLoggedIn ? (
+          <button type="button" className="topnav-login" onClick={() => setShowAuth(true)}>
+            <span className="topnav-login-ico">👤</span> {t('mk.auth.login')}
           </button>
+        ) : (
+          <div className="topnav-item topnav-account">
+            <button
+              type="button"
+              className="topnav-login in"
+              aria-haspopup="true"
+              aria-expanded={accountOpen}
+              onClick={() => { setOpenMenu(null); setAccountOpen((v) => !v); }}
+            >
+              <span className="topnav-login-ico">👤</span> <span className="topnav-login-name">{user?.nick || t('mk.auth.login')}</span> <span className="topnav-caret">▾</span>
+            </button>
+            {accountOpen && (
+              <div className="topnav-menu right">
+                <button type="button" className="topnav-menu-item" onClick={() => { setAccountOpen(false); logout(); }}>
+                  🚪 {t('mk.auth.logout')}
+                </button>
+              </div>
+            )}
+          </div>
         )}
         {isAdmin && (
           <button className="topnav-admin" title={t('nav.admin')} onClick={openAdmin}>
@@ -226,6 +276,59 @@ export default function App() {
             🇬🇧 EN
           </button>
         </div>
+        <button
+          type="button"
+          className={`topnav-burger${mobileOpen ? ' open' : ''}`}
+          aria-label={t('nav.menu')}
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-menu"
+          onClick={() => { setOpenMenu(null); setMobileOpen((v) => !v); }}
+        >
+          <span /><span /><span />
+        </button>
+        {mobileOpen && (
+          <div id="mobile-menu" className="topnav-drawer">
+            {nav.map((n) => (
+              <div key={n.id} className="topnav-drawer-group">
+                {n.tabs ? (
+                  <>
+                    <span className="topnav-drawer-title"><span className="topnav-ico">{n.icon}</span> {t(n.key)}</span>
+                    {n.tabs.map((sub) => (
+                      <button
+                        key={sub.id}
+                        type="button"
+                        className={`topnav-drawer-item sub${section === n.id && currentSub(n.id) === sub.id ? ' active' : ''}`}
+                        onClick={() => pickSub(n.id, sub.id)}
+                      >
+                        <span className="topnav-ico">{sub.icon}</span> {t(sub.key)}
+                      </button>
+                    ))}
+                  </>
+                ) : (
+                  <button type="button" className={`topnav-drawer-item${section === n.id ? ' active' : ''}`} onClick={() => go(n.id)}>
+                    <span className="topnav-ico">{n.icon}</span> {t(n.key)}
+                  </button>
+                )}
+              </div>
+            ))}
+            <div className="topnav-drawer-foot">
+              <div className="lang-toggle" title={t('lang.switch')}>
+                <button className={lang === 'pt' ? 'on' : ''} onClick={() => setLang('pt')}>🇧🇷 PT</button>
+                <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}>🇬🇧 EN</button>
+              </div>
+              {!isLoggedIn && (
+                <button type="button" className="topnav-drawer-login" onClick={() => { setMobileOpen(false); setShowAuth(true); }}>
+                  👤 {t('mk.auth.login')}
+                </button>
+              )}
+              {isAdmin && (
+                <button type="button" className="topnav-drawer-login" onClick={() => { setMobileOpen(false); openAdmin(); }}>
+                  🔒 {t('nav.admin')}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </nav>
 
       {section === 'home' ? (
@@ -242,6 +345,7 @@ export default function App() {
         toolTab === 'soultree' ? <SoulTree />
           : toolTab === 'skilltree' ? <SkillTreeTool />
           : toolTab === 'screenshare' ? <ScreenRooms />
+          : toolTab === 'builds' ? <Builds />
           : toolTab === 'mixing' ? <Mixing />
           : toolTab === 'sod' ? <SoD />
           : <Wardrobe onLogin={() => setShowAuth(true)} />

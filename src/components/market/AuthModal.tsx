@@ -9,7 +9,7 @@ import { squareThumbnail } from '../../lib/market/image';
 import { refreshProfile } from './session';
 import { Avatar, OnlineDot, RepBadge } from './parts';
 
-const AVATARS = ['🧑', '🐺', '🦁', '🏹', '⚔️', '🛡️', '🔮', '🐉', '👑', '🌙', '🦅', '🗡️'];
+const AVATARS = ['🧑', '🐺', '🦁', '🏹', '⚔', '🛡', '🔮', '🐉', '👑', '🌙', '🦅', '🗡'];
 
 function GoogleIcon() {
   return (

@@ -6,6 +6,7 @@ import {
   BASE_PRESETS, type RepTierDef,
   deleteTier, fetchRepTiers, loadRepTiers, newTierKey, saveTier,
 } from '../../lib/market/repTiers';
+import { Loading } from '../Loading';
 
 const BASES: RepLevel[] = ['bronze', 'silver', 'gold', 'diamond', 'legendary'];
 
@@ -31,7 +32,7 @@ export function RepTiersAdmin() {
         <span></span><span>{t('mk.admin.tier.label')}</span><span>{t('mk.admin.tier.base')}</span>
         <span>{t('mk.admin.tier.color')}</span><span>{t('mk.admin.tier.min')}</span><span>{t('mk.admin.strm.order')}</span><span></span>
       </div>
-      {loading && <p className="mk-muted">⏳ {t('mk.loading')}</p>}
+      {loading && <Loading />}
       {rows.map((r) => <TierRow key={r.key} tier={r} onChange={() => { loadRepTiers(); reload(); }} />)}
       <button className="mk-btn primary mk-tiers-add" onClick={addNew}>➕ {t('mk.admin.tier.add')}</button>
     </div>

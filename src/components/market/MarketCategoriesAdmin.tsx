@@ -5,6 +5,7 @@ import {
   type MarketCategory,
   deleteCategory, fetchCategories, loadCategories, newCategoryKey, saveCategory,
 } from '../../lib/market/marketCategories';
+import { Loading } from '../Loading';
 
 export function MarketCategoriesAdmin() {
   const { t } = useI18n();
@@ -24,7 +25,7 @@ export function MarketCategoriesAdmin() {
   return (
     <div className="mk-tiers-admin">
       <p className="mk-muted">{t('mk.admin.cat.hint')}</p>
-      {loading && <p className="mk-muted">⏳ {t('mk.loading')}</p>}
+      {loading && <Loading />}
       {rows.map((c) => <CatRow key={c.key} cat={c} onChange={() => { loadCategories(); reload(); }} />)}
       <button className="mk-btn primary mk-tiers-add" onClick={addNew}>➕ {t('mk.admin.cat.add')}</button>
     </div>

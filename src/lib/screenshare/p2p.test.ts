@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cleanName, makeProof, makeRoomCode, normalizeRoomCode, NAME_MAX_LENGTH } from './p2p';
+import { CHAT_MAX_LENGTH, cleanChatText, cleanName, makeProof, makeRoomCode, normalizeRoomCode, parseChatMessage, NAME_MAX_LENGTH } from './p2p';
 
 describe('room password proof', () => {
   it('is deterministic for the same inputs', async () => {
@@ -44,5 +44,23 @@ describe('cleanName', () => {
   it('trims, collapses spaces and caps the length', () => {
     expect(cleanName('  Had   der ')).toBe('Had der');
     expect(cleanName('x'.repeat(100))).toHaveLength(NAME_MAX_LENGTH);
+  });
+});
+
+describe('chat helpers', () => {
+  it('cleans text: trims, collapses spaces, drops control characters, caps the length', () => {
+    expect(cleanChatText('  oi   mundo \n ')).toBe('oi mundo');
+    expect(cleanChatText('a\u0000b\u0007c')).toBe('a b c');
+    expect(cleanChatText('x'.repeat(1000))).toHaveLength(CHAT_MAX_LENGTH);
+    expect(cleanChatText(42)).toBe('');
+  });
+
+  it('rebuilds a message field by field and rejects junk', () => {
+    const ok = parseChatMessage({ id: 'abc', fromId: 'v1', name: 'Ana', text: ' oi ', ts: 5, fromHost: true, evil: '<script>' });
+    expect(ok).toEqual({ id: 'abc', fromId: 'v1', name: 'Ana', text: 'oi', ts: 5, fromHost: true });
+    expect(parseChatMessage(null)).toBeNull();
+    expect(parseChatMessage({ id: 'a', fromId: 'b', text: '   ' })).toBeNull();
+    expect(parseChatMessage({ id: 1, fromId: 'b', text: 'oi' })).toBeNull();
+    expect(parseChatMessage({ id: 'a', fromId: 'b', text: 'oi', fromHost: 'yes' })?.fromHost).toBe(false);
   });
 });

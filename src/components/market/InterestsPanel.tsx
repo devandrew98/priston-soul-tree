@@ -5,6 +5,7 @@ import { useI18n } from '../../lib/i18n';
 import { type InterestEntry, fetchInterestsReceived, fetchMyInterests } from '../../lib/market/whatsapp';
 import { useAuth } from './store';
 import { Avatar, Since } from './parts';
+import { Loading } from '../Loading';
 
 function Row({ e, onOpen, onSeller, t }: { e: InterestEntry; onOpen: (id: string) => void; onSeller: (id: string) => void; t: (k: string) => string }) {
   return (
@@ -43,7 +44,7 @@ export function InterestsPanel({ onOpen, onSeller }: { onOpen: (id: string) => v
 
   return (
     <div className="mk-interests">
-      {loading && <p className="mk-muted">⏳ {t('mk.loading')}</p>}
+      {loading && <Loading />}
       <section className="mk-interests-sec">
         <h3 className="mk-h3">📥 {t('mk.interests.received')} <span className="mk-count">{received.length}</span></h3>
         {received.map((e) => <Row key={e.id} e={e} onOpen={onOpen} onSeller={onSeller} t={t} />)}

@@ -182,7 +182,7 @@ export { repTier } from './repTiers';
 // Deterministic mock reviews for a seller's public profile.
 export function sellerReviews(seller: Seller, limit = 6): Review[] {
   const buyers = ['Kaelen', 'Mira', 'Torvald', 'Lysa', 'Bram', 'Eowyn', 'Roderic', 'Selene'];
-  const avatars = ['🗡️', '🌹', '🪓', '🔮', '🛡️', '🏹', '⚔️', '🌙'];
+  const avatars = ['🗡', '🌹', '🪓', '🔮', '🛡', '🏹', '⚔', '🌙'];
   const comments = [
     'Negociação impecável, super recomendado!',
     'Rápido e honesto, voltaria a comprar.',

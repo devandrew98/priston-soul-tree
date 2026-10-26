@@ -4,7 +4,7 @@ import { useI18n } from '../../lib/i18n';
 import { getSeller, useChats } from './store';
 import { Avatar, OnlineDot, Since } from './parts';
 
-const EMOJIS = ['👍', '🙏', '😄', '🔥', '💰', '⚔️', '🛡️', '❤️', '🤝', '👀'];
+const EMOJIS = ['👍', '🙏', '😄', '🔥', '💰', '⚔', '🛡', '❤', '🤝', '👀'];
 
 // Canned seller replies so the mock chat feels alive.
 const REPLIES = [

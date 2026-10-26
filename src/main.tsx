@@ -6,6 +6,10 @@ import App from './App';
 import { StoreProvider } from './store';
 import { LanguageProvider } from './lib/i18n';
 import { initVisits } from './lib/visits';
+import { initMedievalCursor } from './lib/medievalCursor';
+import './lib/builds/account'; // dev-only ?fakedb switch for the builds features
+
+initMedievalCursor();
 
 void initVisits(); // counts this visit (once per day) whatever page the person lands on
 

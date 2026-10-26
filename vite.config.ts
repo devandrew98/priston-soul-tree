@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -11,6 +13,24 @@ function devVisitsApi(): Plugin {
     name: 'dev-visits-api',
     apply: 'serve',
     configureServer(server) {
+      // Link previews: answer crawler requests with index.html + page-specific Open Graph tags,
+      // like the /api/share function does in production (see vercel.json).
+      const BOT = /bot|crawler|spider|facebookexternalhit|whatsapp|telegram|discord|slack|twitter|linkedin|embedly|preview/i;
+      server.middlewares.use(async (req, res, next) => {
+        const url = new URL(req.url ?? '/', 'http://localhost');
+        const internal = ['/api/', '/@', '/src/', '/node_modules/'].some((prefix) => url.pathname.startsWith(prefix));
+        const skip = req.method !== 'GET' || url.pathname.includes('.') || internal;
+        if (skip || !BOT.test(String(req.headers['user-agent'] ?? ''))) return next();
+        try {
+          const { buildMeta, injectMeta } = await server.ssrLoadModule('/api/share.ts');
+          const html = readFileSync(join(server.config.root, 'index.html'), 'utf8');
+          res.setHeader('Content-Type', 'text/html; charset=utf-8');
+          res.end(injectMeta(html, buildMeta(url.pathname, Object.fromEntries(url.searchParams)), `http://${req.headers.host}`));
+        } catch {
+          next(); // never take the dev server down over a preview
+        }
+      });
+
       const seen = new Set<string>();
       const counts = new Map<string, number>();
       const store = {

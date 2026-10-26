@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { useStore } from '../store';
 import { useI18n } from '../lib/i18n';
 import { ShareModal } from './ShareModal';
+import { SaveBuild } from './builds/SaveBuild';
+import { encodeBuild } from '../lib/share';
+import { soulBuildPayload } from '../lib/builds/userBuilds';
 
 export function BuildBar() {
   const { builds, activeBuild, selectBuild, createBuild, duplicateBuild, renameBuild, deleteBuild, clearBuild, saveNow } = useStore();
@@ -26,6 +29,16 @@ export function BuildBar() {
       <button className="btn sm" onClick={saveNow} title={t('st.bb.save.title')}>{t('st.bb.save')}</button>
       <button className="btn sm" onClick={() => setSharing(true)} title={t('st.bb.share.title')}>{t('st.bb.share')}</button>
       <button className="btn sm danger" disabled={builds.length <= 1} onClick={() => { if (confirm(t('st.bb.deleteconfirm'))) deleteBuild(); }}>{t('st.bb.delete')}</button>
+
+      <SaveBuild
+        kind="souls"
+        defaultName={activeBuild.name}
+        empty={Object.values(activeBuild.slots).every((s) => !s.soulId)}
+        getPayload={() => ({
+          payload: soulBuildPayload(encodeBuild(activeBuild)),
+          summary: `${Object.values(activeBuild.slots).filter((s) => s.soulId).length} souls`,
+        })}
+      />
 
       {sharing && <ShareModal onClose={() => setSharing(false)} />}
     </div>

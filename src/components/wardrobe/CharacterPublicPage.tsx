@@ -6,6 +6,7 @@ import { fetchCharacterBySlug } from '../../lib/wardrobe/characters';
 import { fetchWardrobeItems } from '../../lib/wardrobe/items';
 import type { WardrobeCharacter, WardrobeItem } from '../../lib/wardrobe/types';
 import { CharacterSummary } from './CharacterSummary';
+import { Loading } from '../Loading';
 
 export function CharacterPublicPage({ slug }: { slug: string }) {
   const { t } = useI18n();
@@ -24,9 +25,9 @@ export function CharacterPublicPage({ slug }: { slug: string }) {
 
   return (
     <div className="wd-public-page">
-      <a className="wd-public-brand" href="/">⚔️ PristonZONE</a>
+      <a className="wd-public-brand" href="/">⚔ PristonZONE</a>
       {character === undefined ? (
-        <p className="mk-empty">⏳ {t('mk.loading')}</p>
+        <Loading className="mk-empty" />
       ) : character === null ? (
         <p className="mk-empty">{t('wd.notfound')}</p>
       ) : (

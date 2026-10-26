@@ -10,7 +10,7 @@ export const sheltomIcon = (name: string): string => `/sheltoms/${name.toLowerCa
 
 export const MIX_CATEGORIES: MixCategory[] = [
   {
-    id: "weapons", name: "Weapons", icon: "⚔️",
+    id: "weapons", name: "Weapons", icon: "⚔",
     formulas: [
       { effects: ["Attack Rating +10%", "Min DMG +1", "Max DMG +4"], sheltoms: [{ name: "Lucidy", qty: 1 }, { name: "Sereneo", qty: 1 }, { name: "Fadeo", qty: 2 }, { name: "Sparky", qty: 4 }, { name: "Raident", qty: 1 }] },
       { effects: ["Attack Rating +40", "Min DMG +3", "Max DMG +5"], sheltoms: [{ name: "Sereneo", qty: 1 }, { name: "Fadeo", qty: 3 }, { name: "Sparky", qty: 5 }, { name: "Murky", qty: 1 }] },
@@ -23,7 +23,7 @@ export const MIX_CATEGORIES: MixCategory[] = [
     ],
   },
   {
-    id: "armors", name: "Armors & Robes", icon: "🛡️",
+    id: "armors", name: "Armors & Robes", icon: "🛡",
     formulas: [
       { effects: ["Absorb +25"], sheltoms: [{ name: "Sereneo", qty: 1 }, { name: "Transparo", qty: 2 }, { name: "Murky", qty: 2 }] },
       { effects: ["Add HP +40"], sheltoms: [{ name: "Sereneo", qty: 1 }, { name: "Sparky", qty: 4 }, { name: "Murky", qty: 1 }] },

@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { fetchSiteFlag, setSiteFlag } from '../../lib/market/siteSettings';
+import { Loading } from '../Loading';
 
 export function MarketplaceToggle() {
   const { t } = useI18n();
@@ -35,7 +36,7 @@ export function MarketplaceToggle() {
         )}
       </div>
       {loading ? (
-        <span className="mk-muted">⏳ {t('mk.loading')}</span>
+        <Loading inline />
       ) : (
         <button className={`mk-btn ${enabled ? 'danger' : 'primary'}`} onClick={toggle} disabled={busy}>
           {enabled ? `⛔ ${t('mk.admin.mktoggle.off')}` : `✅ ${t('mk.admin.mktoggle.on')}`}

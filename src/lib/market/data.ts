@@ -10,8 +10,8 @@ export interface Category {
 
 // Category ids are stable keys; labels are localised in i18n (mk.cat.*).
 export const CATEGORIES: Category[] = [
-  { id: 'weapons', icon: '⚔️', subs: ['Espadas', 'Machados', 'Arcos', 'Garras', 'Adagas', 'Martelos', 'Lanças', 'Fantasmas', 'Foices', 'Varinhas', 'Cajados'] },
-  { id: 'armors', icon: '🛡️', subs: ['Armaduras', 'Roupões', 'Orbes', 'Escudos', 'Botas', 'Luvas', 'Braceletes'] },
+  { id: 'weapons', icon: '⚔', subs: ['Espadas', 'Machados', 'Arcos', 'Garras', 'Adagas', 'Martelos', 'Lanças', 'Fantasmas', 'Foices', 'Varinhas', 'Cajados'] },
+  { id: 'armors', icon: '🛡', subs: ['Armaduras', 'Roupões', 'Orbes', 'Escudos', 'Botas', 'Luvas', 'Braceletes'] },
   { id: 'jewels', icon: '💍', subs: ['Anéis', 'Amuletos'] },
   { id: 'sheltoms', icon: '💠', subs: [] },
   { id: 'souls', icon: '✨', subs: [] },
@@ -61,7 +61,7 @@ export const MEDALS: Medal[] = [
   { id: 'trusted', icon: '🤝' },
   { id: 'veteran', icon: '🏰' },
   { id: 'topseller', icon: '💰' },
-  { id: 'clean', icon: '🛡️' },
+  { id: 'clean', icon: '🛡' },
   { id: 'collector', icon: '📦' },
 ];
 
@@ -90,7 +90,7 @@ export const SELLERS: Seller[] = [
     positivePct: 97, avgResponseMin: 8, avgCompleteMin: 19, reports: 0, medals: ['fast', 'collector'],
   },
   {
-    id: 'gorrim', nick: 'Gorrim', avatar: '⚒️', className: 'Fighter', level: 133, clan: 'IronFist',
+    id: 'gorrim', nick: 'Gorrim', avatar: '⚒', className: 'Fighter', level: 133, clan: 'IronFist',
     joinedAt: now - 300 * DAY, lastSeen: now - 3 * 3600000, online: false, verified: false,
     totalSalesValue: 940_000_000, itemsSold: 118, itemsBought: 140, ratingAvg: 4.4, ratingCount: 88,
     positivePct: 92, avgResponseMin: 22, avgCompleteMin: 40, reports: 1, medals: ['collector'],

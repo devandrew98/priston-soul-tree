@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { type AppDownload, OVERLAY_KEY, downloadUrl, fetchAppDownload, setAppDownload } from '../../lib/market/downloads';
+import { Loading } from '../Loading';
 
 const fmtSize = (bytes: number | null): string => bytes == null ? '—' : `${(bytes / 1048576).toFixed(1)} MB`;
 
@@ -54,7 +55,7 @@ export function DownloadAdmin() {
 
       <div className="mk-dl-current">
         <h3 className="mk-h3">{t('mk.admin.dl.current')}</h3>
-        {loading ? <p className="mk-muted">⏳ {t('mk.loading')}</p> : current ? (
+        {loading ? <Loading /> : current ? (
           <div className="mk-dl-info">
             <span>📦 <b>{current.filename}</b></span>
             <span className="mk-muted">{fmtSize(current.size)}{current.version ? ` · v${current.version}` : ''} · {t('mk.admin.dl.updated')} {fmtDate(current.updatedAt)}</span>
