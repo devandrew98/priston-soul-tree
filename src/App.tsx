@@ -332,7 +332,7 @@ export default function App() {
       </nav>
 
       {section === 'home' ? (
-        <Home onOpen={navigate} marketplaceEnabled={marketplaceEnabled} />
+        <Home />
       ) : section === 'timers' ? (
         timerTab === 'boss' ? <TimeBoss /> : <TimerFury />
       ) : section === 'market' ? (
