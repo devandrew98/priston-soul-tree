@@ -97,7 +97,7 @@ interface Row {
   payload: string; summary: string; is_public: boolean; likes_count: number; created_at: string;
   owner?: { nick?: string } | { nick?: string }[] | null;
 }
-const COLUMNS = 'id, owner_id, kind, name, class_slug, level, payload, summary, is_public, likes_count, created_at, owner:profiles(nick)';
+const COLUMNS = 'id, owner_id, kind, name, class_slug, level, payload, summary, is_public, likes_count, created_at, owner:profiles!user_builds_owner_id_fkey(nick)';
 
 function toBuild(r: Row): UserBuild {
   const owner = Array.isArray(r.owner) ? r.owner[0] : r.owner;
