@@ -28,9 +28,14 @@ function useBuildList(load: () => Promise<UserBuild[]>, deps: unknown[]): [LoadS
   return [state, update, () => setNonce((n) => n + 1)];
 }
 
+const KINDS: { kind: BuildKind; icon: string; nameKey: string; descKey: string }[] = [
+  { kind: 'souls', icon: '🌳', nameKey: 'nav.soultree', descKey: 'bd.kind.souls.desc' },
+  { kind: 'skills', icon: '🌟', nameKey: 'nav.skilltree', descKey: 'bd.kind.skills.desc' },
+];
+
 export function Builds() {
   const { t } = useI18n();
-  const [kind, setKind] = useState<BuildKind>('skills');
+  const [kind, setKind] = useState<BuildKind>('souls'); // Soul Tree first, Skill Builder second
   const [version, setVersion] = useState(0); // bumped when my builds change, so the gallery below reloads
   return (
     <div className="bd-tool">
@@ -38,10 +43,25 @@ export function Builds() {
         <h1 className="mk-h1">🏆 {t('bd.title')}</h1>
         <p className="mk-muted">{t('bd.subtitle')}</p>
       </header>
-      <div className="bd-tabs" role="tablist">
-        <button type="button" role="tab" aria-selected={kind === 'skills'} className={kind === 'skills' ? 'on' : ''} onClick={() => setKind('skills')}>🌟 {t('nav.skilltree')}</button>
-        <button type="button" role="tab" aria-selected={kind === 'souls'} className={kind === 'souls' ? 'on' : ''} onClick={() => setKind('souls')}>🌳 {t('nav.soultree')}</button>
+      <div className="bd-kinds" role="tablist" aria-label={t('bd.kind.label')}>
+        {KINDS.map((k) => (
+          <button
+            key={k.kind}
+            type="button"
+            role="tab"
+            aria-selected={kind === k.kind}
+            className={`bd-kind${kind === k.kind ? ' on' : ''}`}
+            onClick={() => setKind(k.kind)}
+          >
+            <span className="bd-kind-icon" aria-hidden="true">{k.icon}</span>
+            <span className="bd-kind-text">
+              <b>{t(k.nameKey)}</b>
+              <em>{t(k.descKey)}</em>
+            </span>
+          </button>
+        ))}
       </div>
+      <p className="bd-viewing">{t('bd.viewing')} <b>{t(kind === 'souls' ? 'nav.soultree' : 'nav.skilltree')}</b></p>
       <MyBuilds kind={kind} onChanged={() => setVersion((v) => v + 1)} />
       <Gallery kind={kind} version={version} />
     </div>

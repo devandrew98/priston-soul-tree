@@ -1966,3 +1966,18 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
   .topnav-login { padding: 7px 10px; font-size: 13px; }
   .topnav-login-name { max-width: 70px; }
 }
+
+/* Build type selector: two big, clearly different "places" (Soul Tree / Skill Builder) */
+.bd-kinds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 10px; }
+@media (max-width: 640px) { .bd-kinds { grid-template-columns: minmax(0, 1fr); } }
+.bd-kind { display: flex; align-items: center; gap: 14px; text-align: left; padding: 16px 18px; border: 2px solid var(--border); border-radius: 12px; background: linear-gradient(180deg, var(--panel), var(--bg2)); color: var(--text); cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; }
+.bd-kind:hover { border-color: var(--gold); transform: translateY(-2px); }
+.bd-kind.on { border-color: var(--gold-bright); box-shadow: 0 0 0 1px rgba(240, 210, 138, 0.35), 0 8px 22px -8px rgba(240, 210, 138, 0.35); background: linear-gradient(180deg, var(--panel2), var(--bg2)); }
+.bd-kind-icon { font-size: 34px; line-height: 1; flex: none; width: 46px; text-align: center; }
+.bd-kind-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.bd-kind-text b { font-size: 18px; color: var(--gold-bright); }
+.bd-kind-text em { font-style: normal; font-size: 12.5px; color: var(--text-dim); line-height: 1.35; }
+.bd-kind:not(.on) .bd-kind-text b { color: var(--text); }
+.bd-kind.on::after { content: "✓"; margin-left: auto; flex: none; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--gold-bright); color: #1f1204; font-weight: 900; font-size: 14px; }
+.bd-viewing { margin: 0 0 18px; font-size: 13px; color: var(--text-dim); }
+.bd-viewing b { color: var(--gold-bright); }
