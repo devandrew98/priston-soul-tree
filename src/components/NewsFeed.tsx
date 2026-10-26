@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useI18n } from '../lib/i18n';
 import { BACKEND_ENABLED } from '../lib/market/supabase';
+import { RichText } from './RichText';
 import { MOCK_NEWS, type NewsItem, fetchPublishedNews } from '../lib/market/news';
 
 export function NewsFeed() {
@@ -31,7 +32,7 @@ export function NewsFeed() {
               <span className="home-news-date">{fmt(n.createdAt)}</span>
             </div>
             <h3 className="home-news-h">{n.title[lang]}</h3>
-            {n.body[lang] && <p className="home-news-body">{n.body[lang]}</p>}
+            {n.body[lang] && <RichText source={n.body[lang]} className="home-news-body" />}
           </article>
         ))}
       </div>

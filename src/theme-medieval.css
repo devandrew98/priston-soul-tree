@@ -346,3 +346,10 @@ input:focus, select:focus, textarea:focus { border-color: var(--mv-gold); }
 .bd-kind-text b { font-family: var(--mv-title); font-weight: 400; font-size: 22px; letter-spacing: 0.08em; }
 .bd-kind.on::after { border-radius: 0; transform: rotate(45deg) scale(0.7); background: var(--mv-gold); color: transparent; }
 .bd-viewing b { font-family: var(--mv-title); font-weight: 400; letter-spacing: 0.06em; font-size: 15px; }
+
+/* ---- rich text on the parchment news cards ---- */
+.home-news-body.rt p, .home-news-body.rt li { font-family: var(--mv-text); font-size: 17.5px; color: var(--mv-ink); }
+.home-news-body.rt .rt-h1, .home-news-body.rt .rt-h2 { font-family: var(--mv-title); font-weight: 400; letter-spacing: 0.05em; color: #3d0f0b; }
+.home-news-body.rt a { color: var(--mv-blood-hi); }
+.home-news-body.rt .rt-mark { background: rgba(110, 29, 23, 0.22); }
+.home-news-body.rt hr { border-top-color: #3a2a14; }

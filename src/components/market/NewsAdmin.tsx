@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { type NewsInput, type NewsItem, type NewsKind, createNews, deleteNews, fetchAllNews, updateNews } from '../../lib/market/news';
 import { Loading } from '../Loading';
+import { RichTextEditor } from './RichTextEditor';
 
 const KINDS: NewsKind[] = ['news', 'event', 'maintenance'];
 const empty: NewsInput = { titlePt: '', titleEn: '', bodyPt: '', bodyEn: '', kind: 'news', pinned: false, published: true, sort: 0 };
@@ -40,14 +41,8 @@ export function NewsAdmin() {
             <span>🇬🇧 {t('mk.admin.news.titleph')}</span>
             <input value={draft.titleEn} onChange={(e) => setDraft({ ...draft, titleEn: e.target.value })} />
           </label>
-          <label className="mk-news-langfield">
-            <span>🇧🇷 {t('mk.admin.news.bodyph')}</span>
-            <textarea rows={2} value={draft.bodyPt} onChange={(e) => setDraft({ ...draft, bodyPt: e.target.value })} />
-          </label>
-          <label className="mk-news-langfield">
-            <span>🇬🇧 {t('mk.admin.news.bodyph')}</span>
-            <textarea rows={2} value={draft.bodyEn} onChange={(e) => setDraft({ ...draft, bodyEn: e.target.value })} />
-          </label>
+          <RichTextEditor label={`🇧🇷 ${t('mk.admin.news.bodyph')}`} value={draft.bodyPt} onChange={(v) => setDraft({ ...draft, bodyPt: v })} />
+          <RichTextEditor label={`🇬🇧 ${t('mk.admin.news.bodyph')}`} value={draft.bodyEn} onChange={(v) => setDraft({ ...draft, bodyEn: v })} />
         </div>
         <div className="mk-news-form-row">
           <select value={draft.kind} onChange={(e) => setDraft({ ...draft, kind: e.target.value as NewsKind })}>
@@ -91,14 +86,8 @@ function NewsRow({ item, onChange }: { item: NewsItem; onChange: () => void }) {
           <span>🇬🇧 {t('mk.admin.news.titleph')}</span>
           <input value={d.titleEn} onChange={(e) => setD({ ...d, titleEn: e.target.value })} />
         </label>
-        <label className="mk-news-langfield">
-          <span>🇧🇷 {t('mk.admin.news.bodyph')}</span>
-          <textarea rows={2} value={d.bodyPt} onChange={(e) => setD({ ...d, bodyPt: e.target.value })} />
-        </label>
-        <label className="mk-news-langfield">
-          <span>🇬🇧 {t('mk.admin.news.bodyph')}</span>
-          <textarea rows={2} value={d.bodyEn} onChange={(e) => setD({ ...d, bodyEn: e.target.value })} />
-        </label>
+        <RichTextEditor label={`🇧🇷 ${t('mk.admin.news.bodyph')}`} value={d.bodyPt} onChange={(v) => setD({ ...d, bodyPt: v })} />
+        <RichTextEditor label={`🇬🇧 ${t('mk.admin.news.bodyph')}`} value={d.bodyEn} onChange={(v) => setD({ ...d, bodyEn: v })} />
       </div>
       <div className="mk-news-item-row">
         <select value={d.kind} onChange={(e) => setD({ ...d, kind: e.target.value as NewsKind })}>
