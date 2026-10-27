@@ -280,8 +280,9 @@ export function ClanFormation() {
   if (!CLAN_FAKE && !isLoggedIn) {
     return <div className="cl-tool">{header}<section className="sr-card cl-box"><p>{T('login')}</p><button type="button" className="mk-btn primary" onClick={requestLogin}>{T('loginBtn')}</button></section></div>;
   }
-  if (access.loading || status === 'loading') return <div className="cl-tool">{header}<Loading /></div>;
-  if (!access.allowed) return <div className="cl-tool">{header}<p className="sk-notice">{T('noAccess')}</p></div>;
+  // A reload of the data never replaces the page by the spinner once it is on screen (it would reset what the leader is typing).
+  if ((access.loading || status === 'loading') && !clans) return <div className="cl-tool">{header}<Loading /></div>;
+  if (!access.loading && !access.allowed) return <div className="cl-tool">{header}<p className="sk-notice">{T('noAccess')}</p></div>;
   if (status === 'unavailable') return <div className="cl-tool">{header}<p className="sk-notice">{T('unavailable')}</p></div>;
   if (status === 'error') return <div className="cl-tool">{header}<p className="ag-warning" role="alert">{T('error')}</p></div>;
 
@@ -306,7 +307,7 @@ export function ClanFormation() {
             <button type="submit" className="mk-btn primary">{T('createClan')}</button>
           </form>
           <ClanOverview selectedId={clanId} onPick={setClanId} version={overviewVersion} />
-          {clan && <AdminPanel key={clan.id} clan={clan} onDeleted={() => { loadClans(); setOverviewVersion((v) => v + 1); }} T={T} />}
+          {clan && <AdminPanel key={`admin-${clan.id}`} clan={clan} onDeleted={() => { loadClans(); setOverviewVersion((v) => v + 1); }} T={T} />}
         </section>
       )}
 
@@ -342,8 +343,8 @@ export function ClanFormation() {
           </section>
 
           <FormationBoard formation={formation} confirmedCount={confirmed.length} onLeader={setLeader} />
-          <BoardEditor key={clan.id} clan={clan} members={members} onClearConfirmed={() => patchMembers(members.filter((m) => m.confirmed).map((m) => m.id), { confirmed: false })} />
-          <SharePanel key={clan.id} clan={clan} T={T} />
+          <BoardEditor key={`board-${clan.id}`} clan={clan} members={members} onClearConfirmed={() => patchMembers(members.filter((m) => m.confirmed).map((m) => m.id), { confirmed: false })} />
+          <SharePanel key={`share-${clan.id}`} clan={clan} T={T} />
         </>
       )}
     </div>

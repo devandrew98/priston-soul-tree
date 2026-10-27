@@ -93,12 +93,12 @@ function createSupabaseRepo(): ClanRepo {
     },
     async revokeShare(clanId) { check(await sb().from('clan_shares').delete().eq('clan_id', clanId)); },
     async getBoard(clanId) {
-      const row = check(await sb().from('clan_boards').select('note,markers,strokes,bc_at').eq('clan_id', clanId).maybeSingle()) as { note: string; markers: unknown; strokes: unknown; bc_at: string | null } | null;
-      return sanitizeBoard(row && { note: row.note, markers: row.markers, strokes: row.strokes, bcAt: row.bc_at });
+      const row = check(await sb().from('clan_boards').select('note,markers,strokes').eq('clan_id', clanId).maybeSingle()) as { note: string; markers: unknown; strokes: unknown } | null;
+      return sanitizeBoard(row);
     },
     async saveBoard(clanId, board) {
       const b = sanitizeBoard(board);
-      check(await sb().from('clan_boards').upsert({ clan_id: clanId, note: b.note, markers: b.markers, strokes: b.strokes, bc_at: b.bcAt, updated_at: new Date().toISOString() }));
+      check(await sb().from('clan_boards').upsert({ clan_id: clanId, note: b.note, markers: b.markers, strokes: b.strokes, updated_at: new Date().toISOString() }));
     },
     async listEvents(clanId) {
       const rows = check(await sb().from('clan_events').select('id,starts_at,clan_event_members(member_id)').eq('clan_id', clanId).order('starts_at', { ascending: false })) as unknown as { id: string; starts_at: string; clan_event_members: { member_id: string }[] }[];
@@ -111,7 +111,7 @@ function createSupabaseRepo(): ClanRepo {
       return rows.map((r) => ({ clanId: r.clan_id, name: r.name, members: r.members, confirmed: r.confirmed, leader: r.leader, vices: r.vices, lastActivity: new Date(r.last_activity).getTime() }));
     },
     async viewShare(token) {
-      const data = check(await sb().rpc('clan_share_view', { p_token: token })) as { clan: string; note?: string; markers?: unknown; strokes?: unknown; bcAt?: unknown; members: Omit<ClanMember, 'clanId'>[] } | null;
+      const data = check(await sb().rpc('clan_share_view', { p_token: token })) as { clan: string; note?: string; markers?: unknown; strokes?: unknown; members: Omit<ClanMember, 'clanId'>[] } | null;
       if (!data) return null;
       return { clanName: data.clan, members: data.members.map((m) => ({ ...m, clanId: '' })), board: sanitizeBoard(data) };
     },

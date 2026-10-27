@@ -2267,3 +2267,5 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .cl-bccard { border-color: var(--gold); }
 .cl-bcdate { margin: 4px 0; font-size: 20px; font-weight: 700; }
 .cl-bcdate::first-letter { text-transform: uppercase; }
+.cl-bcnext { margin: 4px 0 0; font-size: 18px; font-weight: 700; }
+.cl-bcnext::first-letter { text-transform: uppercase; }

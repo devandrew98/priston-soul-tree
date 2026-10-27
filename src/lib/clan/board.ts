@@ -1,4 +1,4 @@
-// The leader's board: the date of the Bless Castle, a note for the players, the signs placed on the map and the pencil drawings.
+// The leader's board: a note for the players, the signs placed on the map and the pencil drawings.
 // Positions are percentages of the map image (0-100), so they stay right at any screen size.
 
 export const NUMBER_TYPES = ['n1', 'n2', 'n3', 'n4', 'n5', 'n6', 'n7'] as const;
@@ -14,14 +14,14 @@ export type StrokeColor = (typeof STROKE_COLORS)[number];
 /** One pencil line: `pts` is flat [x1, y1, x2, y2, ...] in map percentages. */
 export interface Stroke { id: string; color: StrokeColor; pts: number[] }
 
-export interface BoardData { note: string; markers: MapMarker[]; strokes: Stroke[]; bcAt: string | null }
+export interface BoardData { note: string; markers: MapMarker[]; strokes: Stroke[] }
 
 export const NOTE_MAX = 600;
 export const MAX_MARKERS = 60;
 export const LABEL_MAX = 24;
 export const MAX_STROKES = 60;
 export const MAX_STROKE_POINTS = 120;
-export const EMPTY_BOARD: BoardData = { note: '', markers: [], strokes: [], bcAt: null };
+export const EMPTY_BOARD: BoardData = { note: '', markers: [], strokes: [] };
 
 export const MARKER_ICON: Record<MarkerType, string> = {
   attack: '⚔️', defend: '🛡️', rebuff: '✨', enemy: '👹', arrow: '⬆',
@@ -76,19 +76,11 @@ export function sanitizeStrokes(raw: unknown): Stroke[] {
   return out;
 }
 
-/** A valid ISO date (as sent by the database) or null. */
-export function sanitizeBcAt(raw: unknown): string | null {
-  if (typeof raw !== 'string') return null;
-  const d = new Date(raw);
-  return Number.isNaN(d.getTime()) ? null : d.toISOString();
-}
-
-export function sanitizeBoard(raw: { note?: unknown; markers?: unknown; strokes?: unknown; bcAt?: unknown } | null | undefined): BoardData {
+export function sanitizeBoard(raw: { note?: unknown; markers?: unknown; strokes?: unknown } | null | undefined): BoardData {
   return {
     note: typeof raw?.note === 'string' ? raw.note.slice(0, NOTE_MAX) : '',
     markers: sanitizeMarkers(raw?.markers),
     strokes: sanitizeStrokes(raw?.strokes),
-    bcAt: sanitizeBcAt(raw?.bcAt),
   };
 }
 

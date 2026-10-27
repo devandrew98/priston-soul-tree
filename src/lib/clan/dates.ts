@@ -1,32 +1,30 @@
-// Dates of the Bless Castle: the <input type="datetime-local"> value <-> an ISO instant, and how a date is shown to the players.
-// The date is stored as an instant, so every player sees it in their own time zone.
+// Dates of the Bless Castle. The BC is always on Saturday at noon, Brasília time (America/Sao_Paulo, UTC-3 all year since 2019),
+// so nobody has to type the date: the next one is worked out from today. Dates are instants, so every player sees them in
+// their own time zone.
 
-const pad = (n: number) => String(n).padStart(2, '0');
+const BR_OFFSET_MS = -3 * 3_600_000;
+const DAY_MS = 86_400_000;
 
-/** ISO instant -> the value of a datetime-local input (local time), or '' when empty/invalid. */
-export function toLocalInput(iso: string | null): string {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-/** datetime-local value (local time) -> ISO instant, or null when empty/invalid. */
-export function fromLocalInput(value: string): string | null {
-  if (!value) return null;
-  const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+/** The BC that already started (`last`, the most recent Saturday noon) and the next one (`next`), as instants in ms. */
+export function bcSaturdays(now: number): { last: number; next: number } {
+  const br = new Date(now + BR_OFFSET_MS); // Brasília wall-clock, read with the UTC getters
+  const daysSinceSaturday = (br.getUTCDay() + 1) % 7; // Sat 0, Sun 1, ... Fri 6
+  const thisSaturdayNoon = Date.UTC(br.getUTCFullYear(), br.getUTCMonth(), br.getUTCDate() - daysSinceSaturday, 12) - BR_OFFSET_MS;
+  return thisSaturdayNoon <= now
+    ? { last: thisSaturdayNoon, next: thisSaturdayNoon + 7 * DAY_MS }
+    : { last: thisSaturdayNoon - 7 * DAY_MS, next: thisSaturdayNoon }; // Saturday before noon
 }
 
 type Lang = 'pt' | 'en';
 const locale = (lang: Lang) => (lang === 'pt' ? 'pt-BR' : 'en-US');
 
-/** "sábado, 25 de outubro às 21:00" */
+/** "Sábado, 25 de Outubro às 12:00": the weekday and the month start with a capital letter. */
 export function formatBc(ms: number, lang: Lang): string {
-  return new Date(ms).toLocaleString(locale(lang), { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+  const parts = new Intl.DateTimeFormat(locale(lang), { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).formatToParts(new Date(ms));
+  return parts.map((p) => (p.type === 'weekday' || p.type === 'month' ? p.value.charAt(0).toUpperCase() + p.value.slice(1) : p.value)).join('');
 }
 
-/** "25/10/26 21:00", for the attendance lists. */
+/** "25/10/26 12:00", for the attendance lists. */
 export function formatShort(ms: number, lang: Lang): string {
   return new Date(ms).toLocaleString(locale(lang), { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
 }
@@ -44,7 +42,7 @@ export function countdown(ms: number, now: number): string | null {
 
 /** "hoje", "há 3 dias", "há 2 meses" for the administrator's overview. */
 export function relativeDays(ms: number, now: number, lang: Lang): string {
-  const days = Math.floor((now - ms) / 86_400_000);
+  const days = Math.floor((now - ms) / DAY_MS);
   const rtf = new Intl.RelativeTimeFormat(locale(lang), { numeric: 'auto' });
   if (days < 1) return rtf.format(0, 'day');
   if (days < 31) return rtf.format(-days, 'day');

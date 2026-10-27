@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  LABEL_MAX, MAX_MARKERS, MAX_STROKES, MAX_STROKE_POINTS, NOTE_MAX, appendPoint, sanitizeBcAt, sanitizeBoard, sanitizeMarkers, sanitizeStrokes, strokeHit,
+  LABEL_MAX, MAX_MARKERS, MAX_STROKES, MAX_STROKE_POINTS, NOTE_MAX, appendPoint, sanitizeBoard, sanitizeMarkers, sanitizeStrokes, strokeHit,
 } from './board';
 
 describe('sanitizeMarkers', () => {
@@ -67,15 +67,9 @@ describe('drawing helpers', () => {
   });
 });
 
-describe('sanitizeBoard / sanitizeBcAt', () => {
+describe('sanitizeBoard', () => {
   it('cuts a long note and defaults to empty', () => {
     expect(sanitizeBoard({ note: 'a'.repeat(NOTE_MAX + 50) }).note).toHaveLength(NOTE_MAX);
-    expect(sanitizeBoard(null)).toEqual({ note: '', markers: [], strokes: [], bcAt: null });
-  });
-  it('accepts a real date and rejects garbage', () => {
-    expect(sanitizeBcAt('2026-11-01T22:00:00Z')).toBe('2026-11-01T22:00:00.000Z');
-    expect(sanitizeBcAt('not a date')).toBeNull();
-    expect(sanitizeBcAt(5)).toBeNull();
-    expect(sanitizeBcAt(null)).toBeNull();
+    expect(sanitizeBoard(null)).toEqual({ note: '', markers: [], strokes: [] });
   });
 });

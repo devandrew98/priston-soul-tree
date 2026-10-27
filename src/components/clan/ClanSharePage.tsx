@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { buildFormation } from '../../lib/clan/formation';
 import { MARKER_ICON, MARKER_TYPES, isNumberType } from '../../lib/clan/board';
-import { countdown, formatBc } from '../../lib/clan/dates';
+import { bcSaturdays, countdown, formatBc } from '../../lib/clan/dates';
 import { getClanRepo, type ShareView } from '../../lib/clan/repo';
 import { Loading } from '../Loading';
 import { BlessMap } from './BlessMap';
@@ -23,7 +23,7 @@ const TXT = {
   live: { pt: 'Atualiza sozinho.', en: 'Updates by itself.' },
   nextBc: { pt: 'Próximo Bless Castle', en: 'Next Bless Castle' },
   startsIn: { pt: 'começa em', en: 'starts in' },
-  started: { pt: 'já começou', en: 'already started' },
+  brt: { pt: 'Meio-dia no horário de Brasília', en: 'Noon, Brasília time' },
   order: { pt: 'Números 1–7: ordem', en: 'Numbers 1–7: order' },
 } as const;
 
@@ -62,17 +62,11 @@ export function ClanSharePage({ token }: { token: string }) {
       {state.status === 'ready' && !view && <p className="sk-notice">{T('notFound')}</p>}
       {view && (
         <>
-          {view.board.bcAt && (() => {
-            const ms = new Date(view.board.bcAt).getTime();
-            const left = countdown(ms, now);
-            return (
-              <section className="sr-card cl-box cl-bccard">
-                <h3>📅 {T('nextBc')}</h3>
-                <p className="cl-bcdate">{formatBc(ms, lang)}</p>
-                <p className="mk-muted">{left ? `${T('startsIn')} ${left}` : T('started')}</p>
-              </section>
-            );
-          })()}
+          <section className="sr-card cl-box cl-bccard">
+            <h3>📅 {T('nextBc')}</h3>
+            <p className="cl-bcdate">{formatBc(bcSaturdays(now).next, lang)}</p>
+            <p className="mk-muted">{T('startsIn')} {countdown(bcSaturdays(now).next, now)} · {T('brt')}</p>
+          </section>
           {view.board.note.trim() && (
             <section className="sr-card cl-box cl-notecard">
               <h3>📣 {T('note')}</h3>

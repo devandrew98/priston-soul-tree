@@ -4,15 +4,14 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { attendanceRows, type AttendanceEvent } from '../../lib/clan/attendance';
-import { formatBc, formatShort } from '../../lib/clan/dates';
+import { bcSaturdays, formatBc, formatShort } from '../../lib/clan/dates';
 import { getClanRepo, type Clan, type ClanMember } from '../../lib/clan/repo';
 
 const TXT = {
   title: { pt: 'Histórico de presença', en: 'Attendance history' },
-  hint: { pt: 'Registre o BC depois que ele acontecer: os membros confirmados naquele momento contam como presentes.', en: 'Register the BC after it happens: the members confirmed at that moment count as present.' },
+  hint: { pt: 'Registre o BC depois que ele acontecer (sábado ao meio-dia): os membros confirmados naquele momento contam como presentes.', en: 'Register the BC after it happens (Saturday at noon): the members confirmed at that moment count as present.' },
   register: { pt: 'Registrar presença deste BC', en: 'Register attendance for this BC' },
   update: { pt: 'Atualizar presença deste BC', en: 'Update attendance for this BC' },
-  noDate: { pt: 'Defina a data e a hora do BC acima para registrar.', en: 'Set the BC date and time above to register.' },
   willRegister: { pt: 'BC de', en: 'BC of' },
   present: { pt: 'presentes', en: 'present' },
   registered: { pt: 'Presença registrada', en: 'Attendance registered' },
@@ -30,7 +29,7 @@ const TXT = {
   noMembers: { pt: 'Nenhum membro cadastrado.', en: 'No members yet.' },
 } as const;
 
-export function AttendancePanel({ clan, members, bcAt, onUncheckAll }: { clan: Clan; members: ClanMember[]; bcAt: string | null; onUncheckAll: () => void }) {
+export function AttendancePanel({ clan, members, onUncheckAll }: { clan: Clan; members: ClanMember[]; onUncheckAll: () => void }) {
   const { lang } = useI18n();
   const T = (k: keyof typeof TXT) => TXT[k][lang];
   const [events, setEvents] = useState<AttendanceEvent[] | null>(null);
@@ -47,13 +46,13 @@ export function AttendancePanel({ clan, members, bcAt, onUncheckAll }: { clan: C
 
   const rows = useMemo(() => attendanceRows(members, events ?? []), [members, events]);
   const confirmedIds = members.filter((m) => m.confirmed).map((m) => m.id);
-  const bcMs = bcAt ? new Date(bcAt).getTime() : null;
-  const already = bcMs !== null && !!events?.some((e) => e.startsAt === bcMs);
+  // The BC to register is the one that already started: the most recent Saturday noon.
+  const bcMs = bcSaturdays(Date.now()).last;
+  const already = !!events?.some((e) => e.startsAt === bcMs);
 
   const register = () => {
-    if (!bcAt) return;
     setMsg(null);
-    getClanRepo().registerEvent(clan.id, bcAt, confirmedIds)
+    getClanRepo().registerEvent(clan.id, new Date(bcMs).toISOString(), confirmedIds)
       .then(() => { setJustRegistered(true); setMsg({ kind: 'ok', text: `${T('registered')}: ${confirmedIds.length} ${T('present')}.` }); load(); })
       .catch(() => setMsg({ kind: 'error', text: T('error') }));
   };
@@ -69,12 +68,8 @@ export function AttendancePanel({ clan, members, bcAt, onUncheckAll }: { clan: C
         <div className="cl-att-body">
           <p className="mk-muted">{T('hint')}</p>
           <div className="cl-att-register">
-            {bcMs === null ? <small className="mk-muted">{T('noDate')}</small> : (
-              <>
-                <span>{T('willRegister')} <b>{formatBc(bcMs, lang)}</b> · {confirmedIds.length} {T('present')}</span>
-                <button type="button" className="mk-btn primary" onClick={register}>{already ? T('update') : T('register')}</button>
-              </>
-            )}
+            <span>{T('willRegister')} <b>{formatBc(bcMs, lang)}</b> · {confirmedIds.length} {T('present')}</span>
+            <button type="button" className="mk-btn primary" onClick={register}>{already ? T('update') : T('register')}</button>
           </div>
           {msg && <p className={msg.kind === 'ok' ? 'cl-ok' : 'ag-warning'} role={msg.kind === 'ok' ? 'status' : 'alert'}>{msg.text}</p>}
           {justRegistered && confirmedIds.length > 0 && (

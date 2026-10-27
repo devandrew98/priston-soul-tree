@@ -6,16 +6,15 @@ import {
   LABEL_MAX, MARKER_ICON, NOTE_MAX, NUMBER_TYPES, STROKE_COLORS, isNumberType,
   type BoardData, type MapMarker, type MarkerType, type StrokeColor,
 } from '../../lib/clan/board';
-import { fromLocalInput, toLocalInput } from '../../lib/clan/dates';
+import { bcSaturdays, formatBc } from '../../lib/clan/dates';
 import { getClanRepo, type Clan, type ClanMember } from '../../lib/clan/repo';
 import { AttendancePanel } from './AttendancePanel';
 import { BlessMap, type MapTool } from './BlessMap';
 import { markerName } from './markerNames';
 
 const TXT = {
-  dateTitle: { pt: 'Data e hora do Bless Castle', en: 'Bless Castle date and time' },
-  dateHint: { pt: 'Aparece no link dos jogadores, com a contagem regressiva. Também é a data usada no histórico de presença.', en: 'Shown on the players link, with a countdown. It is also the date used by the attendance history.' },
-  dateClear: { pt: 'Limpar data', en: 'Clear date' },
+  dateTitle: { pt: 'Próximo Bless Castle', en: 'Next Bless Castle' },
+  dateHint: { pt: 'O Bless Castle é sempre aos sábados, ao meio-dia (horário de Brasília). A data é atualizada sozinha e aparece no link dos jogadores, com a contagem regressiva.', en: 'The Bless Castle is always on Saturday at noon (Brasília time). The date updates by itself and shows on the players link, with a countdown.' },
   noteTitle: { pt: 'Orientações para os jogadores', en: 'Instructions for the players' },
   noteHint: { pt: 'Aparece no topo do link dos jogadores. Ex.: Bless Castle de hoje: FULL PvP.', en: 'Shown at the top of the players link. E.g.: Bless Castle today: FULL PvP.' },
   notePlaceholder: { pt: 'Escreva aqui as orientações do dia…', en: 'Write today\'s instructions here…' },
@@ -115,10 +114,7 @@ export function BoardEditor({ clan, members, onClearConfirmed }: { clan: Clan; m
           <small className={`cl-save ${status}`}>{status === 'saving' ? T('saving') : status === 'saved' ? `✔ ${T('saved')}` : status === 'error' ? T('error') : ''}</small>
         </div>
         <p className="mk-muted">{T('dateHint')}</p>
-        <div className="cl-form">
-          <input type="datetime-local" value={toLocalInput(board.bcAt)} aria-label={T('dateTitle')} onChange={(e) => edit({ bcAt: fromLocalInput(e.target.value) })} />
-          {board.bcAt && <button type="button" className="mk-btn" onClick={() => edit({ bcAt: null })}>{T('dateClear')}</button>}
-        </div>
+        <p className="cl-bcnext">📅 {formatBc(bcSaturdays(Date.now()).next, lang)}</p>
       </section>
 
       <section className="sr-card cl-box">
@@ -186,7 +182,7 @@ export function BoardEditor({ clan, members, onClearConfirmed }: { clan: Clan; m
         </div>
       </section>
 
-      <AttendancePanel clan={clan} members={members} bcAt={board.bcAt} onUncheckAll={onClearConfirmed} />
+      <AttendancePanel clan={clan} members={members} onUncheckAll={onClearConfirmed} />
     </>
   );
 }
