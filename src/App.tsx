@@ -19,6 +19,8 @@ import { CharacterPublicPage } from './components/wardrobe/CharacterPublicPage';
 import { SkillTree as SkillTreeTool } from './components/skilltree/SkillTree';
 import { ScreenRooms } from './components/screenshare/ScreenRooms';
 import { AgingCalculator } from './components/aging/AgingCalculator';
+import { ClanFormation } from './components/clan/ClanFormation';
+import { useClanAccess } from './components/clan/useClanAccess';
 import { Builds } from './components/builds/Builds';
 import { LOGIN_EVENT } from './lib/builds/account';
 import { ResetPasswordModal } from './components/market/ResetPasswordModal';
@@ -49,6 +51,7 @@ const TOOL_TABS: { id: ToolTab; icon: string; key: string }[] = [
   { id: 'builds', icon: '🏆', key: 'nav.builds' },
   { id: 'screenshare', icon: '🖥', key: 'nav.screenshare' },
   { id: 'aging', icon: '⚒', key: 'nav.aging' },
+  { id: 'clan', icon: '🏰', key: 'nav.clan' }, // only shown to the admin and to clan leaders/vices
 ];
 
 // Tabs with `tabs` open a dropdown (cascade) instead of navigating directly.
@@ -114,7 +117,9 @@ export default function App() {
     fetchSiteFlag('marketplace').then(setMarketplaceEnabled).catch(() => {});
   }, []);
 
-  const nav = NAV.filter((n) => n.id !== 'market' || marketplaceEnabled);
+  const clanAccess = useClanAccess();
+  const nav = NAV.filter((n) => n.id !== 'market' || marketplaceEnabled)
+    .map((n) => (n.id === 'tools' && n.tabs ? { ...n, tabs: n.tabs.filter((x) => x.id !== 'clan' || clanAccess.allowed) } : n));
 
   // Every page change also changes the address bar (so F5 and Back stay on the page).
   const navigate = (patch: Partial<Route>) => {
@@ -347,6 +352,7 @@ export default function App() {
         toolTab === 'soultree' ? <SoulTree />
           : toolTab === 'skilltree' ? <SkillTreeTool />
           : toolTab === 'aging' ? <AgingCalculator />
+          : toolTab === 'clan' ? <ClanFormation />
           : toolTab === 'screenshare' ? <ScreenRooms />
           : toolTab === 'builds' ? <Builds />
           : toolTab === 'mixing' ? <Mixing />

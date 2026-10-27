@@ -81,6 +81,7 @@ const DICT: Record<string, Entry> = {
   'rt.preview.empty': { pt: 'Escreva algo acima para ver a pré-visualização.', en: 'Write something above to see the preview.' },
   'nav.menu': { pt: 'Menu', en: 'Menu' },
   'nav.aging': { pt: 'Sistema de Aging', en: 'Aging System' },
+  'nav.clan': { pt: 'Formação do Clã', en: 'Clan Formation' },
   'nav.screenshare': { pt: 'Compartilhamento de Tela', en: 'Screen Sharing' },
   // Compartilhamento de Tela (screen sharing, P2P)
   'sc.title': { pt: 'Compartilhamento de Tela', en: 'Screen Sharing' },
