@@ -1,5 +1,6 @@
 // Aging cost calculator: pick an item, pick the aging range, see the sheltoms and gold it takes.
 import { useMemo, useState } from 'react';
+import { AgingStats } from './AgingStats';
 import { useI18n } from '../../lib/i18n';
 import { AGE_CHANCES, effectiveSuccess } from '../../lib/aging/chances';
 import {
@@ -7,7 +8,7 @@ import {
 } from '../../lib/aging/cost';
 
 const TXT = {
-  title: { pt: 'Calculadora de Aging', en: 'Aging Calculator' },
+  title: { pt: 'Sistema de Aging', en: 'Aging System' },
   intro: { pt: 'Escolha o item e o aging que deseja. Veja quantos sheltoms e quanto gold você vai gastar no jogo.', en: 'Pick the item and the aging you want. See how many sheltoms and how much gold it will cost you in game.' },
   category: { pt: 'Tipo', en: 'Type' },
   eventLabel: { pt: 'Evento de Age', en: 'Aging event' },
@@ -250,6 +251,8 @@ export function AgingCalculator() {
           </section>
         </>
       ))}
+
+      {item && <AgingStats key={category} type={category === 'robe' ? 'armor' : category} itemLevel={item.level} from={from} to={to} />}
     </div>
   );
 }

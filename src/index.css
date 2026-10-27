@@ -2106,3 +2106,15 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .ag-total h3 { padding-bottom: 8px; border-bottom: 1px solid var(--border); }
 .ag-total p { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; }
 .ag-total h4 { margin-top: 6px; font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* tabs: aging cost / my item stats */
+.ag-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.ag-stats-form h3, .ag-stats-result h3 { margin: 0 0 8px; }
+.ag-stats-table td:not(:first-child), .ag-stats-table th:not(:first-child) { text-align: right; }
+.ag-gold-sm { color: var(--gold-bright); font-weight: 700; }
+.ag-stats-form, .ag-stats-result { margin-top: 12px; }
+.ag-stats-grid { width: 100%; align-self: stretch; }
+.ag-stats-table { width: 100%; }
+
+.ag-perfect { max-width: 320px; margin-top: 4px; }
+.ag-perfect small { color: var(--text-dim); font-size: 12px; }
