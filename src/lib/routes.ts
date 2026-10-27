@@ -4,7 +4,7 @@
 
 export type Section = 'home' | 'timers' | 'market' | 'streamers' | 'guides' | 'tools';
 export type TimerTab = 'boss' | 'fury';
-export type ToolTab = 'soultree' | 'mixing' | 'sod' | 'wardrobe' | 'skilltree' | 'screenshare' | 'builds';
+export type ToolTab = 'soultree' | 'mixing' | 'sod' | 'wardrobe' | 'skilltree' | 'screenshare' | 'builds' | 'aging';
 
 export interface Route { section: Section; timerTab: TimerTab; toolTab: ToolTab }
 
@@ -20,6 +20,7 @@ export const TOOL_PATHS: Record<ToolTab, string> = {
   wardrobe: '/wardrobe',
   screenshare: '/sharing',
   builds: '/builds',
+  aging: '/aging',
 };
 
 const SECTION_PATHS: Record<'home' | 'market' | 'guides' | 'streamers', string> = {

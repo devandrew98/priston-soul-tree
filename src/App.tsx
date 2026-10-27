@@ -18,6 +18,7 @@ import { Wardrobe } from './components/wardrobe/Wardrobe';
 import { CharacterPublicPage } from './components/wardrobe/CharacterPublicPage';
 import { SkillTree as SkillTreeTool } from './components/skilltree/SkillTree';
 import { ScreenRooms } from './components/screenshare/ScreenRooms';
+import { AgingCalculator } from './components/aging/AgingCalculator';
 import { Builds } from './components/builds/Builds';
 import { LOGIN_EVENT } from './lib/builds/account';
 import { ResetPasswordModal } from './components/market/ResetPasswordModal';
@@ -47,6 +48,7 @@ const TOOL_TABS: { id: ToolTab; icon: string; key: string }[] = [
   { id: 'wardrobe', icon: '🧥', key: 'nav.wardrobe' },
   { id: 'builds', icon: '🏆', key: 'nav.builds' },
   { id: 'screenshare', icon: '🖥', key: 'nav.screenshare' },
+  { id: 'aging', icon: '⚒', key: 'nav.aging' },
 ];
 
 // Tabs with `tabs` open a dropdown (cascade) instead of navigating directly.
@@ -344,6 +346,7 @@ export default function App() {
       ) : (
         toolTab === 'soultree' ? <SoulTree />
           : toolTab === 'skilltree' ? <SkillTreeTool />
+          : toolTab === 'aging' ? <AgingCalculator />
           : toolTab === 'screenshare' ? <ScreenRooms />
           : toolTab === 'builds' ? <Builds />
           : toolTab === 'mixing' ? <Mixing />

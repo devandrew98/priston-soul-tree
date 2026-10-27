@@ -2006,3 +2006,103 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .rt-preview { border: 1px dashed var(--border); border-radius: 8px; padding: 8px 12px; background: rgba(0, 0, 0, 0.18); }
 .rt-preview > summary { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--text-dim); }
 .rt-preview-body { margin-top: 8px; font-size: 14px; }
+
+/* ===== Aging Calculator ===== */
+.ag { max-width: 920px; margin: 0 auto; padding: 0 16px 48px; }
+.ag-intro { color: var(--text-dim); margin: 0 0 14px; }
+.ag-setup { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.ag-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.ag-item { display: flex; gap: 16px; align-items: center; margin-top: 12px; }
+.ag-item p { margin: 2px 0; }
+.ag-item-img { max-height: 110px; max-width: 110px; object-fit: contain; image-rendering: auto; }
+.ag-name { margin: 0 0 4px; }
+.ag-rar-uncommon { color: #6fcf6f; } .ag-rar-rare { color: #5aa7e8; } .ag-rar-epic { color: #b57be0; } .ag-rar-legendary { color: #f0a840; }
+.ag-total, .ag-scroll + * { margin-top: 12px; }
+.ag-total { margin-top: 12px; }
+.ag-gold { color: var(--gold-bright); font-size: 1.3em; }
+.ag-mats { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.ag-mats li { display: inline-flex; align-items: center; gap: 4px; }
+.ag-scroll { overflow-x: auto; }
+.ag-table { width: 100%; border-collapse: collapse; }
+.ag-table td, .ag-table th { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
+.ag-tries { width: 64px; }
+
+.ag-ages { display: flex; align-items: flex-end; justify-content: center; gap: 18px; margin-top: 12px; border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset; }
+.ag-age { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.ag-age span { font-size: 15px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-bright); }
+.ag-age input { width: 110px; text-align: center; font-size: 34px; font-weight: 800; padding: 6px 8px; border: 2px solid var(--gold); border-radius: 8px; color: var(--gold-bright); }
+.ag-age input::placeholder { opacity: 0.35; }
+.ag-age-arrow { font-size: 30px; color: var(--gold); padding-bottom: 12px; }
+@media (max-width: 480px) { .ag-ages { gap: 10px; } .ag-age input { width: 88px; font-size: 28px; } }
+.sr-card.ag-ages { flex-direction: row; flex-wrap: wrap; align-items: flex-end; justify-content: center; }
+.ag-age { min-width: 150px; }
+/* smaller highlight for the aging fields */
+.ag-ages { gap: 12px; padding-top: 10px; padding-bottom: 10px; }
+.ag-age { min-width: 0; gap: 3px; }
+.ag-age span { font-size: 12px; }
+.ag-age input { width: 64px; font-size: 20px; padding: 3px 6px; border-width: 1px; }
+.ag-age-arrow { font-size: 18px; padding-bottom: 6px; }
+@media (max-width: 480px) { .ag-age input { width: 56px; font-size: 18px; } }
+
+.sr-card.ag-event { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; padding-top: 10px; padding-bottom: 10px; }
+.ag-event-pct { display: inline-flex; align-items: center; gap: 6px; }
+.ag-event-pct input { width: 64px; text-align: center; font-size: 18px; font-weight: 700; padding: 3px 6px; }
+.ag-event small, .ag-was { color: var(--text-dim); }
+/* event field: same look as the aging fields, and a gold checkbox instead of the browser's blue one */
+.ag-event-pct input { color: var(--gold-bright); background: rgba(0, 0, 0, 0.35); border: 1px solid var(--gold); border-radius: 8px; font-family: inherit; }
+.ag-event-pct input:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 1px; }
+.ag-check input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; margin: 0 6px 0 0; vertical-align: -4px; border: 1px solid var(--gold); border-radius: 4px; background: rgba(0, 0, 0, 0.35); cursor: pointer; display: inline-grid; place-content: center; }
+.ag-check input[type="checkbox"]::after { content: ""; width: 10px; height: 6px; border-left: 2px solid #1c1712; border-bottom: 2px solid #1c1712; transform: rotate(-45deg) translate(1px, -1px); opacity: 0; }
+.ag-check input[type="checkbox"]:checked { background: var(--gold); }
+.ag-check input[type="checkbox"]:checked::after { opacity: 1; }
+.ag-check input[type="checkbox"]:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+.ag-event .ag-check { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
+.ag-event .ag-check input[type="checkbox"] { margin: 0; vertical-align: baseline; flex: none; }
+
+/* + / - buttons beside the aging fields */
+.ag-stepper { display: inline-flex; align-items: center; gap: 4px; }
+.ag-stepper button { width: 28px; height: 30px; padding: 0; border: 1px solid var(--gold); border-radius: 6px; background: rgba(0, 0, 0, 0.35); color: var(--gold-bright); font-size: 18px; font-weight: 700; line-height: 1; cursor: pointer; transition: background 0.12s, color 0.12s; }
+.ag-stepper button:hover:not(:disabled) { background: var(--gold); color: #1c1712; }
+.ag-stepper button:active:not(:disabled) { transform: translateY(1px); }
+.ag-stepper button:disabled { opacity: 0.35; cursor: not-allowed; }
+.ag-stepper button:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 1px; }
+.ag-age-arrow { padding-bottom: 5px; }
+@media (max-width: 480px) { .ag-stepper button { width: 26px; height: 28px; } .ag-ages { gap: 8px; } }
+/* smaller + / - buttons */
+.ag-stepper { gap: 3px; }
+.ag-stepper button { width: 20px; height: 22px; border-radius: 5px; font-size: 14px; }
+.ag-age input { width: 52px; font-size: 18px; }
+@media (max-width: 480px) { .ag-stepper button { width: 20px; height: 22px; } .ag-age input { width: 48px; font-size: 16px; } }
+
+.ag-chances-table td:not(:first-child), .ag-chances-table th:not(:first-child) { text-align: center; }
+.ag-ok { color: #6fcf6f; } .ag-risk { color: #e0897a; }
+.ag-chance-note { margin: 10px 0 0; font-size: 13px; color: var(--text-dim); }
+
+.ag-next { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+.ag-next-box { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 6px; border: 1px solid var(--border); border-radius: 8px; background: rgba(0, 0, 0, 0.25); text-align: center; }
+.ag-next-box b { font-size: 24px; }
+.ag-next-box span { font-size: 12px; color: var(--text-dim); }
+.ag-next { width: 100%; align-self: stretch; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 560px) { .ag-next { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* chances beside the item */
+.sr-card.ag-item { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 16px 22px; }
+.ag-item-chances { flex: 1 1 320px; min-width: 0; padding-left: 22px; border-left: 1px solid var(--border); }
+.ag-item-chances h4 { margin: 0 0 8px; }
+.ag-item-chances .ag-next { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.ag-item-chances .ag-next-box { padding: 8px 4px; }
+.ag-item-chances .ag-next-box b { font-size: 20px; }
+@media (max-width: 760px) { .ag-item-chances { padding-left: 0; border-left: 0; border-top: 1px solid var(--border); padding-top: 12px; flex-basis: 100%; } .ag-item-chances .ag-next { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ag-chances-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.ag-chances-head h4 { margin: 0; }
+.ag-fails { flex-direction: row; align-items: center; gap: 8px; }
+.ag-fails span { font-size: 11px; }
+
+.ag-warning { margin: 10px 0 0; padding: 8px 12px; border: 1px solid #e0897a; border-left-width: 4px; border-radius: 6px; background: rgba(224, 137, 122, 0.12); font-size: 14px; line-height: 1.45; }
+.ag-warning b { color: var(--gold-bright); }
+/* total to spend: compact and grouped */
+.sr-card.ag-total { gap: 8px; }
+.ag-total h3, .ag-total p, .ag-total h4 { margin: 0; }
+.ag-total h3 { padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.ag-total p { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; }
+.ag-total h4 { margin-top: 6px; font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
