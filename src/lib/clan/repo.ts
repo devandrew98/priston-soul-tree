@@ -3,6 +3,7 @@
 // In `npm run dev` with ?fakedb the in-memory repository is used instead (see FAKE below), without touching the database.
 import { supabase } from '../market/supabase';
 import type { PtClass } from './formation';
+import { EMPTY_BOARD, sanitizeBoard, type BoardData } from './board';
 
 export interface Clan { id: string; name: string }
 export interface ClanMember { id: string; clanId: string; nick: string; cls: PtClass; confirmed: boolean; partyLeader: boolean; createdAt: number }
@@ -10,7 +11,7 @@ export interface StaffEntry { userId: string; nick: string; role: 'leader' | 'vi
 export type MemberPatch = Partial<Pick<ClanMember, 'nick' | 'cls' | 'confirmed' | 'partyLeader'>>;
 
 /** What the public share link shows: the clan name and its confirmed members. */
-export interface ShareView { clanName: string; members: ClanMember[] }
+export interface ShareView { clanName: string; members: ClanMember[]; board: BoardData }
 
 export class ClanUnavailableError extends Error {}
 
@@ -27,6 +28,9 @@ export interface ClanRepo {
   /** Creates the link, or replaces it with a new one (the old link stops working). */
   createShare(clanId: string): Promise<string>;
   revokeShare(clanId: string): Promise<void>;
+  /** The leader's note and the signs on the map. */
+  getBoard(clanId: string): Promise<BoardData>;
+  saveBoard(clanId: string, board: BoardData): Promise<void>;
   /** Public (no login): what the link shows, or null when the link does not exist (anymore). */
   viewShare(token: string): Promise<ShareView | null>;
   // Admin only.
@@ -78,10 +82,17 @@ function createSupabaseRepo(): ClanRepo {
       return (check(await sb().from('clan_shares').insert({ clan_id: clanId }).select('token').single()) as { token: string }).token;
     },
     async revokeShare(clanId) { check(await sb().from('clan_shares').delete().eq('clan_id', clanId)); },
+    async getBoard(clanId) {
+      return sanitizeBoard(check(await sb().from('clan_boards').select('note,markers').eq('clan_id', clanId).maybeSingle()) as { note: string; markers: unknown } | null);
+    },
+    async saveBoard(clanId, board) {
+      const b = sanitizeBoard(board);
+      check(await sb().from('clan_boards').upsert({ clan_id: clanId, note: b.note, markers: b.markers, updated_at: new Date().toISOString() }));
+    },
     async viewShare(token) {
-      const data = check(await sb().rpc('clan_share_view', { p_token: token })) as { clan: string; members: Omit<ClanMember, 'clanId'>[] } | null;
+      const data = check(await sb().rpc('clan_share_view', { p_token: token })) as { clan: string; note?: string; markers?: unknown; members: Omit<ClanMember, 'clanId'>[] } | null;
       if (!data) return null;
-      return { clanName: data.clan, members: data.members.map((m) => ({ ...m, clanId: '' })) };
+      return { clanName: data.clan, members: data.members.map((m) => ({ ...m, clanId: '' })), board: sanitizeBoard(data) };
     },
     async createClan(name) { return check(await sb().from('clans').insert({ name: name.trim() }).select('id,name').single()) as Clan; },
     async deleteClan(id) { check(await sb().from('clans').delete().eq('id', id)); },
@@ -101,6 +112,10 @@ export function createMemoryRepo(): ClanRepo {
   const clans: Clan[] = [{ id: 'c1', name: 'OccultDay' }, { id: 'c2', name: 'Outro Clã' }];
   const members: ClanMember[] = [];
   const staff = new Map<string, StaffEntry[]>();
+  // The boards survive a reload (sessionStorage) so the public page can be tried locally after editing.
+  const BOARDS_KEY = 'pz-fake-boards';
+  const boards = new Map<string, BoardData>((() => { try { return Object.entries(JSON.parse(sessionStorage.getItem(BOARDS_KEY) ?? '{}')) as [string, BoardData][]; } catch { return []; } })());
+  const persistBoards = () => { try { sessionStorage.setItem(BOARDS_KEY, JSON.stringify(Object.fromEntries(boards))); } catch { /* ignore */ } };
   const shares = new Map<string, string>([['c1', 'demo']]); // the fake clan already has a link: /formacao/demo
   const names = ['FxNick', 'PETISTASENSATO', 'Sacerdotada', 'Areon25', 'Kina22', 'CommitaoDourado', 'ArcanisBoy', 'IceLady', 'Submundo', 'Benzetacil', 'RogerioCeni', 'Elyon'];
   const cls: PtClass[] = ['Archer', 'Shaman', 'Priestess', 'Magician', 'Knight', 'Assassin', 'Archer', 'Priestess', 'Atalanta', 'Fighter', 'Mechanician', 'Knight'];
@@ -126,10 +141,12 @@ export function createMemoryRepo(): ClanRepo {
     async getShare(clanId) { return shares.get(clanId) ?? null; },
     async createShare(clanId) { const tok = `fake${++seq}token`; shares.set(clanId, tok); return tok; },
     async revokeShare(clanId) { shares.delete(clanId); },
+    async getBoard(clanId) { return sanitizeBoard(boards.get(clanId) ?? EMPTY_BOARD); },
+    async saveBoard(clanId, board) { boards.set(clanId, sanitizeBoard(board)); persistBoards(); },
     async viewShare(token) {
       const cid = [...shares].find(([, tok]) => tok === token)?.[0];
       const c = clans.find((x) => x.id === cid);
-      return c ? { clanName: c.name, members: members.filter((m) => m.clanId === c.id && m.confirmed).map((m) => ({ ...m })) } : null;
+      return c ? { clanName: c.name, members: members.filter((m) => m.clanId === c.id && m.confirmed).map((m) => ({ ...m })), board: sanitizeBoard(boards.get(c.id) ?? EMPTY_BOARD) } : null;
     },
     async createClan(name) { const c = { id: id(), name: name.trim() }; clans.push(c); return c; },
     async deleteClan(cid) { const i = clans.findIndex((c) => c.id === cid); if (i >= 0) clans.splice(i, 1); },

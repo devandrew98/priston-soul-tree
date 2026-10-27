@@ -8,6 +8,7 @@ import { ClanUnavailableError, CLAN_FAKE, getClanRepo, type Clan, type ClanMembe
 import { useAuth } from '../market/store';
 import { Loading } from '../Loading';
 import { useClanAccess } from './useClanAccess';
+import { BoardEditor } from './BoardEditor';
 import { ClassTag, FormationBoard } from './FormationBoard';
 
 const TXT = {
@@ -338,6 +339,7 @@ export function ClanFormation() {
           </section>
 
           <FormationBoard formation={formation} confirmedCount={confirmed.length} onLeader={setLeader} />
+          <BoardEditor key={clan.id} clan={clan} />
           <SharePanel key={clan.id} clan={clan} T={T} />
         </>
       )}
