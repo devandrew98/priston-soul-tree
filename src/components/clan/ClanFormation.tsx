@@ -8,6 +8,7 @@ import { ClanUnavailableError, CLAN_FAKE, getClanRepo, type Clan, type ClanMembe
 import { useAuth } from '../market/store';
 import { Loading } from '../Loading';
 import { useClanAccess } from './useClanAccess';
+import { ClassTag, FormationBoard } from './FormationBoard';
 
 const TXT = {
   title: { pt: 'Formação do Bless Castle', en: 'Bless Castle Formation' },
@@ -36,16 +37,6 @@ const TXT = {
   total: { pt: 'membros', en: 'members' },
   confirmedCount: { pt: 'confirmados', en: 'confirmed' },
   noMembers: { pt: 'Nenhum membro cadastrado.', en: 'No members yet.' },
-  formation: { pt: 'Formações do Bless Castle', en: 'Bless Castle formations' },
-  confirmedMembers: { pt: 'membros confirmados', en: 'confirmed members' },
-  noFormation: { pt: 'Confirme membros para ver a formação.', en: 'Confirm members to see the formation.' },
-  raid: { pt: 'Raid', en: 'Raid' },
-  party: { pt: 'Grupo', en: 'Party' },
-  buffs: { pt: 'buffs', en: 'buffs' },
-  leader: { pt: 'Líder', en: 'Leader' },
-  makeLeader: { pt: 'Tornar líder do grupo', en: 'Make party leader' },
-  reserves: { pt: 'Reservas (passam de 24 confirmados)', en: 'Reserves (over 24 confirmed)' },
-  missing: { pt: 'Faltam', en: 'Missing' },
   admin: { pt: 'Administração de clãs', en: 'Clan administration' },
   newClan: { pt: 'Nome do novo clã', en: 'New clan name' },
   createClan: { pt: 'Criar clã', en: 'Create clan' },
@@ -56,39 +47,21 @@ const TXT = {
   roleLeader: { pt: 'Líder', en: 'Leader' },
   roleVice: { pt: 'Vice-líder', en: 'Vice-leader' },
   give: { pt: 'Liberar acesso', en: 'Give access' },
+  share: { pt: 'Link para os jogadores', en: 'Link for the players' },
+  shareNote: { pt: 'Quem tiver o link vê as parties e raids, sem poder editar nada. Não precisa de login.', en: 'Anyone with the link sees the parties and raids, and cannot edit anything. No login needed.' },
+  shareCreate: { pt: 'Criar link', en: 'Create link' },
+  shareCopy: { pt: 'Copiar', en: 'Copy' },
+  shareCopied: { pt: 'Copiado!', en: 'Copied!' },
+  shareNew: { pt: 'Gerar novo link', en: 'New link' },
+  shareNewNote: { pt: 'O link antigo deixa de funcionar.', en: 'The old link stops working.' },
+  shareStop: { pt: 'Desativar link', en: 'Turn link off' },
 } as const;
 
+/** Class cards order: the buff classes first, then the others. */
+const GROUP_ORDER: PtClass[] = [...BUFF_CLASSES, ...PT_CLASSES.filter((c) => !BUFF_CLASSES.includes(c))];
+
 type TFn = (k: keyof typeof TXT) => string;
-const iconOf = (c: PtClass) => `/skilltree/classes/${c.toLowerCase()}.png`;
 const errText = (e: unknown) => (e instanceof Error ? e.message : String(e));
-
-function ClassTag({ cls }: { cls: PtClass }) {
-  return <span className="cl-cls"><img src={iconOf(cls)} alt="" width={22} height={22} /> {cls}</span>;
-}
-
-type PartyMember = FormationMember & { partyLeader?: boolean };
-
-function PartyBox({ index, party, onLeader, T }: { index: number; party: Party; onLeader: (p: Party, m: FormationMember) => void; T: TFn }) {
-  const leaderId = (party.members as PartyMember[]).find((m) => m.partyLeader)?.id ?? party.members[0]?.id;
-  // The leader is always shown at the top of the party.
-  const ordered = [...party.members].sort((a, b) => Number(b.id === leaderId) - Number(a.id === leaderId));
-  return (
-    <div className="cl-party">
-      <h4>{T('party')} {index} <span>{party.members.length}/6</span></h4>
-      <ul>
-        {ordered.map((m) => (
-          <li key={m.id} className={m.id === leaderId ? 'lead' : ''}>
-            <ClassTag cls={m.cls} />
-            <b>{m.nick}</b>
-            {m.id === leaderId
-              ? <span className="cl-lead" title={T('leader')}>★ {T('leader')}</span>
-              : <button type="button" className="cl-star" title={T('makeLeader')} aria-label={T('makeLeader')} onClick={() => onLeader(party, m)}>☆</button>}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
 
 /** One member of the list: confirm switch, edit (nick and class) and remove, both done inside the row (no browser dialogs). */
 function MemberRow({ m, onToggle, onSave, onRemove, T }: {
@@ -119,7 +92,6 @@ function MemberRow({ m, onToggle, onSave, onRemove, T }: {
   }
   return (
     <li className={m.confirmed ? 'on' : ''}>
-      <ClassTag cls={m.cls} />
       <b>{m.nick}</b>
       {mode === 'remove' ? (
         <span className="cl-confirm">
@@ -129,14 +101,52 @@ function MemberRow({ m, onToggle, onSave, onRemove, T }: {
         </span>
       ) : (
         <>
-          <button type="button" role="switch" aria-checked={m.confirmed} className={`cl-switch ${m.confirmed ? 'on' : ''}`} title={T('confirmed')} onClick={onToggle}>
-            {m.confirmed ? `✔ ${T('confirmedShort')}` : T('notConfirmed')}
+          <button type="button" role="switch" aria-checked={m.confirmed} aria-label={T('confirmed')} className={`cl-switch ${m.confirmed ? 'on' : ''}`}
+            title={m.confirmed ? T('confirmedShort') : T('notConfirmed')} onClick={onToggle}>
+            {m.confirmed ? '✔' : ''}
           </button>
           <button type="button" className="mk-btn cl-x" aria-label={T('edit')} title={T('edit')} onClick={startEdit}>✎</button>
           <button type="button" className="mk-btn cl-x" aria-label={T('remove')} title={T('remove')} onClick={() => setMode('remove')}>✕</button>
         </>
       )}
     </li>
+  );
+}
+
+/** The read-only link the leader hands to the players. */
+function SharePanel({ clan, T }: { clan: Clan; T: TFn }) {
+  const [token, setToken] = useState<string | null | undefined>(undefined);
+  const [copied, setCopied] = useState(false);
+  const [err, setErr] = useState('');
+  useEffect(() => {
+    let cancelled = false;
+    setToken(undefined);
+    getClanRepo().getShare(clan.id).then((tk) => { if (!cancelled) setToken(tk); }).catch((e) => { if (!cancelled) { setToken(null); setErr(errText(e)); } });
+    return () => { cancelled = true; };
+  }, [clan.id]);
+  const create = () => { setErr(''); setCopied(false); getClanRepo().createShare(clan.id).then(setToken).catch((e) => setErr(errText(e))); };
+  const stop = () => { setErr(''); getClanRepo().revokeShare(clan.id).then(() => setToken(null)).catch((e) => setErr(errText(e))); };
+  const url = token ? `${window.location.origin}/formacao/${token}` : '';
+  const copy = () => { void navigator.clipboard?.writeText(url).then(() => { setCopied(true); window.setTimeout(() => setCopied(false), 2000); }).catch(() => {}); };
+  return (
+    <section className="sr-card cl-box">
+      <h3>{T('share')}</h3>
+      <p className="mk-muted">{T('shareNote')}</p>
+      {token === undefined ? null : token ? (
+        <>
+          <div className="cl-form">
+            <input readOnly value={url} onFocus={(e) => e.target.select()} aria-label={T('share')} />
+            <button type="button" className="mk-btn primary" onClick={copy}>{copied ? T('shareCopied') : T('shareCopy')}</button>
+          </div>
+          <div className="cl-confirm">
+            <button type="button" className="mk-btn" onClick={create} title={T('shareNewNote')}>{T('shareNew')}</button>
+            <button type="button" className="mk-btn cl-danger" onClick={stop}>{T('shareStop')}</button>
+            <small className="mk-muted">{T('shareNewNote')}</small>
+          </div>
+        </>
+      ) : <button type="button" className="mk-btn primary" onClick={create}>{T('shareCreate')}</button>}
+      {err && <p className="ag-warning" role="alert">{err}</p>}
+    </section>
   );
 }
 
@@ -227,7 +237,7 @@ export function ClanFormation() {
     getClanRepo().updateMembers(ids, patch).catch((e) => { setErr(errText(e)); if (clanId) void getClanRepo().listMembers(clanId).then(setMembers); });
   };
   const setLeader = (party: Party, m: FormationMember) => {
-    const others = (party.members as PartyMember[]).filter((x) => x.id !== m.id && x.partyLeader).map((x) => x.id);
+    const others = (party.members as (FormationMember & { partyLeader?: boolean })[]).filter((x) => x.id !== m.id && x.partyLeader).map((x) => x.id);
     if (others.length) patchMembers(others, { partyLeader: false });
     patchMembers([m.id], { partyLeader: true });
   };
@@ -308,39 +318,27 @@ export function ClanFormation() {
               <button type="submit" className="mk-btn primary">{T('add')}</button>
             </form>
             {members.length === 0 ? <p className="mk-muted">{T('noMembers')}</p> : (
-              <ul className="cl-members">
-                {members.map((m) => (
-                  <MemberRow key={m.id} m={m} T={T} onToggle={() => patchMembers([m.id], { confirmed: !m.confirmed })} onSave={(n, c) => saveMember(m, n, c)} onRemove={() => remove(m)} />
-                ))}
-              </ul>
+              <div className="cl-groups">
+                {GROUP_ORDER.map((c) => {
+                  const list = members.filter((m) => m.cls === c);
+                  if (list.length === 0) return null;
+                  return (
+                    <div key={c} className="cl-group">
+                      <h4><ClassTag cls={c} /> <span>{list.filter((m) => m.confirmed).length}/{list.length}</span></h4>
+                      <ul className="cl-members">
+                        {list.map((m) => (
+                          <MemberRow key={m.id} m={m} T={T} onToggle={() => patchMembers([m.id], { confirmed: !m.confirmed })} onSave={(n, cl) => saveMember(m, n, cl)} onRemove={() => remove(m)} />
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </section>
 
-          <section className="sr-card cl-box">
-            <div className="cl-fhead">
-              <div><h3>{T('formation')}</h3><p className="mk-muted">{confirmed.length} {T('confirmedMembers')}</p></div>
-            </div>
-            {formation.raids.length === 0 ? <p className="sk-notice">{T('noFormation')}</p> : formation.raids.map((r, ri) => (
-              <div key={ri} className="cl-raid">
-                <div className="cl-raidhead">
-                  <h3>{T('raid')} {ri + 1}</h3>
-                  <span className={r.buffs.length === BUFF_CLASSES.length ? 'ok' : 'warn'}>{r.buffs.length}/{BUFF_CLASSES.length} {T('buffs')}</span>
-                </div>
-                <div className="cl-chips">
-                  {BUFF_CLASSES.map((c) => <span key={c} className={`cl-chip ${r.buffs.includes(c) ? '' : 'off'}`} title={r.buffs.includes(c) ? c : `${T('missing')}: ${c}`}><ClassTag cls={c} /></span>)}
-                </div>
-                <div className="cl-parties">
-                  {r.parties.map((p, pi) => <PartyBox key={pi} index={ri * 2 + pi + 1} party={p} onLeader={setLeader} T={T} />)}
-                </div>
-              </div>
-            ))}
-            {formation.reserves.length > 0 && (
-              <div className="cl-reserves">
-                <h4>{T('reserves')} ({formation.reserves.length})</h4>
-                <ul>{formation.reserves.map((m) => <li key={m.id}><ClassTag cls={m.cls} /> <b>{m.nick}</b></li>)}</ul>
-              </div>
-            )}
-          </section>
+          <FormationBoard formation={formation} confirmedCount={confirmed.length} onLeader={setLeader} />
+          <SharePanel key={clan.id} clan={clan} T={T} />
         </>
       )}
     </div>

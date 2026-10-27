@@ -20,6 +20,7 @@ import { SkillTree as SkillTreeTool } from './components/skilltree/SkillTree';
 import { ScreenRooms } from './components/screenshare/ScreenRooms';
 import { AgingCalculator } from './components/aging/AgingCalculator';
 import { ClanFormation } from './components/clan/ClanFormation';
+import { ClanSharePage } from './components/clan/ClanSharePage';
 import { useClanAccess } from './components/clan/useClanAccess';
 import { Builds } from './components/builds/Builds';
 import { LOGIN_EVENT } from './lib/builds/account';
@@ -91,6 +92,11 @@ export default function App() {
   if (window.location.pathname.startsWith('/char/')) {
     const slug = decodeURIComponent(window.location.pathname.slice('/char/'.length).replace(/\/$/, ''));
     return <CharacterPublicPage slug={slug} />;
+  }
+
+  // Read-only clan formation link (pristonzone.com/formacao/<token>): standalone page too.
+  if (window.location.pathname.startsWith('/formacao/')) {
+    return <ClanSharePage token={decodeURIComponent(window.location.pathname.slice('/formacao/'.length).replace(/\/$/, ''))} />;
   }
 
   const { t, lang, setLang } = useI18n();

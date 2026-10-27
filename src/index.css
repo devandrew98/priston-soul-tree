@@ -2172,3 +2172,22 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .cl-confirm { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 13px; }
 .cl-form select, .cl-edit select, .cl-clanpick select { color-scheme: dark; }
 .cl-form select option, .cl-edit select option, .cl-clanpick select option { background: #1c1712; color: #e8dcc2; }
+
+/* Clan: wider page, members grouped by class, public page */
+.cl-tool { max-width: 1400px; }
+.cl-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; align-items: start; }
+.cl-group { border: 1px solid var(--border); border-radius: 8px; background: rgba(0, 0, 0, 0.2); padding: 8px; }
+.cl-group h4 { display: flex; justify-content: space-between; align-items: center; margin: 0 0 6px; color: var(--gold-bright); }
+.cl-group h4 > span:last-child { color: var(--text-dim); font-weight: 400; font-size: 13px; }
+.cl-group .cl-members { display: flex; flex-direction: column; gap: 4px; }
+.cl-group .cl-members li { padding: 4px 6px; }
+.cl-group .cl-members li b { font-weight: 600; }
+.cl-switch { width: 26px; height: 26px; padding: 0; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.cl-group .cl-x { padding: 2px 7px; flex: none; }
+.cl-raids { display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 12px; margin-top: 12px; }
+.cl-raids .cl-raid { margin-top: 0; }
+.cl-public { padding: 0 12px 30px; }
+.cl-public-foot { margin-top: 18px; text-align: center; }
+.cl-public-foot a { color: var(--gold-bright); }
+@media (max-width: 520px) { .cl-raids { grid-template-columns: 1fr; } }
+.cl-groups, .cl-raids { width: 100%; align-self: stretch; }
