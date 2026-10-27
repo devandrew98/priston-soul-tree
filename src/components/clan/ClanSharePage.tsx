@@ -3,11 +3,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { buildFormation } from '../../lib/clan/formation';
-import { MARKER_ICON, MARKER_TYPES } from '../../lib/clan/board';
+import { MARKER_ICON, MARKER_TYPES, isNumberType } from '../../lib/clan/board';
+import { countdown, formatBc } from '../../lib/clan/dates';
 import { getClanRepo, type ShareView } from '../../lib/clan/repo';
 import { Loading } from '../Loading';
 import { BlessMap } from './BlessMap';
 import { FormationBoard } from './FormationBoard';
+import { markerName } from './markerNames';
 
 const REFRESH_MS = 3_000;
 
@@ -19,15 +21,17 @@ const TXT = {
   note: { pt: 'Orientações do líder', en: 'Leader\'s instructions' },
   map: { pt: 'Mapa do Bless Castle', en: 'Bless Castle map' },
   live: { pt: 'Atualiza sozinho.', en: 'Updates by itself.' },
-  types: {
-    pt: { attack: 'Atacar', defend: 'Defender', rebuff: 'Rebuff', enemy: 'Inimigos' },
-    en: { attack: 'Attack', defend: 'Defend', rebuff: 'Rebuff', enemy: 'Enemies' },
-  },
+  nextBc: { pt: 'Próximo Bless Castle', en: 'Next Bless Castle' },
+  startsIn: { pt: 'começa em', en: 'starts in' },
+  started: { pt: 'já começou', en: 'already started' },
+  order: { pt: 'Números 1–7: ordem', en: 'Numbers 1–7: order' },
 } as const;
 
 export function ClanSharePage({ token }: { token: string }) {
   const { lang } = useI18n();
-  const T = (k: Exclude<keyof typeof TXT, 'types'>) => TXT[k][lang];
+  const T = (k: keyof typeof TXT) => TXT[k][lang];
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => { const id = window.setInterval(() => setNow(Date.now()), 30_000); return () => window.clearInterval(id); }, []);
   const [state, setState] = useState<{ status: 'loading' } | { status: 'error' } | { status: 'ready'; view: ShareView | null }>({ status: 'loading' });
 
   useEffect(() => {
@@ -58,6 +62,17 @@ export function ClanSharePage({ token }: { token: string }) {
       {state.status === 'ready' && !view && <p className="sk-notice">{T('notFound')}</p>}
       {view && (
         <>
+          {view.board.bcAt && (() => {
+            const ms = new Date(view.board.bcAt).getTime();
+            const left = countdown(ms, now);
+            return (
+              <section className="sr-card cl-box cl-bccard">
+                <h3>📅 {T('nextBc')}</h3>
+                <p className="cl-bcdate">{formatBc(ms, lang)}</p>
+                <p className="mk-muted">{left ? `${T('startsIn')} ${left}` : T('started')}</p>
+              </section>
+            );
+          })()}
           {view.board.note.trim() && (
             <section className="sr-card cl-box cl-notecard">
               <h3>📣 {T('note')}</h3>
@@ -65,13 +80,14 @@ export function ClanSharePage({ token }: { token: string }) {
             </section>
           )}
           <FormationBoard formation={formation} confirmedCount={confirmed.length} />
-          {view.board.markers.length > 0 && (
+          {(view.board.markers.length > 0 || view.board.strokes.length > 0) && (
             <section className="sr-card cl-box">
               <h3>{T('map')}</h3>
               <div className="cl-legend">
-                {MARKER_TYPES.filter((t) => view.board.markers.some((m) => m.type === t)).map((t) => <span key={t}>{MARKER_ICON[t]} {TXT.types[lang][t]}</span>)}
+                {MARKER_TYPES.filter((t) => !isNumberType(t) && view.board.markers.some((m) => m.type === t)).map((t) => <span key={t}>{MARKER_ICON[t]} {markerName(t, lang)}</span>)}
+                {view.board.markers.some((m) => isNumberType(m.type)) && <span>{T('order')}</span>}
               </div>
-              <div className="cl-mapcol cl-mappublic"><BlessMap markers={view.board.markers} /></div>
+              <div className="cl-mapcol cl-mappublic"><BlessMap markers={view.board.markers} strokes={view.board.strokes} /></div>
             </section>
           )}
         </>

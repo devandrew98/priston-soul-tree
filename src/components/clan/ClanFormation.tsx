@@ -9,6 +9,7 @@ import { useAuth } from '../market/store';
 import { Loading } from '../Loading';
 import { useClanAccess } from './useClanAccess';
 import { BoardEditor } from './BoardEditor';
+import { ClanOverview } from './ClanOverview';
 import { ClassTag, FormationBoard } from './FormationBoard';
 
 const TXT = {
@@ -212,6 +213,7 @@ export function ClanFormation() {
   const [cls, setCls] = useState<PtClass>('Archer');
   const [newClan, setNewClan] = useState('');
   const [err, setErr] = useState('');
+  const [overviewVersion, setOverviewVersion] = useState(0); // bumped when a clan is created/deleted, so the overview reloads
 
   const loadClans = useCallback(() => {
     setStatus('loading');
@@ -265,7 +267,7 @@ export function ClanFormation() {
     e.preventDefault();
     if (newClan.trim().length < 2) return;
     setErr('');
-    try { const c = await getClanRepo().createClan(newClan); setNewClan(''); setClans((cur) => [...(cur ?? []), c]); setClanId(c.id); } catch (x) { setErr(errText(x)); }
+    try { const c = await getClanRepo().createClan(newClan); setNewClan(''); setClans((cur) => [...(cur ?? []), c]); setClanId(c.id); setOverviewVersion((v) => v + 1); } catch (x) { setErr(errText(x)); }
   };
 
   const header = (
@@ -303,7 +305,8 @@ export function ClanFormation() {
             <input value={newClan} onChange={(e) => setNewClan(e.target.value)} placeholder={T('newClan')} maxLength={40} />
             <button type="submit" className="mk-btn primary">{T('createClan')}</button>
           </form>
-          {clan && <AdminPanel key={clan.id} clan={clan} onDeleted={loadClans} T={T} />}
+          <ClanOverview selectedId={clanId} onPick={setClanId} version={overviewVersion} />
+          {clan && <AdminPanel key={clan.id} clan={clan} onDeleted={() => { loadClans(); setOverviewVersion((v) => v + 1); }} T={T} />}
         </section>
       )}
 
@@ -339,7 +342,7 @@ export function ClanFormation() {
           </section>
 
           <FormationBoard formation={formation} confirmedCount={confirmed.length} onLeader={setLeader} />
-          <BoardEditor key={clan.id} clan={clan} />
+          <BoardEditor key={clan.id} clan={clan} members={members} onClearConfirmed={() => patchMembers(members.filter((m) => m.confirmed).map((m) => m.id), { confirmed: false })} />
           <SharePanel key={clan.id} clan={clan} T={T} />
         </>
       )}
