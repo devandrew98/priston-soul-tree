@@ -85,6 +85,12 @@ export async function signUp(input: SignUpInput): Promise<{ needsConfirmation: b
   return { needsConfirmation: !data.session, userId: data.user?.id ?? null };
 }
 
+/** Is this nick free? Fails open (true) when the check is unavailable, e.g. before SQL 33 is applied: the database still decides. */
+export async function nickAvailable(nick: string): Promise<boolean> {
+  const { data, error } = await must().rpc('nick_available', { candidate: nick.trim() });
+  return error ? true : data !== false;
+}
+
 export async function signIn(email: string, password: string): Promise<void> {
   const { error } = await must().auth.signInWithPassword({ email: email.trim(), password });
   if (error) throw error;

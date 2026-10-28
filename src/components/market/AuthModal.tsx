@@ -4,7 +4,7 @@ import { CLASSES, SELLERS } from '../../lib/market/data';
 import { useI18n } from '../../lib/i18n';
 import { useAuth } from './store';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
-import { authErrMsg, maskEmail, sendPasswordReset, signIn, signInWithGoogle, signUp, updateAvatar, uploadToBucket } from '../../lib/market/auth';
+import { authErrMsg, maskEmail, nickAvailable, sendPasswordReset, signIn, signInWithGoogle, signUp, updateAvatar, uploadToBucket } from '../../lib/market/auth';
 import { squareThumbnail } from '../../lib/market/image';
 import { refreshProfile } from './session';
 import { Avatar, OnlineDot, RepBadge } from './parts';
@@ -73,6 +73,7 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
     if (password !== password2) { setError(t('mk.auth.err.pwmatch')); return; }
     setBusy(true);
     try {
+      if (!(await nickAvailable(nick))) { setError(t('mk.auth.err.nicktaken')); setBusy(false); return; }
       const { needsConfirmation, userId } = await signUp({ email, password, nick, className, clan, avatar });
       if (!needsConfirmation && userId && avatarFile) {
         try {

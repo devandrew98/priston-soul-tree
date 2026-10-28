@@ -2407,3 +2407,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .ag-cmp-pos { color: #6fcf6f; }
 .ag-cmp-neg { color: #e06666; }
 @media (max-width: 600px) { .ag-cmp-sides { grid-template-columns: 1fr; } .ag-tabs button { flex: 1 1 45%; } }
+
+/* Admin: confirm deleting an account */
+.mk-admin-delask { flex-basis: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--attack); border-radius: 8px; background: rgba(217,83,79,0.10); }
+.mk-admin-delask > span:first-child { flex: 1 1 260px; }
+.mk-admin-delerr { flex-basis: 100%; color: var(--attack); font-weight: 700; }

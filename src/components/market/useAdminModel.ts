@@ -9,7 +9,7 @@ import { useAdmin, useAuth, useMyListings } from './store';
 
 export interface MReport { id: string; reporterNick: string; targetType: 'item' | 'user'; targetId: string; targetName: string; reason: string; note: string; at: number }
 export interface MListing { id: string; kind: string; name: string; icon: string; image: string | null; sellerId: string; sellerNick: string; price: number; currency: string; status: string; removed: boolean; featured: boolean }
-export interface MUser { id: string; nick: string; avatar: string; className: string; level: number; itemsSold: number; reports: number; banned: boolean; suspended: boolean; contributor: boolean; verified: boolean; repTierOverride: string | null; banReason: string | null; createdAt: number; lastSeen: number }
+export interface MUser { id: string; nick: string; avatar: string; className: string; level: number; itemsSold: number; reports: number; banned: boolean; suspended: boolean; contributor: boolean; isAdmin: boolean; verified: boolean; repTierOverride: string | null; banReason: string | null; createdAt: number; lastSeen: number }
 export interface MLog { id: string; text: string; at: number }
 
 export interface AdminModel {
@@ -24,6 +24,8 @@ export interface AdminModel {
   toggleBan: (id: string, nick: string, next: boolean, reason?: string) => void;
   toggleSuspend: (id: string, nick: string, next: boolean) => void;
   toggleContributor: (id: string, nick: string, next: boolean) => void;
+  /** Resolves when the account is gone; rejects with the database message otherwise. */
+  deleteUser: (id: string) => Promise<void>;
   setMemberTier: (id: string, nick: string, key: string | null, label: string) => void;
   resolveReport: (id: string, status: 'resolved' | 'dismissed', label: string) => void;
   sendGlobal: (text: string) => void;
@@ -71,6 +73,8 @@ export function useAdminModel(): AdminModel {
       toggleFeatured: (id, name, next) => { admin.setListingFeatured(id, next).then(() => { log(`${next ? 'Destacou' : 'Removeu destaque de'}: ${name}`); reload(); }).catch(() => {}); },
       toggleBan: (id, nick, next, reason) => { admin.setUserFlag(id, { banned: next, ban_reason: next ? (reason?.trim() || null) : null }).then(() => { log(`${next ? 'Baniu' : 'Desbaniu'} usuário: ${nick}${next && reason?.trim() ? ` — motivo: ${reason.trim()}` : ''}`); reload(); }).catch(() => {}); },
       toggleSuspend: (id, nick, next) => { admin.setUserFlag(id, { suspended: next }).then(() => { log(`${next ? 'Suspendeu' : 'Reativou'} vendedor: ${nick}`); reload(); }).catch(() => {}); },
+      // The database function writes the admin log itself (it knows the nick before the account disappears).
+      deleteUser: (id) => admin.deleteUserAccount(id).then(() => { reload(); }),
       toggleContributor: (id, nick, next) => { admin.setUserFlag(id, { is_contributor: next }).then(() => { log(`${next ? 'Concedeu' : 'Removeu'} selo Colaborador: ${nick}`); reload(); }).catch(() => {}); },
       setMemberTier: (id, nick, key, label) => { dbSetMemberTier(id, key).then(() => { log(`Cargo de ${nick}: ${label}`); reload(); }).catch(() => {}); },
       resolveReport: (id, status, label) => { admin.resolveReport(id, status).then(() => { log(`Denúncia ${id.slice(0, 8)}: ${label}`); reload(); }).catch(() => {}); },
@@ -91,7 +95,7 @@ export function useAdminModel(): AdminModel {
   }));
   const mUsers: MUser[] = SELLERS.map((u) => ({
     id: u.id, nick: u.nick, avatar: u.avatar, className: u.className, level: u.level, itemsSold: u.itemsSold, reports: u.reports,
-    banned: mock.bannedUsers.includes(u.id), suspended: mock.suspendedUsers.includes(u.id), contributor: mock.contributors.includes(u.id), verified: u.verified,
+    banned: mock.bannedUsers.includes(u.id), suspended: mock.suspendedUsers.includes(u.id), contributor: mock.contributors.includes(u.id), isAdmin: false, verified: u.verified,
     repTierOverride: null, banReason: null, createdAt: u.joinedAt, lastSeen: u.lastSeen,
   }));
 
@@ -103,6 +107,7 @@ export function useAdminModel(): AdminModel {
     toggleBan: (id, nick) => mock.toggleBan(id, nick),
     toggleSuspend: (id, nick) => mock.toggleSuspend(id, nick),
     toggleContributor: (id, nick) => mock.toggleContributor(id, nick),
+    deleteUser: () => Promise.resolve(), // mock: accounts only exist in the real database
     setMemberTier: () => {}, // mock: categories are DB-only
     resolveReport: (id, _status, label) => mock.resolveReport(id, label),
     sendGlobal: (text) => mock.sendGlobal(text),

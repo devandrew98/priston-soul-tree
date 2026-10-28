@@ -116,6 +116,7 @@ export interface AdminUser {
   banned: boolean;
   suspended: boolean;
   contributor: boolean;
+  isAdmin: boolean;
   verified: boolean;
   repTierOverride: string | null;
   banReason: string | null;
@@ -125,12 +126,12 @@ export interface AdminUser {
 
 interface AdminUserRow {
   id: string; nick: string; avatar_url: string | null; char_class: string; level: number;
-  banned: boolean; suspended: boolean; is_contributor: boolean; verified: boolean; rep_tier_override: string | null;
+  banned: boolean; suspended: boolean; is_contributor: boolean; is_admin: boolean; verified: boolean; rep_tier_override: string | null;
   ban_reason?: string | null; created_at: string; last_seen: string;
 }
 
 export async function fetchAdminUsers(): Promise<AdminUser[]> {
-  const BASE = 'id,nick,avatar_url,char_class,level,banned,suspended,is_contributor,verified,rep_tier_override,created_at,last_seen';
+  const BASE = 'id,nick,avatar_url,char_class,level,banned,suspended,is_contributor,is_admin,verified,rep_tier_override,created_at,last_seen';
   type Res = { data: AdminUserRow[] | null; error: unknown };
   // ban_reason is added by 11_user_moderation.sql; tolerate its absence so the
   // admin panel keeps working before that migration is applied.
@@ -139,7 +140,7 @@ export async function fetchAdminUsers(): Promise<AdminUser[]> {
   if (rows.error) throw rows.error;
   return (rows.data ?? []).map((u) => ({
     id: u.id, nick: u.nick, avatar: u.avatar_url || '🧑', className: u.char_class, level: u.level,
-    banned: u.banned, suspended: u.suspended, contributor: u.is_contributor, verified: u.verified,
+    banned: u.banned, suspended: u.suspended, contributor: u.is_contributor, isAdmin: u.is_admin, verified: u.verified,
     repTierOverride: u.rep_tier_override, banReason: u.ban_reason ?? null,
     createdAt: new Date(u.created_at).getTime(), lastSeen: new Date(u.last_seen).getTime(),
   }));
@@ -147,6 +148,12 @@ export async function fetchAdminUsers(): Promise<AdminUser[]> {
 
 export async function setUserFlag(userId: string, patch: Partial<{ banned: boolean; suspended: boolean; is_contributor: boolean; ban_reason: string | null }>): Promise<void> {
   const { error } = await sb().from('profiles').update(patch).eq('id', userId);
+  if (error) throw error;
+}
+
+/** Deletes the account (login, profile and everything the user created). Admin only; enforced in the database (SQL 33). */
+export async function deleteUserAccount(userId: string): Promise<void> {
+  const { error } = await sb().rpc('admin_delete_user', { target: userId });
   if (error) throw error;
 }
 

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { useRepTiers } from '../../lib/market/repTiers';
 import { useAdminModel } from './useAdminModel';
+import { useAuth } from './store';
 import { StreamersAdmin } from './StreamersAdmin';
 import { RepTiersAdmin } from './RepTiersAdmin';
 import { NewsAdmin } from './NewsAdmin';
@@ -40,12 +41,27 @@ const SECTIONS: { id: Section; icon: string; key: string }[] = [
 export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSeller: (id: string) => void }) {
   const { t } = useI18n();
   const m = useAdminModel();
+  const { userId: myId } = useAuth();
   const tiers = useRepTiers();
   const [sec, setSec] = useState<Section>('listings');
   const [q, setQ] = useState('');
   const [uq, setUq] = useState('');
   const [uFilter, setUFilter] = useState<'all' | 'banned' | 'suspended' | 'contributors' | 'reported'>('all');
   const [globalText, setGlobalText] = useState('');
+  // Account deletion asks for confirmation inside the row (window.confirm is not reliable in every browser).
+  const [delId, setDelId] = useState<string | null>(null);
+  const [delBusy, setDelBusy] = useState(false);
+  const [delErr, setDelErr] = useState('');
+  const nickKey = (n: string) => n.trim().toLowerCase();
+  const nickCount = new Map<string, number>();
+  for (const u of m.users) nickCount.set(nickKey(u.nick), (nickCount.get(nickKey(u.nick)) ?? 0) + 1);
+  const deleteAccount = (u: { id: string }) => {
+    setDelBusy(true); setDelErr('');
+    m.deleteUser(u.id)
+      .then(() => setDelId(null))
+      .catch((e: unknown) => setDelErr(t('mk.admin.deleteacc.fail', { err: e instanceof Error ? e.message : String((e as { message?: string })?.message ?? e) })))
+      .finally(() => setDelBusy(false));
+  };
 
   const filtered = m.listings.filter((l) => l.name.toLowerCase().includes(q.toLowerCase()));
   const usersFiltered = m.users.filter((u) =>
@@ -125,6 +141,7 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
                 {u.banned && u.banReason && <span className="mk-admin-banreason">🚫 {u.banReason}</span>}
               </span>
               <span className="mk-admin-flags">
+                {(nickCount.get(nickKey(u.nick)) ?? 0) > 1 && <span className="mk-flag bad">⚠ {t('mk.admin.dupnick')}</span>}
                 {u.contributor && <span className="mk-flag contrib">⭐ {t('mk.contrib')}</span>}
                 {u.reports > 0 && <span className={`mk-flag ${u.reports >= 3 ? 'bad' : ''}`}>⚑ {u.reports}</span>}
                 {u.banned && <span className="mk-flag bad">{t('mk.admin.banned')}</span>}
@@ -143,7 +160,18 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
                 <button className={`mk-btn sm ${u.contributor ? 'active' : ''}`} onClick={() => m.toggleContributor(u.id, u.nick, !u.contributor)} title={t('mk.contrib.hint')}>⭐ {t('mk.contrib')}</button>
                 <button className={`mk-btn sm ${u.suspended ? 'active' : ''}`} onClick={() => m.toggleSuspend(u.id, u.nick, !u.suspended)}>{u.suspended ? t('mk.admin.reactivate') : t('mk.admin.suspend')}</button>
                 <button className={`mk-btn sm ${u.banned ? 'active' : 'danger'}`} onClick={() => banUser(u)}>{u.banned ? t('mk.admin.unban') : t('mk.admin.ban')}</button>
+                {!u.isAdmin && u.id !== myId && (
+                  <button className="mk-btn sm danger" onClick={() => { setDelId(u.id); setDelErr(''); }}>🗑 {t('mk.admin.deleteacc')}</button>
+                )}
               </span>
+              {delId === u.id && (
+                <div className="mk-admin-delask" role="alert">
+                  <span>{t('mk.admin.deleteacc.ask', { nick: u.nick })}</span>
+                  <button className="mk-btn sm danger" disabled={delBusy} onClick={() => deleteAccount(u)}>{t('mk.admin.deleteacc.yes')}</button>
+                  <button className="mk-btn sm" disabled={delBusy} onClick={() => setDelId(null)}>{t('mk.admin.deleteacc.no')}</button>
+                  {delErr && <span className="mk-admin-delerr">{delErr}</span>}
+                </div>
+              )}
             </div>
           ))}
           {!m.loading && usersFiltered.length === 0 && <p className="mk-muted">{t('mk.dash.empty')}</p>}
