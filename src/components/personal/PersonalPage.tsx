@@ -179,8 +179,7 @@ export function PersonalPage() {
               return (
                 <label key={blk.id} className={`${cls} pp-check ${on ? 'on' : ''}`}>
                   <input type="checkbox" checked={on} onChange={() => toggle(blk.id)} />
-                  {nums[i] !== null && <b className="pp-num">{nums[i]}.</b>}
-                  <span><Inline text={blk.text} /></span>
+                  <span>{nums[i] !== null && <b className="pp-num">{nums[i]}.</b>}<Inline text={blk.text} /></span>
                 </label>
               );
             })}

@@ -2465,3 +2465,6 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .pp-check input { margin: 2px 0 0; }
 .pp-check .pp-num { line-height: 1.5; }
 @media (max-width: 600px) { .pp-check.sub { width: calc(100% - 16px); margin-left: 16px; } }
+/* Personal guide: the step number is part of the text, so every item's text starts in the same column */
+.pp-check .pp-num { margin-right: 6px; }
+.pp-check > span { min-width: 0; overflow-wrap: anywhere; }
