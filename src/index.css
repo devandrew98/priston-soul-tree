@@ -2389,3 +2389,21 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 
 /* Checkboxes in the new tools use the site's gold instead of the browser's default blue */
 .qt-tool input[type=checkbox], .qa input[type=checkbox], .cl-tool input[type=checkbox] { accent-color: var(--gold); }
+
+/* Aging system: item comparison */
+.ag-tabs { max-width: 920px; margin: 14px auto 0; padding: 0 16px; }
+.ag-cmp-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ag-cmp-side { display: flex; flex-direction: column; gap: 10px; }
+.ag-cmp-row { display: flex; gap: 10px; }
+.ag-cmp-row > label:first-child { flex: 2 1 0; min-width: 0; }
+.ag-cmp-row > label:last-child { flex: 1 1 0; min-width: 0; }
+.ag-cmp-row select { width: 100%; }
+.ag-cmp-item { display: flex; align-items: center; gap: 12px; }
+.ag-cmp-item h4 { margin: 0 0 4px; }
+.ag-cmp-item p { margin: 0; }
+.ag-cmp-table td:not(:first-child), .ag-cmp-table th:not(:first-child) { text-align: right; }
+.ag-cmp-table-wrap { width: 100%; }
+.ag-cmp-win { color: #6fcf6f; font-weight: 800; }
+.ag-cmp-pos { color: #6fcf6f; }
+.ag-cmp-neg { color: #e06666; }
+@media (max-width: 600px) { .ag-cmp-sides { grid-template-columns: 1fr; } .ag-tabs button { flex: 1 1 45%; } }

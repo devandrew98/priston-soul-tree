@@ -18,7 +18,7 @@ import { Wardrobe } from './components/wardrobe/Wardrobe';
 import { CharacterPublicPage } from './components/wardrobe/CharacterPublicPage';
 import { SkillTree as SkillTreeTool } from './components/skilltree/SkillTree';
 import { ScreenRooms } from './components/screenshare/ScreenRooms';
-import { AgingCalculator } from './components/aging/AgingCalculator';
+import { AgingSystem } from './components/aging/AgingSystem';
 import { ClanFormation } from './components/clan/ClanFormation';
 import { QuestTracker } from './components/quest/QuestTracker';
 import { ClanSharePage } from './components/clan/ClanSharePage';
@@ -359,7 +359,7 @@ export default function App() {
       ) : (
         toolTab === 'soultree' ? <SoulTree />
           : toolTab === 'skilltree' ? <SkillTreeTool />
-          : toolTab === 'aging' ? <AgingCalculator />
+          : toolTab === 'aging' ? <AgingSystem />
           : toolTab === 'clan' ? <ClanFormation />
           : toolTab === 'quests' ? <QuestTracker />
           : toolTab === 'screenshare' ? <ScreenRooms />
