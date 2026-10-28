@@ -74,16 +74,14 @@ export function ClanSharePage({ token }: { token: string }) {
             </section>
           )}
           <FormationBoard formation={formation} confirmedCount={confirmed.length} />
-          {(view.board.markers.length > 0 || view.board.strokes.length > 0) && (
-            <section className="sr-card cl-box">
-              <h3>{T('map')}</h3>
-              <div className="cl-legend">
-                {MARKER_TYPES.filter((t) => !isNumberType(t) && view.board.markers.some((m) => m.type === t)).map((t) => <span key={t}>{MARKER_ICON[t]} {markerName(t, lang)}</span>)}
-                {view.board.markers.some((m) => isNumberType(m.type)) && <span>{T('order')}</span>}
-              </div>
-              <div className="cl-mapcol cl-mappublic"><BlessMap markers={view.board.markers} strokes={view.board.strokes} /></div>
-            </section>
-          )}
+          <section className="sr-card cl-box">
+            <h3>{T('map')}</h3>
+            <div className="cl-legend">
+              {MARKER_TYPES.filter((t) => !isNumberType(t) && view.board.markers.some((m) => m.type === t)).map((t) => <span key={t}>{MARKER_ICON[t]} {markerName(t, lang)}</span>)}
+              {view.board.markers.some((m) => isNumberType(m.type)) && <span>{T('order')}</span>}
+            </div>
+            <div className="cl-mapcol cl-mappublic"><BlessMap markers={view.board.markers} strokes={view.board.strokes} /></div>
+          </section>
         </>
       )}
       <p className="cl-public-foot">{view && <span className="mk-muted">{T('live')} </span>}<a href="/">{T('home')}</a></p>
