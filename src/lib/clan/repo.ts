@@ -7,9 +7,10 @@ import { EMPTY_BOARD, sanitizeBoard, type BoardData } from './board';
 import type { AttendanceEvent } from './attendance';
 
 export interface Clan { id: string; name: string }
-export interface ClanMember { id: string; clanId: string; nick: string; cls: PtClass; confirmed: boolean; partyLeader: boolean; createdAt: number }
+/** `partySlot`: manual placement in the formation (0-3 = party, 4 = reserves), null = automatic. */
+export interface ClanMember { id: string; clanId: string; nick: string; cls: PtClass; confirmed: boolean; partyLeader: boolean; partySlot: number | null; createdAt: number }
 export interface StaffEntry { userId: string; nick: string; role: 'leader' | 'vice' }
-export type MemberPatch = Partial<Pick<ClanMember, 'nick' | 'cls' | 'confirmed' | 'partyLeader'>>;
+export type MemberPatch = Partial<Pick<ClanMember, 'nick' | 'cls' | 'confirmed' | 'partyLeader' | 'partySlot'>>;
 
 /** What the public share link shows: the clan name and its confirmed members. */
 export interface ShareView { clanName: string; members: ClanMember[]; board: BoardData }
@@ -51,15 +52,16 @@ export interface ClanRepo {
   removeStaff(clanId: string, userId: string): Promise<void>;
 }
 
-type MemberRow = { id: string; clan_id: string; nick: string; cls: PtClass; confirmed: boolean; party_leader: boolean; created_at: string };
+type MemberRow = { id: string; clan_id: string; nick: string; cls: PtClass; confirmed: boolean; party_leader: boolean; party_slot: number | null; created_at: string };
 const toMember = (r: MemberRow): ClanMember => ({
-  id: r.id, clanId: r.clan_id, nick: r.nick, cls: r.cls, confirmed: r.confirmed, partyLeader: r.party_leader, createdAt: new Date(r.created_at).getTime(),
+  id: r.id, clanId: r.clan_id, nick: r.nick, cls: r.cls, confirmed: r.confirmed, partyLeader: r.party_leader, partySlot: r.party_slot ?? null, createdAt: new Date(r.created_at).getTime(),
 });
 const toRow = (p: MemberPatch) => ({
   ...(p.nick !== undefined && { nick: p.nick }),
   ...(p.cls !== undefined && { cls: p.cls }),
   ...(p.confirmed !== undefined && { confirmed: p.confirmed }),
   ...(p.partyLeader !== undefined && { party_leader: p.partyLeader }),
+  ...(p.partySlot !== undefined && { party_slot: p.partySlot }),
 });
 
 /** Translates the database errors the player can actually cause into a readable message. */
@@ -113,7 +115,7 @@ function createSupabaseRepo(): ClanRepo {
     async viewShare(token) {
       const data = check(await sb().rpc('clan_share_view', { p_token: token })) as { clan: string; note?: string; markers?: unknown; strokes?: unknown; members: Omit<ClanMember, 'clanId'>[] } | null;
       if (!data) return null;
-      return { clanName: data.clan, members: data.members.map((m) => ({ ...m, clanId: '' })), board: sanitizeBoard(data) };
+      return { clanName: data.clan, members: data.members.map((m) => ({ ...m, clanId: '', partySlot: m.partySlot ?? null })), board: sanitizeBoard(data) };
     },
     async createClan(name) { return check(await sb().from('clans').insert({ name: name.trim() }).select('id,name').single()) as Clan; },
     async deleteClan(id) { check(await sb().from('clans').delete().eq('id', id)); },
@@ -141,15 +143,15 @@ export function createMemoryRepo(): ClanRepo {
   const shares = new Map<string, string>([['c1', 'demo']]); // the fake clan already has a link: /formacao/demo
   const names = ['FxNick', 'PETISTASENSATO', 'Sacerdotada', 'Areon25', 'Kina22', 'CommitaoDourado', 'ArcanisBoy', 'IceLady', 'Submundo', 'Benzetacil', 'RogerioCeni', 'Elyon'];
   const cls: PtClass[] = ['Archer', 'Shaman', 'Priestess', 'Magician', 'Knight', 'Assassin', 'Archer', 'Priestess', 'Atalanta', 'Fighter', 'Mechanician', 'Knight'];
-  names.forEach((nick, i) => members.push({ id: id(), clanId: 'c1', nick, cls: cls[i], confirmed: i < 8, partyLeader: false, createdAt: i }));
-  members.push({ id: id(), clanId: 'c2', nick: 'DoOutroCla', cls: 'Archer', confirmed: true, partyLeader: false, createdAt: 99 });
+  names.forEach((nick, i) => members.push({ id: id(), clanId: 'c1', nick, cls: cls[i], confirmed: i < 8, partyLeader: false, partySlot: null, createdAt: i }));
+  members.push({ id: id(), clanId: 'c2', nick: 'DoOutroCla', cls: 'Archer', confirmed: true, partyLeader: false, partySlot: null, createdAt: 99 });
   const dup = (clanId: string, nick: string, except?: string) => members.some((m) => m.clanId === clanId && m.id !== except && m.nick.toLowerCase() === nick.trim().toLowerCase());
   return {
     async listClans() { return [...clans]; },
     async listMembers(clanId) { return members.filter((m) => m.clanId === clanId).map((m) => ({ ...m })); },
     async addMember(clanId, nick, c) {
       if (dup(clanId, nick)) throw new Error('Esse nick já está no clã.');
-      const m: ClanMember = { id: id(), clanId, nick: nick.trim(), cls: c, confirmed: false, partyLeader: false, createdAt: Date.now() };
+      const m: ClanMember = { id: id(), clanId, nick: nick.trim(), cls: c, confirmed: false, partyLeader: false, partySlot: null, createdAt: Date.now() };
       members.push(m);
       return { ...m };
     },

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { requestLogin } from '../../lib/builds/account';
-import { BUFF_CLASSES, PT_CLASSES, buildFormation, type FormationMember, type Party, type PtClass } from '../../lib/clan/formation';
+import { BUFF_CLASSES, PT_CLASSES, arrangeFormation, slotsOf, type FormationMember, type Party, type PtClass } from '../../lib/clan/formation';
 import { ClanUnavailableError, CLAN_FAKE, getClanRepo, type Clan, type ClanMember, type StaffEntry } from '../../lib/clan/repo';
 import { useAuth } from '../market/store';
 import { Loading } from '../Loading';
@@ -232,7 +232,9 @@ export function ClanFormation() {
 
   const clan = clans?.find((c) => c.id === clanId) ?? null;
   const confirmed = useMemo(() => members.filter((m) => m.confirmed).sort((a, b) => a.createdAt - b.createdAt), [members]);
-  const formation = useMemo(() => buildFormation(confirmed), [confirmed]);
+  // The automatic formation with the leader's manual placements (partySlot) applied on top.
+  const formation = useMemo(() => arrangeFormation(confirmed.map((m) => ({ ...m, slot: m.partySlot }))), [confirmed]);
+  const manual = confirmed.some((m) => m.partySlot !== null);
 
   /** Optimistic: the screen updates at once and the change is saved in the background (the list is reloaded if it fails). */
   const patchMembers = (ids: string[], patch: Partial<ClanMember>) => {
@@ -244,6 +246,33 @@ export function ClanFormation() {
     if (others.length) patchMembers(others, { partyLeader: false });
     patchMembers([m.id], { partyLeader: true });
   };
+  /**
+   * Moves a player to another party/raid (or the reserves); `swapWith` takes the place they leave.
+   * The first manual move fixes the layout the leader is looking at (everybody keeps their place), so nothing else jumps around.
+   */
+  const moveMember = (id: string, target: number, swapWith?: string) => {
+    const current = slotsOf(formation);
+    const from = current.get(id);
+    if (from === undefined) return;
+    const next = new Map(current);
+    next.set(id, target);
+    if (swapWith) next.set(swapWith, from);
+    const bySlot = new Map<number, { moved: string[]; rest: string[] }>();
+    for (const [mid, slot] of next) {
+      const m = members.find((x) => x.id === mid);
+      if (!m) continue;
+      const isMoved = mid === id || mid === swapWith;
+      if (!isMoved && m.partySlot === slot) continue;
+      const g = bySlot.get(slot) ?? { moved: [], rest: [] };
+      (isMoved ? g.moved : g.rest).push(mid);
+      bySlot.set(slot, g);
+    }
+    for (const [slot, g] of bySlot) {
+      if (g.rest.length) patchMembers(g.rest, { partySlot: slot });
+      if (g.moved.length) patchMembers(g.moved, { partySlot: slot, partyLeader: false }); // a moved player is no longer the leader of the party they left
+    }
+  };
+  const resetAuto = () => patchMembers(members.filter((m) => m.partySlot !== null).map((m) => m.id), { partySlot: null });
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!clanId || !nick.trim()) return;
@@ -332,7 +361,7 @@ export function ClanFormation() {
                       <h4><ClassTag cls={c} /> <span>{list.filter((m) => m.confirmed).length}/{list.length}</span></h4>
                       <ul className="cl-members">
                         {list.map((m) => (
-                          <MemberRow key={m.id} m={m} T={T} onToggle={() => patchMembers([m.id], { confirmed: !m.confirmed })} onSave={(n, cl) => saveMember(m, n, cl)} onRemove={() => remove(m)} />
+                          <MemberRow key={m.id} m={m} T={T} onToggle={() => patchMembers([m.id], m.confirmed ? { confirmed: false, partySlot: null } : { confirmed: true })} onSave={(n, cl) => saveMember(m, n, cl)} onRemove={() => remove(m)} />
                         ))}
                       </ul>
                     </div>
@@ -342,8 +371,8 @@ export function ClanFormation() {
             )}
           </section>
 
-          <FormationBoard formation={formation} confirmedCount={confirmed.length} onLeader={setLeader} />
-          <BoardEditor key={`board-${clan.id}`} clan={clan} members={members} onClearConfirmed={() => patchMembers(members.filter((m) => m.confirmed).map((m) => m.id), { confirmed: false })} />
+          <FormationBoard formation={formation} confirmedCount={confirmed.length} onLeader={setLeader} onMove={moveMember} manual={manual} onResetAuto={resetAuto} />
+          <BoardEditor key={`board-${clan.id}`} clan={clan} members={members} onClearConfirmed={() => patchMembers(members.filter((m) => m.confirmed).map((m) => m.id), { confirmed: false, partySlot: null })} />
           <SharePanel key={`share-${clan.id}`} clan={clan} T={T} />
         </>
       )}

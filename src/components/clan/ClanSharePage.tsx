@@ -2,7 +2,7 @@
 // It re-reads the clan every few seconds, so what the leader changes (formation, note, map) shows up without reloading.
 import { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
-import { buildFormation } from '../../lib/clan/formation';
+import { arrangeFormation } from '../../lib/clan/formation';
 import { MARKER_ICON, MARKER_TYPES, isNumberType } from '../../lib/clan/board';
 import { bcSaturdays, countdown, formatBc } from '../../lib/clan/dates';
 import { getClanRepo, type ShareView } from '../../lib/clan/repo';
@@ -50,7 +50,7 @@ export function ClanSharePage({ token }: { token: string }) {
 
   const view = state.status === 'ready' ? state.view : null;
   const confirmed = useMemo(() => (view ? [...view.members].sort((a, b) => a.createdAt - b.createdAt) : []), [view]);
-  const formation = useMemo(() => buildFormation(confirmed), [confirmed]);
+  const formation = useMemo(() => arrangeFormation(confirmed.map((m) => ({ ...m, slot: m.partySlot }))), [confirmed]);
 
   return (
     <div className="cl-tool cl-public">

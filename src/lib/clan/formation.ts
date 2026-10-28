@@ -15,7 +15,11 @@ export const RAID_SIZE = PARTY_SIZE * PARTIES_PER_RAID;
 export const MAX_RAIDS = 2;
 export const MAX_PLAYERS = RAID_SIZE * MAX_RAIDS;
 
-export interface FormationMember { id: string; nick: string; cls: PtClass }
+/** `slot` is a manual placement by the leader: 0-3 = that party (raid 1: 0 and 1, raid 2: 2 and 3), 4 = reserves, null/undefined = automatic. */
+export interface FormationMember { id: string; nick: string; cls: PtClass; slot?: number | null }
+
+export const PARTY_SLOTS = PARTIES_PER_RAID * MAX_RAIDS;
+export const SLOT_RESERVE = PARTY_SLOTS;
 export interface Party { members: FormationMember[] }
 export interface Raid { parties: Party[]; buffs: PtClass[] }
 export interface Formation {
@@ -73,4 +77,52 @@ export function buildFormation(confirmed: FormationMember[]): Formation {
 
   const raids = [raid1, raid2].filter((r) => r.length > 0).map((members) => ({ parties: splitParties(members), buffs: buffsOf(members) }));
   return { raids, reserves };
+}
+
+/**
+ * The formation with the leader's manual placements applied on top of the automatic one.
+ * Always 2 raids x 2 parties (an empty one is just empty), so a party keeps the same number wherever it is shown.
+ * - A member with `slot` 0-3 is placed in that party (at most 6 per party), 4 sends them to the reserves.
+ * - Everybody else stays where the automatic formation put them; whoever no longer fits moves to the closest party with room
+ *   (the same raid first) or to the reserves.
+ */
+export function arrangeFormation(confirmed: FormationMember[]): Formation {
+  const isBench = (m: FormationMember) => m.slot === SLOT_RESERVE;
+  const isPinned = (m: FormationMember) => typeof m.slot === 'number' && m.slot >= 0 && m.slot < PARTY_SLOTS;
+  const base = buildFormation(confirmed.filter((m) => !isBench(m)));
+  const baseParty = (i: number) => base.raids[Math.floor(i / PARTIES_PER_RAID)]?.parties[i % PARTIES_PER_RAID]?.members ?? [];
+
+  const final: FormationMember[][] = Array.from({ length: PARTY_SLOTS }, () => []);
+  const placed = new Set<string>();
+  for (const m of confirmed) {
+    if (isPinned(m) && final[m.slot as number].length < PARTY_SIZE) { final[m.slot as number].push(m); placed.add(m.id); }
+  }
+  const leftovers: { m: FormationMember; from: number }[] = [];
+  for (let i = 0; i < PARTY_SLOTS; i++) {
+    for (const m of baseParty(i)) {
+      if (placed.has(m.id)) continue;
+      if (final[i].length < PARTY_SIZE) final[i].push(m); else leftovers.push({ m, from: i });
+    }
+  }
+  const reserves = base.reserves.filter((m) => !placed.has(m.id));
+  for (const { m, from } of leftovers) {
+    const open = final.map((p, i) => ({ i, size: p.length })).filter((p) => p.size < PARTY_SIZE);
+    const sameRaid = (i: number) => Number(Math.floor(i / PARTIES_PER_RAID) !== Math.floor(from / PARTIES_PER_RAID));
+    open.sort((a, b) => sameRaid(a.i) - sameRaid(b.i) || a.size - b.size || a.i - b.i);
+    if (open.length) final[open[0].i].push(m); else reserves.push(m);
+  }
+
+  const raids: Raid[] = Array.from({ length: MAX_RAIDS }, (_, r) => {
+    const parties = Array.from({ length: PARTIES_PER_RAID }, (_, p) => ({ members: final[r * PARTIES_PER_RAID + p] }));
+    return { parties, buffs: buffsOf(parties.flatMap((p) => p.members)) };
+  });
+  return { raids, reserves: [...reserves, ...confirmed.filter(isBench)] };
+}
+
+/** Where each member of a formation is: a party number (0-3) or SLOT_RESERVE. */
+export function slotsOf(f: Formation): Map<string, number> {
+  const out = new Map<string, number>();
+  f.raids.forEach((r, ri) => r.parties.forEach((p, pi) => p.members.forEach((m) => out.set(m.id, ri * PARTIES_PER_RAID + pi))));
+  f.reserves.forEach((m) => out.set(m.id, SLOT_RESERVE));
+  return out;
 }

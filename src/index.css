@@ -2269,3 +2269,20 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .cl-bcdate::first-letter { text-transform: uppercase; }
 .cl-bcnext { margin: 4px 0 0; font-size: 18px; font-weight: 700; }
 .cl-bcnext::first-letter { text-transform: uppercase; }
+
+/* Clan: moving players between parties */
+.cl-draghint { margin: 4px 0 8px; }
+.cl-manual { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 4px 0 8px; color: var(--gold-bright); }
+.cl-selbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; margin: 8px 0; border: 1px solid var(--gold); border-radius: 8px; background: rgba(212, 170, 80, 0.12); }
+.cl-party li.movable { cursor: grab; border-radius: 6px; padding-left: 4px; padding-right: 4px; }
+.cl-party li.movable:hover, .cl-reserves li.movable:hover { background: rgba(255, 255, 255, 0.06); }
+.cl-party li.sel, .cl-reserves li.sel { background: rgba(212, 170, 80, 0.22); outline: 1px solid var(--gold); }
+.cl-party li.dragging, .cl-reserves li.dragging { opacity: 0.4; }
+.cl-party li.cl-emptyslot { justify-content: center; color: var(--text-dim); }
+.cl-party h4 span.full { color: #e0a040; font-weight: 700; }
+.cl-party.over-ok { outline: 2px dashed #6fcf7f; outline-offset: 2px; background: rgba(111, 207, 127, 0.1); }
+.cl-party.over-full { outline: 2px dashed #e07070; outline-offset: 2px; background: rgba(224, 112, 112, 0.1); }
+.cl-movehere { width: 100%; margin: 2px 0 6px; }
+.cl-fulltap { margin: 2px 0 6px; color: #e0a040; font-size: 13px; }
+.cl-reserves.over-ok { outline: 2px dashed #6fcf7f; outline-offset: 4px; border-radius: 6px; }
+.cl-reserves li.movable { cursor: grab; padding: 2px 8px; border: 1px solid var(--border); border-radius: 6px; }
