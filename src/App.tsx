@@ -22,6 +22,7 @@ import { AgingSystem } from './components/aging/AgingSystem';
 import { ClanFormation } from './components/clan/ClanFormation';
 import { QuestTracker } from './components/quest/QuestTracker';
 import { ClanSharePage } from './components/clan/ClanSharePage';
+import { PersonalPage } from './components/personal/PersonalPage';
 import { useClanAccess } from './components/clan/useClanAccess';
 import { Builds } from './components/builds/Builds';
 import { LOGIN_EVENT } from './lib/builds/account';
@@ -100,6 +101,9 @@ export default function App() {
   if (window.location.pathname.startsWith('/formacao/')) {
     return <ClanSharePage token={decodeURIComponent(window.location.pathname.slice('/formacao/'.length).replace(/\/$/, ''))} />;
   }
+
+  // Personal guide (pristonzone.com/pessoalhadder): standalone page, not in any menu. Only the administrator can edit it.
+  if (window.location.pathname.toLowerCase().replace(/\/+$/, '') === '/pessoalhadder') return <PersonalPage />;
 
   const { t, lang, setLang } = useI18n();
   const { isAdmin, isLoggedIn, user, logout } = useAuth();
