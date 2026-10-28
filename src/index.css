@@ -2459,3 +2459,9 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .pp-edit-block textarea { box-sizing: border-box; }
 .pp-edit-block select { min-width: 150px; }
 .pp-edit-blockbar .mk-btn.sm { flex: none; }
+/* Personal guide: every item card spans the full width so the edges line up; sub-items keep their indent */
+.pp-check { width: 100%; box-sizing: border-box; align-items: flex-start; }
+.pp-check.sub { width: calc(100% - 28px); margin-left: 28px; }
+.pp-check input { margin: 2px 0 0; }
+.pp-check .pp-num { line-height: 1.5; }
+@media (max-width: 600px) { .pp-check.sub { width: calc(100% - 16px); margin-left: 16px; } }
