@@ -82,6 +82,7 @@ const DICT: Record<string, Entry> = {
   'nav.menu': { pt: 'Menu', en: 'Menu' },
   'nav.aging': { pt: 'Sistema de Aging', en: 'Aging System' },
   'nav.clan': { pt: 'Formação do Clã', en: 'Clan Formation' },
+  'nav.quests': { pt: 'Quest Tracker', en: 'Quest Tracker' },
   'nav.screenshare': { pt: 'Compartilhamento de Tela', en: 'Screen Sharing' },
   // Compartilhamento de Tela (screen sharing, P2P)
   'sc.title': { pt: 'Compartilhamento de Tela', en: 'Screen Sharing' },
@@ -900,6 +901,9 @@ const DICT: Record<string, Entry> = {
   'mk.admin.dl.notesph': { pt: 'Notas de atualização (opcional) — aparece ao lado do botão na Home', en: 'Update notes (optional) — shown next to the button on Home' },
   'mk.admin.dl.send': { pt: 'Salvar link', en: 'Save link' },
   'mk.admin.dl.done': { pt: 'Link atualizado! O botão da Home já aponta para o novo download.', en: 'Link updated! The Home button now points to the new download.' },
+  'mk.admin.questmgr': { pt: 'Quest Manager', en: 'Quest Manager' },
+  'mk.admin.exptable': { pt: 'Tabela de EXP', en: 'EXP Table' },
+  'mk.admin.expbuffs': { pt: 'Bônus de EXP', en: 'EXP Bonuses' },
   'mk.admin.imgopt': { pt: 'Otimizar imagens', en: 'Optimize images' },
   'mk.admin.imgopt.hint': { pt: 'Fotos de anúncio, avatares e capas de streamer enviadas antes da compressão automática existir podem estar bem maiores do que precisam — isso consome a cota de banda (Cached Egress) do Supabase. Esta ferramenta baixa, recomprime (WebP) e sobrescreve cada imagem no lugar, sem mudar links nem apagar nada.', en: 'Listing photos, avatars and streamer covers uploaded before auto-compression existed can be far bigger than needed — that eats into your Supabase bandwidth (Cached Egress) quota. This tool downloads, recompresses (WebP) and overwrites each image in place, without changing any links or deleting anything.' },
   'mk.admin.imgopt.scan': { pt: 'Verificando imagens...', en: 'Scanning images...' },

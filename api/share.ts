@@ -33,6 +33,7 @@ const PAGES: Record<string, { title: string; description: string }> = {
   '/builds': { title: `Builds da Comunidade — ${SITE}`, description: 'Salve as suas builds de skills e souls na conta, compartilhe com a comunidade e veja o que os outros jogadores montaram.' },
     '/aging': { title: `Sistema de Aging — ${SITE}`, description: 'Calcule quantos sheltoms e quanto gold você vai gastar para envelhecer armas, armaduras, robes, escudos e orbs.' },
   '/cla': { title: `Formação do Clã — ${SITE}`, description: 'Ferramenta para líderes de clã montarem as parties e raids do Bless Castle.' },
+  '/quests': { title: `Quest Tracker — ${SITE}`, description: 'Acompanhe suas quests, calcule a EXP com os seus bônus e planeje as entregas para chegar ao level que você quer.' },
   '/sharing': { title: `Compartilhamento de Tela — ${SITE}`, description: 'Mostre o seu jogo para os amigos, direto pelo navegador, de graça e sem instalar nada.' },
   '/marketplace': { title: `Marketplace — ${SITE}`, description: 'Compre e venda itens do PristonTale EU com a comunidade.' },
   '/guides': { title: `Guias — ${SITE}`, description: 'Vídeos e guias para o seu jogo no PristonTale EU.' },

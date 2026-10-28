@@ -8,13 +8,16 @@ import { NewsAdmin } from './NewsAdmin';
 import { MarketCategoriesAdmin } from './MarketCategoriesAdmin';
 import { GuidesAdmin } from './GuidesAdmin';
 import { DownloadAdmin } from './DownloadAdmin';
+import { QuestManagerAdmin } from '../quest/QuestManagerAdmin';
+import { ExpTableAdmin } from '../quest/ExpTableAdmin';
+import { ExpBuffAdmin } from '../quest/ExpBuffAdmin';
 import { ImageOptimizer } from './ImageOptimizer';
 import { MarketplaceToggle } from './MarketplaceToggle';
 import type { ListingKind } from '../../lib/market/types';
 import { Avatar, KindTag, PriceTag, Since, StatusPill } from './parts';
 import { Loading } from '../Loading';
 
-type Section = 'listings' | 'users' | 'tiers' | 'itemcats' | 'reports' | 'streamers' | 'news' | 'guides' | 'download' | 'imgopt' | 'global' | 'logs';
+type Section = 'listings' | 'users' | 'tiers' | 'itemcats' | 'reports' | 'streamers' | 'news' | 'guides' | 'download' | 'questmgr' | 'exptable' | 'expbuffs' | 'imgopt' | 'global' | 'logs';
 
 const SECTIONS: { id: Section; icon: string; key: string }[] = [
   { id: 'listings', icon: '📦', key: 'mk.admin.listings' },
@@ -26,6 +29,9 @@ const SECTIONS: { id: Section; icon: string; key: string }[] = [
   { id: 'news', icon: '📰', key: 'mk.admin.news' },
   { id: 'guides', icon: '🎬', key: 'mk.admin.guides' },
   { id: 'download', icon: '📥', key: 'mk.admin.download' },
+  { id: 'questmgr', icon: '📜', key: 'mk.admin.questmgr' },
+  { id: 'exptable', icon: '📈', key: 'mk.admin.exptable' },
+  { id: 'expbuffs', icon: '✨', key: 'mk.admin.expbuffs' },
   { id: 'imgopt', icon: '🗜', key: 'mk.admin.imgopt' },
   { id: 'global', icon: '📢', key: 'mk.admin.global' },
   { id: 'logs', icon: '📜', key: 'mk.admin.logs' },
@@ -184,6 +190,11 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
 
       {/* APP DOWNLOAD */}
       {sec === 'download' && <DownloadAdmin />}
+
+      {/* QUEST TRACKER: quests, EXP table, EXP bonuses */}
+      {sec === 'questmgr' && <QuestManagerAdmin />}
+      {sec === 'exptable' && <ExpTableAdmin />}
+      {sec === 'expbuffs' && <ExpBuffAdmin />}
 
       {/* IMAGE OPTIMIZER */}
       {sec === 'imgopt' && <ImageOptimizer />}

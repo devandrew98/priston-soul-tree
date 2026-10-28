@@ -20,6 +20,7 @@ import { SkillTree as SkillTreeTool } from './components/skilltree/SkillTree';
 import { ScreenRooms } from './components/screenshare/ScreenRooms';
 import { AgingCalculator } from './components/aging/AgingCalculator';
 import { ClanFormation } from './components/clan/ClanFormation';
+import { QuestTracker } from './components/quest/QuestTracker';
 import { ClanSharePage } from './components/clan/ClanSharePage';
 import { useClanAccess } from './components/clan/useClanAccess';
 import { Builds } from './components/builds/Builds';
@@ -35,7 +36,7 @@ import { DEFAULT_ROUTE, pathFor, routeFromPath, type Route, type Section, type T
 
 type Tab = 'planner' | 'inventory' | 'optimizer';
 
-interface SubTab { id: string; icon: string; key: string }
+interface SubTab { id: string; icon: string; key: string; /** Reachable by its link but not listed in the menu. */ hidden?: boolean }
 interface NavItem { id: Section; icon: string; key: string; tabs?: SubTab[] }
 
 const TIMER_TABS: { id: TimerTab; icon: string; key: string }[] = [
@@ -43,7 +44,7 @@ const TIMER_TABS: { id: TimerTab; icon: string; key: string }[] = [
   { id: 'fury', icon: '🔥', key: 'nav.timerfury' },
 ];
 
-const TOOL_TABS: { id: ToolTab; icon: string; key: string }[] = [
+const TOOL_TABS: { id: ToolTab; icon: string; key: string; hidden?: boolean }[] = [
   { id: 'soultree', icon: '🌳', key: 'nav.soultree' },
   { id: 'skilltree', icon: '🌟', key: 'nav.skilltree' },
   { id: 'mixing', icon: '⚗', key: 'nav.mixing' },
@@ -52,6 +53,7 @@ const TOOL_TABS: { id: ToolTab; icon: string; key: string }[] = [
   { id: 'builds', icon: '🏆', key: 'nav.builds' },
   { id: 'screenshare', icon: '🖥', key: 'nav.screenshare' },
   { id: 'aging', icon: '⚒', key: 'nav.aging' },
+  { id: 'quests', icon: '📜', key: 'nav.quests', hidden: true }, // /quests works by link; remove `hidden` to list it in the menu
   { id: 'clan', icon: '🏰', key: 'nav.clan' }, // only shown to the admin and to clan leaders/vices
 ];
 
@@ -125,7 +127,7 @@ export default function App() {
 
   const clanAccess = useClanAccess();
   const nav = NAV.filter((n) => n.id !== 'market' || marketplaceEnabled)
-    .map((n) => (n.id === 'tools' && n.tabs ? { ...n, tabs: n.tabs.filter((x) => x.id !== 'clan' || clanAccess.allowed) } : n));
+    .map((n) => (n.id === 'tools' && n.tabs ? { ...n, tabs: n.tabs.filter((x) => !x.hidden && (x.id !== 'clan' || clanAccess.allowed)) } : n));
 
   // Every page change also changes the address bar (so F5 and Back stay on the page).
   const navigate = (patch: Partial<Route>) => {
@@ -359,6 +361,7 @@ export default function App() {
           : toolTab === 'skilltree' ? <SkillTreeTool />
           : toolTab === 'aging' ? <AgingCalculator />
           : toolTab === 'clan' ? <ClanFormation />
+          : toolTab === 'quests' ? <QuestTracker />
           : toolTab === 'screenshare' ? <ScreenRooms />
           : toolTab === 'builds' ? <Builds />
           : toolTab === 'mixing' ? <Mixing />
