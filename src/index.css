@@ -2520,3 +2520,10 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .ck-note, .ck-foot { color: var(--text-dim); font-size: 13px; margin-top: 16px; }
 .ck-foot a { color: var(--text-dim); }
 @media (max-width: 520px) { .ck-list label { flex-wrap: wrap; } .ck-exp { margin-left: 64px; } }
+
+.ck-view { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin: 4px 0 14px; }
+.ck-view button { padding: 7px 14px; background: transparent; border: 0; color: var(--text-dim); font: inherit; cursor: pointer; }
+.ck-view button.on { background: rgba(210, 170, 85, 0.2); color: var(--gold-bright); font-weight: 700; }
+.ck-group { margin-bottom: 10px; }
+.ck-map { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; margin-bottom: 4px; background: rgba(210, 170, 85, 0.1); border: 0; border-left: 3px solid var(--gold); color: var(--gold-bright); font: inherit; font-weight: 700; text-align: left; cursor: pointer; }
+.ck-map small { font-weight: 400; color: var(--text-dim); }

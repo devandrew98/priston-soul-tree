@@ -5,7 +5,7 @@ import { useI18n } from '../../lib/i18n';
 import { availableList, unlockedBetween } from '../../lib/quest/availability';
 import { questReward } from '../../lib/quest/bonus';
 import { expBetween, statePct, type ExpState } from '../../lib/quest/exp';
-import { encodePlan } from '../../lib/quest/checklist';
+import { encodePlan, tokenFor } from '../../lib/quest/checklist';
 import { groupQuests } from '../../lib/quest/mapGroups';
 import { deliveredIds, planGoal, type PlanResult } from '../../lib/quest/planner';
 import type { Quest, SavedPlan } from '../../lib/quest/types';
@@ -129,8 +129,9 @@ export function LevelingPlanner() {
   // the plan as a link to the checklist page: the quests in the order of delivery
   const checklistLink = () => {
     const ids = result && result.steps.length ? result.steps.map((x) => x.quest.id) : selected.map((x) => x.id);
-    const pre = result && result.preGain > 0 ? `${T('afterLeveling')}: ${fmtPos(table, result.preState, lang, lvlWord)}` : undefined;
-    return `/checklist#p=${encodePlan({ v: 1, n: planName.trim() || `${lvlWord} ${goalLvlNum}`, lv: goalLvlNum, pct: goalPctNum, q: ids, ...(pre ? { p: pre } : {}) })}`;
+    const allIds = data.quests.map((x) => x.id);
+    const pre = result && result.preGain > 0 ? { pl: result.preState.level, pp: Math.round((statePct(table, result.preState) ?? 0) * 100) / 100 } : {};
+    return `/checklist#p=${encodePlan({ v: 2, n: planName.trim() || `${lvlWord} ${goalLvlNum}`, lv: goalLvlNum, pct: goalPctNum, q: ids.map((id) => tokenFor(id, allIds)), ...pre })}`;
   };
 
   const resultView = () => {
