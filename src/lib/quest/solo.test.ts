@@ -3,7 +3,7 @@ import { currentSoloId, isSolo } from './solo';
 
 const solo = (area: string, minLevel: number) => ({ id: area.toLowerCase().replace(/ /g, '-'), name: `Solo Quest | ${area}`, minLevel });
 const SOLOS = [
-  solo('Ruinen Village', 20), solo('Forge of the Ancients', 115), solo('Crystal Nest', 118), solo('Land Of Neuren', 120), solo('Whispering Vale', 120),
+  solo('Ruinen Village', 20), solo('Forge of the Ancients', 115), solo('Crystal Nest', 118), solo('Land Of Neuren', 120), solo('Whispering Vale', 150),
 ];
 
 describe('current solo quest', () => {

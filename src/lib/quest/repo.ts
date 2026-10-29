@@ -1,6 +1,7 @@
 // Quest Tracker data. Tables and rules: supabase/30_quest_tracker.sql. Everybody reads; only the administrator writes
 // (enforced by the database). In `npm run dev` with ?fakedb the in-memory copy with ILLUSTRATIVE data is used instead.
 import { supabase } from '../market/supabase';
+import { applyLevelRules } from './levelRules';
 import { sampleData } from './devSample';
 import {
   DEFAULT_SETTINGS, EXP_TABLE_MODES,
@@ -30,7 +31,7 @@ type QuestRow = {
   id: string; name: string; category_id: string; min_level: number | null; max_level: number | null; map: string; npc: string; description: string;
   objectives: Objective[]; base_exp: number | string | null; prerequisites: string[]; repeat_type: RepeatType; repeat_interval_hours: number | null; active: boolean; archived: boolean;
 };
-const toQuest = (r: QuestRow): Quest => ({
+const toQuest = (r: QuestRow): Quest => applyLevelRules({
   id: r.id, name: r.name, categoryId: r.category_id, minLevel: r.min_level, maxLevel: r.max_level, map: r.map, npc: r.npc, description: r.description,
   objectives: Array.isArray(r.objectives) ? r.objectives : [], baseExp: r.base_exp === null ? null : Number(r.base_exp), prerequisites: r.prerequisites ?? [],
   repeatType: r.repeat_type, repeatIntervalHours: r.repeat_interval_hours, active: r.active, archived: r.archived,
