@@ -5,6 +5,8 @@ import { useI18n } from '../../lib/i18n';
 import { questInfo, visibleQuests } from '../../lib/quest/availability';
 import { questReward } from '../../lib/quest/bonus';
 import { expToPercent, pctToState, statePct, type ExpState } from '../../lib/quest/exp';
+import { questGroup } from '../../lib/quest/groups';
+import { groupQuests } from '../../lib/quest/mapGroups';
 import { deliver, planGoal } from '../../lib/quest/planner';
 import type { Quest } from '../../lib/quest/types';
 import { BonusComparison } from './BonusComparison';
@@ -79,6 +81,16 @@ export function ExpCalculator() {
       .sort((a, b) => order[a.status] - order[b.status] || a.quest.name.localeCompare(b.quest.name));
   }, [data, active, now]);
 
+  // the quest picker: by map (highest level first), then the boss hunts, then the solo quests; the quests that give no EXP come last
+  const pickGroups = useMemo(() => {
+    const exp = (r: (typeof list)[number]) => r.quest.baseExp ?? -1;
+    const named = (rows: typeof list, prefix: string) => groupQuests(rows, (r) => r.quest, exp).map((g) => ({ label: `${prefix}${g.map}`, items: g.items }));
+    return [
+      ...named(list.filter((r) => questGroup(r.quest) === 'leveling'), ''),
+      ...named(list.filter((r) => questGroup(r.quest) === 'other'), 'Sem EXP · '),
+    ];
+  }, [list]);
+
   if (!data || !active || !plan || !table) return null;
   const quest: Quest | undefined = data.quests.find((x) => x.id === calcQuestId);
 
@@ -136,7 +148,11 @@ export function ExpCalculator() {
         <label className="mk-field qt-f qt-wide"><span>{T('pick')}</span>
           <select value={calcQuestId ?? ''} onChange={(e) => setCalcQuestId(e.target.value || null)}>
             <option value="">{T('choose')}</option>
-            {list.map(({ quest: x, status }) => <option key={x.id} value={x.id}>{x.name} · {TXT.statuses[lang][status]}{x.baseExp === null ? ' · —' : ''}</option>)}
+            {pickGroups.map((g) => (
+              <optgroup key={g.label} label={`${g.label} (${g.items.length})`}>
+                {g.items.map(({ quest: x, status }) => <option key={x.id} value={x.id}>{x.name} · {TXT.statuses[lang][status]}{x.baseExp === null ? ' · —' : ''}</option>)}
+              </optgroup>
+            ))}
           </select>
         </label>
         {list.length === 0 && <p className="sk-notice">{T('noQuests')}</p>}
