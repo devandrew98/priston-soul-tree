@@ -2469,3 +2469,5 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 
 /* Personal guide: Enter in the editor becomes a new line on the page */
 .pp-block, .pp-check > span, .pp-intro { white-space: pre-line; }
+
+.qt-groups, .mk-subtabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }

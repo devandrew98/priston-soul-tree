@@ -7,8 +7,10 @@ import { expToPercent } from '../../lib/quest/exp';
 import type { Quest, QuestCategory, QuestStatus } from '../../lib/quest/types';
 import { useQuest } from './QuestContext';
 import { fmtExp, fmtPct } from './format';
+import { questGroup, type QuestGroup } from '../../lib/quest/groups';
 
 const TXT = {
+  groups: { pt: { leveling: 'Leveling (dão EXP)', other: 'Outras (sem EXP)' }, en: { leveling: 'Leveling (give EXP)', other: 'Other (no EXP)' } },
   ready: { pt: 'Minhas Quests Prontas', en: 'My Ready Quests' },
   readyHint: { pt: 'Quests prontas para entregar. Adicione ao Planejador de Leveling para planejar a entrega.', en: 'Quests ready to deliver. Add them to the Leveling Planner to plan the delivery.' },
   noReady: { pt: 'Nenhuma quest marcada como pronta para entregar.', en: 'No quest marked as ready to deliver.' },
@@ -62,7 +64,7 @@ const TXT = {
   hiddenNote: { pt: 'Quests de level maior ficam ocultas até você chegar lá (veja em "Bloqueadas / de nível maior").', en: 'Higher-level quests stay hidden until you get there (see "Locked / higher level").' },
   count: { pt: 'quests', en: 'quests' },
 } as const;
-type Tk = Exclude<keyof typeof TXT, 'views' | 'statusName' | 'repeatNames'>;
+type Tk = Exclude<keyof typeof TXT, 'views' | 'statusName' | 'repeatNames' | 'groups'>;
 type View = keyof (typeof TXT)['views']['pt'];
 
 const PAGE = 60;
@@ -75,6 +77,7 @@ export function QuestDatabase() {
   const [cat, setCat] = useState('all');
   const [map, setMap] = useState('all');
   const [lvl, setLvl] = useState('');
+  const [group, setGroup] = useState<QuestGroup>('leveling');
   const [view, setView] = useState<View>('default');
   const [limit, setLimit] = useState(PAGE);
   const [open, setOpen] = useState<string | null>(null);
@@ -93,6 +96,7 @@ export function QuestDatabase() {
   const lvNum = Number(lvl);
   const matchesView = (s: QuestStatus) => view === 'all' || (view === 'default' ? s === 'available' || s === 'in_progress' || s === 'ready' : s === view);
   const filtered = rows.filter(({ quest, info }) => {
+    if (questGroup(quest) !== group) return false;
     if (!matchesView(info.status)) return false;
     if (cat !== 'all' && quest.categoryId !== cat) return false;
     if (map !== 'all' && quest.map !== map) return false;
@@ -165,6 +169,13 @@ export function QuestDatabase() {
       </section>
 
       <section className="sr-card cl-box">
+        <div className="mk-subtabs" role="group" aria-label="Grupo">
+          {(Object.keys(TXT.groups[lang]) as QuestGroup[]).map((g) => (
+            <button key={g} type="button" className={`mk-subtab${group === g ? ' active' : ''}`} aria-pressed={group === g} onClick={() => { setGroup(g); setLimit(PAGE); }}>
+              {TXT.groups[lang][g]} · {rows.filter((r) => questGroup(r.quest) === g).length}
+            </button>
+          ))}
+        </div>
         <div className="qt-filters">
           <input className="qt-search" value={q} onChange={(e) => { setQ(e.target.value); setLimit(PAGE); }} placeholder={T('search')} aria-label={T('search')} />
           <label className="mk-field qt-f"><span>{T('status')}</span>
