@@ -2475,3 +2475,26 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .qt-map-head { list-style: none; margin: 14px 0 4px; padding: 6px 10px; border-left: 3px solid var(--gold); background: rgba(210, 170, 85, 0.1); font-weight: 700; color: var(--gold-bright); }
 .qt-map-head small, .qt-pick-map h5 small { font-weight: 400; color: var(--text-dim); }
 .qt-pick-map h5 { margin: 10px 0 4px; padding: 4px 8px; border-left: 3px solid var(--gold); background: rgba(210, 170, 85, 0.1); color: var(--gold-bright); font-size: 13px; }
+
+/* Quest list, compact: one line per quest, details on demand; maps can be collapsed */
+.qt-list { gap: 2px; }
+.qt-list .qt-map-head { margin: 12px 0 2px; padding: 0; }
+.qt-map-head button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 10px; background: rgba(210, 170, 85, 0.1); border: 0; border-left: 3px solid var(--gold); color: var(--gold-bright); font: inherit; font-weight: 700; text-align: left; cursor: pointer; }
+.qt-map-head button:hover { background: rgba(210, 170, 85, 0.18); }
+.qt-chev { width: 14px; color: var(--text-dim); }
+.qt-row { padding: 6px 10px; border: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); border-radius: 0; background: transparent; }
+.qt-row:hover { background: rgba(255, 255, 255, 0.03); }
+.qt-row.st-locked { opacity: 0.65; }
+.qt-row-main { display: flex; align-items: center; gap: 10px; }
+.qt-dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: #6fcf7f; }
+.qt-dot.st-in_progress { background: #4aa8ff; } .qt-dot.st-ready { background: var(--gold-bright); } .qt-dot.st-completed { background: var(--text-dim); } .qt-dot.st-locked { background: #e07070; }
+.qt-row-name { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
+.qt-row-name b { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.qt-row-name small { font-size: 11.5px; }
+.qt-row-exp { flex: none; text-align: right; font-size: 14px; font-variant-numeric: tabular-nums; }
+.qt-row-act { flex: none; display: flex; align-items: center; gap: 6px; }
+.qt-row-act .mk-btn { padding: 5px 12px; font-size: 12px; }
+.qt-more-btn { width: 30px; height: 30px; background: none; border: 1px solid transparent; border-radius: 6px; color: var(--text-dim); font: inherit; font-size: 16px; cursor: pointer; }
+.qt-more-btn:hover, .qt-more-btn[aria-expanded="true"] { border-color: var(--border); color: var(--gold-bright); }
+.qt-row .qt-detail { margin: 6px 0 4px 19px; }
+@media (max-width: 600px) { .qt-row-main { flex-wrap: wrap; } .qt-row-name { flex-basis: calc(100% - 30px); } .qt-row-exp { text-align: left; margin-left: 19px; } .qt-row-act { margin-left: auto; } }

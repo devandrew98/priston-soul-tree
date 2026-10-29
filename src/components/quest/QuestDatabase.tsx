@@ -1,5 +1,5 @@
 // Quest Database: the quests the character can do now (default), with filters, progress control and the "My Ready Quests" section.
-import { Fragment, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { questInfo, visibleQuests, type StatusInfo } from '../../lib/quest/availability';
 import { questReward } from '../../lib/quest/bonus';
@@ -46,6 +46,11 @@ const TXT = {
   addPlan: { pt: 'Adicionar ao planejador', en: 'Add to planner' },
   inPlan: { pt: 'No planejador', en: 'In planner' },
   details: { pt: 'Detalhes', en: 'Details' },
+  readyShort: { pt: '✓ Pronta', en: '✓ Ready' },
+  deliverShort: { pt: 'Entregar', en: 'Deliver' },
+  readyCount: { pt: 'prontas', en: 'ready' },
+  expand: { pt: 'Mostrar o mapa', en: 'Show map' },
+  collapse: { pt: 'Minimizar o mapa', en: 'Collapse map' },
   deliveries: { pt: 'Entregas', en: 'Deliveries' },
   next: { pt: 'Nova execução a partir de', en: 'Available again from' },
   reasonMin: { pt: 'level mínimo', en: 'minimum level' },
@@ -83,6 +88,9 @@ export function QuestDatabase() {
   const [view, setView] = useState<View>('default');
   const [limit, setLimit] = useState(PAGE);
   const [open, setOpen] = useState<string | null>(null);
+  // maps the player collapsed (true) or expanded (false) by hand; a map whose quests are all marked ready collapses by itself
+  const [collapsedBy, setCollapsedBy] = useState<Record<string, boolean>>(() => { try { return JSON.parse(localStorage.getItem('pz-quest-collapsed') ?? '{}'); } catch { return {}; } });
+  const toggleMap = (m: string, now: boolean) => setCollapsedBy((c) => { const n = { ...c, [m]: !now }; try { localStorage.setItem('pz-quest-collapsed', JSON.stringify(n)); } catch { /* private mode */ } return n; });
 
   const quests = useMemo(() => (data ? visibleQuests(data.quests) : []), [data]);
   const rows = useMemo(() => (active ? quests.map((quest) => ({ quest, info: questInfo(quest, active, now) })) : []), [quests, active, now]);
@@ -115,41 +123,25 @@ export function QuestDatabase() {
   // by map (highest-level map first), and inside each map the quest that gives the most EXP first
   const grouped = groupByMap(inFilters.filter((r) => questGroup(r.quest) === group), (r) => r.quest.map, (r) => expOf(r.quest), (r) => r.quest.minLevel, (r) => r.quest.name);
   const filtered = grouped.flatMap((g) => g.items);
-  const mapHead = new Map(grouped.map((g) => [g.items[0].quest.id, { map: g.map, n: g.items.length }]));
+  const allMarked = (items: typeof filtered) => items.length > 0 && items.every((r) => r.info.status === 'ready' || r.info.status === 'completed');
+  const isCollapsed = (g: (typeof grouped)[number]) => collapsedBy[g.map] ?? allMarked(g.items);
+  const out: ({ head: (typeof grouped)[number]; col: boolean } | { row: (typeof filtered)[number] })[] = [];
+  let shown = 0, totalRows = 0;
+  for (const g of grouped) {
+    const col = isCollapsed(g);
+    out.push({ head: g, col });
+    if (col) continue;
+    totalRows += g.items.length;
+    for (const r of g.items) if (shown < limit) { out.push({ row: r }); shown++; }
+  }
 
   const reasonText = (info: StatusInfo, quest: Quest) => info.reasons.map((r) => (r === 'level_min' ? `${T('reasonMin')} ${quest.minLevel}` : r === 'level_max' ? T('reasonMax') : T('reasonPre'))).join(' · ');
   const catChip = (id: string) => <span className="qt-chip" style={catOf(id)?.color ? { borderColor: catOf(id)!.color, color: catOf(id)!.color } : undefined}>{catOf(id)?.name ?? id}</span>;
-  const expCells = (quest: Quest) => {
-    const r = rewardOf(quest);
-    if (!r) return <span className="mk-muted">{T('noExp')}</span>;
-    const p = pctOfLevel(r.total);
-    return (
-      <span className="qt-exp">
-        <b>{fmtExp(r.total, lang)}</b>
-        {r.extra > 0 && <small> ({fmtExp(r.base, lang)} + {fmtExp(r.extra, lang)})</small>}
-        <small className="mk-muted"> · {p === null ? T('noTable') : `${fmtPct(p, lang)} ${T('ofLevel')} ${active.level}`}</small>
-      </span>
-    );
-  };
   const planBtn = (quest: Quest) => (
     <button type="button" className={`mk-btn${plannerIds.includes(quest.id) ? ' primary' : ''}`} onClick={() => togglePlanner(quest.id)}>
       {plannerIds.includes(quest.id) ? `✔ ${T('inPlan')}` : `➕ ${T('addPlan')}`}
     </button>
   );
-  const actions = (quest: Quest, info: StatusInfo) => (
-    <div className="qt-actions">
-      {info.status === 'available' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'start')}>{T('start')}</button>}
-      {info.status === 'available' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'ready')}>{T('markReady')}</button>}
-      {info.status === 'in_progress' && <button type="button" className="mk-btn primary" onClick={() => setQuestState(quest.id, 'ready')}>{T('markReady')}</button>}
-      {info.status === 'in_progress' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'reset')}>{T('cancel')}</button>}
-      {info.status === 'ready' && <button type="button" className="mk-btn primary" onClick={() => setQuestState(quest.id, 'deliver')}>{T('deliver')}</button>}
-      {info.status === 'ready' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'start')}>{T('back')}</button>}
-      {info.status === 'completed' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'undo')}>{T('undo')}</button>}
-      {info.status !== 'locked' && info.status !== 'completed' && <button type="button" className="mk-btn" onClick={() => { setCalcQuestId(quest.id); setTab('calculator'); }}>🧮 {T('calc')}</button>}
-      {info.status !== 'locked' && info.status !== 'completed' && planBtn(quest)}
-    </div>
-  );
-
   return (
     <div className="qt-section">
       <section className="sr-card cl-box">
@@ -216,40 +208,71 @@ export function QuestDatabase() {
 
         {quests.length === 0 ? <p className="sk-notice">{T('noQuests')}</p> : filtered.length === 0 ? <p className="sk-notice">{T('none')}</p> : (
           <ul className="qt-list">
-            {filtered.slice(0, limit).map(({ quest, info }) => (
-              <Fragment key={quest.id}>
-              {mapHead.has(quest.id) && <li className="qt-map-head">{mapHead.get(quest.id)!.map} <small>· {mapHead.get(quest.id)!.n}</small></li>}
-              <li className={`qt-quest st-${info.status}`}>
-                <div className="qt-quest-head">
-                  <div className="qt-quest-title">
-                    <b>{quest.name}</b> <small className="mk-muted">{quest.id}</small>
-                    <div>{catChip(quest.categoryId)} <span className={`qt-pill st-${info.status}`}>{TXT.statusName[lang][info.status]}</span>
-                      <small className="mk-muted"> · {T('level')} {quest.minLevel ?? '—'}{quest.maxLevel !== null ? `–${quest.maxLevel}` : '+'}{quest.map ? ` · ${quest.map}` : ''}{quest.npc ? ` · ${T('npc')} ${quest.npc}` : ''}</small>
+            {out.map((o) => {
+              if ('head' in o) {
+                const g = o.head;
+                const marked = g.items.filter((r) => r.info.status === 'ready' || r.info.status === 'completed').length;
+                return (
+                  <li key={`map:${g.map}`} className="qt-map-head">
+                    <button type="button" aria-expanded={!o.col} title={o.col ? T('expand') : T('collapse')} onClick={() => toggleMap(g.map, o.col)}>
+                      <span className="qt-chev">{o.col ? '▸' : '▾'}</span> {g.map} <small>· {g.items.length}{marked > 0 ? ` · ✓ ${marked}` : ''}</small>
+                    </button>
+                  </li>
+                );
+              }
+              const { quest, info } = o.row;
+              const r = rewardOf(quest);
+              const p = r ? pctOfLevel(r.total) : null;
+              const isOpen = open === quest.id;
+              const lvlText = `${T('level')} ${quest.minLevel ?? '—'}${quest.maxLevel !== null ? `–${quest.maxLevel}` : '+'}`;
+              return (
+                <li key={quest.id} className={`qt-row st-${info.status}`}>
+                  <div className="qt-row-main">
+                    <span className={`qt-dot st-${info.status}`} title={TXT.statusName[lang][info.status]} />
+                    <div className="qt-row-name">
+                      <b>{quest.name}</b>
+                      <small className="mk-muted">{lvlText}{quest.npc ? ` · ${quest.npc}` : ''}{info.status !== 'available' ? ` · ${TXT.statusName[lang][info.status]}` : ''}</small>
+                    </div>
+                    <div className="qt-row-exp">{r ? <b>{fmtExp(r.total, lang)}</b> : <span className="mk-muted">{T('noExp')}</span>}</div>
+                    <div className="qt-row-act">
+                      {(info.status === 'available' || info.status === 'in_progress') && <button type="button" className="mk-btn primary" onClick={() => setQuestState(quest.id, 'ready')}>{T('readyShort')}</button>}
+                      {info.status === 'ready' && <button type="button" className="mk-btn primary" onClick={() => setQuestState(quest.id, 'deliver')}>{T('deliverShort')}</button>}
+                      <button type="button" className="qt-more-btn" aria-expanded={isOpen} aria-label={T('details')} title={T('details')} onClick={() => setOpen(isOpen ? null : quest.id)}>{isOpen ? '▴' : '⋯'}</button>
                     </div>
                   </div>
-                  <div className="qt-quest-exp">{expCells(quest)}</div>
-                </div>
-                {info.status === 'locked' && <small className="qt-lock">🔒 {reasonText(info, quest)}</small>}
-                {info.status === 'completed' && info.nextAvailableAt !== null && <small className="mk-muted">⏳ {T('next')} {new Date(info.nextAvailableAt).toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US')}</small>}
-                {actions(quest, info)}
-                <button type="button" className="qt-more" aria-expanded={open === quest.id} onClick={() => setOpen(open === quest.id ? null : quest.id)}>{open === quest.id ? '▾' : '▸'} {T('details')}</button>
-                {open === quest.id && (
-                  <div className="qt-detail">
-                    {quest.description && <p>{quest.description}</p>}
-                    {quest.objectives.length > 0 && <><b>{T('objectives')}</b><ul>{quest.objectives.map((o, i) => <li key={i}>{o.name}{o.qty !== null ? ` × ${o.qty}` : ''} <small className="mk-muted">({o.kind})</small></li>)}</ul></>}
-                    {quest.prerequisites.length > 0 && <p><b>{T('prereq')}:</b> {quest.prerequisites.map((id) => data.quests.find((x) => x.id === id)?.name ?? id).join(', ')}</p>}
-                    <p><b>{T('repeat')}:</b> {TXT.repeatNames[lang][quest.repeatType]}{quest.repeatType === 'interval' && quest.repeatIntervalHours ? ` ${quest.repeatIntervalHours} ${T('hours')}` : ''}</p>
-                    {(active.progress[quest.id]?.deliveries.length ?? 0) > 0 && (
-                      <p><b>{T('deliveries')}:</b> {active.progress[quest.id].deliveries.map((d) => new Date(d).toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US')).join(' · ')}</p>
-                    )}
-                  </div>
-                )}
-              </li>
-              </Fragment>
-            ))}
+                  {info.status === 'locked' && <small className="qt-lock">🔒 {reasonText(info, quest)}</small>}
+                  {isOpen && (
+                    <div className="qt-detail">
+                      <p>
+                        {r && r.extra > 0 && <span>{fmtExp(r.base, lang)} + {fmtExp(r.extra, lang)} · </span>}
+                        {r && (p === null ? T('noTable') : `${fmtPct(p, lang)} ${T('ofLevel')} ${active.level}`)}
+                        {catOf(quest.categoryId) ? ` · ${catOf(quest.categoryId)!.name}` : ''}
+                        <small className="mk-muted"> · {quest.id}</small>
+                      </p>
+                      {info.status === 'completed' && info.nextAvailableAt !== null && <small className="mk-muted">⏳ {T('next')} {new Date(info.nextAvailableAt).toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US')}</small>}
+                      <div className="qt-actions">
+                        {info.status === 'available' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'start')}>{T('start')}</button>}
+                        {info.status === 'in_progress' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'reset')}>{T('cancel')}</button>}
+                        {info.status === 'ready' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'start')}>{T('back')}</button>}
+                        {info.status === 'completed' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'undo')}>{T('undo')}</button>}
+                        {info.status !== 'locked' && info.status !== 'completed' && <button type="button" className="mk-btn" onClick={() => { setCalcQuestId(quest.id); setTab('calculator'); }}>🧮 {T('calc')}</button>}
+                        {info.status !== 'locked' && info.status !== 'completed' && planBtn(quest)}
+                      </div>
+                      {quest.description && <p>{quest.description}</p>}
+                      {quest.objectives.length > 0 && <><b>{T('objectives')}</b><ul>{quest.objectives.map((ob, i) => <li key={i}>{ob.name}{ob.qty !== null ? ` × ${ob.qty}` : ''} <small className="mk-muted">({ob.kind})</small></li>)}</ul></>}
+                      {quest.prerequisites.length > 0 && <p><b>{T('prereq')}:</b> {quest.prerequisites.map((id) => data.quests.find((x) => x.id === id)?.name ?? id).join(', ')}</p>}
+                      <p><b>{T('repeat')}:</b> {TXT.repeatNames[lang][quest.repeatType]}{quest.repeatType === 'interval' && quest.repeatIntervalHours ? ` ${quest.repeatIntervalHours} ${T('hours')}` : ''}</p>
+                      {(active.progress[quest.id]?.deliveries.length ?? 0) > 0 && (
+                        <p><b>{T('deliveries')}:</b> {active.progress[quest.id].deliveries.map((d) => new Date(d).toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US')).join(' · ')}</p>
+                      )}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
-        {filtered.length > limit && <button type="button" className="mk-btn" onClick={() => setLimit(limit + PAGE)}>{T('more')} ({filtered.length - limit})</button>}
+        {totalRows > limit && <button type="button" className="mk-btn" onClick={() => setLimit(limit + PAGE)}>{T('more')} ({totalRows - limit})</button>}
       </section>
     </div>
   );
