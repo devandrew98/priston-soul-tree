@@ -58,7 +58,7 @@ const TOOL_TABS: { id: ToolTab; icon: string; key: string; hidden?: boolean }[] 
   { id: 'builds', icon: '🏆', key: 'nav.builds' },
   { id: 'screenshare', icon: '🖥', key: 'nav.screenshare' },
   { id: 'aging', icon: '⚒', key: 'nav.aging' },
-  { id: 'quests', icon: '📜', key: 'nav.quests', hidden: true }, // /quests works by link; remove `hidden` to list it in the menu
+  { id: 'quests', icon: '📜', key: 'nav.quests' },
   { id: 'clan', icon: '🏰', key: 'nav.clan' }, // only shown to the admin and to clan leaders/vices
 ];
 
