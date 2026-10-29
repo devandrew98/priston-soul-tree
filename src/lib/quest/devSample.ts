@@ -12,12 +12,13 @@ export const defaultCategories = (): QuestCategory[] => [
   { id: 'special', name: 'Quests especiais', sort: 5, color: '#c27ba0', active: true, builtin: true },
 ];
 
-/** The four initial bonuses of the brief (these are the only "official" values; the percentages can be changed by the admin). */
+/** The initial bonuses of the brief (these are the only "official" values; the percentages can be changed by the admin). */
 export const defaultBonuses = (): ExpBonus[] => [
   { id: 'exp_potion', name: 'EXP Potion', kind: 'toggle', percent: 30, enabled: true, appliesTo: [], sort: 1, builtin: true },
   { id: 'world_buff', name: 'World Buff', kind: 'toggle', percent: 5, enabled: true, appliesTo: [], sort: 2, builtin: true },
   { id: 'fast_honey', name: 'Fast Honey', kind: 'toggle', percent: 10, enabled: true, appliesTo: [], sort: 3, builtin: true },
   { id: 'soul_tree', name: 'Soul Tree', kind: 'manual', percent: 0, enabled: true, appliesTo: [], sort: 4, builtin: true },
+  { id: 'catch_up', name: 'Catch-Up EXP', kind: 'manual', percent: 0, enabled: true, appliesTo: [], sort: 5, builtin: true },
 ];
 
 const q = (id: string, name: string, over: Partial<Quest>): Quest => ({
