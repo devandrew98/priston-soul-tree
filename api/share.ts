@@ -33,6 +33,7 @@ const PAGES: Record<string, { title: string; description: string }> = {
   '/builds': { title: `Builds da Comunidade — ${SITE}`, description: 'Salve as suas builds de skills e souls na conta, compartilhe com a comunidade e veja o que os outros jogadores montaram.' },
     '/aging': { title: `Sistema de Aging — ${SITE}`, description: 'Calcule quantos sheltoms e quanto gold você vai gastar para envelhecer armas, armaduras, robes, escudos e orbs.' },
   '/cla': { title: `Formação do Clã — ${SITE}`, description: 'Ferramenta para líderes de clã montarem as parties e raids do Bless Castle.' },
+  '/checklist': { title: `Checklist de leveling — ${SITE}`, description: 'Plano de leveling com as quests na ordem de entrega, para marcar conforme faz.' },
   '/leveling': { title: `Rota de leveling — ${SITE}`, description: 'Guia passo a passo com marcador de progresso para fazer as quests em grupo.' },
   '/quests': { title: `Quest Tracker — ${SITE}`, description: 'Acompanhe suas quests, calcule a EXP com os seus bônus e planeje as entregas para chegar ao level que você quer.' },
   '/sharing': { title: `Compartilhamento de Tela — ${SITE}`, description: 'Mostre o seu jogo para os amigos, direto pelo navegador, de graça e sem instalar nada.' },

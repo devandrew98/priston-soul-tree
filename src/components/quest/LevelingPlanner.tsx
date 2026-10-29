@@ -5,6 +5,7 @@ import { useI18n } from '../../lib/i18n';
 import { availableList, unlockedBetween } from '../../lib/quest/availability';
 import { questReward } from '../../lib/quest/bonus';
 import { expBetween, pctToState, statePct, type ExpState } from '../../lib/quest/exp';
+import { encodePlan } from '../../lib/quest/checklist';
 import { groupQuests } from '../../lib/quest/mapGroups';
 import { deliveredIds, planGoal, type PlanResult } from '../../lib/quest/planner';
 import type { Quest, SavedPlan } from '../../lib/quest/types';
@@ -56,6 +57,10 @@ const TXT = {
   heuristic: { pt: 'Muitas quests: foi usada uma ordem razoável (pré-requisitos e level), sem testar todas as combinações.', en: 'Many quests: one reasonable order was used (prerequisites and level), without trying every combination.' },
   step: { pt: 'Evolução após cada entrega', en: 'Progress after each delivery' },
   afterLeveling: { pt: 'Depois de upar', en: 'After levelling' },
+  openChecklist: { pt: '🔗 Abrir checklist', en: '🔗 Open checklist' },
+  copyChecklist: { pt: '📋 Copiar link do checklist', en: '📋 Copy checklist link' },
+  copied: { pt: 'Link copiado!', en: 'Link copied!' },
+  checklistHint: { pt: 'Uma página à parte, com link, para ir marcando as quests conforme faz. Pode mandar o link para o grupo.', en: 'A separate page, with a link, to tick the quests off as you do them. You can send the link to your group.' },
   capped: { pt: 'limitada pela regra de limite por quest', en: 'limited by the per-quest limit rule' },
   unlocks: { pt: 'Quests que serão desbloqueadas ao subir de level', en: 'Quests unlocked by levelling up' },
   unlocksNote: { pt: 'Não contam como prontas para entrega nem como concluídas.', en: 'They do not count as ready to deliver nor as completed.' },
@@ -85,6 +90,7 @@ export function LevelingPlanner() {
   const [goalLevel, setGoalLevel] = useState('');
   const [goalPct, setGoalPct] = useState('0');
   const [planName, setPlanName] = useState('');
+  const [copied, setCopied] = useState(false);
   const lvlWord = 'Level';
 
   const startLevel = sim ? Number(simLevel) || (active?.level ?? 1) : active?.level ?? 1;
@@ -129,6 +135,13 @@ export function LevelingPlanner() {
     );
   };
 
+  // the plan as a link to the checklist page: the quests in the order of delivery
+  const checklistLink = () => {
+    const ids = result && result.steps.length ? result.steps.map((x) => x.quest.id) : selected.map((x) => x.id);
+    const pre = result && result.preGain > 0 ? `${T('afterLeveling')}: ${fmtPos(table, result.preState, lang, lvlWord)}` : undefined;
+    return `/checklist#p=${encodePlan({ v: 1, n: planName.trim() || `${lvlWord} ${goalLvlNum}`, lv: goalLvlNum, pct: goalPctNum, q: ids, ...(pre ? { p: pre } : {}) })}`;
+  };
+
   const resultView = () => {
     if (!result) return null;
     if (result.status === 'missing_data') return <p className="sk-notice">{T('missing')} {result.missingLevel}{T('missingTail')}</p>;
@@ -166,6 +179,11 @@ export function LevelingPlanner() {
               : orderDiff !== null && orderDiff > 0 ? <p className="mk-muted">{T('better')} <b>{fmtExp(orderDiff, lang)}</b> {T('betterTail')} ({result.orders.valid} {T('seq')}).</p> : null}
             <p className="mk-muted">{T('preRequired')}</p>
             <h4>{T('step')}</h4>
+            <div className="qt-actions">
+              <a className="mk-btn primary" href={checklistLink()} target="_blank" rel="noopener">{T('openChecklist')}</a>
+              <button type="button" className="mk-btn" onClick={() => { void navigator.clipboard?.writeText(window.location.origin + checklistLink()); setCopied(true); window.setTimeout(() => setCopied(false), 2000); }}>{copied ? T('copied') : T('copyChecklist')}</button>
+            </div>
+            <p className="mk-muted">{T('checklistHint')}</p>
             <ol className="qt-steps">
               {result.preGain > 0 && (
                 <li><span>{T('afterLeveling')}</span><b>{fmtPos(table, result.preState, lang, lvlWord)}</b>

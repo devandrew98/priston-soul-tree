@@ -25,6 +25,7 @@ import { ClanSharePage } from './components/clan/ClanSharePage';
 import { PersonalPage } from './components/personal/PersonalPage';
 
 // Private pain diary (pristonzone.com/dor): a separate app that only shares the domain; loaded on demand so the site does not carry it.
+const ChecklistPage = lazy(() => import('./components/quest/ChecklistPage').then((m) => ({ default: m.ChecklistPage })));
 const DorApp = lazy(() => import('./components/dor/DorApp').then((m) => ({ default: m.DorApp })));
 import { useClanAccess } from './components/clan/useClanAccess';
 import { Builds } from './components/builds/Builds';
@@ -104,6 +105,9 @@ export default function App() {
   if (window.location.pathname.startsWith('/formacao/')) {
     return <ClanSharePage token={decodeURIComponent(window.location.pathname.slice('/formacao/'.length).replace(/\/$/, ''))} />;
   }
+
+  // Leveling checklist (a plan from the planner as a page to tick off): standalone, the plan comes in the link.
+  if (window.location.pathname.toLowerCase().replace(/\/+$/, '') === '/checklist') return <Suspense fallback={null}><ChecklistPage /></Suspense>;
 
   // Private pain diary: nothing else of the site is shown on this address.
   if (window.location.pathname.toLowerCase().replace(/\/+$/, '') === '/dor') return <Suspense fallback={null}><DorApp /></Suspense>;
