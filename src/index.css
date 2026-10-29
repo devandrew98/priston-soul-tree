@@ -2413,7 +2413,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .mk-admin-delask > span:first-child { flex: 1 1 260px; }
 .mk-admin-delerr { flex-basis: 100%; color: var(--attack); font-weight: 700; }
 
-/* Personal guide page (/pessoalhadder) */
+/* Personal guide page (/leveling) */
 .pp { max-width: 860px; margin: 0 auto; padding: 18px 16px 56px; }
 .pp-head { margin-bottom: 14px; }
 .pp-intro { color: var(--text-dim); margin: 6px 0 12px; }
@@ -2435,8 +2435,6 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .pp-tip { padding: 10px 12px; border-left: 3px solid var(--gold); background: rgba(212, 170, 80, 0.1); border-radius: 6px; }
 .pp-tip::before { content: '💡 '; }
 .pp-foot { margin-top: 20px; text-align: center; }
-.pp-lock { background: none; border: 0; opacity: 0.35; cursor: pointer; font-size: 18px; }
-.pp-lock:hover { opacity: 0.9; }
 .pp-bar { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px; margin-bottom: 12px; border: 1px solid var(--gold); border-radius: 10px; background: var(--panel); }
 .pp-bar-spacer { flex: 1; }
 .pp-edit-head, .pp-edit-section { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }

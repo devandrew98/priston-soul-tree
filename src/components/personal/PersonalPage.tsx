@@ -1,8 +1,7 @@
-// pristonzone.com/pessoalhadder: a private-link guide with check-off items. Everybody with the link reads it and ticks their own
+// pristonzone.com/leveling: a private-link guide with check-off items. Everybody with the link reads it and ticks their own
 // progress (kept in their browser); only the administrator sees the editor, which works inside this same page.
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../market/store';
-import { AuthModal } from '../market/AuthModal';
 import { Loading } from '../Loading';
 import {
   BLOCK_KINDS, LIMITS, PAGE_SLUG, PERSONAL_FAKE, defaultPage, getPageRepo, inlinePieces, isCheckable, loadMarks, newId, pageBlocks, progressOf, sanitizePage,
@@ -26,7 +25,7 @@ const move = <T,>(list: T[], i: number, d: -1 | 1): T[] => {
 };
 
 export function PersonalPage() {
-  const { isAdmin: realAdmin, isLoggedIn } = useAuth();
+  const { isAdmin: realAdmin } = useAuth();
   const isAdmin = realAdmin || PERSONAL_FAKE;
   const [page, setPage] = useState<Page | null>(null);
   const [loadError, setLoadError] = useState(false);
@@ -36,7 +35,6 @@ export function PersonalPage() {
   const [msg, setMsg] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
   const [confirmDel, setConfirmDel] = useState<string | null>(null);
-  const [showAuth, setShowAuth] = useState(false);
 
   useEffect(() => {
     document.title = 'Rota de leveling — PristonZONE';
@@ -188,13 +186,9 @@ export function PersonalPage() {
       })}
 
       <footer className="pp-foot">
-        {isAdmin ? (
-          <button type="button" className="mk-btn" onClick={startEdit}>✏ Editar esta página</button>
-        ) : !isLoggedIn ? (
-          <button type="button" className="pp-lock" onClick={() => setShowAuth(true)} aria-label="Entrar para editar">🔒</button>
-        ) : null}
+        {/* Only the administrator sees the editor (and the database refuses anybody else's save). */}
+        {isAdmin && <button type="button" className="mk-btn" onClick={startEdit}>✏ Editar esta página</button>}
       </footer>
-      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
     </div>
   );
 }

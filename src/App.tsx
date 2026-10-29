@@ -102,8 +102,13 @@ export default function App() {
     return <ClanSharePage token={decodeURIComponent(window.location.pathname.slice('/formacao/'.length).replace(/\/$/, ''))} />;
   }
 
-  // Personal guide (pristonzone.com/pessoalhadder): standalone page, not in any menu. Only the administrator can edit it.
-  if (window.location.pathname.toLowerCase().replace(/\/+$/, '') === '/pessoalhadder') return <PersonalPage />;
+  // Leveling guide (pristonzone.com/leveling): standalone page, not in any menu. Only the administrator can edit it; everybody else just ticks their own items.
+  // The old address (/pessoalhadder) keeps working and moves to the new one.
+  {
+    const path = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+    if (path === '/pessoalhadder') window.history.replaceState(null, '', `/leveling${window.location.search}${window.location.hash}`);
+    if (path === '/pessoalhadder' || path === '/leveling') return <PersonalPage />;
+  }
 
   const { t, lang, setLang } = useI18n();
   const { isAdmin, isLoggedIn, user, logout } = useAuth();

@@ -1,4 +1,4 @@
-// Personal follow-along page (pristonzone.com/pessoalhadder): a guide made of sections, each with text and check-off items.
+// Personal follow-along page (pristonzone.com/leveling): a guide made of sections, each with text and check-off items.
 // The owner (administrator) edits it inside the page itself; everybody else only reads it and ticks their own items.
 // Content lives in public.personal_pages (supabase/34_personal_page.sql); the ticks of each visitor stay in that browser.
 import { supabase } from '../market/supabase';
