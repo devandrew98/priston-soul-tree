@@ -5,6 +5,7 @@ import { useI18n } from '../../lib/i18n';
 import { availableList, unlockedBetween } from '../../lib/quest/availability';
 import { questReward } from '../../lib/quest/bonus';
 import { expBetween, pctToState, statePct, type ExpState } from '../../lib/quest/exp';
+import { groupByMap } from '../../lib/quest/mapGroups';
 import { deliveredIds, planGoal, type PlanResult } from '../../lib/quest/planner';
 import type { Quest, SavedPlan } from '../../lib/quest/types';
 import { BonusComparison } from './BonusComparison';
@@ -107,8 +108,15 @@ export function LevelingPlanner() {
 
   if (!data || !active || !plan || !table) return null;
   const rewardOf = (q: Quest) => questReward(q, data.bonuses, active.bonuses, settings.combineMode, settings.rounding);
-  const readyList = pickable.filter((p) => p.info.status === 'ready');
-  const otherList = pickable.filter((p) => p.info.status !== 'ready');
+  // only quests that give EXP (they are the ones that matter for leveling)
+  const givesExp = pickable.filter((p) => (p.quest.baseExp ?? 0) > 0);
+  const readyList = givesExp.filter((p) => p.info.status === 'ready');
+  const otherList = givesExp.filter((p) => p.info.status !== 'ready');
+  // by map (highest-level map first) and, inside each map, the most EXP first
+  const byMap = (list: typeof givesExp) => groupByMap(list, (p) => p.quest.map, (p) => rewardOf(p.quest)?.total ?? -1, (p) => p.quest.minLevel, (p) => p.quest.name);
+  const pickGroups = (list: typeof givesExp) => byMap(list).map((g) => (
+    <div key={g.map} className="qt-pick-map"><h5>{g.map} <small>· {g.items.length}</small></h5>{g.items.map(pickRow)}</div>
+  ));
 
   const pickRow = ({ quest }: { quest: Quest }) => {
     const r = rewardOf(quest);
@@ -243,11 +251,11 @@ export function LevelingPlanner() {
         <div className="qt-picklist">
           <div>
             <h4>{T('readyQuests')} <small>· {readyList.length}</small> {readyList.length > 0 && <button type="button" className="mk-btn" onClick={() => setPlannerIds([...new Set([...plannerIds, ...readyList.map((r) => r.quest.id)])])}>{T('addAllReady')}</button>}</h4>
-            {readyList.map(pickRow)}
+            {pickGroups(readyList)}
           </div>
           <div>
             <h4>{T('availableQuests')} <small>· {otherList.length}</small></h4>
-            <div className="qt-picklist-scroll">{otherList.map(pickRow)}</div>
+            <div className="qt-picklist-scroll">{pickGroups(otherList)}</div>
           </div>
         </div>
       </section>

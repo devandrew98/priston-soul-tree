@@ -1,5 +1,5 @@
 // Quest Database: the quests the character can do now (default), with filters, progress control and the "My Ready Quests" section.
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { questInfo, visibleQuests, type StatusInfo } from '../../lib/quest/availability';
 import { questReward } from '../../lib/quest/bonus';
@@ -9,6 +9,7 @@ import { useQuest } from './QuestContext';
 import { fmtExp, fmtPct } from './format';
 import { questGroup, type QuestGroup } from '../../lib/quest/groups';
 import { currentSoloId, isSolo } from '../../lib/quest/solo';
+import { groupByMap } from '../../lib/quest/mapGroups';
 
 const TXT = {
   groups: { pt: { leveling: 'Leveling (dão EXP)', other: 'Outras (sem EXP)' }, en: { leveling: 'Leveling (give EXP)', other: 'Other (no EXP)' } },
@@ -111,7 +112,10 @@ export function QuestDatabase() {
   const inFilters = rows.filter(passes);
   // the quests that give the most EXP come first
   const expOf = (quest: Quest) => rewardOf(quest)?.total ?? -1;
-  const filtered = inFilters.filter((r) => questGroup(r.quest) === group).sort((a, b) => expOf(b.quest) - expOf(a.quest) || a.quest.name.localeCompare(b.quest.name));
+  // by map (highest-level map first), and inside each map the quest that gives the most EXP first
+  const grouped = groupByMap(inFilters.filter((r) => questGroup(r.quest) === group), (r) => r.quest.map, (r) => expOf(r.quest), (r) => r.quest.minLevel, (r) => r.quest.name);
+  const filtered = grouped.flatMap((g) => g.items);
+  const mapHead = new Map(grouped.map((g) => [g.items[0].quest.id, { map: g.map, n: g.items.length }]));
 
   const reasonText = (info: StatusInfo, quest: Quest) => info.reasons.map((r) => (r === 'level_min' ? `${T('reasonMin')} ${quest.minLevel}` : r === 'level_max' ? T('reasonMax') : T('reasonPre'))).join(' · ');
   const catChip = (id: string) => <span className="qt-chip" style={catOf(id)?.color ? { borderColor: catOf(id)!.color, color: catOf(id)!.color } : undefined}>{catOf(id)?.name ?? id}</span>;
@@ -213,7 +217,9 @@ export function QuestDatabase() {
         {quests.length === 0 ? <p className="sk-notice">{T('noQuests')}</p> : filtered.length === 0 ? <p className="sk-notice">{T('none')}</p> : (
           <ul className="qt-list">
             {filtered.slice(0, limit).map(({ quest, info }) => (
-              <li key={quest.id} className={`qt-quest st-${info.status}`}>
+              <Fragment key={quest.id}>
+              {mapHead.has(quest.id) && <li className="qt-map-head">{mapHead.get(quest.id)!.map} <small>· {mapHead.get(quest.id)!.n}</small></li>}
+              <li className={`qt-quest st-${info.status}`}>
                 <div className="qt-quest-head">
                   <div className="qt-quest-title">
                     <b>{quest.name}</b> <small className="mk-muted">{quest.id}</small>
@@ -239,6 +245,7 @@ export function QuestDatabase() {
                   </div>
                 )}
               </li>
+              </Fragment>
             ))}
           </ul>
         )}

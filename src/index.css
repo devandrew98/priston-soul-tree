@@ -2471,3 +2471,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .pp-block, .pp-check > span, .pp-intro { white-space: pre-line; }
 
 .qt-groups, .mk-subtabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+
+.qt-map-head { list-style: none; margin: 14px 0 4px; padding: 6px 10px; border-left: 3px solid var(--gold); background: rgba(210, 170, 85, 0.1); font-weight: 700; color: var(--gold-bright); }
+.qt-map-head small, .qt-pick-map h5 small { font-weight: 400; color: var(--text-dim); }
+.qt-pick-map h5 { margin: 10px 0 4px; padding: 4px 8px; border-left: 3px solid var(--gold); background: rgba(210, 170, 85, 0.1); color: var(--gold-bright); font-size: 13px; }
