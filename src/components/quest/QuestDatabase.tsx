@@ -95,15 +95,17 @@ export function QuestDatabase() {
   const readyRows = rows.filter((r) => r.info.status === 'ready');
   const lvNum = Number(lvl);
   const matchesView = (s: QuestStatus) => view === 'all' || (view === 'default' ? s === 'available' || s === 'in_progress' || s === 'ready' : s === view);
-  const filtered = rows.filter(({ quest, info }) => {
-    if (questGroup(quest) !== group) return false;
+  // everything the filters allow, except the group tab (so the tab numbers match the list they open)
+  const passes = ({ quest, info }: (typeof rows)[number]) => {
     if (!matchesView(info.status)) return false;
     if (cat !== 'all' && quest.categoryId !== cat) return false;
     if (map !== 'all' && quest.map !== map) return false;
     if (lvl.trim() !== '' && Number.isFinite(lvNum) && ((quest.minLevel !== null && lvNum < quest.minLevel) || (quest.maxLevel !== null && lvNum > quest.maxLevel))) return false;
     const text = q.trim().toLowerCase();
     return !text || quest.name.toLowerCase().includes(text) || quest.id.toLowerCase().includes(text);
-  });
+  };
+  const inFilters = rows.filter(passes);
+  const filtered = inFilters.filter((r) => questGroup(r.quest) === group);
 
   const reasonText = (info: StatusInfo, quest: Quest) => info.reasons.map((r) => (r === 'level_min' ? `${T('reasonMin')} ${quest.minLevel}` : r === 'level_max' ? T('reasonMax') : T('reasonPre'))).join(' · ');
   const catChip = (id: string) => <span className="qt-chip" style={catOf(id)?.color ? { borderColor: catOf(id)!.color, color: catOf(id)!.color } : undefined}>{catOf(id)?.name ?? id}</span>;
@@ -172,7 +174,7 @@ export function QuestDatabase() {
         <div className="mk-subtabs" role="group" aria-label="Grupo">
           {(Object.keys(TXT.groups[lang]) as QuestGroup[]).map((g) => (
             <button key={g} type="button" className={`mk-subtab${group === g ? ' active' : ''}`} aria-pressed={group === g} onClick={() => { setGroup(g); setLimit(PAGE); }}>
-              {TXT.groups[lang][g]} · {rows.filter((r) => questGroup(r.quest) === g).length}
+              {TXT.groups[lang][g]} · {inFilters.filter((r) => questGroup(r.quest) === g).length}
             </button>
           ))}
         </div>
