@@ -9,7 +9,7 @@ export interface Section { id: string; title: string; blocks: Block[] }
 export interface PersonalPage { title: string; intro: string; sections: Section[] }
 
 export const BLOCK_KINDS: BlockKind[] = ['text', 'check', 'step', 'tip'];
-export const LIMITS = { title: 120, intro: 1000, sectionTitle: 120, text: 1000, sections: 40, blocks: 200 } as const;
+export const LIMITS = { title: 120, intro: 1000, sectionTitle: 120, text: 3000, sections: 40, blocks: 200 } as const;
 
 /** Items the visitor can tick. */
 export const isCheckable = (b: Block) => b.kind === 'check' || b.kind === 'step';

@@ -2468,3 +2468,6 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 /* Personal guide: the step number is part of the text, so every item's text starts in the same column */
 .pp-check .pp-num { margin-right: 6px; }
 .pp-check > span { min-width: 0; overflow-wrap: anywhere; }
+
+/* Personal guide: Enter in the editor becomes a new line on the page */
+.pp-block, .pp-check > span, .pp-intro { white-space: pre-line; }

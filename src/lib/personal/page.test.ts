@@ -16,6 +16,12 @@ describe('sanitizePage', () => {
   it('cuts texts at the limits', () => {
     expect(sanitizePage({ title: 'x'.repeat(500) }).title).toHaveLength(120);
   });
+  it('allows 3000 characters per block and keeps line breaks', () => {
+    const text = ['linha 1', 'linha 2', 'x'.repeat(3500)].join('\n');
+    const p = sanitizePage({ sections: [{ id: 's', title: 'S', blocks: [{ id: 'a', kind: 'text', text }] }] });
+    expect(p.sections[0].blocks[0].text).toHaveLength(3000);
+    expect(p.sections[0].blocks[0].text.split('\n').slice(0, 2)).toEqual(['linha 1', 'linha 2']);
+  });
   it('has the same ids every time, so ticks survive a reload', () => {
     expect(defaultPage()).toEqual(defaultPage());
   });
