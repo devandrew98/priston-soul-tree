@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { questInfo, visibleQuests } from '../../lib/quest/availability';
 import { questReward } from '../../lib/quest/bonus';
-import { expToPercent, pctToState, statePct, type ExpState } from '../../lib/quest/exp';
+import { expToPercent, statePct, type ExpState } from '../../lib/quest/exp';
 import { questGroup } from '../../lib/quest/groups';
 import { groupQuests } from '../../lib/quest/mapGroups';
 import { deliver, planGoal } from '../../lib/quest/planner';
@@ -17,11 +17,7 @@ const TXT = {
   pick: { pt: 'Quest', en: 'Quest' },
   choose: { pt: 'Escolha uma quest…', en: 'Pick a quest…' },
   noQuests: { pt: 'Ainda não há quests cadastradas.', en: 'There are no quests yet.' },
-  sim: { pt: 'Simular a partir de outro level/EXP (não altera seu personagem)', en: 'Simulate from another level/EXP (does not change your character)' },
-  simLevel: { pt: 'Level simulado', en: 'Simulated level' },
-  simPct: { pt: 'EXP simulada (%)', en: 'Simulated EXP (%)' },
   real: { pt: 'Usando o level e a EXP reais do personagem.', en: 'Using the real level and EXP of the character.' },
-  simulating: { pt: 'Simulação', en: 'Simulation' },
   current: { pt: 'Posição atual', en: 'Current position' },
   breakdown: { pt: 'Recompensa', en: 'Reward' },
   baseExp: { pt: 'EXP base da quest', en: 'Quest base EXP' },
@@ -63,13 +59,10 @@ export function ExpCalculator() {
   const { lang } = useI18n();
   const T = (k: Tk) => TXT[k][lang];
   const { data, active, plan, table, start, calcQuestId, setCalcQuestId, now } = useQuest();
-  const [sim, setSim] = useState(false);
-  const [simLevel, setSimLevel] = useState('');
-  const [simPct, setSimPct] = useState('0');
   const [goalLevel, setGoalLevel] = useState('');
   const [goalPct, setGoalPct] = useState('0');
 
-  const startLevel = sim ? Number(simLevel) || (active?.level ?? 1) : active?.level ?? 1;
+  const startLevel = active?.level ?? 1;
   // Default goal: the next level at 0%.
   useEffect(() => { setGoalLevel(String(startLevel + 1)); }, [startLevel, calcQuestId]);
 
@@ -94,10 +87,7 @@ export function ExpCalculator() {
   if (!data || !active || !plan || !table) return null;
   const quest: Quest | undefined = data.quests.find((x) => x.id === calcQuestId);
 
-  const simPctNum = parseDecimal(simPct);
-  const from: ExpState | null = sim
-    ? (Number.isFinite(simPctNum) && simPctNum >= 0 && simPctNum < 100 ? pctToState(table, startLevel, simPctNum) : null)
-    : start;
+  const from: ExpState | null = start;
   const lvlWord = lang === 'pt' ? 'Level' : 'Level';
   const reward = quest ? questReward(quest, data.bonuses, active.bonuses, plan.settings.combineMode, plan.settings.rounding) : null;
   const need = from ? table.needed(from.level) : null;
@@ -157,16 +147,7 @@ export function ExpCalculator() {
         </label>
         {list.length === 0 && <p className="sk-notice">{T('noQuests')}</p>}
 
-        <label className="qt-check qt-sim">
-          <input type="checkbox" checked={sim} onChange={(e) => { setSim(e.target.checked); if (e.target.checked) setSimLevel(String(active.level)); }} /> <span>{T('sim')}</span>
-        </label>
-        {sim && (
-          <div className="qt-profile-row">
-            <label className="mk-field qt-f"><span>{T('simLevel')}</span><input type="text" inputMode="numeric" value={simLevel} onChange={(e) => setSimLevel(e.target.value.replace(/\D/g, '').slice(0, 3))} /></label>
-            <label className="mk-field qt-f"><span>{T('simPct')}</span><input type="text" inputMode="decimal" value={simPct} onChange={(e) => setSimPct(e.target.value.replace(/[^\d.,]/g, '').slice(0, 10))} /></label>
-          </div>
-        )}
-        <p className="mk-muted">{sim ? <b>{T('simulating')}: </b> : null}{from ? <>{T('current')}: <b>{fmtPos(table, from, lang, lvlWord)}</b></> : T('real')}</p>
+        <p className="mk-muted">{from ? <>{T('current')}: <b>{fmtPos(table, from, lang, lvlWord)}</b></> : T('real')}</p>
       </section>
 
       {quest && (

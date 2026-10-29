@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { availableList, unlockedBetween } from '../../lib/quest/availability';
 import { questReward } from '../../lib/quest/bonus';
-import { expBetween, pctToState, statePct, type ExpState } from '../../lib/quest/exp';
+import { expBetween, statePct, type ExpState } from '../../lib/quest/exp';
 import { encodePlan } from '../../lib/quest/checklist';
 import { groupQuests } from '../../lib/quest/mapGroups';
 import { deliveredIds, planGoal, type PlanResult } from '../../lib/quest/planner';
@@ -18,10 +18,6 @@ const TXT = {
   goalLevel: { pt: 'Level desejado', en: 'Desired level' },
   goalPct: { pt: 'com EXP (%)', en: 'with EXP (%)' },
   presets: { pt: 'Atalhos', en: 'Shortcuts' },
-  sim: { pt: 'Simular a partir de outro level/EXP (não altera seu personagem)', en: 'Simulate from another level/EXP (does not change your character)' },
-  simLevel: { pt: 'Level simulado', en: 'Simulated level' },
-  simPct: { pt: 'EXP simulada (%)', en: 'Simulated EXP (%)' },
-  simulating: { pt: 'Simulação', en: 'Simulation' },
   starting: { pt: 'Ponto de partida', en: 'Starting point' },
   pickQuests: { pt: 'Quests no planejamento', en: 'Quests in the plan' },
   empty: { pt: 'Nenhuma quest selecionada. Escolha abaixo (prontas primeiro) ou use "Adicionar ao planejador" no Banco de Quests.', en: 'No quest selected. Pick below (ready ones first) or use "Add to planner" in the Quest Database.' },
@@ -84,25 +80,20 @@ export function LevelingPlanner() {
   const { lang } = useI18n();
   const T = (k: Tk) => TXT[k][lang];
   const { data, active, plan, table, start, plannerIds, setPlannerIds, togglePlanner, update, settings, now } = useQuest();
-  const [sim, setSim] = useState(false);
-  const [simLevel, setSimLevel] = useState('');
-  const [simPct, setSimPct] = useState('0');
   const [goalLevel, setGoalLevel] = useState('');
   const [goalPct, setGoalPct] = useState('0');
   const [planName, setPlanName] = useState('');
   const [copied, setCopied] = useState(false);
   const lvlWord = 'Level';
 
-  const startLevel = sim ? Number(simLevel) || (active?.level ?? 1) : active?.level ?? 1;
+  const startLevel = active?.level ?? 1;
   useEffect(() => { setGoalLevel((g) => (g === '' ? String(startLevel + 1) : g)); }, [startLevel]);
 
   const questsById = useMemo(() => new Map((data?.quests ?? []).map((q) => [q.id, q])), [data]);
   const selected = useMemo(() => plannerIds.map((id) => questsById.get(id)).filter((q): q is Quest => !!q), [plannerIds, questsById]);
   const pickable = useMemo(() => (data && active ? availableList(data.quests, active, now) : []), [data, active, now]);
 
-  const simPctNum = parseDecimal(simPct);
-  const from: ExpState | null = !table || !active ? null
-    : sim ? (Number.isFinite(simPctNum) && simPctNum >= 0 && simPctNum < 100 ? pctToState(table, startLevel, simPctNum) : null) : start;
+  const from: ExpState | null = !table || !active ? null : start;
   const goalLvlNum = Number(goalLevel);
   const goalPctNum = parseDecimal(goalPct);
   const goalOk = Number.isInteger(goalLvlNum) && goalLvlNum >= 1 && Number.isFinite(goalPctNum) && goalPctNum >= 0 && goalPctNum < 100;
@@ -241,18 +232,10 @@ export function LevelingPlanner() {
           <label className="mk-field qt-f"><span>{T('goalLevel')}</span><input type="text" inputMode="numeric" value={goalLevel} onChange={(e) => setGoalLevel(e.target.value.replace(/\D/g, '').slice(0, 3))} /></label>
           <label className="mk-field qt-f"><span>{T('goalPct')}</span><input type="text" inputMode="decimal" value={goalPct} onChange={(e) => setGoalPct(e.target.value.replace(/[^\d.,]/g, '').slice(0, 10))} /></label>
           <div className="qt-presets" role="group" aria-label={T('presets')}>
-            {[0, 25, 50, 75].map((p) => <button key={p} type="button" className={`mk-btn${goalPctNum === p ? ' primary' : ''}`} onClick={() => setGoalPct(String(p))}>{p}%</button>)}
             <button type="button" className="mk-btn" onClick={() => setGoalLevel(String((Number(goalLevel) || startLevel) + 1))}>{lvlWord} +1</button>
           </div>
         </div>
-        <label className="qt-check qt-sim"><input type="checkbox" checked={sim} onChange={(e) => { setSim(e.target.checked); if (e.target.checked) setSimLevel(String(active.level)); }} /> <span>{T('sim')}</span></label>
-        {sim && (
-          <div className="qt-profile-row">
-            <label className="mk-field qt-f"><span>{T('simLevel')}</span><input type="text" inputMode="numeric" value={simLevel} onChange={(e) => setSimLevel(e.target.value.replace(/\D/g, '').slice(0, 3))} /></label>
-            <label className="mk-field qt-f"><span>{T('simPct')}</span><input type="text" inputMode="decimal" value={simPct} onChange={(e) => setSimPct(e.target.value.replace(/[^\d.,]/g, '').slice(0, 10))} /></label>
-          </div>
-        )}
-        <p className="mk-muted">{sim && <b>{T('simulating')}: </b>}{T('starting')}: <b>{from ? fmtPos(table, from, lang, lvlWord) : '—'}</b> {T('to')} <b>{lvlWord} {goalLevel || '—'}{goalPctNum > 0 ? ` · ${fmtPct(goalPctNum, lang)}` : ''}</b></p>
+        <p className="mk-muted">{T('starting')}: <b>{from ? fmtPos(table, from, lang, lvlWord) : '—'}</b> {T('to')} <b>{lvlWord} {goalLevel || '—'}{goalPctNum > 0 ? ` · ${fmtPct(goalPctNum, lang)}` : ''}</b></p>
       </section>
 
       <section className="sr-card cl-box">
