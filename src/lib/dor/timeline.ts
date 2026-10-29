@@ -1,7 +1,7 @@
 // The unified timeline of the diary and the spreadsheet export, both built only from saved records.
 import { crisisStats, type Ctx } from './calc';
 import { dayKey, fmtDateTime, timeKey } from './time';
-import type { Crisis, Intensity, MedAdmin, NoPain, Rec, Sleep, SymptomUpdate } from './types';
+import type { Crisis, Intensity, MedAdmin, NoPain, Physio, Rec, Sleep, SymptomUpdate } from './types';
 
 export type TLGroup = 'headache' | 'meds' | 'other';
 export interface TLEvent { key: string; at: number; group: TLGroup; icon: string; title: string; detail?: string; rec: Rec }
@@ -9,6 +9,10 @@ export type TLFilter = 'all' | 'headache' | 'meds';
 
 const ms = (iso: string) => new Date(iso).getTime();
 export const medLabel = (a: Pick<MedAdmin, 'name' | 'dose' | 'unit' | 'quantity'>) => `${a.quantity > 1 || !a.dose ? `${a.quantity}× ` : ''}${a.name}${a.dose ? ` ${a.dose} ${a.unit}` : ''}`.trim();
+
+export const physioLabel = (p: Pick<Physio, 'techniques'>) => p.techniques.join(' + ') || 'sessão';
+/** Pain before/after the session and the note, as the person typed them (no conclusion drawn). */
+export const physioDetail = (p: Physio) => [typeof p.painBefore === 'number' ? `dor antes ${p.painBefore}/10` : '', typeof p.painAfter === 'number' ? `dor depois ${p.painAfter}/10` : '', p.note].filter(Boolean).join(' — ') || undefined;
 
 export function allEvents(ctx: Ctx, symptoms: Rec<SymptomUpdate>[]): TLEvent[] {
   const ev: TLEvent[] = [];
@@ -36,6 +40,7 @@ export function allEvents(ctx: Ctx, symptoms: Rec<SymptomUpdate>[]): TLEvent[] {
     const bits = [typeof s.data.hours === 'number' ? `${String(s.data.hours).replace('.', ',')} h` : '', s.data.quality ? `qualidade ${s.data.quality}` : '', s.data.note].filter(Boolean);
     ev.push({ key: s.id, at: ms(`${s.data.date}T12:00:00Z`), group: 'other', icon: '😴', title: 'Sono', detail: bits.join(' — '), rec: s });
   }
+  for (const p of ctx.physio) ev.push({ key: p.id, at: ms(p.data.at), group: 'other', icon: '🙌', title: `Fisioterapia: ${physioLabel(p.data)}`, detail: physioDetail(p.data), rec: p });
   return ev.sort((a, b) => a.at - b.at);
 }
 
@@ -71,6 +76,7 @@ export function eventsCsv(ctx: Ctx, symptoms: Rec<SymptomUpdate>[]): string {
   for (const a of ctx.admins as Rec<MedAdmin>[]) rows.push(['medicamento', ...when(a.data.at), a.data.crisisId ?? '', '', a.data.name, a.data.dose, a.data.unit, a.data.quantity, a.data.category === 'crisis' ? 'crise' : 'continuo', a.data.status === 'taken' ? 'administrado' : 'omitido', '', '', '', a.data.note ?? '', ...base(a)]);
   for (const s of ctx.sleeps as Rec<Sleep>[]) rows.push(['sono', s.data.date.split('-').reverse().join('/'), '', '', '', '', '', '', '', '', '', num(s.data.hours), s.data.quality ?? '', '', s.data.note ?? '', ...base(s)]);
   for (const n of ctx.nopain as Rec<NoPain>[]) rows.push(['dia_sem_cefaleia', n.data.date.split('-').reverse().join('/'), '', '', '', '', '', '', '', '', '', '', '', '', '', ...base(n)]);
+  for (const p of ctx.physio as Rec<Physio>[]) rows.push(['fisioterapia', ...when(p.data.at), '', '', '', '', '', '', '', '', '', '', p.data.techniques.join(', '), physioDetail(p.data) ?? '', ...base(p)]);
   return toCsv(rows);
 }
 

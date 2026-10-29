@@ -95,6 +95,7 @@ export function Home({ store, open, onOpenRec, goHistory }: { store: DorStore; o
           <button className="dor-btn" onClick={() => intensityFlow(store, open)}>📈 Registrar intensidade</button>
           <button className="dor-btn" onClick={noPain}>🌤 Hoje não tive dor</button>
           <button className="dor-btn" onClick={() => open({ t: 'sleep' })}>😴 Registrar sono</button>
+          <button className="dor-btn" onClick={() => open({ t: 'physio' })}>🙌 Fisioterapia</button>
         </div>
         {msg && <div className="dor-alert warn" role="status">{msg}</div>}
       </section>

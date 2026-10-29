@@ -11,7 +11,7 @@ const crisis = (s: [string, string], e?: [string, string]) => rec<Crisis>('crisi
 const inten = (c: Rec<Crisis>, date: string, time: string, value: number) => rec<Intensity>('intensity', { crisisId: c.id, at: at(date, time), value });
 const admin = (name: string, date: string, time: string, category: 'crisis' | 'continuous' = 'crisis', crisisId?: string, status: 'taken' | 'omitted' = 'taken') =>
   rec<MedAdmin>('med_admin', { medId: name, name, dose: '1', unit: 'g', category, quantity: 1, at: at(date, time), crisisId, status });
-const ctx = (p: Partial<Ctx> = {}): Ctx => ({ tz: TZ, now: localToMs('2026-10-28', '12:00', TZ), crises: [], intensities: [], admins: [], nopain: [], sleeps: [], therapy: [], ...p });
+const ctx = (p: Partial<Ctx> = {}): Ctx => ({ tz: TZ, now: localToMs('2026-10-28', '12:00', TZ), crises: [], intensities: [], admins: [], nopain: [], sleeps: [], therapy: [], physio: [], ...p });
 
 describe('time', () => {
   it('converts wall-clock time in São Paulo both ways', () => {

@@ -6,7 +6,7 @@
 //  - time-weighted mean = linear interpolation between consecutive recorded points, only between the first and last point
 //    (no extrapolation), and only when those points cover at least MIN_COVERAGE of the crisis. Otherwise null (not enough data).
 //  - overlapping crises are merged before adding durations; each medication administration is one record, counted once.
-import type { AlertRule, Crisis, DayState, Intensity, MedAdmin, NoPain, Rec, Sleep, Therapy } from './types';
+import type { AlertRule, Crisis, DayState, Intensity, MedAdmin, NoPain, Physio, Rec, Sleep, Therapy } from './types';
 import { addDays, dayKey, dayRange, dayStartMs } from './time';
 
 export const MIN_COVERAGE = 0.6;
@@ -38,7 +38,7 @@ export function unionMs(list: Interval[]): number {
 export interface Ctx {
   tz: string; now: number;
   crises: Rec<Crisis>[]; intensities: Rec<Intensity>[]; admins: Rec<MedAdmin>[];
-  nopain: Rec<NoPain>[]; sleeps: Rec<Sleep>[]; therapy: Rec<Therapy>[];
+  nopain: Rec<NoPain>[]; sleeps: Rec<Sleep>[]; therapy: Rec<Therapy>[]; physio: Rec<Physio>[];
 }
 
 export function dayStates(ctx: Ctx, days: string[]): Map<string, DayState> {

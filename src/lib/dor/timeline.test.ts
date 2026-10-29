@@ -12,7 +12,7 @@ const rec = <T extends object>(kind: Rec['kind'], data: T): Rec<T> => ({ id: `r$
 const c = rec<Crisis>('crisis', { start: at('2026-10-20', '22:00'), end: at('2026-10-21', '02:00'), location: ['Frontal'], character: [], symptoms: ['Náusea'], factors: [] });
 const i = rec<Intensity>('intensity', { crisisId: c.id, at: at('2026-10-20', '22:05'), value: 7 });
 const a = rec<MedAdmin>('med_admin', { medId: 'm', name: 'Dipirona', dose: '1', unit: 'g', category: 'crisis', quantity: 1, at: at('2026-10-20', '22:10'), crisisId: c.id, status: 'taken' });
-const ctx: Ctx = { tz: TZ, now: localToMs('2026-10-28', '12:00', TZ), crises: [c], intensities: [i], admins: [a], nopain: [], sleeps: [], therapy: [] };
+const ctx: Ctx = { tz: TZ, now: localToMs('2026-10-28', '12:00', TZ), crises: [c], intensities: [i], admins: [a], nopain: [], sleeps: [], therapy: [], physio: [] };
 
 describe('timeline', () => {
   it('puts the start and the end of a crisis in their own days', () => {

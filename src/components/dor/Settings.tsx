@@ -21,6 +21,7 @@ export function describe(store: DorStore, r: Rec): string {
     case 'med': return `Medicamento ${d.name}`;
     case 'therapy': return `Tratamento: ${d.name} (${fmtDate(String(d.date))})`;
     case 'sleep': return `Sono de ${fmtDate(String(d.date))}`;
+    case 'physio': return `Fisioterapia — ${when(d.at)}`;
     case 'nopain': return `Dia sem cefaleia ${fmtDate(String(d.date))}`;
     case 'alert_rule': return `Critério de aviso ${d.name}`;
     default: return 'Registro';
@@ -30,6 +31,7 @@ export function describe(store: DorStore, r: Rec): string {
 export function SettingsSheet({ store, secret, onClose, onRotated, onLeave }: { store: DorStore; secret: string; onClose: () => void; onRotated: (s: string) => void; onLeave: () => void }) {
   const [tz, setTz] = useState(store.settings.tz);
   const [doctor, setDoctor] = useState(store.settings.doctor);
+  const [physio, setPhysio] = useState(store.settings.physio);
   const [rule, setRule] = useState<{ rec?: Rec<AlertRule> } | null>(null);
   const [pw1, setPw1] = useState('');
   const [done, setDone] = useState(false);
@@ -55,7 +57,8 @@ export function SettingsSheet({ store, secret, onClose, onRotated, onLeave }: { 
         <h3>Geral</h3>
         <Field label="Fuso horário"><select value={tz} onChange={(e) => setTz(e.target.value)}>{ZONES.map((z) => <option key={z}>{z}</option>)}</select></Field>
         <Field label="Médica responsável"><input value={doctor} onChange={(e) => setDoctor(e.target.value)} maxLength={80} /></Field>
-        <button className="dor-btn primary" disabled={saver.busy} onClick={() => saver.submit('settings', { tz, doctor }, null, store.settingsRec)}>{saver.busy ? 'Salvando…' : 'Salvar'}</button>
+        <Field label="Fisioterapeuta responsável"><input value={physio} onChange={(e) => setPhysio(e.target.value)} maxLength={80} /></Field>
+        <button className="dor-btn primary" disabled={saver.busy} onClick={() => saver.submit('settings', { tz, doctor, physio }, null, store.settingsRec)}>{saver.busy ? 'Salvando…' : 'Salvar'}</button>
         {saver.node}
         {msg && <div className="dor-alert info" role="status">{msg}</div>}
       </section>

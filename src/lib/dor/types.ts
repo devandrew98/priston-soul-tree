@@ -1,13 +1,13 @@
 // Record shapes of the pain diary. The database stores them as generic versioned rows (supabase/35_dor_diary.sql);
 // `data` holds one of the shapes below. Instants are ISO strings (UTC); calendar days are 'YYYY-MM-DD' in the diary's time zone.
-export type Kind = 'settings' | 'crisis' | 'intensity' | 'symptom' | 'med' | 'med_admin' | 'therapy' | 'sleep' | 'nopain' | 'alert_rule';
+export type Kind = 'settings' | 'crisis' | 'intensity' | 'symptom' | 'med' | 'med_admin' | 'therapy' | 'sleep' | 'nopain' | 'alert_rule' | 'physio';
 
 export interface Rec<T extends object = object> {
   id: string; kind: Kind; data: T; eventAt: string | null; version: number;
   createdAt: string; updatedAt: string; deletedAt: string | null;
 }
 
-export interface Settings { tz: string; doctor: string }
+export interface Settings { tz: string; doctor: string; physio: string }
 export interface Crisis {
   start: string; end?: string;
   location: string[]; character: string[]; symptoms: string[]; factors: string[];
@@ -34,6 +34,9 @@ export interface MedAdmin {
 }
 export type TherapyType = 'start' | 'dose' | 'frequency' | 'suspend' | 'restart' | 'note';
 export interface Therapy { medId: string; name: string; date: string; type: TherapyType; from?: string; to?: string; note?: string }
+/** A physiotherapy session (myofascial release and manipulation), done by the physiotherapist in the settings. */
+export const PHYSIO_TECHNIQUES = ['Liberação miofascial', 'Manipulação'];
+export interface Physio { at: string; techniques: string[]; painBefore?: number; painAfter?: number; note?: string }
 export interface Sleep { date: string; hours?: number; quality?: 'boa' | 'regular' | 'ruim'; note?: string }
 export interface NoPain { date: string }
 /** Alert criteria are configured by the doctor in the system; none comes pre-filled. */

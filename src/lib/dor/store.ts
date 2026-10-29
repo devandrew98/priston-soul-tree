@@ -5,12 +5,12 @@ import { supabase } from '../market/supabase';
 import { channelName, type DorApi } from './api';
 import type { Ctx } from './calc';
 import { DEFAULT_TZ } from './time';
-import type { AlertRule, Crisis, Intensity, Kind, Med, MedAdmin, NoPain, Rec, Settings, Sleep, SymptomUpdate, Therapy } from './types';
+import type { AlertRule, Crisis, Intensity, Kind, Med, MedAdmin, NoPain, Physio, Rec, Settings, Sleep, SymptomUpdate, Therapy } from './types';
 
 export type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 export type Outcome = { ok: true; record: Rec } | { ok: false; conflict: true; record: Rec } | { ok: false; conflict: false; error: string };
 
-export const DEFAULT_SETTINGS: Settings = { tz: DEFAULT_TZ, doctor: 'Dra. Dayane Almeida Schinaider' };
+export const DEFAULT_SETTINGS: Settings = { tz: DEFAULT_TZ, doctor: 'Dra. Dayane Almeida Schinaider', physio: 'Rafael Schinaider' };
 const POLL_MS = 30000;
 
 const sortByEvent = <T extends object>(list: Rec<T>[]) => [...list].sort((a, b) => (a.eventAt ?? a.createdAt).localeCompare(b.eventAt ?? b.createdAt));
@@ -118,7 +118,7 @@ export function useDorStore(api: DorApi, secret: string, onDenied: () => void) {
   const ctx: Ctx = useMemo(() => ({
     tz: settings.tz, now,
     crises: of<Crisis>('crisis'), intensities: of<Intensity>('intensity'), admins: of<MedAdmin>('med_admin'),
-    nopain: of<NoPain>('nopain'), sleeps: of<Sleep>('sleep'), therapy: of<Therapy>('therapy'),
+    nopain: of<NoPain>('nopain'), sleeps: of<Sleep>('sleep'), therapy: of<Therapy>('therapy'), physio: of<Physio>('physio'),
   }), [of, settings.tz, now]);
 
   return {

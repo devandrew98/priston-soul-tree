@@ -5,7 +5,7 @@ import { DOR_FAKE, deriveSecret, forgetSecret, memoryApi, readSecret, storeSecre
 import { useDorStore, type DorStore } from '../../lib/dor/store';
 import type { Crisis, MedAdmin, Rec } from '../../lib/dor/types';
 import './dor.css';
-import { CrisisForm, EditRecord, EndForm, IntensityForm, MedAdminForm, SleepForm, SymptomForm } from './forms';
+import { CrisisForm, EditRecord, EndForm, IntensityForm, MedAdminForm, PhysioForm, SleepForm, SymptomForm } from './forms';
 import { History } from './History';
 import { Home } from './Home';
 import { Meds } from './Meds';
@@ -85,7 +85,7 @@ function Diary({ secret, onDenied, onRotated, onLeave }: { secret: string; onDen
               {tab === 'reports' && <Reports store={store} />}
             </>
           )}
-          <footer className="dor-foot">Médica responsável pelo acompanhamento: {store.settings.doctor}</footer>
+          <footer className="dor-foot">Médica responsável pelo acompanhamento: {store.settings.doctor} · Fisioterapeuta responsável: {store.settings.physio}</footer>
         </main>
       </div>
 
@@ -124,6 +124,7 @@ function SheetHost({ store, sheet, close, setSheet, secret, onRotated, onLeave, 
     case 'symptom': return <SymptomForm store={store} onClose={close} crisis={sheet.rec} />;
     case 'med': return <MedAdminForm store={store} onClose={close} pick={sheet.pick} onSaved={(r) => { if (r.data.category === 'crisis' && r.data.status === 'taken' && r.data.crisisId) onMedSaved(r); }} />;
     case 'sleep': return <SleepForm store={store} onClose={close} date={sheet.date} />;
+    case 'physio': return <PhysioForm store={store} onClose={close} />;
     case 'edit': return <EditRecord store={store} rec={sheet.rec} onClose={close} />;
     case 'settings': return <SettingsSheet store={store} secret={secret} onClose={close} onRotated={onRotated} onLeave={onLeave} />;
     case 'choice': return <RecentChoice store={store} close={close} setSheet={setSheet} />;

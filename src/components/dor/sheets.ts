@@ -11,6 +11,7 @@ export type SheetState =
   | { t: 'symptom'; rec: Rec<Crisis> }
   | { t: 'med'; pick?: MedPick }
   | { t: 'sleep'; date?: string }
+  | { t: 'physio' }
   | { t: 'edit'; rec: Rec }
   | { t: 'settings' }
   | null;

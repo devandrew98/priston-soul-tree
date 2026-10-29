@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import type { HistoryEntry } from '../../lib/dor/api';
 import type { DorStore } from '../../lib/dor/store';
 import { dayKey, fmtDateTime } from '../../lib/dor/time';
-import type { Crisis, Intensity, Med, MedAdmin, NoPain, Rec, Sleep } from '../../lib/dor/types';
+import { PHYSIO_TECHNIQUES, type Crisis, type Intensity, type Med, type MedAdmin, type NoPain, type Physio, type Rec, type Sleep } from '../../lib/dor/types';
 import { Chips, DateTimeField, Field, IntensityPicker, Sheet, SheetExtra, Stepper, nowIso, useSaver } from './ui';
 
 export const LOCATION = ['Frontal', 'Temporal', 'Occipital', 'Retro-orbitária', 'Unilateral direita', 'Unilateral esquerda', 'Bilateral', 'Cervical/nuca', 'Outra'];
@@ -288,6 +288,43 @@ export function SleepForm({ store, onClose, rec, date }: Props & { rec?: Rec<Sle
   );
 }
 
+// ---------- physiotherapy session ----------
+export function PhysioForm({ store, onClose, rec }: Props & { rec?: Rec<Physio> }) {
+  const tz = store.settings.tz;
+  const [at, setAt] = useState(rec?.data.at ?? nowIso());
+  // the two techniques of the treatment start selected on a new session; they can be unticked
+  const [techniques, setTechniques] = useState<string[]>(rec?.data.techniques ?? PHYSIO_TECHNIQUES);
+  const [before, setBefore] = useState<number | null>(rec?.data.painBefore ?? null);
+  const [after, setAfter] = useState<number | null>(rec?.data.painAfter ?? null);
+  const [note, setNote] = useState(rec?.data.note ?? '');
+  const [err, setErr] = useState('');
+  const saver = useSaver(store, () => onClose());
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault(); setErr('');
+    if (techniques.length === 0) { setErr('Marque ao menos uma técnica.'); return; }
+    const data: Physio = { at, techniques, painBefore: before ?? undefined, painAfter: after ?? undefined, note: note.trim() || undefined };
+    await saver.submit('physio', data, at, rec);
+  };
+  return (
+    <Sheet title={rec ? 'Editar fisioterapia' : 'Registrar fisioterapia'} onClose={onClose}>
+      <form onSubmit={submit}>
+        <p className="dor-muted dor-small">Fisioterapeuta: {store.settings.physio}</p>
+        <Chips label="O que foi feito" options={PHYSIO_TECHNIQUES} value={techniques} onChange={setTechniques} />
+        <DateTimeField label="Data e horário da sessão" iso={at} onChange={setAt} tz={tz} />
+        <details className="dor-details" open={before !== null || after !== null}>
+          <summary>Dor antes e depois (opcional)</summary>
+          <IntensityPicker value={before} onChange={setBefore} label="Dor antes da sessão (0 a 10)" />
+          <IntensityPicker value={after} onChange={setAfter} label="Dor depois da sessão (0 a 10)" />
+        </details>
+        <Field label="Observação (opcional)"><textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} maxLength={500} /></Field>
+        {err && <div className="dor-alert err" role="alert">{err}</div>}
+        {saver.node}
+        <Actions busy={saver.busy} onCancel={onClose} />
+      </form>
+    </Sheet>
+  );
+}
+
 // ---------- delete + versions ----------
 const OPS: Record<string, string> = { create: 'Criado', update: 'Alterado', delete: 'Excluído', restore: 'Restaurado da lixeira', restore_version: 'Versão restaurada' };
 
@@ -342,6 +379,7 @@ export function EditRecord({ store, rec, onClose }: Props & { rec: Rec }) {
   if (rec.kind === 'intensity') return <SheetExtra.Provider value={extras}><IntensityForm store={store} rec={rec as Rec<Intensity>} onClose={onClose} /></SheetExtra.Provider>;
   if (rec.kind === 'med_admin') return <SheetExtra.Provider value={extras}><MedAdminForm store={store} rec={rec as Rec<MedAdmin>} onClose={onClose} /></SheetExtra.Provider>;
   if (rec.kind === 'sleep') return <SheetExtra.Provider value={extras}><SleepForm store={store} rec={rec as Rec<Sleep>} onClose={onClose} /></SheetExtra.Provider>;
+  if (rec.kind === 'physio') return <SheetExtra.Provider value={extras}><PhysioForm store={store} rec={rec as Rec<Physio>} onClose={onClose} /></SheetExtra.Provider>;
   const label = rec.kind === 'nopain' ? `Dia sem cefaleia confirmado: ${(rec.data as unknown as NoPain).date.split('-').reverse().join('/')}` : 'Registro';
   return (
     <Sheet title={label} onClose={onClose}>

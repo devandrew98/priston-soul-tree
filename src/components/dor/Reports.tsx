@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { adminsOf, alertsFor, compareAround, crisisStats, dayPeaks, dayStates, periodStats, type PeriodStats } from '../../lib/dor/calc';
 import type { DorStore } from '../../lib/dor/store';
 import { addDays, dayKey, dayRange, fmtDate, fmtDateTime, fmtDuration } from '../../lib/dor/time';
-import { allEvents, crisesCsv, eventsCsv } from '../../lib/dor/timeline';
+import { allEvents, crisesCsv, eventsCsv, physioDetail, physioLabel } from '../../lib/dor/timeline';
 import { THERAPY_LABEL } from './Meds';
 import { BarChart, CrisisChart, LineChart, StackChart, n1, type Bar, type Stack } from './charts';
 
@@ -137,6 +137,8 @@ export function Reports({ store }: { store: DorStore }) {
         <SleepVsHeadache store={store} from={safeFrom} to={safeTo} />
       </section>
 
+      <PhysioCard store={store} from={safeFrom} to={safeTo} />
+
       <section className="dor-card"><h3>Comparação com o período anterior</h3><CompareTable a={stats} b={prev} la="Período selecionado" lb="Período anterior (mesma duração)" /></section>
 
       <section className="dor-card">
@@ -167,6 +169,26 @@ export function Reports({ store }: { store: DorStore }) {
 
       {mode && <ReportDoc store={store} from={safeFrom} to={safeTo} mode={mode} stats={stats} prev={prev} onDone={() => setMode(null)} />}
     </div>
+  );
+}
+
+/** Physiotherapy sessions of the period, newest first. */
+const physioIn = (store: DorStore, from: string, to: string) =>
+  store.ctx.physio.filter((p) => { const d = dayKey(new Date(p.data.at).getTime(), store.ctx.tz); return d >= from && d <= to; }).sort((a, b) => b.data.at.localeCompare(a.data.at));
+
+function PhysioCard({ store, from, to }: { store: DorStore; from: string; to: string }) {
+  const list = physioIn(store, from, to);
+  return (
+    <section className="dor-card" aria-label="Fisioterapia">
+      <h3>Fisioterapia no período</h3>
+      <p className="dor-small">Fisioterapeuta responsável: {store.settings.physio}</p>
+      {list.length === 0 ? <p className="dor-muted">Nenhuma sessão registrada no período.</p> : (
+        <>
+          <p className="dor-small">{list.length} sessão(ões).</p>
+          <ul className="dor-list">{list.map((p) => <li key={p.id}><div><strong>{fmtDateTime(new Date(p.data.at).getTime(), store.ctx.tz)}</strong><small>{[physioLabel(p.data), physioDetail(p.data)].filter(Boolean).join(' — ')}</small></div></li>)}</ul>
+        </>
+      )}
+    </section>
   );
 }
 
@@ -229,12 +251,13 @@ function ReportDoc({ store, from, to, mode, stats, prev, onDone }: { store: DorS
   });
   const crises = ctx.crises.filter((c) => { const d = dayKey(new Date(c.data.start).getTime(), ctx.tz); return d >= from && d <= to; });
   const adm = ctx.admins.filter((a) => { const d = dayKey(new Date(a.data.at).getTime(), ctx.tz); return d >= from && d <= to; });
+  const physio = physioIn(store, from, to);
   const tl = allEvents(ctx, store.symptoms).filter((e) => { const d = dayKey(e.at, ctx.tz); return d >= from && d <= to; });
   return (
     <article className="dor-print" aria-hidden>
       <header>
         <h1>Diário de Dor – Adolpho</h1>
-        <p>Relatório {mode === 'full' ? 'completo' : 'resumido'} · Período: {fmtDate(from)} a {fmtDate(to)}<br />Médica responsável pelo acompanhamento: {settings.doctor}<br />Gerado em {fmtDateTime(Date.now(), ctx.tz)}</p>
+        <p>Relatório {mode === 'full' ? 'completo' : 'resumido'} · Período: {fmtDate(from)} a {fmtDate(to)}<br />Médica responsável pelo acompanhamento: {settings.doctor}<br />Fisioterapeuta responsável: {settings.physio}<br />Gerado em {fmtDateTime(Date.now(), ctx.tz)}</p>
       </header>
       <h2>Indicadores principais</h2>
       <table><tbody>
@@ -247,6 +270,9 @@ function ReportDoc({ store, from, to, mode, stats, prev, onDone }: { store: DorS
       <p className="note">Dias com informação: {stats.informedDays} de {stats.days}. Dias não informados não foram considerados dias sem dor.</p>
       <h2>Medicamentos para crise</h2>
       {stats.perMed.length ? <table><thead><tr><th>Medicamento</th><th>Administrações</th><th>Dias de uso</th><th>Quantidade</th></tr></thead><tbody>{stats.perMed.map((m) => <tr key={m.name}><td>{m.name}</td><td>{m.administrations}</td><td>{m.days}</td><td>{String(m.quantity).replace('.', ',')}</td></tr>)}</tbody></table> : <p>Nenhum registrado.</p>}
+      <h2>Fisioterapia (liberação miofascial e manipulação)</h2>
+      <p>Fisioterapeuta responsável: {settings.physio}</p>
+      {physio.length ? <table><thead><tr><th>Data/hora</th><th>Técnicas</th><th>Dor antes</th><th>Dor depois</th><th>Obs.</th></tr></thead><tbody>{physio.map((p) => <tr key={p.id}><td>{fmtDateTime(new Date(p.data.at).getTime(), ctx.tz)}</td><td>{physioLabel(p.data)}</td><td>{p.data.painBefore ?? '—'}</td><td>{p.data.painAfter ?? '—'}</td><td>{p.data.note ?? ''}</td></tr>)}</tbody></table> : <p>Nenhuma sessão registrada no período.</p>}
       <h2>Gráficos</h2>
       <h3>Intensidade máxima por dia</h3><BarChart data={peakBars} max={10} label="Intensidade máxima por dia" height={140} />
       <h3>Estado dos dias</h3><StackChart data={stack} label="Estado dos dias" />
@@ -288,7 +314,7 @@ function ReportDoc({ store, from, to, mode, stats, prev, onDone }: { store: DorS
           </tbody></table>
         </>
       )}
-      <footer>Médica responsável pelo acompanhamento: {settings.doctor}. Este relatório apresenta apenas os registros feitos no diário e não substitui avaliação médica.</footer>
+      <footer>Médica responsável pelo acompanhamento: {settings.doctor}. Fisioterapeuta responsável: {settings.physio}. Este relatório apresenta apenas os registros feitos no diário e não substitui avaliação médica.</footer>
     </article>
   );
 }
