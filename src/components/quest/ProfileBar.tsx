@@ -93,7 +93,7 @@ export function ProfileBar() {
                         <em>%</em>
                       </label>
                     )}
-                    <small className="mk-muted">{scope}</small>
+                    {b.appliesTo.length > 0 && <small className="mk-muted">{scope}</small>}
                   </li>
                 );
               })}
