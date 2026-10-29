@@ -31,11 +31,14 @@ export function nextAvailableAt(q: Quest, p: QuestProgress | undefined, now: num
   return at > now ? at : null;
 }
 
+/** The game registers 150 as the maximum level of quests that have no real cap, so 150 means "no maximum". */
+export const NO_CAP_LEVEL = 150;
+
 export function questInfo(q: Quest, char: Pick<Character, 'level' | 'progress'>, now: number): StatusInfo {
   const prog = char.progress[q.id];
   const reasons: LockReason[] = [];
   if (q.minLevel !== null && char.level < q.minLevel) reasons.push('level_min');
-  if (q.maxLevel !== null && char.level > q.maxLevel) reasons.push('level_max');
+  if (q.maxLevel !== null && q.maxLevel < NO_CAP_LEVEL && char.level > q.maxLevel) reasons.push('level_max');
   if (q.prerequisites.some((id) => !isDelivered(char.progress[id]))) reasons.push('prerequisite');
   if (reasons.length) return { status: 'locked', reasons, nextAvailableAt: null };
 

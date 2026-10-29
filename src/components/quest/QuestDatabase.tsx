@@ -8,6 +8,7 @@ import type { Quest, QuestCategory, QuestStatus } from '../../lib/quest/types';
 import { useQuest } from './QuestContext';
 import { fmtExp, fmtPct } from './format';
 import { questGroup, type QuestGroup } from '../../lib/quest/groups';
+import { currentSoloId, isSolo } from '../../lib/quest/solo';
 
 const TXT = {
   groups: { pt: { leveling: 'Leveling (dão EXP)', other: 'Outras (sem EXP)' }, en: { leveling: 'Leveling (give EXP)', other: 'Other (no EXP)' } },
@@ -96,8 +97,11 @@ export function QuestDatabase() {
   const lvNum = Number(lvl);
   const matchesView = (s: QuestStatus) => view === 'all' || (view === 'default' ? s === 'available' || s === 'in_progress' || s === 'ready' : s === view);
   // everything the filters allow, except the group tab (so the tab numbers match the list they open)
+  const soloNow = currentSoloId(quests, active.level);
   const passes = ({ quest, info }: (typeof rows)[number]) => {
     if (!matchesView(info.status)) return false;
+    // available list: only the solo quest of the current level (older ones stay visible if already started)
+    if (view === 'default' && isSolo(quest) && quest.id !== soloNow && info.status === 'available') return false;
     if (cat !== 'all' && quest.categoryId !== cat) return false;
     if (map !== 'all' && quest.map !== map) return false;
     if (lvl.trim() !== '' && Number.isFinite(lvNum) && ((quest.minLevel !== null && lvNum < quest.minLevel) || (quest.maxLevel !== null && lvNum > quest.maxLevel))) return false;
@@ -105,7 +109,9 @@ export function QuestDatabase() {
     return !text || quest.name.toLowerCase().includes(text) || quest.id.toLowerCase().includes(text);
   };
   const inFilters = rows.filter(passes);
-  const filtered = inFilters.filter((r) => questGroup(r.quest) === group);
+  // the quests that give the most EXP come first
+  const expOf = (quest: Quest) => rewardOf(quest)?.total ?? -1;
+  const filtered = inFilters.filter((r) => questGroup(r.quest) === group).sort((a, b) => expOf(b.quest) - expOf(a.quest) || a.quest.name.localeCompare(b.quest.name));
 
   const reasonText = (info: StatusInfo, quest: Quest) => info.reasons.map((r) => (r === 'level_min' ? `${T('reasonMin')} ${quest.minLevel}` : r === 'level_max' ? T('reasonMax') : T('reasonPre'))).join(' · ');
   const catChip = (id: string) => <span className="qt-chip" style={catOf(id)?.color ? { borderColor: catOf(id)!.color, color: catOf(id)!.color } : undefined}>{catOf(id)?.name ?? id}</span>;
