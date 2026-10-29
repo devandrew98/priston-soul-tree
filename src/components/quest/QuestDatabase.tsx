@@ -9,7 +9,7 @@ import { useQuest } from './QuestContext';
 import { fmtExp, fmtPct } from './format';
 import { questGroup, type QuestGroup } from '../../lib/quest/groups';
 import { currentSoloId, isSolo } from '../../lib/quest/solo';
-import { groupByMap } from '../../lib/quest/mapGroups';
+import { displayMap, groupByMap, questMapGroup } from '../../lib/quest/mapGroups';
 
 const TXT = {
   groups: { pt: { leveling: 'Leveling (dão EXP)', other: 'Outras (sem EXP)' }, en: { leveling: 'Leveling (give EXP)', other: 'Other (no EXP)' } },
@@ -121,7 +121,7 @@ export function QuestDatabase() {
   // the quests that give the most EXP come first
   const expOf = (quest: Quest) => rewardOf(quest)?.total ?? -1;
   // by map (highest-level map first), and inside each map the quest that gives the most EXP first
-  const grouped = groupByMap(inFilters.filter((r) => questGroup(r.quest) === group), (r) => r.quest.map, (r) => expOf(r.quest), (r) => r.quest.minLevel, (r) => r.quest.name);
+  const grouped = groupByMap(inFilters.filter((r) => questGroup(r.quest) === group), (r) => questMapGroup(r.quest), (r) => expOf(r.quest), (r) => r.quest.minLevel, (r) => r.quest.name);
   const filtered = grouped.flatMap((g) => g.items);
   const allMarked = (items: typeof filtered) => items.length > 0 && items.every((r) => r.info.status === 'ready' || r.info.status === 'completed');
   const isCollapsed = (g: (typeof grouped)[number]) => collapsedBy[g.map] ?? allMarked(g.items);
@@ -196,7 +196,7 @@ export function QuestDatabase() {
           <label className="mk-field qt-f"><span>{T('map')}</span>
             <select value={map} onChange={(e) => { setMap(e.target.value); setLimit(PAGE); }}>
               <option value="all">{T('all')}</option>
-              {maps.map((m) => <option key={m} value={m}>{m}</option>)}
+              {maps.map((m) => <option key={m} value={m}>{displayMap(m)}</option>)}
             </select>
           </label>
           <label className="mk-field qt-f qt-f-sm"><span>{T('level')}</span>

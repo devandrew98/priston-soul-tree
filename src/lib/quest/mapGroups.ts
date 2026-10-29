@@ -18,3 +18,13 @@ export function groupByMap<T>(items: T[], mapOf: (t: T) => string, expOf: (t: T)
   groups.sort((a, b) => b.level - a.level || a.map.localeCompare(b.map));
   return groups.map(({ map, items: its }) => ({ map, items: its }));
 }
+
+/** The boss hunts (given by the NPC "Boss Hunter, William") are listed together in one block instead of spread over the maps of their bosses. */
+export const BOSS_GROUP = 'Boss Hunter (William)';
+export const isBossHunt = (q: { npc: string }): boolean => /boss hunter/i.test(q.npc);
+
+/** Hard-mode maps are written "Name [H]" (the export has "Forge of the Ancients H"). */
+export const displayMap = (map: string): string => map.trim().replace(/\s+H$/, ' [H]');
+
+/** The block a quest is listed under. */
+export const questMapGroup = (q: { map: string; npc: string }): string => (isBossHunt(q) ? BOSS_GROUP : displayMap(q.map));

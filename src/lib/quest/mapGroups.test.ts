@@ -21,3 +21,17 @@ describe('groupByMap', () => {
     expect(g([{ name: 'x', map: '', exp: 1, min: null }])[0].map).toBe('—');
   });
 });
+
+import { BOSS_GROUP, displayMap, questMapGroup } from './mapGroups';
+
+describe('map names and the boss block', () => {
+  it('writes hard maps with [H]', () => {
+    expect(displayMap('Forge of the Ancients H')).toBe('Forge of the Ancients [H]');
+    expect(displayMap('Crystal Nest [H]')).toBe('Crystal Nest [H]');
+    expect(displayMap('Land of Neuren')).toBe('Land of Neuren');
+  });
+  it('the quests of the NPC Boss Hunter go to one block, the others to their map', () => {
+    expect(questMapGroup({ map: 'Ice Mine 1', npc: 'Boss Hunter, William' })).toBe(BOSS_GROUP);
+    expect(questMapGroup({ map: 'Ice Mine 1', npc: 'Someone else' })).toBe('Ice Mine 1');
+  });
+});
