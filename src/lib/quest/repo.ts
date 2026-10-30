@@ -29,16 +29,16 @@ export interface QuestRepo {
 // ---------- row mapping ----------
 type QuestRow = {
   id: string; name: string; category_id: string; min_level: number | null; max_level: number | null; map: string; npc: string; description: string;
-  objectives: Objective[]; base_exp: number | string | null; prerequisites: string[]; repeat_type: RepeatType; repeat_interval_hours: number | null; active: boolean; archived: boolean;
+  objectives: Objective[]; base_exp: number | string | null; grind_exp?: number | string | null; prerequisites: string[]; repeat_type: RepeatType; repeat_interval_hours: number | null; active: boolean; archived: boolean;
 };
 const toQuest = (r: QuestRow): Quest => applyLevelRules({
   id: r.id, name: r.name, categoryId: r.category_id, minLevel: r.min_level, maxLevel: r.max_level, map: r.map, npc: r.npc, description: r.description,
-  objectives: Array.isArray(r.objectives) ? r.objectives : [], baseExp: r.base_exp === null ? null : Number(r.base_exp), prerequisites: r.prerequisites ?? [],
+  objectives: Array.isArray(r.objectives) ? r.objectives : [], baseExp: r.base_exp === null ? null : Number(r.base_exp), grindExp: r.grind_exp === undefined ? undefined : r.grind_exp === null ? null : Number(r.grind_exp), prerequisites: r.prerequisites ?? [],
   repeatType: r.repeat_type, repeatIntervalHours: r.repeat_interval_hours, active: r.active, archived: r.archived,
 });
 const fromQuest = (q: Quest) => ({
   id: q.id, name: q.name, category_id: q.categoryId, min_level: q.minLevel, max_level: q.maxLevel, map: q.map, npc: q.npc, description: q.description,
-  objectives: q.objectives, base_exp: q.baseExp, prerequisites: q.prerequisites, repeat_type: q.repeatType,
+  objectives: q.objectives, base_exp: q.baseExp, ...(q.grindExp === undefined ? {} : { grind_exp: q.grindExp }), prerequisites: q.prerequisites, repeat_type: q.repeatType,
   repeat_interval_hours: q.repeatType === 'interval' ? q.repeatIntervalHours : null, active: q.active, archived: q.archived,
 });
 

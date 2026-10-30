@@ -3,7 +3,7 @@ import type { Character, Quest, QuestProgress, QuestStatus } from './types';
 
 const HOUR = 3_600_000;
 
-export type LockReason = 'level_min' | 'level_max' | 'prerequisite';
+export type LockReason = 'level_min' | 'level_max';
 export interface StatusInfo {
   status: QuestStatus;
   reasons: LockReason[];
@@ -39,19 +39,18 @@ export function questInfo(q: Quest, char: Pick<Character, 'level' | 'progress'>,
   const reasons: LockReason[] = [];
   if (q.minLevel !== null && char.level < q.minLevel) reasons.push('level_min');
   if (q.maxLevel !== null && q.maxLevel < NO_CAP_LEVEL && char.level > q.maxLevel) reasons.push('level_max');
-  if (q.prerequisites.some((id) => !isDelivered(char.progress[id]))) reasons.push('prerequisite');
+  // prerequisites do not lock anything: the game itself says what is missing; the site only shows them as a note
   if (reasons.length) return { status: 'locked', reasons, nextAvailableAt: null };
 
   if (isDelivered(prog) && (prog?.status === 'completed' || prog?.deliveries.length)) {
-    if (q.repeatType === 'once') return { status: 'completed', reasons: [], nextAvailableAt: null };
+    // marked as done: it stays hidden until the player undoes it, unless the quest has a wait (daily / interval) that already passed
+    if (repeatHours(q) === null) return { status: 'completed', reasons: [], nextAvailableAt: null };
     const next = nextAvailableAt(q, prog, now);
     if (next !== null) return { status: 'completed', reasons: [], nextAvailableAt: next };
-    // a repeatable quest whose wait is over is available again, unless the player already started the new run
-    if (prog && (prog.status === 'in_progress' || prog.status === 'ready')) return { status: prog.status, reasons: [], nextAvailableAt: null };
+    // a repeatable quest whose wait is over is available again
     return { status: 'available', reasons: [], nextAvailableAt: null };
   }
-  if (prog?.status === 'in_progress') return { status: 'in_progress', reasons: [], nextAvailableAt: null };
-  if (prog?.status === 'ready') return { status: 'ready', reasons: [], nextAvailableAt: null };
+  // old "started" / "ready" marks from before the change count as plain available
   return { status: 'available', reasons: [], nextAvailableAt: null };
 }
 
@@ -60,11 +59,11 @@ export const visibleQuests = (quests: Quest[]): Quest[] => quests.filter((q) => 
 
 export interface ListedQuest { quest: Quest; info: StatusInfo }
 
-/** The default list: quests the character can do now (available, in progress, ready). */
+/** The default list: quests the character can do now. */
 export function availableList(quests: Quest[], char: Pick<Character, 'level' | 'progress'>, now: number): ListedQuest[] {
   return visibleQuests(quests)
     .map((quest) => ({ quest, info: questInfo(quest, char, now) }))
-    .filter(({ info }) => info.status === 'available' || info.status === 'in_progress' || info.status === 'ready');
+    .filter(({ info }) => info.status === 'available');
 }
 
 /** Quests a character at `level` would unlock on the way up from `fromLevel` (level range only; the quest is not "ready"). */

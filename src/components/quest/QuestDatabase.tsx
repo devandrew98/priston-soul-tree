@@ -13,9 +13,13 @@ import { displayMap, groupQuests } from '../../lib/quest/mapGroups';
 
 const TXT = {
   groups: { pt: { leveling: 'Leveling (dão EXP)', other: 'Outras (sem EXP)' }, en: { leveling: 'Leveling (give EXP)', other: 'Other (no EXP)' } },
-  ready: { pt: 'Minhas Quests Prontas', en: 'My Ready Quests' },
-  readyHint: { pt: 'Quests prontas para entregar. Adicione ao Planejador de Leveling para planejar a entrega.', en: 'Quests ready to deliver. Add them to the Leveling Planner to plan the delivery.' },
-  noReady: { pt: 'Nenhuma quest marcada como pronta para entregar.', en: 'No quest marked as ready to deliver.' },
+  filter: { pt: 'Filtrar', en: 'Filter' },
+  done: { pt: '✓ Já fiz', en: '✓ Done' },
+  doneNote: { pt: 'Marcar como feita só esconde a quest da lista, para você se orientar. Não muda nada no jogo.', en: 'Marking a quest as done only hides it from the list, to help you keep track. It changes nothing in the game.' },
+  needsFirst: { pt: 'Antes: ', en: 'Before: ' },
+  grind: { pt: 'EXP de Grind durante a quest (medida em jogo, não entra nas contas)', en: 'Grind EXP while doing the quest (measured in game, not part of the calculations)' },
+  perLevel: { pt: 'Para subir 1 level só com esta quest', en: 'To gain 1 level with this quest alone' },
+  times: { pt: 'vezes', en: 'times' },
   search: { pt: 'Pesquisar por nome ou ID', en: 'Search by name or ID' },
   category: { pt: 'Categoria', en: 'Category' },
   map: { pt: 'Mapa', en: 'Map' },
@@ -24,38 +28,29 @@ const TXT = {
   all: { pt: 'Todos', en: 'All' },
   allF: { pt: 'Todas', en: 'All' },
   views: {
-    pt: { default: 'Disponíveis agora', in_progress: 'Em andamento', ready: 'Prontas para entregar', completed: 'Histórico (concluídas)', locked: 'Bloqueadas / de nível maior', all: 'Todas' },
-    en: { default: 'Available now', in_progress: 'In progress', ready: 'Ready to deliver', completed: 'History (completed)', locked: 'Locked / higher level', all: 'All' },
+    pt: { default: 'Disponíveis agora', completed: 'Já feitas', locked: 'De outro level', all: 'Todas' },
+    en: { default: 'Available now', completed: 'Done', locked: 'Other levels', all: 'All' },
   },
   statusName: {
-    pt: { locked: 'Bloqueada', available: 'Disponível', in_progress: 'Em andamento', ready: 'Pronta para entregar', completed: 'Concluída' },
-    en: { locked: 'Locked', available: 'Available', in_progress: 'In progress', ready: 'Ready to deliver', completed: 'Completed' },
+    pt: { locked: 'De outro level', available: 'Disponível', in_progress: 'Disponível', ready: 'Disponível', completed: 'Já feita' },
+    en: { locked: 'Other level', available: 'Available', in_progress: 'Available', ready: 'Available', completed: 'Done' },
   },
   baseExp: { pt: 'EXP base', en: 'Base EXP' },
   finalExp: { pt: 'EXP final', en: 'Final EXP' },
   ofLevel: { pt: 'do level', en: 'of the level' },
   noExp: { pt: 'EXP não cadastrada', en: 'EXP not registered' },
   noTable: { pt: 'sem tabela do level', en: 'no level table' },
-  start: { pt: 'Iniciar', en: 'Start' },
-  markReady: { pt: 'Marcar como pronta', en: 'Mark as ready' },
-  deliver: { pt: 'Entregar (concluir)', en: 'Deliver (complete)' },
-  cancel: { pt: 'Cancelar andamento', en: 'Cancel progress' },
-  back: { pt: 'Voltar para em andamento', en: 'Back to in progress' },
-  undo: { pt: 'Desfazer a última entrega', en: 'Undo the last delivery' },
+  undo: { pt: 'Desfazer (voltar para a lista)', en: 'Undo (back to the list)' },
   calc: { pt: 'Calcular', en: 'Calculate' },
   addPlan: { pt: 'Adicionar ao planejador', en: 'Add to planner' },
   inPlan: { pt: 'No planejador', en: 'In planner' },
   details: { pt: 'Detalhes', en: 'Details' },
-  readyShort: { pt: '✓ Pronta', en: '✓ Ready' },
-  deliverShort: { pt: 'Entregar', en: 'Deliver' },
-  readyCount: { pt: 'prontas', en: 'ready' },
   expand: { pt: 'Mostrar o mapa', en: 'Show map' },
   collapse: { pt: 'Minimizar o mapa', en: 'Collapse map' },
   deliveries: { pt: 'Entregas', en: 'Deliveries' },
   next: { pt: 'Nova execução a partir de', en: 'Available again from' },
   reasonMin: { pt: 'level mínimo', en: 'minimum level' },
   reasonMax: { pt: 'level máximo ultrapassado', en: 'maximum level exceeded' },
-  reasonPre: { pt: 'pré-requisito pendente', en: 'prerequisite missing' },
   objectives: { pt: 'Objetivos', en: 'Objectives' },
   prereq: { pt: 'Pré-requisitos', en: 'Prerequisites' },
   repeat: { pt: 'Repetição', en: 'Repetition' },
@@ -68,7 +63,7 @@ const TXT = {
   none: { pt: 'Nenhuma quest para esses filtros.', en: 'No quests for these filters.' },
   noQuests: { pt: 'Ainda não há quests cadastradas.', en: 'There are no quests yet.' },
   more: { pt: 'Mostrar mais', en: 'Show more' },
-  hiddenNote: { pt: 'Quests de level maior ficam ocultas até você chegar lá (veja em "Bloqueadas / de nível maior").', en: 'Higher-level quests stay hidden until you get there (see "Locked / higher level").' },
+  hiddenNote: { pt: 'Quests de level maior ficam ocultas até você chegar lá (veja em "De outro level").', en: 'Higher-level quests stay hidden until you get there (see "Other levels").' },
   count: { pt: 'quests', en: 'quests' },
 } as const;
 type Tk = Exclude<keyof typeof TXT, 'views' | 'statusName' | 'repeatNames' | 'groups'>;
@@ -102,9 +97,8 @@ export function QuestDatabase() {
   const need = table?.needed(active.level) ?? null;
   const pctOfLevel = (exp: number) => (need === null ? null : expToPercent(exp, need));
 
-  const readyRows = rows.filter((r) => r.info.status === 'ready');
   const lvNum = Number(lvl);
-  const matchesView = (s: QuestStatus) => view === 'all' || (view === 'default' ? s === 'available' || s === 'in_progress' || s === 'ready' : s === view);
+  const matchesView = (s: QuestStatus) => view === 'all' || (view === 'default' ? s === 'available' : s === view);
   // everything the filters allow, except the group tab (so the tab numbers match the list they open)
   const soloNow = currentSoloId(quests, active.level);
   const passes = ({ quest, info }: (typeof rows)[number]) => {
@@ -123,7 +117,7 @@ export function QuestDatabase() {
   // by map (highest-level map first), and inside each map the quest that gives the most EXP first
   const grouped = groupQuests(inFilters.filter((r) => questGroup(r.quest) === group), (r) => r.quest, (r) => expOf(r.quest));
   const filtered = grouped.flatMap((g) => g.items);
-  const allMarked = (items: typeof filtered) => items.length > 0 && items.every((r) => r.info.status === 'ready' || r.info.status === 'completed');
+  const allMarked = (items: typeof filtered) => items.length > 0 && items.every((r) => r.info.status === 'completed');
   const isCollapsed = (g: (typeof grouped)[number]) => collapsedBy[g.map] ?? allMarked(g.items);
   const out: ({ head: (typeof grouped)[number]; col: boolean } | { row: (typeof filtered)[number] })[] = [];
   let shown = 0, totalRows = 0;
@@ -135,8 +129,7 @@ export function QuestDatabase() {
     for (const r of g.items) if (shown < limit) { out.push({ row: r }); shown++; }
   }
 
-  const reasonText = (info: StatusInfo, quest: Quest) => info.reasons.map((r) => (r === 'level_min' ? `${T('reasonMin')} ${quest.minLevel}` : r === 'level_max' ? T('reasonMax') : T('reasonPre'))).join(' · ');
-  const catChip = (id: string) => <span className="qt-chip" style={catOf(id)?.color ? { borderColor: catOf(id)!.color, color: catOf(id)!.color } : undefined}>{catOf(id)?.name ?? id}</span>;
+  const reasonText = (info: StatusInfo, quest: Quest) => info.reasons.map((r) => (r === 'level_min' ? `${T('reasonMin')} ${quest.minLevel}` : T('reasonMax'))).join(' · ');
   const planBtn = (quest: Quest) => (
     <button type="button" className={`mk-btn${plannerIds.includes(quest.id) ? ' primary' : ''}`} onClick={() => togglePlanner(quest.id)}>
       {plannerIds.includes(quest.id) ? `✔ ${T('inPlan')}` : `➕ ${T('addPlan')}`}
@@ -145,34 +138,6 @@ export function QuestDatabase() {
   return (
     <div className="qt-section">
       <section className="sr-card cl-box">
-        <h3>✅ {T('ready')} <small>· {readyRows.length}</small></h3>
-        <p className="mk-muted">{T('readyHint')}</p>
-        {readyRows.length === 0 ? <p className="mk-muted">{T('noReady')}</p> : (
-          <div className="qt-scroll">
-            <table className="ag-table qt-table">
-              <thead><tr><th>{T('ready').split(' ')[0] === 'My' ? 'Quest' : 'Quest'}</th><th>{T('category')}</th><th>{T('baseExp')}</th><th>{T('finalExp')}</th><th>%</th><th /></tr></thead>
-              <tbody>
-                {readyRows.map(({ quest }) => {
-                  const r = rewardOf(quest);
-                  const p = r ? pctOfLevel(r.total) : null;
-                  return (
-                    <tr key={quest.id}>
-                      <td><b>{quest.name}</b> <small className="mk-muted">{quest.id}</small></td>
-                      <td>{catChip(quest.categoryId)}</td>
-                      <td>{r ? fmtExp(r.base, lang) : '—'}</td>
-                      <td>{r ? fmtExp(r.total, lang) : '—'}</td>
-                      <td>{p === null ? '—' : fmtPct(p, lang)}</td>
-                      <td>{planBtn(quest)}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
-
-      <section className="sr-card cl-box">
         <div className="mk-subtabs" role="group" aria-label="Grupo">
           {(Object.keys(TXT.groups[lang]) as QuestGroup[]).map((g) => (
             <button key={g} type="button" className={`mk-subtab${group === g ? ' active' : ''}`} aria-pressed={group === g} onClick={() => { setGroup(g); setLimit(PAGE); }}>
@@ -180,8 +145,10 @@ export function QuestDatabase() {
             </button>
           ))}
         </div>
+        <div className="qt-filters"><input className="qt-search" value={q} onChange={(e) => { setQ(e.target.value); setLimit(PAGE); }} placeholder={T('search')} aria-label={T('search')} /></div>
+        <details className="qt-more" open={view !== 'default' || cat !== 'all' || map !== 'all' || lvl !== ''}>
+          <summary>{T('filter')}</summary>
         <div className="qt-filters">
-          <input className="qt-search" value={q} onChange={(e) => { setQ(e.target.value); setLimit(PAGE); }} placeholder={T('search')} aria-label={T('search')} />
           <label className="mk-field qt-f"><span>{T('status')}</span>
             <select value={view} onChange={(e) => { setView(e.target.value as View); setLimit(PAGE); }}>
               {(Object.keys(TXT.views[lang]) as View[]).map((v) => <option key={v} value={v}>{TXT.views[lang][v]}</option>)}
@@ -203,7 +170,8 @@ export function QuestDatabase() {
             <input type="text" inputMode="numeric" value={lvl} placeholder="—" onChange={(e) => { setLvl(e.target.value.replace(/\D/g, '').slice(0, 3)); setLimit(PAGE); }} />
           </label>
         </div>
-        {view === 'default' && <p className="mk-muted qt-note">{T('hiddenNote')}</p>}
+        </details>
+        {view === 'default' && <p className="mk-muted qt-note">{T('hiddenNote')} {T('doneNote')}</p>}
         <p className="mk-muted">{filtered.length} {T('count')}</p>
 
         {quests.length === 0 ? <p className="sk-notice">{T('noQuests')}</p> : filtered.length === 0 ? <p className="sk-notice">{T('none')}</p> : (
@@ -211,7 +179,7 @@ export function QuestDatabase() {
             {out.map((o) => {
               if ('head' in o) {
                 const g = o.head;
-                const marked = g.items.filter((r) => r.info.status === 'ready' || r.info.status === 'completed').length;
+                const marked = g.items.filter((r) => r.info.status === 'completed').length;
                 return (
                   <li key={`map:${g.map}`} className="qt-map-head">
                     <button type="button" aria-expanded={!o.col} title={o.col ? T('expand') : T('collapse')} onClick={() => toggleMap(g.map, o.col)}>
@@ -235,11 +203,11 @@ export function QuestDatabase() {
                     </div>
                     <div className="qt-row-exp">{r ? <b>{fmtExp(r.total, lang)}</b> : <span className="mk-muted">{T('noExp')}</span>}</div>
                     <div className="qt-row-act">
-                      {(info.status === 'available' || info.status === 'in_progress') && <button type="button" className="mk-btn primary" onClick={() => setQuestState(quest.id, 'ready')}>{T('readyShort')}</button>}
-                      {info.status === 'ready' && <button type="button" className="mk-btn primary" onClick={() => setQuestState(quest.id, 'deliver')}>{T('deliverShort')}</button>}
+                      {info.status === 'available' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'deliver')}>{T('done')}</button>}
                       <button type="button" className="qt-more-btn" aria-expanded={isOpen} aria-label={T('details')} title={T('details')} onClick={() => setOpen(isOpen ? null : quest.id)}>{isOpen ? '▴' : '⋯'}</button>
                     </div>
                   </div>
+                  {quest.prerequisites.length > 0 && info.status !== 'completed' && <small className="mk-muted">{T('needsFirst')}{quest.prerequisites.map((id) => data.quests.find((x) => x.id === id)?.name ?? id).join(', ')}</small>}
                   {info.status === 'locked' && <small className="qt-lock">🔒 {reasonText(info, quest)}</small>}
                   {isOpen && (
                     <div className="qt-detail">
@@ -251,12 +219,11 @@ export function QuestDatabase() {
                       </p>
                       {info.status === 'completed' && info.nextAvailableAt !== null && <small className="mk-muted">⏳ {T('next')} {new Date(info.nextAvailableAt).toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US')}</small>}
                       <div className="qt-actions">
-                        {info.status === 'available' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'start')}>{T('start')}</button>}
-                        {info.status === 'in_progress' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'reset')}>{T('cancel')}</button>}
-                        {info.status === 'ready' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'start')}>{T('back')}</button>}
                         {info.status === 'completed' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'undo')}>{T('undo')}</button>}
-                        {info.status !== 'locked' && info.status !== 'completed' && planBtn(quest)}
+                        {info.status === 'available' && planBtn(quest)}
                       </div>
+                      {quest.grindExp ? <p><b>{T('grind')}:</b> ≈ {fmtExp(quest.grindExp, lang)}</p> : null}
+                      {quest.repeatType !== 'once' && p !== null && p > 0 && <p><b>{T('perLevel')}:</b> ≈ {Math.ceil(100 / p)} {T('times')}</p>}
                       {quest.description && <p>{quest.description}</p>}
                       {quest.objectives.length > 0 && <><b>{T('objectives')}</b><ul>{quest.objectives.map((ob, i) => <li key={i}>{ob.name}{ob.qty !== null ? ` × ${ob.qty}` : ''} <small className="mk-muted">({ob.kind})</small></li>)}</ul></>}
                       {quest.prerequisites.length > 0 && <p><b>{T('prereq')}:</b> {quest.prerequisites.map((id) => data.quests.find((x) => x.id === id)?.name ?? id).join(', ')}</p>}

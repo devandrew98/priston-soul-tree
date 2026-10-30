@@ -20,27 +20,25 @@ const TXT = {
   presets: { pt: 'Atalhos', en: 'Shortcuts' },
   starting: { pt: 'Ponto de partida', en: 'Starting point' },
   pickQuests: { pt: 'Quests no planejamento', en: 'Quests in the plan' },
-  empty: { pt: 'Nenhuma quest selecionada. Escolha abaixo (prontas primeiro) ou use "Adicionar ao planejador" no Banco de Quests.', en: 'No quest selected. Pick below (ready ones first) or use "Add to planner" in the Quest Database.' },
+  empty: { pt: 'Nenhuma quest selecionada. Escolha abaixo ou use "Adicionar ao planejador" em Quests Disponíveis.', en: 'No quest selected. Pick below or use "Add to planner" in Available Quests.' },
   remove: { pt: 'Remover', en: 'Remove' },
   clearAll: { pt: 'Limpar seleção', en: 'Clear selection' },
-  readyQuests: { pt: 'Prontas para entregar', en: 'Ready to deliver' },
-  availableQuests: { pt: 'Disponíveis', en: 'Available' },
-  addAllReady: { pt: 'Adicionar todas as prontas', en: 'Add all ready' },
+  availableQuests: { pt: 'Disponíveis para o seu level', en: 'Available for your level' },
   noExp: { pt: 'sem EXP cadastrada', en: 'no EXP registered' },
   result: { pt: 'Resultado', en: 'Result' },
   totalBase: { pt: 'EXP base das quests', en: 'Quests base EXP' },
   totalExtra: { pt: 'EXP adicional dos bônus', en: 'Extra EXP from bonuses' },
   totalFinal: { pt: 'EXP total das quests', en: 'Quests total EXP' },
   needed: { pt: 'EXP do ponto de partida até o objetivo', en: 'EXP from the starting point to the goal' },
-  preGain: { pt: 'EXP ainda a ganhar upando (antes de entregar)', en: 'EXP still to earn by levelling (before delivering)' },
+  preGain: { pt: 'EXP de Grind (antes de entregar)', en: 'Grind EXP (before delivering)' },
   finalPos: { pt: 'Posição final estimada', en: 'Estimated final position' },
   levelLeft: { pt: 'EXP restante no level final', en: 'EXP left in the final level' },
-  recommend: { pt: 'Ganhe mais', en: 'Earn' },
-  recommendTail: { pt: 'de EXP antes de entregar suas quests para atingir', en: 'more EXP before delivering your quests to reach' },
+  recommend: { pt: 'Faça', en: 'Earn' },
+  recommendTail: { pt: 'de EXP de Grind antes de entregar suas quests para atingir', en: 'of Grind EXP before delivering your quests to reach' },
   enough: { pt: 'As quests selecionadas já bastam: entregue agora para atingir', en: 'The selected quests are enough: deliver now to reach' },
   surplus: { pt: 'Sobram', en: 'Left over' },
   surplusTail: { pt: 'de EXP acima do objetivo.', en: 'of EXP above the goal.' },
-  noQuestsPlan: { pt: 'Sem quests, todo o caminho até o objetivo é de upar:', en: 'Without quests the whole way to the goal is levelling:' },
+  noQuestsPlan: { pt: 'Sem quests, todo o caminho até o objetivo é EXP de Grind:', en: 'Without quests the whole way to the goal is Grind EXP:' },
   missing: { pt: 'Faltam dados na tabela de EXP (level', en: 'The EXP table is missing data (level' },
   missingTail: { pt: ') para concluir o cálculo. Nada foi estimado.', en: ') to finish the calculation. Nothing was estimated.' },
   unreachable: { pt: 'Não é possível chegar a esse objetivo com as quests selecionadas:', en: 'This goal cannot be reached with the selected quests:' },
@@ -52,9 +50,10 @@ const TXT = {
   betterTail: { pt: 'de EXP a mais que a pior sequência testada', en: 'more EXP than the worst sequence tested' },
   heuristic: { pt: 'Muitas quests: foi usada uma ordem razoável (pré-requisitos e level), sem testar todas as combinações.', en: 'Many quests: one reasonable order was used (prerequisites and level), without trying every combination.' },
   step: { pt: 'Evolução após cada entrega', en: 'Progress after each delivery' },
-  afterLeveling: { pt: 'Depois de upar', en: 'After levelling' },
+  afterLeveling: { pt: 'Depois do grind', en: 'After grinding' },
   toPhone: { pt: '📱 Levar para o celular', en: '📱 Take it to your phone' },
   phoneHint: { pt: 'Abra o link no celular (ou mande para si mesmo) para ir marcando as quests conforme faz. Suas marcações ficam salvas no aparelho. Também dá para mandar o link para o grupo.', en: 'Open the link on your phone (or send it to yourself) to tick the quests off as you do them. Your ticks stay on that device. You can also send the link to your group.' },
+  grindInfo: { pt: 'Durante estas quests você ainda ganha EXP de Grind (medida em jogo, não está incluída na conta):', en: 'While doing these quests you also earn Grind EXP (measured in game, not included in the calculation):' },
   openNow: { pt: 'Abrir agora', en: 'Open now' },
   share: { pt: 'Compartilhar', en: 'Share' },
   ofLevel: { pt: 'do level', en: 'of the level' },
@@ -81,6 +80,9 @@ const TXT = {
 } as const;
 type Tk = keyof typeof TXT;
 
+/** Prerequisites are only a note in the site: the ones that are not part of the plan count as done, so they never block it. */
+const doneFor = (progress: Parameters<typeof deliveredIds>[0], quests: Quest[]): Set<string> => new Set([...deliveredIds(progress), ...quests.flatMap((q) => q.prerequisites)]);
+
 export function LevelingPlanner() {
   const { lang } = useI18n();
   const T = (k: Tk) => TXT[k][lang];
@@ -106,7 +108,7 @@ export function LevelingPlanner() {
 
   const result: PlanResult | null = useMemo(() => {
     if (!plan || !active || !from || !goalOk) return null;
-    return planGoal(plan, from, selected, { level: goalLvlNum, pct: goalPctNum }, deliveredIds(active.progress));
+    return planGoal(plan, from, selected, { level: goalLvlNum, pct: goalPctNum }, doneFor(active.progress, selected));
   }, [plan, active, from, goalOk, selected, goalLvlNum, goalPctNum]);
 
   if (!data || !active || !plan || !table) return null;
@@ -114,8 +116,6 @@ export function LevelingPlanner() {
   const rewardOf = (q: Quest) => questReward(q, data.bonuses, active.bonuses, settings.combineMode, settings.rounding);
   // only quests that give EXP (they are the ones that matter for leveling)
   const givesExp = pickable.filter((p) => (p.quest.baseExp ?? 0) > 0);
-  const readyList = givesExp.filter((p) => p.info.status === 'ready');
-  const otherList = givesExp.filter((p) => p.info.status !== 'ready');
   // by map (highest-level map first) and, inside each map, the most EXP first
   const byMap = (list: typeof givesExp) => groupQuests(list, (p) => p.quest, (p) => rewardOf(p.quest)?.total ?? -1);
   const pickGroups = (list: typeof givesExp) => byMap(list).map((g) => (
@@ -151,7 +151,7 @@ export function LevelingPlanner() {
     return (
       <div className="qt-result">
         {selected.length === 0 ? (
-          <p className="qt-recommend">{T('noQuestsPlan')} <b>{fmtExp(result.preGain, lang)}</b> EXP.</p>
+          <p className="qt-recommend">{T('noQuestsPlan')} <b>{fmtExp(result.preGain, lang)}</b>.</p>
         ) : result.alreadyEnough ? (
           <p className="qt-recommend ok">{T('enough')} <b>{goalText}</b>.</p>
         ) : (
@@ -167,6 +167,8 @@ export function LevelingPlanner() {
           <div><small>{T('preGain')}</small><b>{fmtExp(result.preGain, lang)}</b></div>
           <div><small>{T('finalPos')}</small><b>{best ? fmtPos(table, best, lang, lvlWord) : '—'}</b></div>
         </div>
+
+        {(() => { const g = selected.filter((q) => q.grindExp); const sum = g.reduce((a, q) => a + (q.grindExp as number), 0); return sum > 0 ? <p className="mk-muted">{T('grindInfo')} <b>≈ {fmtExp(sum, lang)}</b>{g.length < selected.length ? ` (${g.length}/${selected.length})` : ''}</p> : null; })()}
 
         {result.skipped.length > 0 && <p className="sk-notice">{T('skipped')} {result.skipped.map((q) => q.name).join(', ')}</p>}
 
@@ -237,7 +239,7 @@ export function LevelingPlanner() {
   const recalcPlan = (p: SavedPlan) => {
     const qs = p.questIds.map((id) => questsById.get(id)).filter((q): q is Quest => !!q);
     const base = start;
-    const r = base ? planGoal(plan, base, qs, p.target, deliveredIds(active.progress)) : null;
+    const r = base ? planGoal(plan, base, qs, p.target, doneFor(active.progress, qs)) : null;
     update((c) => ({ plans: c.plans.map((x) => (x.id === p.id ? { ...x, questIds: qs.map((q) => q.id), dataVersion: settings.dataVersion, summary: r?.final ? { finalLevel: r.final.level, finalPct: statePct(table, r.final) ?? 0, preGainExp: r.preGain } : null } : x)) }));
   };
 
@@ -268,12 +270,8 @@ export function LevelingPlanner() {
         {selected.length > 0 && <button type="button" className="mk-btn" onClick={() => setPlannerIds([])}>{T('clearAll')}</button>}
         <div className="qt-picklist">
           <div>
-            <h4>{T('readyQuests')} <small>· {readyList.length}</small> {readyList.length > 0 && <button type="button" className="mk-btn" onClick={() => setPlannerIds([...new Set([...plannerIds, ...readyList.map((r) => r.quest.id)])])}>{T('addAllReady')}</button>}</h4>
-            {pickGroups(readyList)}
-          </div>
-          <div>
-            <h4>{T('availableQuests')} <small>· {otherList.length}</small></h4>
-            <div className="qt-picklist-scroll">{pickGroups(otherList)}</div>
+            <h4>{T('availableQuests')} <small>· {givesExp.length}</small></h4>
+            <div className="qt-picklist-scroll">{pickGroups(givesExp)}</div>
           </div>
         </div>
       </section>

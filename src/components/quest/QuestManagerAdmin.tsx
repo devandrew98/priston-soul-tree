@@ -125,6 +125,7 @@ export function QuestManagerAdmin() {
             {field('Mapa', <input value={draft.map} onChange={(e) => setDraft({ ...draft, map: e.target.value })} maxLength={120} />)}
             {field('NPC responsável', <input value={draft.npc} onChange={(e) => setDraft({ ...draft, npc: e.target.value })} maxLength={120} />)}
             {field('EXP base (valor absoluto)', <input inputMode="numeric" value={draft.baseExp ?? ''} onChange={(e) => setDraft({ ...draft, baseExp: numOrNull(e.target.value) })} />)}
+            {field('EXP de Grind durante a quest (opcional, medida em jogo)', <input inputMode="numeric" value={draft.grindExp ?? ''} onChange={(e) => setDraft({ ...draft, grindExp: numOrNull(e.target.value) })} />)}
             {field('Tipo de repetição', <select value={draft.repeatType} onChange={(e) => setDraft({ ...draft, repeatType: e.target.value as RepeatType })}>{REPEAT_TYPES.map((r) => <option key={r} value={r}>{REPEAT_LABEL[r]}</option>)}</select>)}
             {draft.repeatType === 'interval' && field('Intervalo (horas)', <input inputMode="numeric" value={draft.repeatIntervalHours ?? ''} onChange={(e) => setDraft({ ...draft, repeatIntervalHours: numOrNull(e.target.value) })} />)}
             {field('Pré-requisitos (IDs de quests, separados por vírgula)', <input value={prereqText} onChange={(e) => setPrereqText(e.target.value)} />, true)}

@@ -18,15 +18,14 @@ describe('questInfo', () => {
     expect(questInfo(quest('a', { minLevel: 10 }), { level: 9, progress: {} }, NOW)).toMatchObject({ status: 'locked', reasons: ['level_min'] });
     expect(questInfo(quest('a', { maxLevel: 20 }), { level: 21, progress: {} }, NOW)).toMatchObject({ status: 'locked', reasons: ['level_max'] });
   });
-  it('locked until every prerequisite was delivered', () => {
+  it('a prerequisite is only a note: it never locks the quest', () => {
     const q = quest('b', { prerequisites: ['a'] });
-    expect(questInfo(q, { level: 50, progress: {} }, NOW)).toMatchObject({ status: 'locked', reasons: ['prerequisite'] });
-    expect(questInfo(q, { level: 50, progress: { a: done(NOW) } }, NOW).status).toBe('available');
+    expect(questInfo(q, { level: 50, progress: {} }, NOW).status).toBe('available');
   });
-  it('the progress the player recorded', () => {
+  it('old started/ready marks count as plain available', () => {
     const q = quest('a');
-    expect(questInfo(q, { level: 1, progress: { a: { status: 'in_progress', deliveries: [], updatedAt: 0 } } }, NOW).status).toBe('in_progress');
-    expect(questInfo(q, { level: 1, progress: { a: { status: 'ready', deliveries: [], updatedAt: 0 } } }, NOW).status).toBe('ready');
+    expect(questInfo(q, { level: 1, progress: { a: { status: 'in_progress', deliveries: [], updatedAt: 0 } } }, NOW).status).toBe('available');
+    expect(questInfo(q, { level: 1, progress: { a: { status: 'ready', deliveries: [], updatedAt: 0 } } }, NOW).status).toBe('available');
   });
   it('a quest done once stays completed', () => {
     expect(questInfo(quest('a'), { level: 1, progress: { a: done(NOW - 100 * HOUR) } }, NOW).status).toBe('completed');
@@ -36,11 +35,11 @@ describe('questInfo', () => {
     expect(questInfo(q, { level: 1, progress: { d: done(NOW - 5 * HOUR) } }, NOW)).toMatchObject({ status: 'completed', nextAvailableAt: NOW + 19 * HOUR });
     expect(questInfo(q, { level: 1, progress: { d: done(NOW - 25 * HOUR) } }, NOW).status).toBe('available');
   });
-  it('an interval quest uses its own interval; a repeatable one has no wait', () => {
+  it('an interval quest uses its own interval; one with no wait stays marked until undone', () => {
     const q = quest('i', { repeatType: 'interval', repeatIntervalHours: 72 });
     expect(questInfo(q, { level: 1, progress: { i: done(NOW - 71 * HOUR) } }, NOW).status).toBe('completed');
     expect(questInfo(q, { level: 1, progress: { i: done(NOW - 73 * HOUR) } }, NOW).status).toBe('available');
-    expect(questInfo(quest('r', { repeatType: 'repeatable' }), { level: 1, progress: { r: done(NOW - 1000) } }, NOW).status).toBe('available');
+    expect(questInfo(quest('r', { repeatType: 'repeatable' }), { level: 1, progress: { r: done(NOW - 1000) } }, NOW).status).toBe('completed');
   });
   it('the delivery history is separate: nextAvailableAt uses only the last one', () => {
     const q = quest('d', { repeatType: 'daily' });

@@ -22,6 +22,8 @@ export interface Quest {
   objectives: Objective[];
   /** Absolute base EXP of the reward; null when the administrator has not registered it yet. */
   baseExp: number | null;
+  /** Typical Grind EXP (killing mobs) while doing the quest, measured in game by the administrator. Shown apart, never part of the calculations. */
+  grindExp?: number | null;
   prerequisites: string[];
   repeatType: RepeatType;
   /** Hours between two deliveries ('interval'); 'daily' is 24h. */
