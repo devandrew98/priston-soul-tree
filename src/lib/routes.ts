@@ -2,7 +2,7 @@
 // single-page app: Vercel sends any path to index.html (vercel.json), and this module
 // maps path <-> which page to show, so F5, the Back button and shared links all work.
 
-export type Section = 'home' | 'timers' | 'market' | 'streamers' | 'guides' | 'tools';
+export type Section = 'home' | 'timers' | 'market' | 'streamers' | 'guides' | 'tools' | 'tutorial';
 export type TimerTab = 'boss' | 'fury';
 export type ToolTab = 'soultree' | 'mixing' | 'sod' | 'wardrobe' | 'skilltree' | 'screenshare' | 'builds' | 'aging' | 'clan' | 'quests';
 
@@ -25,11 +25,12 @@ export const TOOL_PATHS: Record<ToolTab, string> = {
   quests: '/quests',
 };
 
-const SECTION_PATHS: Record<'home' | 'market' | 'guides' | 'streamers', string> = {
+const SECTION_PATHS: Record<'home' | 'market' | 'guides' | 'streamers' | 'tutorial', string> = {
   home: '/',
   market: '/marketplace',
   guides: '/guides',
   streamers: '/streamers',
+  tutorial: '/tutorial',
 };
 
 /** The URL path that shows this page. */
@@ -53,6 +54,8 @@ export function routeFromPath(pathname: string): Route | null {
     if (`${path}/`.startsWith(prefix)) return { ...DEFAULT_ROUTE, section: 'tools', toolTab };
   }
 
+  if (path.startsWith('/tutorial/')) return { ...DEFAULT_ROUTE, section: 'tutorial' }; // /tutorial/<area> opens one area
+
   if (path === SECTION_PATHS.home) return { ...DEFAULT_ROUTE };
   if (path === '/timers') return { ...DEFAULT_ROUTE, section: 'timers' };
   for (const [timerTab, p] of Object.entries(TIMER_PATHS)) {
@@ -62,7 +65,7 @@ export function routeFromPath(pathname: string): Route | null {
   for (const [toolTab, p] of Object.entries(TOOL_PATHS)) {
     if (path === p) return { ...DEFAULT_ROUTE, section: 'tools', toolTab: toolTab as ToolTab };
   }
-  for (const section of ['market', 'guides', 'streamers'] as const) {
+  for (const section of ['market', 'guides', 'streamers', 'tutorial'] as const) {
     if (path === SECTION_PATHS[section]) return { ...DEFAULT_ROUTE, section };
   }
   return null;

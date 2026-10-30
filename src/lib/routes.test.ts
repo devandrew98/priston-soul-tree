@@ -10,6 +10,7 @@ describe('routes', () => {
       { ...DEFAULT_ROUTE, section: 'market' },
       { ...DEFAULT_ROUTE, section: 'guides' },
       { ...DEFAULT_ROUTE, section: 'streamers' },
+      { ...DEFAULT_ROUTE, section: 'tutorial' },
     ];
     for (const route of routes) {
       expect(routeFromPath(pathFor(route))).toEqual(route);

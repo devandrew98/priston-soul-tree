@@ -17,6 +17,7 @@ const DICT: Record<string, Entry> = {
   'nav.soultree': { pt: 'Árvore de Souls', en: 'Soul Tree' },
   'nav.streamers': { pt: 'Streamers', en: 'Streamers' },
   'nav.guides': { pt: 'Guias', en: 'Guides' },
+  'nav.tutorial': { pt: 'Tutorial', en: 'Tutorial' },
   'nav.mixing': { pt: 'Mixing', en: 'Mixing' },
   'nav.wardrobe': { pt: 'Armário', en: 'Wardrobe' },
   'nav.skilltree': { pt: 'Construtor de Skills', en: 'Class Skill Builder' },

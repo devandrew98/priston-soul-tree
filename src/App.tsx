@@ -23,6 +23,7 @@ import { ClanFormation } from './components/clan/ClanFormation';
 import { QuestTracker } from './components/quest/QuestTracker';
 import { ClanSharePage } from './components/clan/ClanSharePage';
 import { PersonalPage } from './components/personal/PersonalPage';
+import { Tutorial } from './components/tutorial/Tutorial';
 
 // Private pain diary (pristonzone.com/dor): a separate app that only shares the domain; loaded on demand so the site does not carry it.
 const ChecklistPage = lazy(() => import('./components/quest/ChecklistPage').then((m) => ({ default: m.ChecklistPage })));
@@ -173,6 +174,7 @@ export default function App() {
     const labelKey = section === 'timers' ? TIMER_TABS.find((x) => x.id === timerTab)?.key
       : section === 'tools' ? TOOL_TABS.find((x) => x.id === toolTab)?.key
       : section === 'home' ? undefined
+      : section === 'tutorial' ? 'nav.tutorial'
       : NAV.find((x) => x.id === section)?.key;
     document.title = labelKey ? `${t(labelKey)} — PristonZONE` : 'PristonZONE';
   }, [section, timerTab, toolTab, lang, t]);
@@ -267,6 +269,9 @@ export default function App() {
           ))}
         </div>
         <span className="spacer" />
+        <button className={`topnav-tab ${section === 'tutorial' ? 'active' : ''}`} onClick={() => { setOpenMenu(null); go('tutorial'); }}>
+          <span className="topnav-ico">❓</span> {t('nav.tutorial')}
+        </button>
         {visits !== null && (
           <div className="topnav-stat" title={t('home.visits', { n: visits.toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US') })}>
             <span className="topnav-stat-label">👁 {t('nav.visits')}</span>
@@ -375,6 +380,8 @@ export default function App() {
         <Streamers />
       ) : section === 'guides' ? (
         <Guides />
+      ) : section === 'tutorial' ? (
+        <Tutorial onOpen={navigate} />
       ) : (
         toolTab === 'soultree' ? <SoulTree />
           : toolTab === 'skilltree' ? <SkillTreeTool />

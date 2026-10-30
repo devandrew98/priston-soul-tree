@@ -2533,3 +2533,15 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .qt-phone { margin-top: 14px; }
 .qt-phone-box { margin-top: 8px; display: grid; gap: 8px; }
 .qt-phone-box input { width: 100%; }
+
+/* ===== Tutorial (/tutorial) ===== */
+.tut { max-width: 860px; margin: 0 auto; }
+.tut-grid { margin-top: 14px; }
+.tut-grid .home-card { cursor: pointer; font: inherit; }
+.tut-back { flex: none; margin-bottom: 12px; }
+.tut-card { margin-bottom: 14px; align-items: stretch; }
+.tut-card p { margin: 0; line-height: 1.5; }
+.tut-card .mk-note { margin-top: 0; }
+.tut-card .mk-btn.primary { align-self: flex-start; }
+.tut-steps { margin: 0; padding-left: 22px; display: grid; gap: 8px; line-height: 1.5; }
+.tut-next { margin-top: 4px; }
