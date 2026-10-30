@@ -2553,3 +2553,25 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .lang-toggle button { display: inline-flex; align-items: center; gap: 6px; }
 .lang-toggle .flag { display: block; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,0.5); }
 .topnav > .lang-toggle button { padding: 7px 9px; }
+
+/* ===== Admin > Estatísticas ===== */
+.ss-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.ss-head .mk-h2 { margin: 0; }
+.ss-periods { display: flex; flex-wrap: wrap; gap: 6px; }
+.ss-periods .mk-btn.sm { flex: none; }
+.ss-card { align-items: stretch; margin-bottom: 14px; }
+.ss-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 14px; }
+.ss-grid .ss-card { margin-bottom: 0; }
+.ss-bars { display: grid; gap: 6px; }
+.ss-row { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) auto auto; align-items: center; gap: 8px; font-size: 13px; }
+.ss-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ss-track { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; height: 10px; overflow: hidden; }
+.ss-track i { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); }
+.ss-row b { color: var(--gold-bright); font-family: ui-monospace, monospace; min-width: 36px; text-align: right; }
+.ss-row small { color: var(--text-dim); min-width: 78px; }
+.ss-days, .ss-hours { display: flex; align-items: flex-end; gap: 3px; height: 120px; }
+.ss-day, .ss-hour { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+.ss-day i, .ss-hour i { display: block; width: 100%; background: linear-gradient(180deg, var(--gold-bright), var(--gold)); border-radius: 3px 3px 0 0; }
+.ss-hour { height: 100%; }
+.ss-hour small { color: var(--text-dim); font-size: 10px; height: 12px; }
+@media (max-width: 560px) { .ss-row { grid-template-columns: minmax(0, 1fr) auto; } .ss-track, .ss-row small { display: none; } }

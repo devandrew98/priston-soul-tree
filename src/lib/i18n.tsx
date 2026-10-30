@@ -876,6 +876,7 @@ const DICT: Record<string, Entry> = {
   'mk.admin.reports': { pt: 'Denúncias', en: 'Reports' },
   'mk.admin.global': { pt: 'Notificação global', en: 'Global notice' },
   'mk.admin.logs': { pt: 'Logs', en: 'Logs' },
+  'mk.admin.sitestats': { pt: 'Estatísticas', en: 'Statistics' },
   'mk.admin.streamers': { pt: 'Streamers', en: 'Streamers' },
 
   // categorias de reputação (Fase 11)

@@ -3,6 +3,7 @@ import { useI18n } from '../lib/i18n';
 import { BACKEND_ENABLED } from '../lib/market/supabase';
 import { OVERLAY_KEY, downloadUrl, fetchAppDownload } from '../lib/market/downloads';
 import { NewsFeed } from './NewsFeed';
+import { trackEvent } from '../lib/analytics';
 
 const PIX_KEY = 'aed0ca9e-6f45-4f9c-9370-460bc85b438e';
 
@@ -71,7 +72,7 @@ export function Home() {
 
       {href && (
         <div className="home-download-row">
-          <a className="home-download" href={href} download={filename} title={t('home.download.hint')}>
+          <a className="home-download" href={href} download={filename} title={t('home.download.hint')} onClick={() => trackEvent('home:download_overlay')}>
             <img src="/overlay-download.png" alt={t('home.download.alt')} />
           </a>
           {notes && (

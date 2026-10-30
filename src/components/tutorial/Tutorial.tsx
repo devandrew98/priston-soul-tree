@@ -1,6 +1,7 @@
 // pristonzone.com/tutorial: how the site works. The player picks the area to learn (/tutorial/<area> opens one directly).
 import { useEffect, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
+import { trackEvent } from '../../lib/analytics';
 import { youtubeEmbedUrl } from '../../lib/market/guides';
 import type { Route } from '../../lib/routes';
 import { AREAS, findArea } from './content';
@@ -73,7 +74,7 @@ export function Tutorial({ onOpen }: { onOpen: (patch: Partial<Route>) => void }
         <h2 className="mk-h2">{T('about')}</h2>
         <p>{area.about[lang]}</p>
         {area.note && <p className="mk-note">{area.note[lang]}</p>}
-        <button type="button" className="mk-btn primary" onClick={() => onOpen(area.open)}>{T('open')}: {area.title[lang]}</button>
+        <button type="button" className="mk-btn primary" onClick={() => { trackEvent('tutorial:open_tool'); onOpen(area.open); }}>{T('open')}: {area.title[lang]}</button>
       </section>
 
       {area.video && (

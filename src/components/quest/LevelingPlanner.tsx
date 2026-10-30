@@ -1,5 +1,6 @@
 // Leveling Planner: pick several quests, choose the goal (a level and a percentage of it) and see how much EXP is still needed
 // before delivering, the best delivery order and the progress after each quest. A simulation never changes the real character.
+import { trackEvent } from '../../lib/analytics';
 import { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { availableList, unlockedBetween } from '../../lib/quest/availability';
@@ -200,9 +201,9 @@ export function LevelingPlanner() {
                   <p className="mk-muted">{T('phoneHint')}</p>
                   <input readOnly value={window.location.origin + checklistLink()} onFocus={(e) => e.target.select()} aria-label={T('toPhone')} />
                   <div className="qt-actions">
-                    <button type="button" className="mk-btn" onClick={() => { void navigator.clipboard?.writeText(window.location.origin + checklistLink()); setCopied(true); window.setTimeout(() => setCopied(false), 2000); }}>{copied ? T('copied') : T('copyChecklist')}</button>
-                    {typeof navigator.share === 'function' && <button type="button" className="mk-btn" onClick={() => { void navigator.share({ title: 'Checklist de leveling', url: window.location.origin + checklistLink() }).catch(() => {}); }}>{T('share')}</button>}
-                    <a className="mk-btn" href={checklistLink()} target="_blank" rel="noopener">{T('openNow')}</a>
+                    <button type="button" className="mk-btn" onClick={() => { trackEvent('quests:phone_link'); void navigator.clipboard?.writeText(window.location.origin + checklistLink()); setCopied(true); window.setTimeout(() => setCopied(false), 2000); }}>{copied ? T('copied') : T('copyChecklist')}</button>
+                    {typeof navigator.share === 'function' && <button type="button" className="mk-btn" onClick={() => { trackEvent('quests:phone_link'); void navigator.share({ title: 'Checklist de leveling', url: window.location.origin + checklistLink() }).catch(() => {}); }}>{T('share')}</button>}
+                    <a className="mk-btn" href={checklistLink()} target="_blank" rel="noopener" onClick={() => trackEvent('quests:phone_link')}>{T('openNow')}</a>
                   </div>
                 </div>
               )}

@@ -6,11 +6,13 @@ import App from './App';
 import { StoreProvider } from './store';
 import { LanguageProvider } from './lib/i18n';
 import { initVisits } from './lib/visits';
+import { initAnalytics } from './lib/analytics';
 import { initMedievalCursor } from './lib/medievalCursor';
 import './lib/builds/account'; // dev-only ?fakedb switch for the builds features
 
 initMedievalCursor();
 
+initAnalytics(); // anonymous page statistics (admin panel > Estatísticas)
 void initVisits(); // counts this visit (once per day) whatever page the person lands on
 
 createRoot(document.getElementById('root')!).render(

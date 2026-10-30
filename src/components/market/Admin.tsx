@@ -13,14 +13,16 @@ import { QuestManagerAdmin } from '../quest/QuestManagerAdmin';
 import { ExpTableAdmin } from '../quest/ExpTableAdmin';
 import { ExpBuffAdmin } from '../quest/ExpBuffAdmin';
 import { ImageOptimizer } from './ImageOptimizer';
+import { SiteStatsAdmin } from './SiteStatsAdmin';
 import { MarketplaceToggle } from './MarketplaceToggle';
 import type { ListingKind } from '../../lib/market/types';
 import { Avatar, KindTag, PriceTag, Since, StatusPill } from './parts';
 import { Loading } from '../Loading';
 
-type Section = 'listings' | 'users' | 'tiers' | 'itemcats' | 'reports' | 'streamers' | 'news' | 'guides' | 'download' | 'questmgr' | 'exptable' | 'expbuffs' | 'imgopt' | 'global' | 'logs';
+type Section = 'listings' | 'users' | 'tiers' | 'itemcats' | 'reports' | 'streamers' | 'news' | 'guides' | 'download' | 'questmgr' | 'exptable' | 'expbuffs' | 'imgopt' | 'global' | 'logs' | 'sitestats';
 
 const SECTIONS: { id: Section; icon: string; key: string }[] = [
+  { id: 'sitestats', icon: '📊', key: 'mk.admin.sitestats' },
   { id: 'listings', icon: '📦', key: 'mk.admin.listings' },
   { id: 'users', icon: '👤', key: 'mk.admin.users' },
   { id: 'tiers', icon: '🏅', key: 'mk.admin.tiers' },
@@ -212,6 +214,9 @@ export function Admin({ onOpen, onSeller }: { onOpen: (id: string) => void; onSe
 
       {/* NEWS / EVENTS */}
       {sec === 'news' && <NewsAdmin />}
+
+      {/* SITE STATISTICS */}
+      {sec === 'sitestats' && <SiteStatsAdmin />}
 
       {/* GUIDES */}
       {sec === 'guides' && <GuidesAdmin />}

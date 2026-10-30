@@ -35,6 +35,7 @@ import { LOGIN_EVENT } from './lib/builds/account';
 import { ResetPasswordModal } from './components/market/ResetPasswordModal';
 import { AuthModal } from './components/market/AuthModal';
 import { useAuth } from './components/market/store';
+import { setAnalyticsMuted, trackEvent } from './lib/analytics';
 import { BACKEND_ENABLED } from './lib/market/supabase';
 import { fetchSiteFlag } from './lib/market/siteSettings';
 import { useI18n } from './lib/i18n';
@@ -125,6 +126,7 @@ export default function App() {
   const { t, lang, setLang } = useI18n();
   const { isAdmin, isLoggedIn, user, logout } = useAuth();
   const [route, setRoute] = useState<Route>(INIT);
+  useEffect(() => { setAnalyticsMuted(isAdmin); }, [isAdmin]); // the administrator's own visits are not counted
   const { section, timerTab, toolTab } = route;
   const [openMenu, setOpenMenu] = useState<Section | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false); // the phone-sized menu drawer
@@ -309,8 +311,8 @@ export default function App() {
           </button>
         )}
         <div className="lang-toggle" title={t('lang.switch')}>
-          <button className={lang === 'pt' ? 'on' : ''} onClick={() => setLang('pt')} title="Português" aria-label="Português"><BrFlag /></button>
-          <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')} title="English" aria-label="English"><UkFlag /></button>
+          <button className={lang === 'pt' ? 'on' : ''} onClick={() => { setLang('pt'); trackEvent('lang:pt'); }} title="Português" aria-label="Português"><BrFlag /></button>
+          <button className={lang === 'en' ? 'on' : ''} onClick={() => { setLang('en'); trackEvent('lang:en'); }} title="English" aria-label="English"><UkFlag /></button>
         </div>
         <button
           type="button"
@@ -354,8 +356,8 @@ export default function App() {
             </div>
             <div className="topnav-drawer-foot">
               <div className="lang-toggle" title={t('lang.switch')}>
-                <button className={lang === 'pt' ? 'on' : ''} onClick={() => setLang('pt')}><BrFlag /> PT</button>
-                <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}><UkFlag /> EN</button>
+                <button className={lang === 'pt' ? 'on' : ''} onClick={() => { setLang('pt'); trackEvent('lang:pt'); }}><BrFlag /> PT</button>
+                <button className={lang === 'en' ? 'on' : ''} onClick={() => { setLang('en'); trackEvent('lang:en'); }}><UkFlag /> EN</button>
               </div>
               {!isLoggedIn && (
                 <button type="button" className="topnav-drawer-login" onClick={() => { setMobileOpen(false); setShowAuth(true); }}>
