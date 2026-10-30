@@ -1,5 +1,5 @@
 // Quest Tracker: follow quests, calculate the EXP they give with the active bonuses and plan the deliveries to reach a level.
-// Three sections: Plan (goal, quests, EXP calculation, checklist), My Characters and Advanced (the full quest database). Official data comes from the administrator.
+// Three sections: Available Quests (the full quest database), Plan (goal, quests, EXP calculation, checklist) and My Characters. Official data comes from the administrator.
 import { useI18n } from '../../lib/i18n';
 import { QUEST_FAKE } from '../../lib/quest/repo';
 import { SAMPLE_BANNER } from '../../lib/quest/devSample';
@@ -16,18 +16,18 @@ const TXT = {
   unavailable: { pt: 'O Quest Tracker ainda não foi ativado no banco de dados.', en: 'The Quest Tracker is not enabled in the database yet.' },
   error: { pt: 'Não foi possível carregar os dados. Tente de novo.', en: 'Could not load the data. Try again.' },
   retry: { pt: 'Tentar de novo', en: 'Try again' },
-  advancedNote: { pt: 'Banco completo de quests, com as que não dão EXP (side quests, rank up, eventos…). Para planejar o leveling, use a aba Planejar.', en: 'The full quest database, including the quests that give no EXP. To plan your leveling, use the Plan tab.' },
+  advancedNote: { pt: 'Todas as quests do jogo, inclusive as que não dão EXP (side quests, rank up, eventos…). Para montar o leveling, use a aba Planejar.', en: 'All the quests of the game, including the ones that give no EXP. To build your leveling, use the Plan tab.' },
   noData: { pt: 'Ainda não há quests nem tabela de EXP cadastradas. Quando o administrador importar os dados oficiais, tudo aparece aqui.', en: 'There are no quests or EXP table yet. When the administrator imports the official data, everything shows up here.' },
   tabs: {
-    pt: { database: 'Avançado', planner: 'Planejar', characters: 'Meus Personagens' },
-    en: { database: 'Advanced', planner: 'Plan', characters: 'My Characters' },
+    pt: { database: 'Quests Disponíveis', planner: 'Planejar', characters: 'Meus Personagens' },
+    en: { database: 'Available Quests', planner: 'Plan', characters: 'My Characters' },
   },
 } as const;
 
 const TABS: { id: QuestTab; icon: string }[] = [
+  { id: 'database', icon: '📜' },
   { id: 'planner', icon: '🗺' },
   { id: 'characters', icon: '👤' },
-  { id: 'database', icon: '⚙' },
 ];
 
 function Inner() {

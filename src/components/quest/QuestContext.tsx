@@ -62,7 +62,7 @@ export function QuestProvider({ children }: { children: ReactNode }) {
   const [charsLoaded, setCharsLoaded] = useState(false);
   const [activeId, setActiveIdState] = useState<string | null>(() => { try { return localStorage.getItem(ACTIVE_KEY); } catch { return null; } });
   const [saveState, setSaveState] = useState<QuestCtx['saveState']>('idle');
-  const [tab, setTab] = useState<QuestTab>('planner');
+  const [tab, setTab] = useState<QuestTab>('database');
   const [calcQuestId, setCalcQuestId] = useState<string | null>(null);
   const [plannerIds, setPlannerIds] = useState<string[]>([]);
   const [now, setNow] = useState(() => Date.now());
