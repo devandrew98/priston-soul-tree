@@ -2527,3 +2527,9 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .ck-group { margin-bottom: 10px; }
 .ck-map { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; margin-bottom: 4px; background: rgba(210, 170, 85, 0.1); border: 0; border-left: 3px solid var(--gold); color: var(--gold-bright); font: inherit; font-weight: 700; text-align: left; cursor: pointer; }
 .ck-map small { font-weight: 400; color: var(--text-dim); }
+
+.qt-more { margin-top: 14px; }
+.qt-more > summary { cursor: pointer; font-weight: 600; padding: 8px 0; }
+.qt-phone { margin-top: 14px; }
+.qt-phone-box { margin-top: 8px; display: grid; gap: 8px; }
+.qt-phone-box input { width: 100%; }

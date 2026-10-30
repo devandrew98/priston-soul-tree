@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { availableList, unlockedBetween } from '../../lib/quest/availability';
 import { questReward } from '../../lib/quest/bonus';
-import { expBetween, statePct, type ExpState } from '../../lib/quest/exp';
+import { expBetween, expToPercent, statePct, type ExpState } from '../../lib/quest/exp';
 import { encodePlan, tokenFor } from '../../lib/quest/checklist';
 import { groupQuests } from '../../lib/quest/mapGroups';
 import { deliveredIds, planGoal, type PlanResult } from '../../lib/quest/planner';
@@ -53,6 +53,11 @@ const TXT = {
   heuristic: { pt: 'Muitas quests: foi usada uma ordem razoável (pré-requisitos e level), sem testar todas as combinações.', en: 'Many quests: one reasonable order was used (prerequisites and level), without trying every combination.' },
   step: { pt: 'Evolução após cada entrega', en: 'Progress after each delivery' },
   afterLeveling: { pt: 'Depois de upar', en: 'After levelling' },
+  toPhone: { pt: '📱 Levar para o celular', en: '📱 Take it to your phone' },
+  phoneHint: { pt: 'Abra o link no celular (ou mande para si mesmo) para ir marcando as quests conforme faz. Suas marcações ficam salvas no aparelho. Também dá para mandar o link para o grupo.', en: 'Open the link on your phone (or send it to yourself) to tick the quests off as you do them. Your ticks stay on that device. You can also send the link to your group.' },
+  openNow: { pt: 'Abrir agora', en: 'Open now' },
+  share: { pt: 'Compartilhar', en: 'Share' },
+  ofLevel: { pt: 'do level', en: 'of the level' },
   openChecklist: { pt: '🔗 Abrir checklist', en: '🔗 Open checklist' },
   copyChecklist: { pt: '📋 Copiar link do checklist', en: '📋 Copy checklist link' },
   copied: { pt: 'Link copiado!', en: 'Link copied!' },
@@ -84,6 +89,7 @@ export function LevelingPlanner() {
   const [goalPct, setGoalPct] = useState('0');
   const [planName, setPlanName] = useState('');
   const [copied, setCopied] = useState(false);
+  const [phone, setPhone] = useState(false);
   const lvlWord = 'Level';
 
   const startLevel = active?.level ?? 1;
@@ -104,6 +110,7 @@ export function LevelingPlanner() {
   }, [plan, active, from, goalOk, selected, goalLvlNum, goalPctNum]);
 
   if (!data || !active || !plan || !table) return null;
+  const needNow = table.needed(active.level);
   const rewardOf = (q: Quest) => questReward(q, data.bonuses, active.bonuses, settings.combineMode, settings.rounding);
   // only quests that give EXP (they are the ones that matter for leveling)
   const givesExp = pickable.filter((p) => (p.quest.baseExp ?? 0) > 0);
@@ -171,11 +178,6 @@ export function LevelingPlanner() {
               : orderDiff !== null && orderDiff > 0 ? <p className="mk-muted">{T('better')} <b>{fmtExp(orderDiff, lang)}</b> {T('betterTail')} ({result.orders.valid} {T('seq')}).</p> : null}
             <p className="mk-muted">{T('preRequired')}</p>
             <h4>{T('step')}</h4>
-            <div className="qt-actions">
-              <a className="mk-btn primary" href={checklistLink()} target="_blank" rel="noopener">{T('openChecklist')}</a>
-              <button type="button" className="mk-btn" onClick={() => { void navigator.clipboard?.writeText(window.location.origin + checklistLink()); setCopied(true); window.setTimeout(() => setCopied(false), 2000); }}>{copied ? T('copied') : T('copyChecklist')}</button>
-            </div>
-            <p className="mk-muted">{T('checklistHint')}</p>
             <ol className="qt-steps">
               {result.preGain > 0 && (
                 <li><span>{T('afterLeveling')}</span><b>{fmtPos(table, result.preState, lang, lvlWord)}</b>
@@ -189,6 +191,20 @@ export function LevelingPlanner() {
                 </li>
               ))}
             </ol>
+            <div className="qt-phone">
+              <button type="button" className="mk-btn primary" aria-expanded={phone} onClick={() => setPhone(!phone)}>{T('toPhone')}</button>
+              {phone && (
+                <div className="qt-phone-box">
+                  <p className="mk-muted">{T('phoneHint')}</p>
+                  <input readOnly value={window.location.origin + checklistLink()} onFocus={(e) => e.target.select()} aria-label={T('toPhone')} />
+                  <div className="qt-actions">
+                    <button type="button" className="mk-btn" onClick={() => { void navigator.clipboard?.writeText(window.location.origin + checklistLink()); setCopied(true); window.setTimeout(() => setCopied(false), 2000); }}>{copied ? T('copied') : T('copyChecklist')}</button>
+                    {typeof navigator.share === 'function' && <button type="button" className="mk-btn" onClick={() => { void navigator.share({ title: 'Checklist de leveling', url: window.location.origin + checklistLink() }).catch(() => {}); }}>{T('share')}</button>}
+                    <a className="mk-btn" href={checklistLink()} target="_blank" rel="noopener">{T('openNow')}</a>
+                  </div>
+                </div>
+              )}
+            </div>
           </>
         )}
 
@@ -244,7 +260,7 @@ export function LevelingPlanner() {
         {selected.length === 0 ? <p className="mk-muted">{T('empty')}</p> : (
           <ul className="qt-selected">
             {selected.map((q) => { const r = rewardOf(q); return (
-              <li key={q.id}><b>{q.name}</b> <small className="mk-muted">{r ? fmtExp(r.total, lang) : T('noExp')}</small>
+              <li key={q.id}><b>{q.name}</b> <small className="mk-muted">{r ? `${r.extra > 0 ? `${fmtExp(r.base, lang)} + ${fmtExp(r.extra, lang)} = ` : ''}${fmtExp(r.total, lang)}${needNow ? ` · ${fmtPct(expToPercent(r.total, needNow), lang)} ${T('ofLevel')} ${active.level}` : ''}` : T('noExp')}</small>
                 <button type="button" className="mk-btn" onClick={() => togglePlanner(q.id)} aria-label={T('remove')}>✕</button></li>
             ); })}
           </ul>

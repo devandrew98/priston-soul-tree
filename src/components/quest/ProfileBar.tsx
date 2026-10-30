@@ -69,7 +69,7 @@ export function ProfileBar() {
       </div>
       {levelMissing && <p className="sk-notice">{T('noLevel')} {active.level}.</p>}
 
-      <details className="qt-bonus" open>
+      <details className="qt-bonus">
         <summary>{T('bonuses')} <b className="qt-bonus-total">{total > 0 ? `+${fmtPct(total, lang)}` : '—'}</b></summary>
         {bonuses.length === 0 ? <p className="mk-muted">{T('noBonuses')}</p> : (
           <>

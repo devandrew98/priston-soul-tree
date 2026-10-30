@@ -8,7 +8,7 @@ import { makeContext, type PlanContext } from '../../lib/quest/planner';
 import { getQuestRepo, QUEST_FAKE, QuestUnavailableError } from '../../lib/quest/repo';
 import type { Character, QuestData, QuestProgress, QuestSettings } from '../../lib/quest/types';
 
-export type QuestTab = 'database' | 'calculator' | 'planner' | 'characters';
+export type QuestTab = 'database' | 'planner' | 'characters';
 export type ProgressAction = 'start' | 'ready' | 'deliver' | 'reset' | 'undo';
 
 interface QuestCtx {
@@ -62,7 +62,7 @@ export function QuestProvider({ children }: { children: ReactNode }) {
   const [charsLoaded, setCharsLoaded] = useState(false);
   const [activeId, setActiveIdState] = useState<string | null>(() => { try { return localStorage.getItem(ACTIVE_KEY); } catch { return null; } });
   const [saveState, setSaveState] = useState<QuestCtx['saveState']>('idle');
-  const [tab, setTab] = useState<QuestTab>('database');
+  const [tab, setTab] = useState<QuestTab>('planner');
   const [calcQuestId, setCalcQuestId] = useState<string | null>(null);
   const [plannerIds, setPlannerIds] = useState<string[]>([]);
   const [now, setNow] = useState(() => Date.now());

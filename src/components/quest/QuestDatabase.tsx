@@ -79,7 +79,7 @@ const PAGE = 60;
 export function QuestDatabase() {
   const { lang } = useI18n();
   const T = (k: Tk) => TXT[k][lang];
-  const { data, active, plan, table, setQuestState, setCalcQuestId, setTab, plannerIds, togglePlanner, now } = useQuest();
+  const { data, active, plan, table, setQuestState, plannerIds, togglePlanner, now } = useQuest();
   const [q, setQ] = useState('');
   const [cat, setCat] = useState('all');
   const [map, setMap] = useState('all');
@@ -255,7 +255,6 @@ export function QuestDatabase() {
                         {info.status === 'in_progress' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'reset')}>{T('cancel')}</button>}
                         {info.status === 'ready' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'start')}>{T('back')}</button>}
                         {info.status === 'completed' && <button type="button" className="mk-btn" onClick={() => setQuestState(quest.id, 'undo')}>{T('undo')}</button>}
-                        {info.status !== 'locked' && info.status !== 'completed' && <button type="button" className="mk-btn" onClick={() => { setCalcQuestId(quest.id); setTab('calculator'); }}>🧮 {T('calc')}</button>}
                         {info.status !== 'locked' && info.status !== 'completed' && planBtn(quest)}
                       </div>
                       {quest.description && <p>{quest.description}</p>}
