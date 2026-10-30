@@ -40,7 +40,7 @@ const SECTIONS: { id: Section; icon: string; key: string }[] = [
   { id: 'logs', icon: '📜', key: 'mk.admin.logs' },
 ];
 
-// The panel is split in a few groups, each with its own sections, so the top is never a wall of tabs.
+// The panel opens on a home of big buttons, one per function, grouped by area; picking one opens it (no sub-tabs).
 const GROUPS: { id: string; icon: string; key: string; sections: Section[] }[] = [
   { id: 'overview', icon: '📊', key: 'mk.admin.grp.overview', sections: ['sitestats'] },
   { id: 'market', icon: '🏰', key: 'mk.admin.grp.market', sections: ['listings', 'users', 'reports', 'tiers', 'itemcats', 'global', 'logs'] },
@@ -54,8 +54,8 @@ export function Admin({ onOpen, onSeller, onBack }: { onOpen: (id: string) => vo
   const m = useAdminModel();
   const { userId: myId } = useAuth();
   const tiers = useRepTiers();
-  const [sec, setSec] = useState<Section>('sitestats');
-  const group = GROUPS.find((g) => g.sections.includes(sec)) ?? GROUPS[0];
+  const [sec, setSec] = useState<Section | null>(null); // null = the home with all the functions
+  const current = SECTIONS.find((x) => x.id === sec);
   const [q, setQ] = useState('');
   const [uq, setUq] = useState('');
   const [uFilter, setUFilter] = useState<'all' | 'banned' | 'suspended' | 'contributors' | 'reported'>('all');
@@ -94,26 +94,31 @@ export function Admin({ onOpen, onSeller, onBack }: { onOpen: (id: string) => vo
         <h1 className="mk-h1">🛡 {t('mk.admin.title')}</h1>
         <span className="mk-admin-badge">ADMIN</span>
         {m.loading && <Loading inline />}
-        {onBack && <button type="button" className="mk-btn sm mk-admin-back" onClick={onBack}>← {t('mk.admin.back')}</button>}
+        {sec !== null
+          ? <button type="button" className="mk-btn sm mk-admin-back" onClick={() => setSec(null)}>← {t('mk.admin.home')}</button>
+          : onBack && <button type="button" className="mk-btn sm mk-admin-back" onClick={onBack}>← {t('mk.admin.back')}</button>}
       </div>
 
-      <div className="mk-admin-groups" role="tablist">
-        {GROUPS.map((g) => (
-          <button key={g.id} type="button" role="tab" aria-selected={group.id === g.id} className={group.id === g.id ? 'on' : ''} onClick={() => setSec(g.sections[0])}>
-            <span>{g.icon}</span> {t(g.key)}
-            {g.sections.includes('reports') && m.reports.length > 0 && <span className="mk-chat-badge sm">{m.reports.length}</span>}
-          </button>
-        ))}
-      </div>
+      {sec === null && (
+        <div className="mk-admin-home">
+          {GROUPS.map((g) => (
+            <section key={g.id} className="mk-admin-area">
+              <h2 className="mk-admin-area-title">{g.icon} {t(g.key)}</h2>
+              <div className="mk-admin-tiles">
+                {g.sections.map((id) => SECTIONS.find((x) => x.id === id)!).map((x) => (
+                  <button key={x.id} type="button" className="mk-admin-tile" onClick={() => { setSec(x.id); window.scrollTo({ top: 0 }); }}>
+                    <span className="mk-admin-tile-ico">{x.icon}</span>
+                    <b>{t(x.key)}</b>
+                    {x.id === 'reports' && m.reports.length > 0 && <span className="mk-chat-badge sm">{m.reports.length}</span>}
+                  </button>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      )}
 
-      {group.sections.length > 1 && <div className="mk-dash-tabs">
-        {group.sections.map((id) => SECTIONS.find((x) => x.id === id)!).map((s) => (
-          <button key={s.id} className={sec === s.id ? 'on' : ''} onClick={() => setSec(s.id)}>
-            {s.icon} {t(s.key)}
-            {s.id === 'reports' && m.reports.length > 0 && <span className="mk-chat-badge sm">{m.reports.length}</span>}
-          </button>
-        ))}
-      </div>}
+      {current && <h2 className="mk-admin-sec-title">{current.icon} {t(current.key)}</h2>}
 
       {/* LISTINGS */}
       {sec === 'listings' && (
