@@ -2545,3 +2545,11 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .tut-card .mk-btn.primary { align-self: flex-start; }
 .tut-steps { margin: 0; padding-left: 22px; display: grid; gap: 8px; line-height: 1.5; }
 .tut-next { margin-top: 4px; }
+
+/* Top bar kept on one line: help link as a "?" button, visits as eye + number, flags without text. */
+.topnav-help { padding-left: 14px; padding-right: 14px; font-weight: 800; font-size: 16px; }
+.topnav-stat { flex-direction: row; align-items: center; gap: 6px; }
+.topnav-stat-eye { font-size: 13px; opacity: 0.8; }
+.lang-toggle button { display: inline-flex; align-items: center; gap: 6px; }
+.lang-toggle .flag { display: block; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,0.5); }
+.topnav > .lang-toggle button { padding: 7px 9px; }

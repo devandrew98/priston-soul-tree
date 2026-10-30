@@ -24,6 +24,7 @@ import { QuestTracker } from './components/quest/QuestTracker';
 import { ClanSharePage } from './components/clan/ClanSharePage';
 import { PersonalPage } from './components/personal/PersonalPage';
 import { Tutorial } from './components/tutorial/Tutorial';
+import { BrFlag, UkFlag } from './components/Flags';
 
 // Private pain diary (pristonzone.com/dor): a separate app that only shares the domain; loaded on demand so the site does not carry it.
 const ChecklistPage = lazy(() => import('./components/quest/ChecklistPage').then((m) => ({ default: m.ChecklistPage })));
@@ -269,12 +270,12 @@ export default function App() {
           ))}
         </div>
         <span className="spacer" />
-        <button className={`topnav-tab ${section === 'tutorial' ? 'active' : ''}`} onClick={() => { setOpenMenu(null); go('tutorial'); }}>
-          <span className="topnav-ico">❓</span> {t('nav.tutorial')}
+        <button className={`topnav-tab topnav-help ${section === 'tutorial' ? 'active' : ''}`} title={t('nav.tutorial')} aria-label={t('nav.tutorial')} onClick={() => { setOpenMenu(null); go('tutorial'); }}>
+          ?
         </button>
         {visits !== null && (
           <div className="topnav-stat" title={t('home.visits', { n: visits.toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US') })}>
-            <span className="topnav-stat-label">👁 {t('nav.visits')}</span>
+            <span className="topnav-stat-eye" aria-label={t('nav.visits')}>👁</span>
             <b className="topnav-stat-num">{visits.toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US')}</b>
           </div>
         )}
@@ -308,12 +309,8 @@ export default function App() {
           </button>
         )}
         <div className="lang-toggle" title={t('lang.switch')}>
-          <button className={lang === 'pt' ? 'on' : ''} onClick={() => setLang('pt')}>
-            🇧🇷 PT
-          </button>
-          <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}>
-            🇬🇧 EN
-          </button>
+          <button className={lang === 'pt' ? 'on' : ''} onClick={() => setLang('pt')} title="Português" aria-label="Português"><BrFlag /></button>
+          <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')} title="English" aria-label="English"><UkFlag /></button>
         </div>
         <button
           type="button"
@@ -350,10 +347,15 @@ export default function App() {
                 )}
               </div>
             ))}
+            <div className="topnav-drawer-group">
+              <button type="button" className={`topnav-drawer-item${section === 'tutorial' ? ' active' : ''}`} onClick={() => go('tutorial')}>
+                <span className="topnav-ico">❓</span> {t('nav.tutorial')}
+              </button>
+            </div>
             <div className="topnav-drawer-foot">
               <div className="lang-toggle" title={t('lang.switch')}>
-                <button className={lang === 'pt' ? 'on' : ''} onClick={() => setLang('pt')}>🇧🇷 PT</button>
-                <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}>🇬🇧 EN</button>
+                <button className={lang === 'pt' ? 'on' : ''} onClick={() => setLang('pt')}><BrFlag /> PT</button>
+                <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}><UkFlag /> EN</button>
               </div>
               {!isLoggedIn && (
                 <button type="button" className="topnav-drawer-login" onClick={() => { setMobileOpen(false); setShowAuth(true); }}>
