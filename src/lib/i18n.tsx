@@ -871,6 +871,12 @@ const DICT: Record<string, Entry> = {
 
   // admin panel
   'mk.admin.title': { pt: 'Painel Administrativo', en: 'Admin Panel' },
+  'mk.admin.back': { pt: 'Voltar ao Marketplace', en: 'Back to the Marketplace' },
+  'mk.admin.grp.overview': { pt: 'Visão geral', en: 'Overview' },
+  'mk.admin.grp.market': { pt: 'Marketplace', en: 'Marketplace' },
+  'mk.admin.grp.site': { pt: 'Site', en: 'Site' },
+  'mk.admin.grp.quests': { pt: 'Quest Tracker', en: 'Quest Tracker' },
+  'mk.admin.grp.tools': { pt: 'Ferramentas', en: 'Tools' },
   'mk.admin.listings': { pt: 'Anúncios', en: 'Listings' },
   'mk.admin.users': { pt: 'Usuários', en: 'Users' },
   'mk.admin.reports': { pt: 'Denúncias', en: 'Reports' },

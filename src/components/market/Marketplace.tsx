@@ -109,7 +109,7 @@ export function Marketplace({ openAdminAt, onAdminOpened }: { openAdminAt?: numb
       {!enabled && isAdmin && (
         <div className="mk-disabled-banner">⚠ {t('mk.disabled.adminnote')}</div>
       )}
-      <header className="mk-head">
+      {view.name !== 'admin' && <header className="mk-head">
         <div className="mk-head-title">
           <h1 className="mk-title">🏰 {t('mk.title')}</h1>
           <p className="mk-sub">{t('mk.subtitle')}</p>
@@ -142,7 +142,7 @@ export function Marketplace({ openAdminAt, onAdminOpened }: { openAdminAt?: numb
           <NotificationBell onNavigate={onNotifNav} />
           <UserMenu onLogin={openLogin} onDashboard={() => go('dashboard')} />
         </div>
-      </header>
+      </header>}
 
       {view.name === 'browse' && <Browse onOpen={openItem} onSeller={openSeller} />}
       {view.name === 'stats' && <Stats onOpen={openItem} onSeller={openSeller} />}
@@ -157,7 +157,7 @@ export function Marketplace({ openAdminAt, onAdminOpened }: { openAdminAt?: numb
           onLogin={openLogin}
         />
       )}
-      {view.name === 'admin' && (adminUnlocked ? <Admin onOpen={openItem} onSeller={openSeller} /> : <AdminGate onUnlock={() => setAdminUnlocked(true)} />)}
+      {view.name === 'admin' && (adminUnlocked ? <Admin onOpen={openItem} onSeller={openSeller} onBack={() => go('browse')} /> : <AdminGate onUnlock={() => setAdminUnlocked(true)} />)}
       {view.name === 'item' && <ItemView id={view.id} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} />}
       {view.name === 'seller' && <SellerProfile sellerId={view.id} onOpen={openItem} onSeller={openSeller} onChat={openChat} onBack={() => go('browse')} />}
 
