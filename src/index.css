@@ -2586,3 +2586,12 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .mk-admin-tile b { color: var(--gold-bright); font-size: 14px; }
 .mk-admin-tile .mk-chat-badge { position: absolute; top: 8px; right: 8px; }
 .mk-admin-sec-title { font-size: 18px; color: var(--gold-bright); margin: 0 0 14px; }
+
+/* Pix: QR code next to the key. The QR keeps a white frame so cameras can read it on the dark theme. */
+.home-pix-pay { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.home-pix-qrbox { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: none; }
+.home-pix-qr { display: block; width: 160px; height: 160px; background: #fff; border-radius: 8px; image-rendering: pixelated; }
+.home-pix-qrbox small { color: var(--text-dim); font-size: 11px; max-width: 160px; text-align: center; }
+.home-pix-pay .home-pix-key { flex: 1; min-width: 200px; }
+.home-pix-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.home-pix-btns .mk-btn.sm { flex: none; }

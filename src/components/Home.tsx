@@ -3,9 +3,25 @@ import { useI18n } from '../lib/i18n';
 import { BACKEND_ENABLED } from '../lib/market/supabase';
 import { OVERLAY_KEY, downloadUrl, fetchAppDownload } from '../lib/market/downloads';
 import { NewsFeed } from './NewsFeed';
+import { pixPayload } from '../lib/pix';
 import { trackEvent } from '../lib/analytics';
 
 const PIX_KEY = 'aed0ca9e-6f45-4f9c-9370-460bc85b438e';
+const PIX_CODE = pixPayload({ key: PIX_KEY, name: 'PristonZONE', city: 'Brasil' });
+
+/** The Pix code as a QR image. The QR library loads only when this is shown. */
+function PixQr({ alt }: { alt: string }) {
+  const [src, setSrc] = useState('');
+  useEffect(() => {
+    let cancelled = false;
+    import('qrcode')
+      .then((m) => m.toDataURL(PIX_CODE, { errorCorrectionLevel: 'M', margin: 2, width: 240 }))
+      .then((url) => { if (!cancelled) setSrc(url); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+  return src ? <img className="home-pix-qr" src={src} alt={alt} width={160} height={160} /> : null;
+}
 
 /** Simplified PIX-style diamond mark. */
 function PixMark() {
@@ -24,11 +40,11 @@ function PixMark() {
 
 export function Home() {
   const { t } = useI18n();
-  const [copied, setCopied] = useState(false);
-  const copyKey = () => {
-    navigator.clipboard?.writeText(PIX_KEY);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
+  const [copied, setCopied] = useState<'' | 'key' | 'code'>('');
+  const copy = (what: 'key' | 'code') => {
+    navigator.clipboard?.writeText(what === 'key' ? PIX_KEY : PIX_CODE);
+    setCopied(what);
+    window.setTimeout(() => setCopied(''), 2000);
   };
   const [href, setHref] = useState('');
   const [filename, setFilename] = useState('');
@@ -59,10 +75,19 @@ export function Home() {
               <b>{t('home.pix.title')}</b>
             </div>
             <p>{t('home.pix.body')}</p>
-            <div className="home-pix-key">
-              <span>{t('home.pix.keylabel')}</span>
-              <code>{PIX_KEY}</code>
-              <button type="button" className="mk-btn sm" onClick={copyKey}>{copied ? t('home.pix.copied') : t('home.pix.copy')}</button>
+            <div className="home-pix-pay">
+              <div className="home-pix-qrbox">
+                <PixQr alt={t('home.pix.qr.alt')} />
+                <small>{t('home.pix.qr.hint')}</small>
+              </div>
+              <div className="home-pix-key">
+                <span>{t('home.pix.keylabel')}</span>
+                <code>{PIX_KEY}</code>
+                <div className="home-pix-btns">
+                  <button type="button" className="mk-btn sm" onClick={() => copy('key')}>{copied === 'key' ? t('home.pix.copied') : t('home.pix.copy')}</button>
+                  <button type="button" className="mk-btn sm" onClick={() => copy('code')}>{copied === 'code' ? t('home.pix.copied') : t('home.pix.copycode')}</button>
+                </div>
+              </div>
             </div>
           </aside>
         </div>

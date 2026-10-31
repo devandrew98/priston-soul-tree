@@ -462,7 +462,10 @@ const DICT: Record<string, Entry> = {
     en: 'PristonZONE is a project made with love by players, for players! 💜 Keeping everything running involves monthly costs, and your help can make all the difference. If you enjoy our work and would like to contribute any amount, the PIX key for donations is below. Every contribution is very welcome and helps keep this project alive. Thank you so much for your support!',
   },
   'home.pix.keylabel': { pt: 'Chave PIX:', en: 'PIX key:' },
-  'home.pix.copy': { pt: 'Copiar', en: 'Copy' },
+  'home.pix.copy': { pt: 'Copiar chave', en: 'Copy key' },
+  'home.pix.copycode': { pt: 'Copiar Pix copia e cola', en: 'Copy Pix code' },
+  'home.pix.qr.alt': { pt: 'QR Code do Pix para apoiar o PristonZONE', en: 'Pix QR code to support PristonZONE' },
+  'home.pix.qr.hint': { pt: 'Aponte a câmera ou o app do seu banco', en: 'Point your bank app or camera at it' },
   'home.pix.copied': { pt: 'Copiado!', en: 'Copied!' },
   'home.welcome.body': {
     pt: 'Um site feito por jogadores, para jogadores do PristonTale EU',
