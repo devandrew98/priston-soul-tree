@@ -24,6 +24,7 @@ import { QuestTracker } from './components/quest/QuestTracker';
 import { ClanSharePage } from './components/clan/ClanSharePage';
 import { PersonalPage } from './components/personal/PersonalPage';
 import { Tutorial } from './components/tutorial/Tutorial';
+import { LiveBadge } from './components/LiveBadge';
 import { BrFlag, UkFlag } from './components/Flags';
 
 // Private pain diary (pristonzone.com/dor): a separate app that only shares the domain; loaded on demand so the site does not carry it.
@@ -398,6 +399,8 @@ export default function App() {
           : toolTab === 'sod' ? <SoD />
           : <Wardrobe onLogin={() => setShowAuth(true)} />
       )}
+
+      {section !== 'streamers' && <LiveBadge onSeeAll={() => go('streamers')} />}
 
       <ResetPasswordModal />
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
