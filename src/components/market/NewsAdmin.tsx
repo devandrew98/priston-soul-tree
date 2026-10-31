@@ -7,7 +7,22 @@ import { Loading } from '../Loading';
 import { RichTextEditor } from './RichTextEditor';
 
 const KINDS: NewsKind[] = ['news', 'event', 'maintenance'];
-const empty: NewsInput = { titlePt: '', titleEn: '', bodyPt: '', bodyEn: '', kind: 'news', pinned: false, published: true, sort: 0 };
+const empty: NewsInput = { titlePt: '', titleEn: '', bodyPt: '', bodyEn: '', kind: 'news', pinned: false, published: true, sort: 0, showPt: true, showEn: true };
+
+/** At least one language, and a title in every language the notice is shown in. */
+const valid = (d: NewsInput) => (d.showPt || d.showEn) && (!d.showPt || !!d.titlePt.trim()) && (!d.showEn || !!d.titleEn.trim());
+
+function LangPick({ d, set }: { d: NewsInput; set: (d: NewsInput) => void }) {
+  const { t } = useI18n();
+  return (
+    <div className="ht-langs" role="group" aria-label={t('mk.admin.news.showin')}>
+      <b>{t('mk.admin.news.showin')}</b>
+      <label className="mk-news-chk"><input type="checkbox" checked={d.showPt} onChange={(e) => set({ ...d, showPt: e.target.checked })} /> 🇧🇷 Português</label>
+      <label className="mk-news-chk"><input type="checkbox" checked={d.showEn} onChange={(e) => set({ ...d, showEn: e.target.checked })} /> 🇬🇧 English</label>
+      {!valid(d) && <small className="mk-muted">{t('mk.admin.news.needlang')}</small>}
+    </div>
+  );
+}
 
 export function NewsAdmin() {
   const { t } = useI18n();
@@ -20,7 +35,7 @@ export function NewsAdmin() {
   useEffect(() => { reload(); }, []);
 
   const add = async () => {
-    if (!draft.titlePt.trim() || !draft.titleEn.trim()) return;
+    if (!valid(draft)) return;
     setBusy(true);
     try {
       await createNews({ ...draft, titlePt: draft.titlePt.trim(), titleEn: draft.titleEn.trim(), bodyPt: draft.bodyPt.trim(), bodyEn: draft.bodyEn.trim() });
@@ -32,6 +47,7 @@ export function NewsAdmin() {
     <div className="mk-news-admin">
       <div className="mk-news-form">
         <h3 className="mk-h3">➕ {t('mk.admin.news.add')}</h3>
+        <LangPick d={draft} set={setDraft} />
         <div className="mk-news-lang-grid">
           <label className="mk-news-langfield">
             <span>🇧🇷 {t('mk.admin.news.titleph')}</span>
@@ -50,7 +66,7 @@ export function NewsAdmin() {
           </select>
           <label className="mk-news-chk"><input type="checkbox" checked={draft.pinned} onChange={(e) => setDraft({ ...draft, pinned: e.target.checked })} /> 📌 {t('mk.admin.news.pin')}</label>
           <label className="mk-news-chk"><input type="checkbox" checked={draft.published} onChange={(e) => setDraft({ ...draft, published: e.target.checked })} /> {t('mk.admin.news.published')}</label>
-          <button className="mk-btn primary" onClick={add} disabled={busy || !draft.titlePt.trim() || !draft.titleEn.trim()}>{busy ? '⏳' : `✓ ${t('mk.admin.news.publish')}`}</button>
+          <button className="mk-btn primary" onClick={add} disabled={busy || !valid(draft)}>{busy ? '⏳' : `✓ ${t('mk.admin.news.publish')}`}</button>
         </div>
       </div>
 
@@ -67,16 +83,18 @@ function NewsRow({ item, onChange }: { item: NewsItem; onChange: () => void }) {
   const { t } = useI18n();
   const [d, setD] = useState<NewsInput>({
     titlePt: item.title.pt, titleEn: item.title.en, bodyPt: item.body.pt, bodyEn: item.body.en,
-    kind: item.kind, pinned: item.pinned, published: item.published, sort: item.sort,
+    kind: item.kind, pinned: item.pinned, published: item.published, sort: item.sort, showPt: item.show.pt, showEn: item.show.en,
   });
   const [busy, setBusy] = useState(false);
   const dirty = d.titlePt !== item.title.pt || d.titleEn !== item.title.en || d.bodyPt !== item.body.pt || d.bodyEn !== item.body.en
-    || d.kind !== item.kind || d.pinned !== item.pinned || d.published !== item.published || d.sort !== item.sort;
+    || d.kind !== item.kind || d.pinned !== item.pinned || d.published !== item.published || d.sort !== item.sort
+    || d.showPt !== item.show.pt || d.showEn !== item.show.en;
   const save = async () => { setBusy(true); try { await updateNews(item.id, d); onChange(); } finally { setBusy(false); } };
   const remove = async () => { await deleteNews(item.id).catch(() => {}); onChange(); };
 
   return (
     <div className={`mk-news-item ${d.published ? '' : 'unpub'}`}>
+      <LangPick d={d} set={setD} />
       <div className="mk-news-lang-grid">
         <label className="mk-news-langfield">
           <span>🇧🇷 {t('mk.admin.news.titleph')}</span>
@@ -97,7 +115,7 @@ function NewsRow({ item, onChange }: { item: NewsItem; onChange: () => void }) {
         <label className="mk-news-chk"><input type="checkbox" checked={d.published} onChange={(e) => setD({ ...d, published: e.target.checked })} /> {t('mk.admin.news.published')}</label>
         <input className="mk-news-sort" type="number" value={d.sort} onChange={(e) => setD({ ...d, sort: Number(e.target.value) || 0 })} title={t('mk.admin.strm.order')} />
         <span className="mk-news-acts">
-          <button className="mk-btn sm primary" onClick={save} disabled={!dirty || busy}>{busy ? '⏳' : t('mk.edit.save')}</button>
+          <button className="mk-btn sm primary" onClick={save} disabled={!dirty || busy || !valid(d)}>{busy ? '⏳' : t('mk.edit.save')}</button>
           <button className="mk-btn sm danger" onClick={remove}>{t('mk.delete')}</button>
         </span>
       </div>

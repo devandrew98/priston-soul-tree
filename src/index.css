@@ -2632,3 +2632,16 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 /* The key bar takes the same size and frame as the buttons under it, so the three line up. */
 .home-pix .home-pix-pay .home-pix-key code { box-sizing: border-box; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0 8px; margin: 2px; width: calc(100% - 4px); box-shadow: 0 0 0 2px #1a0604, 0 3px 6px rgba(0, 0, 0, 0.6); white-space: nowrap; font-size: 13px; }
 .home-pix .home-pix-btns .mk-btn.sm { box-sizing: border-box; height: 32px; width: calc(100% - 4px); margin: 2px; }
+
+/* Admin: Home messages and the "shown in" language choice. */
+.ht { display: grid; gap: 14px; }
+.ht-card { align-items: stretch; }
+.ht-card p { margin: 0; }
+.ht-langs { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 4px 0 10px; }
+.ht-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+.ht-col { display: grid; gap: 10px; align-content: start; }
+.ht-col textarea, .ht-col input { width: 100%; }
+.ht-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+/* Admin checkboxes in the site's gold (they were the browser's default blue). */
+.mk-news-chk input, .ht-langs input { accent-color: var(--gold); cursor: pointer; width: 16px; height: 16px; }
+.mk-news-chk, .ht-langs label { cursor: pointer; }

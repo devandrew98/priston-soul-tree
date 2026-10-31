@@ -16,7 +16,8 @@ export function NewsFeed() {
     return () => { cancelled = true; };
   }, []);
 
-  if (items.length === 0) return null;
+  const visible = items.filter((n) => n.show[lang]);
+  if (visible.length === 0) return null;
 
   const fmt = (ms: number) => new Date(ms).toLocaleDateString(lang === 'pt' ? 'pt-BR' : 'en-US', { day: '2-digit', month: 'short' });
 
@@ -24,7 +25,7 @@ export function NewsFeed() {
     <section className="home-news">
       <h2 className="home-news-title">{t('home.news.title')}</h2>
       <div className="home-news-list">
-        {items.map((n) => (
+        {visible.map((n) => (
           <article key={n.id} className={`home-news-card ${n.kind} ${n.pinned ? 'pinned' : ''}`}>
             <div className="home-news-head">
               <span className="home-news-kind">{t(`home.news.kind.${n.kind}`)}</span>

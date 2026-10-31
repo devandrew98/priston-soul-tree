@@ -12,6 +12,8 @@ export interface NewsItem {
   kind: NewsKind;
   pinned: boolean;
   published: boolean;
+  /** Languages this notice is shown in. */
+  show: { pt: boolean; en: boolean };
   sort: number;
   createdAt: number;
 }
@@ -19,12 +21,13 @@ export interface NewsItem {
 interface NewsRow {
   id: string; title_pt: string; title_en: string; body_pt: string; body_en: string;
   kind: NewsKind; pinned: boolean; published: boolean; sort: number; created_at: string;
+  show_pt?: boolean; show_en?: boolean;
 }
 
 function sb() { if (!supabase) throw new Error('backend_not_configured'); return supabase; }
 const toItem = (r: NewsRow): NewsItem => ({
   id: r.id, title: { pt: r.title_pt, en: r.title_en }, body: { pt: r.body_pt, en: r.body_en },
-  kind: r.kind, pinned: r.pinned, published: r.published, sort: r.sort, createdAt: new Date(r.created_at).getTime(),
+  kind: r.kind, pinned: r.pinned, published: r.published, show: { pt: r.show_pt ?? true, en: r.show_en ?? true }, sort: r.sort, createdAt: new Date(r.created_at).getTime(),
 });
 
 /** Published items for the public Home page (pinned first). */
@@ -46,10 +49,11 @@ export async function fetchAllNews(): Promise<NewsItem[]> {
 export interface NewsInput {
   titlePt: string; titleEn: string; bodyPt: string; bodyEn: string;
   kind: NewsKind; pinned: boolean; published: boolean; sort: number;
+  showPt: boolean; showEn: boolean;
 }
 
 function toRow(input: NewsInput) {
-  return { title_pt: input.titlePt, title_en: input.titleEn, body_pt: input.bodyPt, body_en: input.bodyEn, kind: input.kind, pinned: input.pinned, published: input.published, sort: input.sort };
+  return { title_pt: input.titlePt, title_en: input.titleEn, body_pt: input.bodyPt, body_en: input.bodyEn, kind: input.kind, pinned: input.pinned, published: input.published, sort: input.sort, show_pt: input.showPt, show_en: input.showEn };
 }
 
 export async function createNews(input: NewsInput): Promise<void> {
@@ -73,12 +77,12 @@ export const MOCK_NEWS: NewsItem[] = [
     id: 'n1',
     title: { pt: 'Evento de Fury em dobro neste fim de semana!', en: 'Double Fury event this weekend!' },
     body: { pt: 'Sábado e domingo, drop e spawn de Fury aumentados. Aproveitem!', en: 'Saturday and Sunday, increased Fury drop and spawn rate. Enjoy!' },
-    kind: 'event', pinned: true, published: true, sort: 0, createdAt: Date.now() - 3600_000,
+    kind: 'event', pinned: true, published: true, show: { pt: true, en: true }, sort: 0, createdAt: Date.now() - 3600_000,
   },
   {
     id: 'n2',
     title: { pt: 'Manutenção programada', en: 'Scheduled maintenance' },
     body: { pt: 'Terça-feira às 03h (GMT-3), ~30 min de instabilidade.', en: 'Tuesday at 03:00 (GMT-3), ~30 min of instability.' },
-    kind: 'maintenance', pinned: false, published: true, sort: 1, createdAt: Date.now() - 86400_000,
+    kind: 'maintenance', pinned: false, published: true, show: { pt: true, en: true }, sort: 1, createdAt: Date.now() - 86400_000,
   },
 ];

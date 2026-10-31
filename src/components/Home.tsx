@@ -4,6 +4,7 @@ import { BACKEND_ENABLED } from '../lib/market/supabase';
 import { OVERLAY_KEY, downloadUrl, fetchAppDownload } from '../lib/market/downloads';
 import { NewsFeed } from './NewsFeed';
 import { pixPayload } from '../lib/pix';
+import { useHomeTexts } from '../lib/market/homeTexts';
 import { trackEvent } from '../lib/analytics';
 
 const PIX_KEY = 'aed0ca9e-6f45-4f9c-9370-460bc85b438e';
@@ -40,6 +41,7 @@ function PixMark() {
 
 export function Home() {
   const { t } = useI18n();
+  const ht = useHomeTexts();
   const [copied, setCopied] = useState<'' | 'key' | 'code'>('');
   const copy = (what: 'key' | 'code') => {
     navigator.clipboard?.writeText(what === 'key' ? PIX_KEY : PIX_CODE);
@@ -69,12 +71,12 @@ export function Home() {
           <div className="home-logo-frame">
             <img src="/pristonzone-logo.png" alt="PristonZONE" className="home-logo" />
           </div>
-          <aside className="home-pix">
+          {ht.shown('pix') && <aside className="home-pix">
             <div className="home-pix-head">
               <PixMark />
-              <b>{t('home.pix.title')}</b>
+              <b>{ht.text('pix', 'title', t('home.pix.title'))}</b>
             </div>
-            <p>{t('home.pix.body')}</p>
+            <p>{ht.text('pix', 'body', t('home.pix.body'))}</p>
             <div className="home-pix-pay">
               <div className="home-pix-qrbox">
                 <PixQr alt={t('home.pix.qr.alt')} />
@@ -89,10 +91,12 @@ export function Home() {
                 </div>
               </div>
             </div>
-          </aside>
+          </aside>}
         </div>
-        <h1 className="home-welcome-title">{t('home.welcome.title')}</h1>
-        <p className="home-welcome-body">{t('home.welcome.body')}</p>
+        {ht.shown('welcome') && <>
+          <h1 className="home-welcome-title">{ht.text('welcome', 'title', t('home.welcome.title'))}</h1>
+          <p className="home-welcome-body">{ht.text('welcome', 'body', t('home.welcome.body'))}</p>
+        </>}
       </header>
 
       {href && (

@@ -887,6 +887,9 @@ const DICT: Record<string, Entry> = {
   'mk.admin.global': { pt: 'Notificação global', en: 'Global notice' },
   'mk.admin.logs': { pt: 'Logs', en: 'Logs' },
   'mk.admin.sitestats': { pt: 'Estatísticas', en: 'Statistics' },
+  'mk.admin.hometexts': { pt: 'Mensagens da Home', en: 'Home messages' },
+  'mk.admin.news.showin': { pt: 'Aparece em:', en: 'Shown in:' },
+  'mk.admin.news.needlang': { pt: 'Marque pelo menos um idioma e preencha o título dele.', en: 'Pick at least one language and fill in its title.' },
   'mk.admin.streamers': { pt: 'Streamers', en: 'Streamers' },
 
   // categorias de reputação (Fase 11)
@@ -1391,6 +1394,9 @@ const DICT: Record<string, Entry> = {
   'ai2.rec.levelup': { pt: '⬆ {name} está no nível {lvl}: juntar cópias até o nível 3 rende mais nos mesmos nodes.', en: '⬆ {name} is at level {lvl}: merging copies up to level 3 yields more on the same nodes.' },
   'ai2.rec.acquire': { pt: '🎯 Vale caçar: {name} — entraria direto no topo da sua build.', en: '🎯 Worth hunting: {name} — it would go straight into your build\'s top.' },
 };
+
+/** The site's built-in text for a key in a language (what shows when the admin has not written another). */
+export const dictText = (key: string, lang: Lang): string => DICT[key]?.[lang] ?? '';
 
 type Ctx = {
   lang: Lang;
