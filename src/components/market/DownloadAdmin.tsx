@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useI18n } from '../../lib/i18n';
 import { type AppDownload, OVERLAY_KEY, downloadUrl, fetchAppDownload, setAppDownload } from '../../lib/market/downloads';
 import { Loading } from '../Loading';
+import { RichTextEditor } from './RichTextEditor';
 
 const fmtSize = (bytes: number | null): string => bytes == null ? '—' : `${(bytes / 1048576).toFixed(1)} MB`;
 
@@ -74,7 +75,7 @@ export function DownloadAdmin() {
             <input className="mk-dl-input mk-dl-version" value={version} onChange={(e) => setVersion(e.target.value)} placeholder={t('mk.admin.dl.versionph')} />
             <input className="mk-dl-input mk-dl-version" value={sizeMb} onChange={(e) => setSizeMb(e.target.value)} placeholder={t('mk.admin.dl.sizeph')} inputMode="decimal" />
           </div>
-          <textarea className="mk-dl-input mk-dl-notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t('mk.admin.dl.notesph')} rows={3} />
+          <RichTextEditor label={t('home.download.notes.title')} value={notes} onChange={setNotes} placeholder={t('mk.admin.dl.notesph')} rows={4} />
           <button className="mk-btn primary" onClick={save} disabled={!url.trim() || busy}>{busy ? '⏳' : '✓'} {t('mk.admin.dl.send')}</button>
         </div>
         {error && <p className="mk-auth-err">✕ {error}</p>}

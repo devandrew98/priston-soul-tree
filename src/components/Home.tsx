@@ -3,6 +3,7 @@ import { useI18n } from '../lib/i18n';
 import { BACKEND_ENABLED } from '../lib/market/supabase';
 import { OVERLAY_KEY, downloadUrl, fetchAppDownload } from '../lib/market/downloads';
 import { NewsFeed } from './NewsFeed';
+import { RichText } from './RichText';
 import { pixPayload } from '../lib/pix';
 import { useHomeTexts } from '../lib/market/homeTexts';
 import { trackEvent } from '../lib/analytics';
@@ -76,7 +77,7 @@ export function Home() {
               <PixMark />
               <b>{ht.text('pix', 'title', t('home.pix.title'))}</b>
             </div>
-            <p>{ht.text('pix', 'body', t('home.pix.body'))}</p>
+            <RichText source={ht.text('pix', 'body', t('home.pix.body'))} />
             <div className="home-pix-pay">
               <div className="home-pix-qrbox">
                 <PixQr alt={t('home.pix.qr.alt')} />
@@ -95,7 +96,7 @@ export function Home() {
         </div>
         {ht.shown('welcome') && <>
           <h1 className="home-welcome-title">{ht.text('welcome', 'title', t('home.welcome.title'))}</h1>
-          <p className="home-welcome-body">{ht.text('welcome', 'body', t('home.welcome.body'))}</p>
+          <RichText className="home-welcome-body" source={ht.text('welcome', 'body', t('home.welcome.body'))} />
         </>}
       </header>
 
@@ -107,7 +108,7 @@ export function Home() {
           {notes && (
             <div className="home-download-notes">
               <h3>{t('home.download.notes.title')}</h3>
-              <p>{notes}</p>
+              <RichText source={notes} />
             </div>
           )}
         </div>

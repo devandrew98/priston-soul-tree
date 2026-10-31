@@ -7,12 +7,14 @@ const MAX_LENGTH = 4000;
 
 /** A text box with a formatting toolbar (bold, italic, underline, lists...) and a live preview. */
 export function RichTextEditor({
-  label, value, onChange, rows = 7,
+  label, value, onChange, rows = 7, placeholder,
 }: {
   label: string;
   value: string;
   onChange: (next: string) => void;
   rows?: number;
+  /** Shown in grey while the box is empty (e.g. the default text). */
+  placeholder?: string;
 }) {
   const { t } = useI18n();
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -79,7 +81,7 @@ export function RichTextEditor({
           </button>
         ))}
       </div>
-      <textarea ref={ref} rows={rows} value={value} maxLength={MAX_LENGTH} onChange={(e) => onChange(e.target.value)} onKeyDown={onKeyDown} />
+      <textarea ref={ref} rows={rows} value={value} placeholder={placeholder} maxLength={MAX_LENGTH} onChange={(e) => onChange(e.target.value)} onKeyDown={onKeyDown} />
       <details className="rt-preview" open>
         <summary>{t('rt.preview')}</summary>
         {value.trim() ? <RichText source={value} className="rt-preview-body" /> : <p className="mk-muted">{t('rt.preview.empty')}</p>}

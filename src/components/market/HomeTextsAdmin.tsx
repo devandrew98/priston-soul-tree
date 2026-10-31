@@ -5,9 +5,10 @@ import { useI18n, dictText } from '../../lib/i18n';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { fetchHomeTexts, resetHomeText, saveHomeText, type HomeText, type HomeTextKey } from '../../lib/market/homeTexts';
 import { Loading } from '../Loading';
+import { RichTextEditor } from './RichTextEditor';
 
 const TXT = {
-  hint: { pt: 'Os textos fixos da Home. Deixe um campo vazio para usar o texto padrão (aparece em cinza). Para os avisos e novidades, use “Notícias”.', en: 'The fixed texts of the Home. Leave a field empty to use the default text (shown in grey). For notices and news, use “News”.' },
+  hint: { pt: 'Os textos fixos da Home. Deixe um campo vazio para usar o texto padrão (aparece em cinza). O texto aceita negrito, itálico, sublinhado, listas e links. Para os avisos e novidades, use “Notícias”.', en: 'The fixed texts of the Home. Leave a field empty to use the default text (shown in grey). The text accepts bold, italic, underline, lists and links. For notices and news, use “News”.' },
   showIn: { pt: 'Aparece em:', en: 'Shown in:' },
   title: { pt: 'Título', en: 'Title' },
   body: { pt: 'Texto', en: 'Text' },
@@ -57,11 +58,8 @@ function Block({ def, saved, onChange }: { def: (typeof BLOCKS)[number]; saved: 
               <input value={l === 'pt' ? d.titlePt : d.titleEn} placeholder={dictText(def.titleKey, l)}
                 onChange={(e) => setD(l === 'pt' ? { ...d, titlePt: e.target.value } : { ...d, titleEn: e.target.value })} />
             </label>
-            <label className="mk-news-langfield">
-              <span>{l === 'pt' ? '🇧🇷' : '🇬🇧'} {T('body')}</span>
-              <textarea rows={7} value={l === 'pt' ? d.bodyPt : d.bodyEn} placeholder={dictText(def.bodyKey, l)}
-                onChange={(e) => setD(l === 'pt' ? { ...d, bodyPt: e.target.value } : { ...d, bodyEn: e.target.value })} />
-            </label>
+            <RichTextEditor label={`${l === 'pt' ? '🇧🇷' : '🇬🇧'} ${T('body')}`} rows={7} value={l === 'pt' ? d.bodyPt : d.bodyEn} placeholder={dictText(def.bodyKey, l)}
+              onChange={(v) => setD(l === 'pt' ? { ...d, bodyPt: v } : { ...d, bodyEn: v })} />
           </div>
         ))}
       </div>
