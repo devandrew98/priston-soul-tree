@@ -8,7 +8,7 @@
   --gold-bright: #f0d28a;
   --text: #e7dcc4;
   --text-dim: #9c9079;
-  --accent: #a06bff;
+  --accent: #d4af6a;
   --attack: #d9534f;
   --defense: #4a90d9;
   --support: #e0a93b;
@@ -110,7 +110,7 @@ button {
   font-weight: 600;
 }
 .btn:hover { border-color: var(--gold); color: var(--gold-bright); }
-.btn.primary { background: linear-gradient(180deg, #6a4fb0, #4a2f90); border-color: var(--accent); color: #fff; }
+.btn.primary { background: linear-gradient(180deg, var(--gold-bright), var(--gold)); border-color: var(--gold); color: #1a1206; }
 .btn.primary:hover { filter: brightness(1.15); }
 .btn.danger:hover { border-color: var(--attack); color: var(--attack); }
 .btn.sm { padding: 4px 8px; font-size: 12px; }
@@ -187,7 +187,7 @@ button {
 .inv-row-name { font-weight: 600; color: var(--text); }
 .lvl-btns { display: inline-flex; gap: 3px; }
 .lvl-btn { width: 26px; height: 24px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg2); color: var(--text-dim); font-weight: 700; }
-.lvl-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.lvl-btn.active { background: var(--accent); color: #1a1206; border-color: var(--accent); }
 .lvl-btn.off.active { background: #555; border-color: #555; }
 
 .chip { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 700; }
@@ -263,10 +263,10 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .lvl-adj { width: 19px; height: 19px; padding: 0; border: 1px solid var(--border); background: #1d1810; color: var(--gold-bright); border-radius: 3px; font-size: 14px; font-weight: 800; line-height: 1; display: flex; align-items: center; justify-content: center; }
 .lvl-adj:hover:not(:disabled) { border-color: var(--gold); }
 .lvl-adj:disabled { opacity: 0.3; cursor: not-allowed; }
-.lvl-adj.mv.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.lvl-adj.mv.on { background: var(--accent); color: #1a1206; border-color: var(--accent); }
 .lvl-num { min-width: 16px; text-align: center; }
 .lvl-adj.wide { width: auto; padding: 0 8px; font-size: 11px; }
-.tnode.moving .tnode-frame { filter: drop-shadow(0 0 6px #a06bff) drop-shadow(0 0 2px #fff); }
+.tnode.moving .tnode-frame { filter: drop-shadow(0 0 6px #d4af6a) drop-shadow(0 0 2px #fff); }
 .tnode.drop-ok .tnode-frame { filter: drop-shadow(0 0 7px #5cff9a); }
 
 /* Soul-level pips — sit inside the 3 sockets of the frame art (96x120 asset in
@@ -288,7 +288,7 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .pip.p1 { left: 23.3%; top: 39.2%; }
 .pip.p2 { left: 20.8%; top: 55%; }
 .pip.p3 { left: 22.5%; top: 70%; }
-.move-hint { background: rgba(160,107,255,0.15); border: 1px solid var(--accent); color: var(--gold-bright); border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; font-size: 13px; }
+.move-hint { background: rgba(212,175,106,0.15); border: 1px solid var(--accent); color: var(--gold-bright); border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; font-size: 13px; }
 
 /* Tutorial / tour guiado */
 .tour { position: fixed; inset: 0; z-index: 100; }
@@ -357,7 +357,7 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .ne-picker-list { max-height: 230px; overflow-y: auto; margin-top: 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg2); }
 .ne-pick-item { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; background: transparent; border: none; border-bottom: 1px solid #00000030; padding: 6px 8px; color: var(--text); font-size: 13px; }
 .ne-pick-item:hover { background: var(--panel2); }
-.ne-pick-item.active { background: rgba(160,107,255,0.18); }
+.ne-pick-item.active { background: rgba(212,175,106,0.18); }
 .ne-pick-item:disabled { opacity: 0.4; cursor: not-allowed; }
 .ne-pick-item:disabled:hover { background: transparent; }
 .ne-pick-name { font-weight: 600; color: var(--gold-bright); flex: 1; }
@@ -371,7 +371,7 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .fusion-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
 .fusion-row label { font-size: 12px; color: var(--text-dim); }
 .points-bar { height: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-.points-fill { height: 100%; background: linear-gradient(90deg, #5a3fa0, var(--accent)); transition: width 0.2s; }
+.points-fill { height: 100%; background: linear-gradient(90deg, #8a6a2c, var(--accent)); transition: width 0.2s; }
 .points-fill.over { background: linear-gradient(90deg, #a0392f, var(--attack)); }
 .points-meta { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; margin-top: 6px; color: var(--text-dim); }
 .points-meta b { color: var(--gold-bright); }
@@ -392,7 +392,7 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 .attr-range { width: 100%; accent-color: var(--accent); cursor: pointer; }
 .attr-num { width: 50px; padding: 3px 4px; text-align: center; font-size: 12px; }
 .attr-pct { font-size: 11px; color: var(--text-dim); }
-.ai-feedback { margin-top: 12px; background: rgba(160,107,255,0.08); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 12px; }
+.ai-feedback { margin-top: 12px; background: rgba(212,175,106,0.08); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 12px; }
 .ai-note { margin: 5px 0; font-size: 13px; color: var(--text); line-height: 1.5; }
 
 /* Busca profunda (solver) */
@@ -2658,3 +2658,6 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .home-download-notes .rt li { font-family: var(--mv-text, inherit); font-size: 16px; line-height: 1.45; color: var(--mv-ink, inherit); }
 .home-pix .rt a, .home-download-notes .rt a { color: #7d241c; }
 .home-pix .rt ul, .home-pix .rt ol { margin-bottom: 0.6em; }
+
+/* Every native control (checkbox, radio, slider, progress) in the site's gold instead of the browser's default blue. */
+input[type="checkbox"], input[type="radio"], input[type="range"], progress { accent-color: var(--gold); }
