@@ -2621,3 +2621,14 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .live-all { width: 100%; background: none; border: none; color: var(--gold); padding: 9px; font-weight: 700; font-size: 12.5px; }
 .live-all:hover { color: var(--gold-bright); background: var(--panel2); }
 @media (max-width: 560px) { .live-badge { right: 10px; bottom: 10px; } }
+/* Pix block alignment: QR on the left, key + buttons in one tidy column starting at the QR's top edge. */
+.home-pix .home-pix-pay { align-items: flex-start; gap: 18px; }
+.home-pix .home-pix-pay .home-pix-key { flex-direction: column; align-items: stretch; gap: 8px; min-width: 210px; }
+.home-pix .home-pix-pay .home-pix-key > span { font-weight: 700; }
+.home-pix .home-pix-pay .home-pix-key code { display: block; text-align: center; }
+.home-pix .home-pix-btns { flex-direction: column; align-items: stretch; gap: 8px; }
+.home-pix .home-pix-btns .mk-btn.sm { width: 100%; margin: 0; }
+.home-pix .home-pix-qrbox small { color: var(--mv-ink, #2c1a0a); font-size: 12.5px; }
+/* The key bar takes the same size and frame as the buttons under it, so the three line up. */
+.home-pix .home-pix-pay .home-pix-key code { box-sizing: border-box; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0 8px; margin: 2px; width: calc(100% - 4px); box-shadow: 0 0 0 2px #1a0604, 0 3px 6px rgba(0, 0, 0, 0.6); white-space: nowrap; font-size: 13px; }
+.home-pix .home-pix-btns .mk-btn.sm { box-sizing: border-box; height: 32px; width: calc(100% - 4px); margin: 2px; }
