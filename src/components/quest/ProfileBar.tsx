@@ -69,8 +69,8 @@ export function ProfileBar() {
       </div>
       {levelMissing && <p className="sk-notice">{T('noLevel')} {active.level}.</p>}
 
-      <details className="qt-bonus">
-        <summary>{T('bonuses')} <b className="qt-bonus-total">{total > 0 ? `+${fmtPct(total, lang)}` : '—'}</b></summary>
+      <div className="qt-bonus">
+        <h3 className="qt-bonus-head">{T('bonuses')} <b className="qt-bonus-total">{total > 0 ? `+${fmtPct(total, lang)}` : '—'}</b></h3>
         {bonuses.length === 0 ? <p className="mk-muted">{T('noBonuses')}</p> : (
           <>
             <ul className="qt-bonus-list">
@@ -101,7 +101,7 @@ export function ProfileBar() {
             <p className="mk-muted">{T('bonusTotal')}: <b>{total > 0 ? `+${fmtPct(total, lang)}` : '0%'}</b> · {settings.combineMode === 'additive' ? T('additive') : T('multiplicative')}. {T('simNote')}</p>
           </>
         )}
-      </details>
+      </div>
     </section>
   );
 }

@@ -2710,3 +2710,6 @@ input[type="checkbox"], input[type="radio"], input[type="range"], progress { acc
 .af-tips { align-items: stretch; margin-top: 18px; }
 .af-tips ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; line-height: 1.5; }
 @media (max-width: 560px) { .af-small { width: 100%; } .af-list { grid-template-columns: minmax(0, 1fr); } }
+
+/* EXP bonuses: always shown (no longer a collapsible). */
+.qt-bonus-head { margin: 0; font-size: 15px; font-weight: 700; }
