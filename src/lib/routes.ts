@@ -4,7 +4,7 @@
 
 export type Section = 'home' | 'timers' | 'market' | 'streamers' | 'guides' | 'tools' | 'tutorial';
 export type TimerTab = 'boss' | 'fury';
-export type ToolTab = 'soultree' | 'mixing' | 'sod' | 'wardrobe' | 'skilltree' | 'screenshare' | 'builds' | 'aging' | 'clan' | 'quests' | 'affixes';
+export type ToolTab = 'soultree' | 'mixing' | 'sod' | 'wardrobe' | 'skilltree' | 'screenshare' | 'builds' | 'aging' | 'clan' | 'quests' | 'affixes' | 'overlay';
 
 export interface Route { section: Section; timerTab: TimerTab; toolTab: ToolTab }
 
@@ -24,6 +24,7 @@ export const TOOL_PATHS: Record<ToolTab, string> = {
   clan: '/cla',
   quests: '/quests',
   affixes: '/afixos',
+  overlay: '/overlay',
 };
 
 const SECTION_PATHS: Record<'home' | 'market' | 'guides' | 'streamers' | 'tutorial', string> = {

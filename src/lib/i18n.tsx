@@ -84,6 +84,7 @@ const DICT: Record<string, Entry> = {
   'nav.aging': { pt: 'Sistema de Aging', en: 'Aging System' },
   'nav.clan': { pt: 'Formação do Clã', en: 'Clan Formation' },
   'nav.quests': { pt: 'Quest Tracker', en: 'Quest Tracker' },
+  'nav.overlay': { pt: 'Overlay PristonZONE', en: 'PristonZONE Overlay' },
   'nav.affixes': { pt: 'Guia de Afixos', en: 'Affix Guide' },
   'nav.screenshare': { pt: 'Compartilhamento de Tela', en: 'Screen Sharing' },
   // Compartilhamento de Tela (screen sharing, P2P)

@@ -36,6 +36,7 @@ const PAGES: Record<string, { title: string; description: string }> = {
   '/checklist': { title: `Checklist de leveling — ${SITE}`, description: 'Plano de leveling com as quests na ordem de entrega, para marcar conforme faz.' },
   '/leveling': { title: `Rota de leveling — ${SITE}`, description: 'Guia passo a passo com marcador de progresso para fazer as quests em grupo.' },
   '/quests': { title: `Quest Tracker — ${SITE}`, description: 'Acompanhe suas quests, calcule a EXP com os seus bônus e planeje as entregas para chegar ao level que você quer.' },
+  '/overlay': { title: `Overlay PristonZONE — ${SITE}`, description: 'O overlay de timers para jogar: bosses, Fury e Vengeful na tela do jogo, com aviso por voz. Veja como funciona e baixe.' },
   '/afixos': { title: `Guia de Afixos — ${SITE}`, description: 'Ache o melhor afixo para o seu amuleto, bota, bracelete, luva ou anel: atributos, faixa de nível (Tier) e chance de sair.' },
   '/sharing': { title: `Compartilhamento de Tela — ${SITE}`, description: 'Mostre o seu jogo para os amigos, direto pelo navegador, de graça e sem instalar nada.' },
   '/marketplace': { title: `Marketplace — ${SITE}`, description: 'Compre e venda itens do PristonTale EU com a comunidade.' },

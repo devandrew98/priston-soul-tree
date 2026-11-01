@@ -2713,3 +2713,32 @@ input[type="checkbox"], input[type="radio"], input[type="range"], progress { acc
 
 /* EXP bonuses: always shown (no longer a collapsible). */
 .qt-bonus-head { margin: 0; font-size: 15px; font-weight: 700; }
+
+/* ===== Floating Overlay button (all pages, bottom-left): the Overlay's logo ===== */
+.ovfab { position: fixed; left: 30px; bottom: 18px; z-index: 150; }
+.ovfab-main { position: relative; display: block; width: 64px; overflow: visible; padding: 0; background: none; border: none; cursor: pointer; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.6)) drop-shadow(0 0 10px rgba(212,175,106,0.35)); transition: transform 0.15s; }
+.ovfab-main img { display: block; width: 64px; height: 64px; border-radius: 16px; }
+.ovfab-main:hover { transform: translateY(-3px) scale(1.05); }
+.ovfab-tag { position: absolute; left: 50%; bottom: -6px; transform: translateX(-50%); background: linear-gradient(180deg, #2a1f10, #120d07); border: 1px solid var(--gold); color: var(--gold-bright); border-radius: 999px; padding: 1px 9px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; white-space: nowrap; }
+.ovfab-x { position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; display: grid; place-items: center; padding: 0; border-radius: 50%; background: var(--panel); border: 1px solid var(--border); color: var(--text-dim); font-size: 10px; cursor: pointer; }
+.ovfab-x:hover { color: var(--gold-bright); border-color: var(--gold); }
+@media (max-width: 560px) { .ovfab { left: 24px; bottom: 16px; } .ovfab-main, .ovfab-main img { width: 54px; height: 54px; } }
+
+/* ===== Overlay page (/overlay) ===== */
+.ovg { max-width: 1000px; margin: 0 auto; }
+.ovg .sr-card { align-items: stretch; margin-bottom: 14px; }
+.ovg p, .ovg li { line-height: 1.55; }
+.ovg p { margin: 0 0 8px; }
+.ovg ul { margin: 6px 0 0; padding-left: 22px; display: grid; gap: 6px; }
+.ovg-big { margin: 22px 0 10px; }
+.ovg-h3 { margin: 14px 0 4px; font-size: 14px; color: var(--gold-bright); }
+.ovg-dl { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 12px 0; }
+.ovg-dl .mk-btn { flex: none; }
+.ovg-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0 24px; }
+.ovg-fig { margin: 12px 0 4px; }
+.ovg-fig a { display: block; }
+.ovg-fig img { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 6px 18px rgba(0,0,0,0.45); }
+.ovg-fig.narrow img { max-width: 380px; margin: 0 auto; }
+.ovg-fig figcaption { margin-top: 6px; text-align: center; font-size: 12.5px; color: var(--text-dim); }
+.ovg-keys td { padding: 6px 10px; }
+.ovg-keys kbd { background: var(--bg); border: 1px solid var(--gold); border-radius: 6px; padding: 2px 8px; font-family: inherit; font-weight: 700; color: var(--gold-bright); }
