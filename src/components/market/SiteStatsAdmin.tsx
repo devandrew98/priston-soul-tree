@@ -59,6 +59,7 @@ const PAGE_NAMES: Record<string, { pt: string; en: string }> = {
   '/sharing': { pt: 'Compartilhamento de Tela', en: 'Screen Sharing' },
   '/aging': { pt: 'Aging', en: 'Aging' },
   '/quests': { pt: 'Quest Tracker', en: 'Quest Tracker' },
+  '/afixos': { pt: 'Guia de Afixos', en: 'Affix Guide' },
   '/cla': { pt: 'Formação do Clã', en: 'Clan Formation' },
   '/marketplace': { pt: 'Marketplace', en: 'Marketplace' },
   '/guides': { pt: 'Guias', en: 'Guides' },

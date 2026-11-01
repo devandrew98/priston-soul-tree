@@ -47,6 +47,25 @@ export const AREAS: Area[] = [
     open: { section: 'tools', toolTab: 'quests' },
   },
   {
+    id: 'affixes', icon: '💎',
+    title: { pt: 'Guia de Afixos', en: 'Affix Guide' },
+    summary: { pt: 'Ache o melhor afixo para o seu item, pelo atributo que você quer.', en: 'Find the best affix for your item, by the stat you want.' },
+    about: {
+      pt: 'Lista os prefixos e sufixos de amuletos, botas, braceletes, luvas e anéis, com os atributos que dão, a faixa de nível (Tier) e a chance de sair.',
+      en: 'Lists the prefixes and suffixes of amulets, boots, bracelets, gauntlets and rings, with the stats they give, the level bracket (Tier) and the chance to roll.',
+    },
+    steps: [
+      { pt: 'Escolha o item (amuleto, bota, bracelete, luva ou anel) e, se quiser, só prefixos ou só sufixos.', en: 'Pick the item (amulet, boots, bracelet, gauntlet or ring) and, if you want, only prefixes or only suffixes.' },
+      { pt: 'Em “O que eu quero”, clique no atributo que procura (por exemplo Attack Power, Defensa ou Move Speed): os afixos com o maior valor dele aparecem primeiro.', en: 'Under “What I want”, click the stat you are after (for example Attack Power, Defense or Move Speed): the affixes with the highest value of it come first.' },
+      { pt: 'Use a busca pelo nome, o filtro de Tier e a ordenação (mais comum, mais raro, Tier) para refinar.', en: 'Use the name search, the Tier filter and the sorting (most common, rarest, Tier) to refine.' },
+    ],
+    tips: [
+      { pt: 'A “Chance” é o peso do sorteio: quanto maior o número, mais comum o afixo.', en: 'The “Chance” is the roll weight: the bigger the number, the more common the affix.' },
+      { pt: 'Abra “Como funciona” no topo da página para ver as faixas de Tier e as pedras.', en: 'Open “How it works” at the top of the page to see the Tier brackets and the stones.' },
+    ],
+    open: { section: 'tools', toolTab: 'affixes' },
+  },
+  {
     id: 'souls', icon: '🌳',
     title: { pt: 'Árvore de Souls', en: 'Soul Tree' },
     summary: { pt: 'Planeje a sua build da Fusion Tier e gere sugestões.', en: 'Plan your Fusion Tier build and generate suggestions.' },

@@ -25,6 +25,7 @@ import { ClanSharePage } from './components/clan/ClanSharePage';
 import { PersonalPage } from './components/personal/PersonalPage';
 import { Tutorial } from './components/tutorial/Tutorial';
 import { LiveBadge } from './components/LiveBadge';
+import { AffixGuide } from './components/affixes/AffixGuide';
 import { BrFlag, UkFlag } from './components/Flags';
 
 // Private pain diary (pristonzone.com/dor): a separate app that only shares the domain; loaded on demand so the site does not carry it.
@@ -63,6 +64,7 @@ const TOOL_TABS: { id: ToolTab; icon: string; key: string; hidden?: boolean }[] 
   { id: 'screenshare', icon: '🖥', key: 'nav.screenshare' },
   { id: 'aging', icon: '⚒', key: 'nav.aging' },
   { id: 'quests', icon: '📜', key: 'nav.quests' },
+  { id: 'affixes', icon: '💎', key: 'nav.affixes' },
   { id: 'clan', icon: '🏰', key: 'nav.clan' }, // only shown to the admin and to clan leaders/vices
 ];
 
@@ -393,6 +395,7 @@ export default function App() {
           : toolTab === 'aging' ? <AgingSystem />
           : toolTab === 'clan' ? <ClanFormation />
           : toolTab === 'quests' ? <QuestTracker />
+          : toolTab === 'affixes' ? <AffixGuide />
           : toolTab === 'screenshare' ? <ScreenRooms />
           : toolTab === 'builds' ? <Builds />
           : toolTab === 'mixing' ? <Mixing />

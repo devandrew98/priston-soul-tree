@@ -1,0 +1,423 @@
+# Affix tables (Season 11 pools), as supplied by the site owner. Run `node scripts/affixes/build.cjs` after editing.
+# Row format: Name <tab> Rarity (min–max) <tab> Chance (weight) <tab> Stat Bonus
+📂 Amulets
+Prefixes
+Tier 1 (0–59)
+Vigorous	3–5	6000	HP +8–12, MP +20–40, HP Regen +0.1–0.2
+Beryl	3–5	6000	HP +8–12, MP +20–40, MP Regen +0.2–0.4
+Cerulean	2–5	8000	MP +14–28, MP Regen +0.1–0.2
+Stout	3–5	8000	HP +12–20, HP Regen +0.1–0.2
+Tier 2 (40–99)
+Directed	2–5	10000	HP +8–12, Defense +3–11
+Latent	2–5	12000	HP +16–28
+Detailed	2–5	12000	AR +7–25
+Reinforced	2–5	16000	Defense +4–14
+Hale	2–5	16000	HP +8–12, MP +8–16
+Staunch	2–5	16000	AR +4–11, Defense +2–8
+Teal	2–5	18000	MP +16–34
+Tier 3 (60–112)
+Vivacious	3–5	6000	HP +10–18, MP +34–72, HP Regen +0.2–0.3
+Cobalt	3–5	6000	HP +10–18, MP +34–72, MP Regen +0.4–0.6
+Opalescent	2–5	8000	MP +24–50, MP Regen +0.2–0.4
+Remora's	3–5	8000	HP +16–30, HP Regen +0.2–0.3
+Reigning	2–5	10000	HP +10–18, Defense +10–25
+Present	2–5	12000	HP +22–44
+Precise	2–5	12000	AR +22–52
+Layered	2–5	16000	Defense +13–31
+Healthy	2–5	16000	HP +10–18, MP +14–30
+Steadfast	2–5	16000	AR +11–25, Defense +7–17
+Turquoise	2–5	18000	MP +28–60
+Tier 4 (100–130)
+Sustenant	3–5	6000	HP +16–26, MP +60–140, HP Regen +0.3–0.5
+Vital	3–5	6000	HP +24–30, MP +120–180, HP Regen +0.4–0.7
+Azure	3–5	6000	HP +16–26, MP +60–140, MP Regen +0.5–0.8
+Sapphire	3–5	6000	HP +24–30, MP +120–180, MP Regen +0.7–1.5
+Chalybeous	2–5	8000	MP +42–98, MP Regen +0.4–0.6
+Mazarine	2–5	8000	MP +84–126, MP Regen +0.5–0.9
+Lamprey's	3–5	8000	HP +28–42, HP Regen +0.3–0.6
+Vampire's	3–5	8000	HP +40–50, HP Regen +0.4–0.8
+Governed	2–5	10000	HP +16–26, Defense +22–32
+Commanding	2–5	10000	HP +24–30, Defense +29–50
+Subsistant	2–5	12000	HP +40–60
+Prevalent	2–5	12000	HP +56–70
+Veracious	2–5	12000	AR +46–68
+Accurate	2–5	12000	AR +61–100
+Thickened	2–5	16000	Defense +27–40
+Impregnable	2–5	16000	Defense +36–63
+Stalwart	2–5	16000	HP +16–26, MP +26–58
+Robust	2–5	16000	HP +24–30, MP +50–76
+Cohesive	2–5	16000	AR +22–32, Defense +15–22
+Ardent	2–5	16000	AR +29–50, Defense +20–35
+Ultramarine	2–5	18000	MP +50–118
+Royal	2–5	18000	MP +100–152
+Suffixes
+Tier 1 (0–59)
+Honor	3–5	6000	HP +8–12, MP +20–40, HP Regen +0.1–0.2
+the Pupil	3–5	6000	HP +8–12, MP +20–40, MP Regen +0.2–0.4
+Excitement	2–5	8000	MP +14–28, MP Regen +0.1–0.2
+Success	3–5	8000	HP +12–20, HP Regen +0.1–0.2
+Tier 2 (40–99)
+Control	2–5	10000	HP +8–12, Defense +3–11
+the Hopy	2–5	12000	HP +16–28
+Steadiness	2–5	12000	AR +7–25
+Thick Skin	2–5	16000	Defense +4–14
+the Mephit	2–5	16000	HP +8–12, MP +8–16
+Security	2–5	16000	AR +4–11, Defense +2–8
+the Student	2–5	18000	MP +16–34
+Tier 3 (60–112)
+Regeneration	3–5	6000	HP +10–18, MP +34–72, HP Regen +0.2–0.3
+the Augur	3–5	6000	HP +10–18, MP +34–72, MP Regen +0.4–0.6
+Joy	2–5	8000	MP +24–50, MP Regen +0.2–0.4
+Conquest	3–5	8000	HP +16–30, HP Regen +0.2–0.3
+Instruction	2–5	10000	HP +10–18, Defense +10–25
+the Greaven	2–5	12000	HP +22–44
+Precision	2–5	12000	AR +22–52
+Stone Skin	2–5	16000	Defense +13–31
+the Naz	2–5	16000	HP +10–18, MP +14–30
+Unforgiving	2–5	16000	AR +11–25, Defense +7–17
+the Prodigy	2–5	18000	MP +28–60
+Tier 4 (100–130)
+Regrowth	3–5	6000	HP +16–26, MP +60–140, HP Regen +0.3–0.5
+Recovery	3–5	6000	HP +24–30, MP +120–180, HP Regen +0.4–0.7
+the Savant	3–5	6000	HP +16–26, MP +60–140, MP Regen +0.5–0.8
+the Virtuoso	3–5	6000	HP +24–30, MP +120–180, MP Regen +0.7–1.5
+Elation	2–5	8000	MP +42–98, MP Regen +0.4–0.6
+Bliss	2–5	8000	MP +84–126, MP Regen +0.5–0.9
+Victory	3–5	8000	HP +28–42, HP Regen +0.3–0.6
+Triumph	3–5	8000	HP +40–50, HP Regen +0.4–0.8
+Regulation	2–5	10000	HP +16–26, Defense +22–32
+Manipulation	2–5	10000	HP +24–30, Defense +29–50
+the Seto	2–5	12000	HP +40–60
+the Acero	2–5	12000	HP +56–70
+Sniper	2–5	12000	AR +46–68
+Marksman	2–5	12000	AR +61–100
+Iron Skin	2–5	16000	Defense +27–40
+Steel Skin	2–5	16000	Defense +36–63
+the Avelin	2–5	16000	HP +16–26, MP +26–58
+the Xetan	2–5	16000	HP +24–30, MP +50–76
+Determined	2–5	16000	AR +22–32, Defense +15–22
+Unswerving	2–5	16000	AR +29–50, Defense +20–35
+the Sage	2–5	18000	MP +50–118
+the Genius	2–5	18000	MP +100–152
+📂 Boots
+Prefixes
+Tier 1 (0–59)
+Runner's	2–5	4000	Move Speed +0.2–0.4
+Swift	2–5	6000	Move Speed +0.1–0.2, Defense +2–8
+Insolent	2–5	8000	Absorb +0–1
+Callous	2–5	8000	Absorb +0, HP +8–12
+Tier 2 (40–99)
+Directed	2–5	10000	HP +8–12, Defense +3–11
+Latent	2–5	12000	HP +16–28
+Infixed	2–5	12000	Absorb +0, Defense +3–11
+Reinforced	2–5	16000	Defense +4–14
+Tier 3 (60–112)
+Sprinter's	2–5	4000	Move Speed +0.4–0.8
+Keen	2–5	6000	Move Speed +0.2–0.5, Defense +7–17
+Stoic	2–5	8000	Absorb +1–4
+Effrontery	2–5	8000	Absorb +0–2, HP +10–18
+Reigning	2–5	10000	HP +10–18, Defense +10–25
+Present	2–5	12000	HP +22–44
+Ingrained	2–5	12000	Absorb +0–2, Defense +10–25
+Layered	2–5	16000	Defense +13–31
+Tier 4 (100–130)
+Stallion's	2–5	4000	Move Speed +0.8–1.4
+Hellion's	2–5	4000	Move Speed +1.5–2.2
+Energetic	2–5	6000	Move Speed +0.5–0.8, Defense +15–22
+Expeditive	2–5	6000	Move Speed +0.9–1.3, Defense +20–35
+Enduring	2–5	8000	Absorb +4–6
+Truculent	2–5	8000	Absorb +6–12
+Impetuous	2–5	8000	Absorb +2–4, HP +16–26
+Recalcitrant	2–5	8000	Absorb +3–7, HP +24–30
+Governed	2–5	10000	HP +16–26, Defense +22–32
+Commanding	2–5	10000	HP +24–30, Defense +29–50
+Subsistant	2–5	12000	HP +40–60
+Prevalent	2–5	12000	HP +56–70
+Infused	2–5	12000	Absorb +2–3, Defense +22–32
+Inspired	2–5	12000	Absorb +2–5, Defense +29–50
+Thickened	2–5	16000	Defense +27–40
+Impregnable	2–5	16000	Defense +36–63
+Suffixes
+Tier 1 (0–59)
+Pacing	2–5	4000	Move Speed +0.2–0.4
+Alacrity	2–5	6000	Move Speed +0.1–0.2, Defense +2–8
+Rigidity	2–5	8000	Absorb +0–1
+Presumption	2–5	8000	Absorb +0, HP +8–12
+Tier 2 (40–99)
+Control	2–5	10000	HP +8–12, Defense +3–11
+the Hopy	2–5	12000	HP +16–28
+Stability	2–5	12000	Absorb +0, Defense +3–11
+Thick Skin	2–5	16000	Defense +4–14
+Tier 3 (60–112)
+Speed	2–5	4000	Move Speed +0.4–0.8
+Alertness	2–5	6000	Move Speed +0.2–0.5, Defense +7–17
+Unbending	2–5	8000	Absorb +1–4
+Audacity	2–5	8000	Absorb +0–2, HP +10–18
+Instruction	2–5	10000	HP +10–18, Defense +10–25
+the Greaven	2–5	12000	HP +22–44
+Security	2–5	12000	Absorb +0–2, Defense +10–25
+Stone Skin	2–5	16000	Defense +13–31
+Tier 4 (100–130)
+Haste	2–5	4000	Move Speed +0.8–1.4
+Inertia	2–5	4000	Move Speed +1.5–2.2
+Liveliness	2–5	6000	Move Speed +0.5–0.8, Defense +15–22
+Momentum	2–5	6000	Move Speed +0.9–1.3, Defense +20–35
+Astringence	2–5	8000	Absorb +4–6
+Temerity	2–5	8000	Absorb +6–12
+Perseverance	2–5	8000	Absorb +2–4, HP +16–26
+Obduration	2–5	8000	Absorb +3–7, HP +24–30
+Regulation	2–5	10000	HP +16–26, Defense +22–32
+Manipulation	2–5	10000	HP +24–30, Defense +29–50
+the Seto	2–5	12000	HP +40–60
+the Acero	2–5	12000	HP +56–70
+Bastion	2–5	12000	Absorb +2–3, Defense +22–32
+Contumacy	2–5	12000	Absorb +2–5, Defense +29–50
+Iron Skin	2–5	16000	Defense +27–40
+Steel Skin	2–5	16000	Defense +36–63
+📂 Bracelets
+Prefixes
+Tier 1 (0–59)
+Whirled	3–5	1000	Block +0.1–0.3, HP +8–12, Defense +4–14
+Glinting	3–5	1000	ATK +2–6, AR +11–41, MP +4–10
+Heavy	2–5	1000	ATK +2–3, AR +7–25
+Detained	2–5	4000	Block +0.1–0.2, Defense +3–11
+Beryl	3–5	6000	HP +8–12, MP +20–40, MP Regen +0.2–0.4
+Directed	2–5	10000	HP +8–12, Defense +3–11
+Detailed	2–5	12000	AR +7–25
+Potent	2–5	14000	ATK +1–2
+Reinforced	2–5	16000	Defense +4–14
+Hale	2–5	16000	HP +8–12, MP +8–16
+Staunch	2–5	16000	AR +4–11, Defense +2–8
+Teal	2–5	18000	MP +16–34
+Tier 2 (40–99)
+Pivoted	3–5	1000	Block +0.2–0.5, HP +10–18, Defense +13–31
+Burnished	3–5	1000	ATK +6–12, AR +36–87, MP +8–18
+Vicious	2–5	1000	ATK +3–5, AR +22–52
+Wrought	2–5	4000	Block +0.1–0.3, Defense +10–25
+Cobalt	3–5	6000	HP +10–18, MP +34–72, MP Regen +0.4–0.6
+Reigning	2–5	10000	HP +10–18, Defense +10–25
+Precise	2–5	12000	AR +22–52
+Mighty	2–5	14000	ATK +1–3
+Layered	2–5	16000	Defense +13–31
+Healthy	2–5	16000	HP +10–18, MP +14–30
+Steadfast	2–5	16000	AR +11–25, Defense +7–17
+Turquoise	2–5	18000	MP +28–60
+Tier 3 (60–112)
+Prevented	3–5	1000	Block +0.5–0.8, HP +16–26, Defense +27–40
+Veering	3–5	1000	Block +0.7–1.2, HP +24–30, Defense +36–63
+Polished	3–5	1000	ATK +10–16, AR +77–113, MP +16–34
+Honed	3–5	1000	ATK +14–22, AR +102–180, MP +30–46
+Cruel	2–5	1000	ATK +4–7, AR +46–68
+Merciless	2–5	1000	ATK +7–11, AR +61–108
+Limiting	2–5	4000	Block +0.3–0.5, Defense +22–32
+Restricted	2–5	4000	Block +0.4–0.7, Defense +29–50
+Azure	3–5	6000	HP +16–26, MP +60–140, MP Regen +0.5–0.8
+Sapphire	3–5	6000	HP +24–30, MP +120–180, MP Regen +0.7–1.5
+Governed	2–5	10000	HP +16–26, Defense +22–32
+Commanding	2–5	10000	HP +24–30, Defense +29–50
+Veracious	2–5	12000	AR +46–68
+Accurate	2–5	12000	AR +61–100
+Vigor	2–5	14000	ATK +2–5
+Impactful	2–5	14000	ATK +5–7
+Thickened	2–5	16000	Defense +27–40
+Impregnable	2–5	16000	Defense +36–63
+Stalwart	2–5	16000	HP +16–26, MP +26–58
+Robust	2–5	16000	HP +24–30, MP +50–76
+Cohesive	2–5	16000	AR +22–32, Defense +15–22
+Ardent	2–5	16000	AR +29–50, Defense +20–35
+Ultramarine	2–5	18000	MP +50–118
+Royal	2–5	18000	MP +100–152
+Tier 4 (100–130)
+Bastion	2–5	12000	Absorb +2–3, Defense +22–32
+Contumacy	2–5	12000	Absorb +2–5, Defense +29–50
+Iron Skin	2–5	16000	Defense +27–40
+Steel Skin	2–5	16000	Defense +36–63
+Suffixes
+Tier 1 (0–59)
+Aversion	3–5	1000	Block +0.1–0.3, HP +8–12, Defense +4–14
+Skill	3–5	1000	ATK +2–6, AR +11–41, MP +4–10
+Ire	2–5	1000	ATK +2–3, AR +7–25
+the Snag	2–5	4000	Block +0.1–0.2, Defense +3–11
+the Pupil	3–5	6000	HP +8–12, MP +20–40, MP Regen +0.2–0.4
+Control	2–5	10000	HP +8–12, Defense +3–11
+Steadiness	2–5	12000	AR +7–25
+the Sinew	2–5	14000	ATK +1–2
+Thick Skin	2–5	16000	Defense +4–14
+the Mephit	2–5	16000	HP +8–12, MP +8–16
+Security	2–5	16000	AR +4–11, Defense +2–8
+the Student	2–5	18000	MP +16–34
+Tier 2 (40–99)
+Dissuasion	3–5	1000	Block +0.2–0.5, HP +10–18, Defense +13–31
+Ease	3–5	1000	ATK +6–12, AR +36–87, MP +8–18
+Anger	2–5	1000	ATK +3–5, AR +22–52
+the Barrier	2–5	4000	Block +0.1–0.3, Defense +10–25
+the Augur	3–5	6000	HP +10–18, MP +34–72, MP Regen +0.4–0.6
+Instruction	2–5	10000	HP +10–18, Defense +10–25
+Precision	2–5	12000	AR +22–52
+Potential	2–5	14000	ATK +1–3
+Stone Skin	2–5	16000	Defense +13–31
+Unforgiving	2–5	16000	AR +11–25, Defense +7–17
+the Prodigy	2–5	18000	MP +28–60
+Tier 3 (60–112)
+Deviation	3–5	1000	Block +0.5–0.8, HP +16–26, Defense +27–40
+Divergence	3–5	1000	Block +0.7–1.2, HP +24–30, Defense +36–63
+Mastery	3–5	1000	ATK +10–16, AR +77–113, MP +16–34
+Grandmastery	3–5	1000	ATK +14–22, AR +102–180, MP +30–46
+Rage	2–5	1000	ATK +4–7, AR +46–68
+Fury	2–5	1000	ATK +7–11, AR +61–108
+the Wall	2–5	4000	Block +0.3–0.5, Defense +22–32
+the Blockade	2–5	4000	Block +0.4–0.7, Defense +29–50
+the Savant	3–5	6000	HP +16–26, MP +60–140, MP Regen +0.5–0.8
+the Virtuoso	3–5	6000	HP +24–30, MP +120–180, MP Regen +0.7–1.5
+Regulation	2–5	10000	HP +16–26, Defense +22–32
+Manipulation	2–5	10000	HP +24–30, Defense +29–50
+Sniper	2–5	12000	AR +46–68
+Marksman	2–5	12000	AR +61–100
+Intensity	2–5	14000	ATK +2–5
+Force	2–5	14000	ATK +5–7
+Iron Skin	2–5	16000	Defense +27–40
+Steel Skin	2–5	16000	Defense +36–63
+Tier 4 (100–130)
+Bastion	2–5	12000	Absorb +2–3, Defense +22–32
+Contumacy	2–5	12000	Absorb +2–5, Defense +29–50
+Iron Skin	2–5	16000	Defense +27–40
+Steel Skin	2–5	16000	Defense +36–63
+📂 Gauntlets
+Prefixes
+Tier 1 (0–59)
+Glinting	3–5	1000	ATK +2–6, AR +11–41, MP +4–10
+Heavy	2–5	1000	ATK +2–3, AR +7–25
+Insolent	2–5	8000	Absorb +0–1
+Callous	2–5	8000	Absorb +0–0, HP +8–12
+Directed	2–5	10000	HP +8–12, Defense +3–11
+Infixed	2–5	12000	Absorb +0–0, Defense +3–11
+Detailed	2–5	12000	AR +7–25
+Potent	2–5	14000	ATK +1–2
+Reinforced	2–5	16000	Defense +4–14
+Staunch	2–5	16000	AR +4–11, Defense +2–8
+Tier 2 (40–99)
+Burnished	3–5	1000	ATK +6–12, AR +36–87, MP +8–18
+Vicious	2–5	1000	ATK +3–5, AR +22–52
+Stoic	2–5	8000	Absorb +1–4
+Effrontery	2–5	8000	Absorb +0–2, HP +10–18
+Reigning	2–5	10000	HP +10–18, Defense +10–25
+Ingrained	2–5	12000	Absorb +0–2, Defense +10–25
+Precise	2–5	12000	AR +22–52
+Mighty	2–5	14000	ATK +1–3
+Layered	2–5	16000	Defense +13–31
+Steadfast	2–5	16000	AR +11–25, Defense +7–17
+Tier 3 (60–112)
+Polished	3–5	1000	ATK +10–16, AR +77–113, MP +16–34
+Honed	3–5	1000	ATK +14–22, AR +102–180, MP +30–46
+Cruel	2–5	1000	ATK +4–7, AR +46–68
+Merciless	2–5	1000	ATK +7–11, AR +61–108
+Enduring	2–5	8000	Absorb +4–6
+Truculent	2–5	8000	Absorb +6–12
+Impetuous	2–5	8000	Absorb +2–4, HP +16–26
+Recalcitrant	2–5	8000	Absorb +3–7, HP +24–30
+Governed	2–5	10000	HP +16–26, Defense +22–32
+Commanding	2–5	10000	HP +24–30, Defense +29–50
+Infused	2–5	12000	Absorb +2–3, Defense +22–32
+Inspired	2–5	12000	Absorb +2–5, Defense +29–50
+Veracious	2–5	12000	AR +46–68
+Accurate	2–5	12000	AR +61–100
+Vigor	2–5	14000	ATK +2–5
+Impactful	2–5	14000	ATK +5–7
+Thickened	2–5	16000	Defense +27–40
+Impregnable	2–5	16000	Defense +36–63
+Cohesive	2–5	16000	AR +22–32, Defense +15–22
+Ardent	2–5	16000	AR +29–50, Defense +20–35
+Ultramarine	2–5	18000	MP +50–118
+Royal	2–5	18000	MP +100–152
+Tier 4 (100–130)
+Bastion	2–5	12000	Absorb +2–3, Defense +22–32
+Contumacy	2–5	12000	Absorb +2–5, Defense +29–50
+Iron Skin	2–5	16000	Defense +27–40
+Steel Skin	2–5	16000	Defense +36–63
+Suffixes
+Tier 1 (0–59)
+Skill	3–5	1000	ATK +2–6, AR +11–41, MP +4–10
+Ire	2–5	1000	ATK +2–3, AR +7–25
+Rigidity	2–5	8000	Absorb +0–1
+Presumption	2–5	8000	Absorb +0–0, HP +8–12
+Control	2–5	10000	HP +8–12, Defense +3–11
+Stability	2–5	12000	Absorb +0–0, Defense +3–11
+Steadiness	2–5	12000	AR +7–25
+the Sinew	2–5	14000	ATK +1–2
+Thick Skin	2–5	16000	Defense +4–14
+Security	2–5	16000	AR +4–11, Defense +2–8
+Tier 2 (40–99)
+Ease	3–5	1000	ATK +6–12, AR +36–87, MP +8–18
+Anger	2–5	1000	ATK +3–5, AR +22–52
+Unbending	2–5	8000	Absorb +1–4
+Audacity	2–5	8000	Absorb +0–2, HP +10–18
+Instruction	2–5	10000	HP +10–18, Defense +10–25
+Precision	2–5	12000	AR +22–52
+Potential	2–5	14000	ATK +1–3
+Stone Skin	2–5	16000	Defense +13–31
+Unforgiving	2–5	16000	AR +11–25, Defense +7–17
+Tier 3 (60–112)
+Mastery	3–5	1000	ATK +10–16, AR +77–113, MP +16–34
+Grandmastery	3–5	1000	ATK +14–22, AR +102–180, MP +30–46
+Rage	2–5	1000	ATK +4–7, AR +46–68
+Fury	2–5	1000	ATK +7–11, AR +61–108
+Bastion	2–5	12000	Absorb +2–3, Defense +22–32
+Contumacy	2–5	12000	Absorb +2–5, Defense +29–50
+Iron Skin	2–5	16000	Defense +27–40
+Steel Skin	2–5	16000	Defense +36–63
+Tier 4 (100–130)
+(No Gauntlet-specific suffixes in this bracket)
+📂 Rings
+Prefixes
+Tier 1 (0–59)
+Distressed	3–5	1000	ATK +1–3, AR +2–8, Crit +0.1–0.2
+Pressing	2–5	1000	ATK +1–2, Crit +0.1–0.2
+Vigorous	3–5	8000	HP +6–10, MP +10–16, HP Regen +0.1–0.2
+Stout	2–5	8000	HP +8–12, HP Regen +0.1–0.1
+Hale	2–5	14000	HP +4–8, MP +4–10
+Reinforced	2–5	16000	Defense +2–8
+Staunch	2–5	16000	AR +2–6, Defense +2–5
+Detailed	2–5	16000	AR +2–8
+Tier 2 (40–99)
+Demanding	3–5	1000	ATK +2–4, AR +7–17, Crit +0.1–0.3
+Plighted	2–5	1000	ATK +2–3, Crit +0.1–0.3
+Vivacious	3–5	8000	HP +8–16, MP +14–26, HP Regen +0.1–0.3
+Remora's	2–5	8000	HP +10–18, HP Regen +0.1–0.2
+Healthy	2–5	14000	HP +6–10, MP +8–18
+Layered	2–5	16000	Defense +7–17
+Steadfast	2–5	16000	AR +5–12, Defense +5–13
+Precise	2–5	16000	AR +7–17
+Tier 3 (60–112)
+Imperative	3–5	1000	ATK +3–4, AR +15–22, Crit +0.3–0.5
+Exigence	3–5	1000	ATK +4–6, AR +20–35, Crit +0.4–0.6
+Predicating	2–5	1000	ATK +2–3, Crit +0.2–0.4
+Contingence	2–5	1000	ATK +3–5, Crit +0.3–0.5
+Sustenant	3–5	8000	HP +14–22, MP +24–36, HP Regen +0.3–0.5
+Vital	3–5	8000	HP +20–26, MP +34–42, HP Regen +0.4–0.6
+Lamprey's	2–5	8000	HP +16–26, HP Regen +0.2–0.4
+Vampire's	2–5	8000	HP +24–30, HP Regen +0.3–0.5
+Stalwart	2–5	14000	HP +10–16, MP +16–34
+Robust	2–5	14000	HP +14–18, MP +30–46
+Thickened	2–5	16000	Defense +15–22
+Impregnable	2–5	16000	Defense +20–35
+Cohesive	2–5	16000	AR +11–16, Defense +11–16
+Ardent	2–5	16000	AR +14–25, Defense +14–25
+Veracious	2–5	16000	AR +15–22
+Accurate	2–5	16000	AR +20–35
+Tier 4 (100–130)
+Perplexion	3–5	1000	ATK +3–4, AR +15–22, Crit +0.3–0.5
+Vicissitude	3–5	1000	ATK +4–6, AR +20–35, Crit +0.4–0.6
+Quandary	2–5	1000	ATK +2–3, Crit +0.2–0.4
+Eventuality	2–5	1000	ATK +3–5, Crit +0.3–0.5
+Regrowth	3–5	8000	HP +14–22, MP +24–36, HP Regen +0.3–0.5
+Recovery	3–5	8000	HP +20–26, MP +34–42, HP Regen +0.4–0.6
+Victory	2–5	8000	HP +16–26, HP Regen +0.2–0.4
+Triumph	2–5	8000	HP +24–30, HP Regen +0.3–0.5
+the Avelin	2–5	14000	HP +10–16, MP +16–34
+the Xetan	2–5	14000	HP +14–18, MP +30–46
+Iron Skin	2–5	16000	Defense +15–22
+Steel Skin	2–5	16000	Defense +20–35
+Determined	2–5	16000	AR +11–16, Defense +11–16
+Unswerving	2–5	16000	AR +14–25, Defense +14–25
+Sniper	2–5	16000	AR +15–22
+Marksman	2–5	16000	AR +20–35
