@@ -26,6 +26,7 @@ import { PersonalPage } from './components/personal/PersonalPage';
 import { Tutorial } from './components/tutorial/Tutorial';
 import { LiveBadge } from './components/LiveBadge';
 import { OverlayFab } from './components/OverlayFab';
+import { SoulsCatalog } from './components/souls/SoulsCatalog';
 import { OverlayGuide } from './components/overlay/OverlayGuide';
 import { AffixGuide } from './components/affixes/AffixGuide';
 import { BrFlag, UkFlag } from './components/Flags';
@@ -59,6 +60,7 @@ const TIMER_TABS: { id: TimerTab; icon: string; key: string }[] = [
 const TOOL_TABS: { id: ToolTab; icon: string; key: string; hidden?: boolean }[] = [
   { id: 'overlay', icon: '🖥️', key: 'nav.overlay' },
   { id: 'soultree', icon: '🌳', key: 'nav.soultree' },
+  { id: 'soulslist', icon: '👻', key: 'nav.soulslist' },
   { id: 'skilltree', icon: '🌟', key: 'nav.skilltree' },
   { id: 'mixing', icon: '⚗', key: 'nav.mixing' },
   { id: 'sod', icon: '🎯', key: 'nav.sod' },
@@ -400,6 +402,7 @@ export default function App() {
           : toolTab === 'quests' ? <QuestTracker />
           : toolTab === 'affixes' ? <AffixGuide />
           : toolTab === 'overlay' ? <OverlayGuide />
+          : toolTab === 'soulslist' ? <SoulsCatalog />
           : toolTab === 'screenshare' ? <ScreenRooms />
           : toolTab === 'builds' ? <Builds />
           : toolTab === 'mixing' ? <Mixing />

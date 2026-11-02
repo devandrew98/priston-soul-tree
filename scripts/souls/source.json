@@ -1,0 +1,1312 @@
+[
+ {
+  "A": "Categoria",
+  "B": "Soul",
+  "C": "Level",
+  "D": "Status / Benefício",
+  "E": "Rank 1",
+  "F": "Rank 2",
+  "G": "Rank 3",
+  "H": "Mapa de Drop"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Doral",
+  "C": "5",
+  "D": "Attack Power",
+  "E": "1",
+  "F": "2",
+  "G": "4",
+  "H": "Bamboo Forest (1) and Acasia Forest (1)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Mutant Plant",
+  "C": "5",
+  "D": "Attack Power",
+  "E": "1",
+  "F": "2",
+  "G": "4",
+  "H": "Valley of Tranquility (1)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Armored Beetle",
+  "C": "30",
+  "D": "Attack Power",
+  "E": "1",
+  "F": "2",
+  "G": "4",
+  "H": "Forgotten Land (1)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Headcutter",
+  "C": "35",
+  "D": "Attack Power",
+  "E": "8",
+  "F": "15",
+  "G": "30",
+  "H": "Oasis (35) and Ancient Prision 1F (40)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Mighty Goblin",
+  "C": "35",
+  "D": "Attack Power",
+  "E": "2",
+  "F": "4",
+  "G": "8",
+  "H": "Oasis (35)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Slaughter",
+  "C": "45",
+  "D": "Attack Power",
+  "E": "4",
+  "F": "8",
+  "G": "15",
+  "H": "Ancient Prision 1F (45) and Battlefield of the Ancients (55)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Reptile Warlord",
+  "C": "65",
+  "D": "Attack Power",
+  "E": "4",
+  "F": "8",
+  "G": "15",
+  "H": "Forbidden Land (65)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Iron Fist",
+  "C": "85",
+  "D": "Attack Power",
+  "E": "3",
+  "F": "7",
+  "G": "15",
+  "H": "Heart of Perum (85)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Frost",
+  "C": "89",
+  "D": "Attack Power",
+  "E": "5",
+  "F": "10",
+  "G": "20",
+  "H": "Gallubia Valley (89) and Frozen Sanctuary (92)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Gorgoniac",
+  "C": "100",
+  "D": "Attack Power",
+  "E": "15",
+  "F": "30",
+  "G": "60",
+  "H": "Endless Tower 1F (100)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Gorgon",
+  "C": "100",
+  "D": "Attack Power",
+  "E": "6",
+  "F": "12",
+  "G": "25",
+  "H": "Endless Tower 1F (100)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Crystal Wrath",
+  "C": "118",
+  "D": "Attack Power",
+  "E": "5",
+  "F": "10",
+  "G": "20",
+  "H": "Crystal Nest (118)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Toos",
+  "C": "120",
+  "D": "Attack Power",
+  "E": "3",
+  "F": "6",
+  "G": "12",
+  "H": "Land of Neuren (120)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Lufia",
+  "C": "150",
+  "D": "Attack Power",
+  "E": "18",
+  "F": "36",
+  "G": "72",
+  "H": "Whispering Vale (150)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Ghost",
+  "C": "5",
+  "D": "Attack Rating",
+  "E": "5",
+  "F": "11",
+  "G": "22",
+  "H": "Bamboo Forest (1)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "BeeDog",
+  "C": "10",
+  "D": "Attack Rating",
+  "E": "11",
+  "F": "22",
+  "G": "33",
+  "H": "Forest of Spirits (1)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Mutant Tree",
+  "C": "15",
+  "D": "Attack Rating",
+  "E": "5",
+  "F": "11",
+  "G": "22",
+  "H": "Forest of Spirits (1)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Red Scorpion",
+  "C": "20",
+  "D": "Attack Rating",
+  "E": "17",
+  "F": "33",
+  "G": "65",
+  "H": "Castle of the Lost (1)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Figon",
+  "C": "50",
+  "D": "Attack Rating",
+  "E": "17",
+  "F": "33",
+  "G": "65",
+  "H": "Battlefield of the Ancients (55)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Reptile Warlord",
+  "C": "65",
+  "D": "Attack Rating",
+  "E": "32",
+  "F": "65",
+  "G": "130",
+  "H": "Forbidden Land (65)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Devil Bird",
+  "C": "92",
+  "D": "Attack Rating",
+  "E": "30",
+  "F": "60",
+  "G": "125",
+  "H": "Frozen Sanctuary (92)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Gorgon",
+  "C": "100",
+  "D": "Attack Rating",
+  "E": "30",
+  "F": "60",
+  "G": "125",
+  "H": "Endless Tower 1F (100)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Tulla",
+  "C": "105",
+  "D": "Attack Rating",
+  "E": "65",
+  "F": "130",
+  "G": "260",
+  "H": "Ice Mine 1F (105)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Crystal Scorpion",
+  "C": "118",
+  "D": "Attack Rating",
+  "E": "45",
+  "F": "90",
+  "G": "180",
+  "H": "Crystal Nest (118)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Mutant Rabie",
+  "C": "5",
+  "D": "Critical Rate",
+  "E": "0.2%",
+  "F": "0.3%",
+  "G": "0.5%",
+  "H": "Valley of Tranquility (1)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Ratoo",
+  "C": "75",
+  "D": "Critical Rate",
+  "E": "0.2%",
+  "F": "0.3%",
+  "G": "0.5%",
+  "H": "Cursed Temple 2F (75)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Hyper Machine",
+  "C": "80",
+  "D": "Critical Rate",
+  "E": "0.1%",
+  "F": "0.2%",
+  "G": "0.4%",
+  "H": "Railway of Chaos (80)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Babel",
+  "C": "85",
+  "D": "Critical Rate",
+  "E": "0.5%",
+  "F": "1%",
+  "G": "1.5%",
+  "H": "Heart of Perum (85)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Acero",
+  "C": "110",
+  "D": "Critical Rate",
+  "E": "0.1%",
+  "F": "0.2%",
+  "G": "0.4%",
+  "H": "Ancient Weapon (110)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Chalybs",
+  "C": "110",
+  "D": "Critical Rate",
+  "E": "0.25",
+  "F": "0.3%",
+  "G": "0.5%",
+  "H": "Ancient Weapon (110)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Xetan",
+  "C": "80",
+  "D": "Exp",
+  "E": "1.5%",
+  "F": "3%",
+  "G": "6%",
+  "H": "Todos os mapas acima de Railway of Chaos (80)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Hobgoblin",
+  "C": "1",
+  "D": "Mana",
+  "E": "6",
+  "F": "12",
+  "G": "25",
+  "H": "Garden of Freeom (1) and Acasia Forest (1) and Refuge of the Ancients (15)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Leech",
+  "C": "25",
+  "D": "Mana",
+  "E": "25",
+  "F": "50",
+  "G": "100",
+  "H": "Cursed Land (25)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Witch",
+  "C": "55",
+  "D": "Mana",
+  "E": "12",
+  "F": "25",
+  "G": "50",
+  "H": "Mushroom Cave (55) and Sanctuary of Darkness (60)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Xetan",
+  "C": "80",
+  "D": "Mana",
+  "E": "25",
+  "F": "50",
+  "G": "100",
+  "H": "Todos os mapas acima de Railway of Chaos (80)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Cold Eye",
+  "C": "89",
+  "D": "Mana",
+  "E": "20",
+  "F": "40",
+  "G": "80",
+  "H": "Gallubia Valley (89)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Devil Bird",
+  "C": "92",
+  "D": "Mana",
+  "E": "12",
+  "F": "25",
+  "G": "50",
+  "H": "Frozen Sanctuary (92)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Valento",
+  "C": "92",
+  "D": "Mana",
+  "E": "25",
+  "F": "50",
+  "G": "100",
+  "H": "Frozen Sanctuary (92)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Dark Mage",
+  "C": "95",
+  "D": "Mana",
+  "E": "12",
+  "F": "25",
+  "G": "50",
+  "H": "Land of Chaos (95)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Chalybs",
+  "C": "110",
+  "D": "Mana",
+  "E": "12",
+  "F": "25",
+  "G": "50",
+  "H": "Ancient Weapon (110)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Scorpion",
+  "C": "10",
+  "D": "Movement Speed",
+  "E": "1",
+  "F": "2",
+  "G": "3",
+  "H": "Refuge of the Ancients (15)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Avelisk-S",
+  "C": "50",
+  "D": "Movement Speed",
+  "E": "1",
+  "F": "1.5",
+  "G": "2",
+  "H": "Battlefield of the Ancients (55)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Undead Greven",
+  "C": "50",
+  "D": "Movement Speed",
+  "E": "3",
+  "F": "4",
+  "G": "5",
+  "H": "Battlefield of the Ancients (55)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Invader Assassin",
+  "C": "108",
+  "D": "Movement Speed",
+  "E": "2",
+  "F": "3",
+  "G": "4",
+  "H": "Secret Laboratory (108)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Omicron",
+  "C": "75",
+  "D": "Stamina",
+  "E": "25",
+  "F": "50",
+  "G": "100",
+  "H": "Cursed Temple 2F (75)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Rampage",
+  "C": "80",
+  "D": "Stamina",
+  "E": "12",
+  "F": "25",
+  "G": "50",
+  "H": "Railway of Chaos (80)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Iron Fist",
+  "C": "85",
+  "D": "Stamina",
+  "E": "12",
+  "F": "25",
+  "G": "50",
+  "H": "Heart of Perum (85)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Valento",
+  "C": "92",
+  "D": "Stamina",
+  "E": "25",
+  "F": "50",
+  "G": "100",
+  "H": "Frozen Sanctuary (92)"
+ },
+ {
+  "A": "Attack Souls",
+  "B": "Dark Mage",
+  "C": "95",
+  "D": "Stamina",
+  "E": "12",
+  "F": "25",
+  "G": "50",
+  "H": "Land of Chaos (95)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Wild Goblin",
+  "C": "10",
+  "D": "Absorb",
+  "E": "1",
+  "F": "2",
+  "G": "5",
+  "H": "Acasia Forest (1)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Bloody Buma",
+  "C": "40",
+  "D": "Absorb",
+  "E": "2",
+  "F": "5",
+  "G": "10",
+  "H": "Ancient Prision 1F (40)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Mummy",
+  "C": "45",
+  "D": "Absorb",
+  "E": "1",
+  "F": "2",
+  "G": "5",
+  "H": "Ancient Prision 2F (50)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Desert Golem",
+  "C": "50",
+  "D": "Absorb",
+  "E": "5",
+  "F": "10",
+  "G": "20",
+  "H": "Battlefield of the Ancients (55)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Stone Golem",
+  "C": "60",
+  "D": "Absorb",
+  "E": "2",
+  "F": "5",
+  "G": "10",
+  "H": "Sanctuary of Darkness (65)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Bloody Prince",
+  "C": "95",
+  "D": "Absorb",
+  "E": "5",
+  "F": "10",
+  "G": "20",
+  "H": "Land of Chaos (95)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Undead Maple",
+  "C": "102",
+  "D": "Absorb",
+  "E": "5",
+  "F": "10",
+  "G": "20",
+  "H": "Endless Tower 2F (102)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Draxos",
+  "C": "108",
+  "D": "Absorb",
+  "E": "5",
+  "F": "10",
+  "G": "20",
+  "H": "Secret Laboratory (108)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Arhdyra",
+  "C": "113",
+  "D": "Absorb",
+  "E": "10",
+  "F": "20",
+  "G": "40",
+  "H": "Abyss of the Sea (113)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Elite Crios",
+  "C": "115",
+  "D": "Absorb",
+  "E": "7",
+  "F": "14",
+  "G": "28",
+  "H": "Forge the Ancients (115)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Aragonian",
+  "C": "118",
+  "D": "Absorb",
+  "E": "10",
+  "F": "15",
+  "G": "30",
+  "H": "Crystal Nest Lair Boss (118)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Oblacko",
+  "C": "120",
+  "D": "Absorb",
+  "E": "2.5",
+  "F": "5",
+  "G": "10",
+  "H": "Land of Neuren (120)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Cyclops Knight",
+  "C": "35",
+  "D": "Block",
+  "E": "0.1%",
+  "F": "0.2%",
+  "G": "0.4%",
+  "H": "Oasis (35)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Dawlin",
+  "C": "70",
+  "D": "Block",
+  "E": "0.2%",
+  "F": "0.3%",
+  "G": "0.5%",
+  "H": "Cursed Temple 1F (70)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Undead King Hopy",
+  "C": "100",
+  "D": "Block",
+  "E": "0.1%",
+  "F": "0.2%",
+  "G": "0.4%",
+  "H": "Endless Tower 1F (100)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Sathla",
+  "C": "113",
+  "D": "Block",
+  "E": "0.1%",
+  "F": "0.2%",
+  "G": "0.4%",
+  "H": "Abyss of the Sea (113)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Primal Golem",
+  "C": "115",
+  "D": "Block",
+  "E": "0.5%",
+  "F": "1%",
+  "G": "1.5%",
+  "H": "Forge the Ancients (115)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Tobie",
+  "C": "1",
+  "D": "Defense",
+  "E": "6",
+  "F": "12",
+  "G": "25",
+  "H": "Road of the Wind (1)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Haunting Plant",
+  "C": "5",
+  "D": "Defense",
+  "E": "12",
+  "F": "25",
+  "G": "50",
+  "H": "Land of the Dusk (1) and Florest of Spirits (1)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Bargon",
+  "C": "30",
+  "D": "Defense",
+  "E": "25",
+  "F": "50",
+  "G": "100",
+  "H": "Cursed Land (25) and Forgotten Land (30)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Bloody Buma",
+  "C": "40",
+  "D": "Defense",
+  "E": "12",
+  "F": "25",
+  "G": "50",
+  "H": "Ancient Prision 1F (40)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Doom Guard",
+  "C": "60",
+  "D": "Defense",
+  "E": "10",
+  "F": "20",
+  "G": "40",
+  "H": "Sanctuary of Darkness (65)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Bloody Knight",
+  "C": "95",
+  "D": "Defense",
+  "E": "25",
+  "F": "50",
+  "G": "100",
+  "H": "Land of Chaos (95)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Bloody Prince",
+  "C": "95",
+  "D": "Defense",
+  "E": "25",
+  "F": "50",
+  "G": "100",
+  "H": "Land of Chaos (95)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Mokova",
+  "C": "98",
+  "D": "Defense",
+  "E": "25",
+  "F": "50",
+  "G": "100",
+  "H": "Lost Temple (98)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Avelisk Explorer",
+  "C": "105",
+  "D": "Defense",
+  "E": "15",
+  "F": "30",
+  "G": "60",
+  "H": "Ice Mine 1F (105)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Elite Engineer",
+  "C": "108",
+  "D": "Defense",
+  "E": "20",
+  "F": "40",
+  "G": "80",
+  "H": "Secret Laboratory (108)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Crystal Bat",
+  "C": "118",
+  "D": "Defense",
+  "E": "20",
+  "F": "40",
+  "G": "80",
+  "H": "Crystal Nest (118)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Illusion Knight",
+  "C": "45",
+  "D": "Evade",
+  "E": "0.1%",
+  "F": "0.2%",
+  "G": "0.4%",
+  "H": "Ancient Prision 2F (50)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Shadow",
+  "C": "70",
+  "D": "Evade",
+  "E": "0.1%",
+  "F": "0.2%",
+  "G": "0.4%",
+  "H": "Cursed Temple 1F (70)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Mokova",
+  "C": "98",
+  "D": "Evade",
+  "E": "0.5%",
+  "F": "1%",
+  "G": "1.5%",
+  "H": "Lost Temple (98)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Seto",
+  "C": "98",
+  "D": "Evade",
+  "E": "0.1%",
+  "F": "0.2%",
+  "G": "0.4%",
+  "H": "Lost Temple (98)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Ruca",
+  "C": "102",
+  "D": "Evade",
+  "E": "0.1%",
+  "F": "0.2%",
+  "G": "0.4%",
+  "H": "Endless Tower 2F (102)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Draxos",
+  "C": "108",
+  "D": "Evade",
+  "E": "0.5%",
+  "F": "1%",
+  "G": "1.5%",
+  "H": "Secret Laboratory (108)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Arma",
+  "C": "1",
+  "D": "HP",
+  "E": "2",
+  "F": "5",
+  "G": "10",
+  "H": "Garden of Freeom (1) "
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Zombie",
+  "C": "15",
+  "D": "HP",
+  "E": "3",
+  "F": "7",
+  "G": "15",
+  "H": "Castle of the Lost (1) and Refuge of the Ancients (1)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Haunted Treant",
+  "C": "20",
+  "D": "HP",
+  "E": "15",
+  "F": "30",
+  "G": "60",
+  "H": "Ruinen Village (20) and Cursed Land (25)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Buma",
+  "C": "30",
+  "D": "HP",
+  "E": "7",
+  "F": "15",
+  "G": "30",
+  "H": "Forgotten Land (30) and Ancient Prision 1F (40)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Stone Golem",
+  "C": "60",
+  "D": "HP",
+  "E": "7",
+  "F": "15",
+  "G": "30",
+  "H": "Sanctuary of Darkness (65)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Mountain",
+  "C": "85",
+  "D": "HP",
+  "E": "12",
+  "F": "25",
+  "G": "50",
+  "H": "Heart of Perum (85)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Blizzard Giant",
+  "C": "89",
+  "D": "HP",
+  "E": "15",
+  "F": "30",
+  "G": "60",
+  "H": "Frozen Sanctuary (92)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Kelvezu",
+  "C": "92",
+  "D": "HP",
+  "E": "40",
+  "F": "80",
+  "G": "160",
+  "H": "Kelvezu Lair (92)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Fusion Ratoo",
+  "C": "115",
+  "D": "HP",
+  "E": "10",
+  "F": "20",
+  "G": "40",
+  "H": "Forge the Ancients (115)"
+ },
+ {
+  "A": "Defense Souls",
+  "B": "Aragonian",
+  "C": "118",
+  "D": "HP",
+  "E": "35",
+  "F": "70",
+  "G": "140",
+  "H": "Crystal Nest Lair Boss (118)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Egan",
+  "C": "1",
+  "D": "Aging Success",
+  "E": "0.10%",
+  "F": "0.20%",
+  "G": "0.40%",
+  "H": "Road of the Wind (1) and Valley of Tranquility (1)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Lizard Chemist",
+  "C": "65",
+  "D": "Aging Success",
+  "E": "0.10%",
+  "F": "0.20%",
+  "G": "0.40%",
+  "H": "Forbidden Land (65)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Stygian",
+  "C": "70",
+  "D": "Aging Success",
+  "E": "0.20%",
+  "F": "0.40%",
+  "G": "0.50%",
+  "H": "Cursed Temple 1F (70)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Devil Shy",
+  "C": "102",
+  "D": "Aging Success",
+  "E": "0.50%",
+  "F": "1.00%",
+  "G": "1.50%",
+  "H": "Endless Tower 2F (102)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Yagditha",
+  "C": "113",
+  "D": "Aging Success",
+  "E": "0.50%",
+  "F": "1.00%",
+  "G": "1.50%",
+  "H": "Abyss of the Sea (113)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Hopy",
+  "C": "1",
+  "D": "Exp",
+  "E": "1.00%",
+  "F": "1.50%",
+  "G": "3.00%",
+  "H": "Soul Box"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Rabie",
+  "C": "1",
+  "D": "Exp",
+  "E": "1.00%",
+  "F": "1.50%",
+  "G": "3.00%",
+  "H": "Soul Box"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Decoy",
+  "C": "20",
+  "D": "Exp",
+  "E": "1.00%",
+  "F": "2.00%",
+  "G": "4.00%",
+  "H": "Soul Box"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Grotesque",
+  "C": "80",
+  "D": "Exp",
+  "E": "1.50%",
+  "F": "3.00%",
+  "G": "6.00%",
+  "H": "Soul Box"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Minigue",
+  "C": "5",
+  "D": "Own Item Type",
+  "E": "1.00%",
+  "F": "3.00%",
+  "G": "7.00%",
+  "H": "Bamboo Forest (1) and Refuge of the Ancients (1)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "King Hopy",
+  "C": "55",
+  "D": "Own Item Type",
+  "E": "10.00%",
+  "F": "13.00%",
+  "G": "15.00%",
+  "H": "Mushroom Cave (55)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Lizard Elder",
+  "C": "65",
+  "D": "Own Item Type",
+  "E": "1.00%",
+  "F": "3.00%",
+  "G": "7.00%",
+  "H": "Forbidden Land (65)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Chaos Cara",
+  "C": "89",
+  "D": "Own Item Type",
+  "E": "3.00%",
+  "F": "7.00%",
+  "G": "14.00%",
+  "H": "Gallubia Valley (89)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Greedy",
+  "C": "110",
+  "D": "Own Item Type",
+  "E": "3.00%",
+  "F": "7.00%",
+  "G": "15.00%",
+  "H": "Ancient Weapon (110)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Sen",
+  "C": "5",
+  "D": "Own Spec Chance",
+  "E": "1.00%",
+  "F": "2.00%",
+  "G": "3.00%",
+  "H": "Valley of Tranquility (1) and Land of Dusk (1)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Mephit",
+  "C": "20",
+  "D": "Own Spec Chance",
+  "E": "1.00%",
+  "F": "2.00%",
+  "G": "3.00%",
+  "H": "Ruinen Village (20) and Cursed Land (25)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Crypt",
+  "C": "40",
+  "D": "Own Spec Chance",
+  "E": "3.00%",
+  "F": "5.00%",
+  "G": "7.00%",
+  "H": "Cursed Land (25)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Hongky",
+  "C": "50",
+  "D": "Own Spec Chance",
+  "E": "10.00%",
+  "F": "13.00%",
+  "G": "15.00%",
+  "H": "Battlefield of the Ancients (55)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Lizard Scout",
+  "C": "65",
+  "D": "Own Spec Chance",
+  "E": "3.00%",
+  "F": "5.00%",
+  "G": "7.00%",
+  "H": "Forbidden Land (65)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Greedy",
+  "C": "110",
+  "D": "Own Spec Chance",
+  "E": "10.00%",
+  "F": "13.00%",
+  "G": "15.00%",
+  "H": "Ancient Weapon (110)"
+ },
+ {
+  "A": "Utility Souls",
+  "B": "Yagditha",
+  "C": "113",
+  "D": "Own Spec Chance",
+  "E": "7.00%",
+  "F": "15.00%",
+  "G": "30.00%",
+  "H": "Abyss of the Sea (113)"
+ },
+ {
+  "A": "PVP Attack Souls",
+  "B": "Vault Skeleton",
+  "C": "40",
+  "D": "Crit",
+  "E": "0.20%",
+  "F": "0.30%",
+  "G": "0.50%",
+  "H": "Ricarten Vault 1 (1)"
+ },
+ {
+  "A": "PVP Attack Souls",
+  "B": "Skillmaster, Eadric",
+  "C": "70",
+  "D": "Crit",
+  "E": "0.50%",
+  "F": "1.00%",
+  "G": "1.50%",
+  "H": "Ricarten Vault 3 (60)"
+ },
+ {
+  "A": "PVP Attack Souls",
+  "B": "Vengefull Saint",
+  "C": "70",
+  "D": "Attack Power",
+  "E": "15",
+  "F": "30",
+  "G": "60",
+  "H": "Todos os mapas a partir de Vilage Ruinnen (25)"
+ },
+ {
+  "A": "PVP Attack Souls",
+  "B": "Vault Mummy",
+  "C": "90",
+  "D": "Attack Power",
+  "E": "4",
+  "F": "8",
+  "G": "15",
+  "H": "Ricarten Vault 3 (60)"
+ },
+ {
+  "A": "PVP Attack Souls",
+  "B": "Vault Mage",
+  "C": "118",
+  "D": "Attack Power",
+  "E": "8",
+  "F": "15",
+  "G": "30",
+  "H": "Ricarten Vault 3 (60)"
+ },
+ {
+  "A": "PVP Attack Souls",
+  "B": "Vault Nightmare",
+  "C": "118",
+  "D": "Attack Power",
+  "E": "5",
+  "F": "10",
+  "G": "25",
+  "H": "Ricarten Vault 3 (60)"
+ },
+ {
+  "A": "PVP Attack Souls",
+  "B": "Vault Ranger",
+  "C": "90",
+  "D": "Attack Rating",
+  "E": "17",
+  "F": "33",
+  "G": "65",
+  "H": "Ricarten Vault 2 (40) "
+ },
+ {
+  "A": "PVP Attack Souls",
+  "B": "Vault Knight",
+  "C": "118",
+  "D": "Attack Rating",
+  "E": "30",
+  "F": "60",
+  "G": "125",
+  "H": "Ricarten Vault 3 (60)"
+ },
+ {
+  "A": "PVP Attack Souls",
+  "B": "Vault Nightmare",
+  "C": "118",
+  "D": "Attack Rating",
+  "E": "20",
+  "F": "45",
+  "G": "100",
+  "H": "Ricarten Vault 3 (60)"
+ },
+ {
+  "A": "PVP Defense Souls",
+  "B": "Vault Ghost",
+  "C": "40",
+  "D": "Evade",
+  "E": "0.10%",
+  "F": "0.20%",
+  "G": "0.40%",
+  "H": "Ricarten Vault 1 (1)"
+ },
+ {
+  "A": "PVP Defense Souls",
+  "B": "Vault Ghoul",
+  "C": "40",
+  "D": "Defense",
+  "E": "12",
+  "F": "25",
+  "G": "50",
+  "H": "Ricarten Vault 1 (1)"
+ },
+ {
+  "A": "PVP Defense Souls",
+  "B": "Vault Guard",
+  "C": "90",
+  "D": "Defense",
+  "E": "12",
+  "F": "25",
+  "G": "50",
+  "H": "Ricarten Vault 2 (40) "
+ },
+ {
+  "A": "PVP Defense Souls",
+  "B": "Vault Guard",
+  "C": "90",
+  "D": "Absorb",
+  "E": "2",
+  "F": "5",
+  "G": "10",
+  "H": "Ricarten Vault 2 (40) "
+ },
+ {
+  "A": "PVP Defense Souls",
+  "B": "Vault Stygian",
+  "C": "90",
+  "D": "Absorb",
+  "E": "1",
+  "F": "5",
+  "G": "10",
+  "H": "Ricarten Vault 2 (40) "
+ },
+ {
+  "A": "PVP Defense Souls",
+  "B": "Vault Stygian",
+  "C": "90",
+  "D": "HP",
+  "E": "10",
+  "F": "20",
+  "G": "30",
+  "H": "Ricarten Vault 2 (40) "
+ },
+ {
+  "A": "PVP Defense Souls",
+  "B": "Vault Warrior",
+  "C": "90",
+  "D": "Block",
+  "E": "0.10%",
+  "F": "0.20%",
+  "G": "0.40%",
+  "H": "Ricarten Vault 2 (40) "
+ }
+]
