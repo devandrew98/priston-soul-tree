@@ -73,6 +73,7 @@ export function Home() {
             <img src="/pristonzone-logo.png" alt="PristonZONE" className="home-logo" />
           </div>
           {ht.shown('pix') && <aside className="home-pix">
+            <img className="home-priestess" src="/classes/priestess.webp" alt="" aria-hidden="true" decoding="async" />
             <div className="home-pix-head">
               <PixMark />
               <b>{ht.text('pix', 'title', t('home.pix.title'))}</b>

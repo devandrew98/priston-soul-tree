@@ -2776,3 +2776,8 @@ input[type="checkbox"], input[type="radio"], input[type="range"], progress { acc
 .sl-place.plain:hover { border-color: var(--border); color: var(--text); }
 .sl-note { margin-top: 16px; font-size: 12.5px; }
 .sl .af-small { width: 200px; max-width: 100%; }
+
+/* ===== The Priestess standing on the Pix card (Home only) ===== */
+.home-pix { position: relative; }
+.home-pix > .home-priestess { position: absolute; right: -120px; bottom: -20px; height: 62%; width: auto; z-index: 6; pointer-events: none; filter: drop-shadow(0 8px 14px rgba(0,0,0,0.55)); }
+@media (max-width: 1299px) { .home-pix > .home-priestess { display: none; } }
