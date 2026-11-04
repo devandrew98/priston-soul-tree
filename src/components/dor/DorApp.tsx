@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DOR_FAKE, deriveSecret, forgetSecret, memoryApi, readSecret, storeSecret, supabaseApi } from '../../lib/dor/api';
 import { useDorStore, type DorStore } from '../../lib/dor/store';
-import type { Crisis, MedAdmin, Rec } from '../../lib/dor/types';
+import type { MedAdmin, Rec } from '../../lib/dor/types';
 import './dor.css';
-import { CrisisForm, EditRecord, EndForm, IntensityForm, MedAdminForm, PhysioForm, SleepForm, SymptomForm } from './forms';
+import { EditRecord, EndForm, IntensityForm, MedAdminForm, PainForm, PhysioForm, SleepForm, SymptomForm } from './forms';
 import { History } from './History';
 import { Home } from './Home';
 import { Meds } from './Meds';
@@ -89,7 +89,7 @@ function Diary({ secret, onDenied, onRotated, onLeave }: { secret: string; onDen
         </main>
       </div>
 
-      <SheetHost store={store} sheet={sheet} close={close} setSheet={setSheet} secret={secret} onRotated={onRotated} onLeave={onLeave} onMedSaved={setFollow} />
+      <SheetHost store={store} sheet={sheet} close={close} secret={secret} onRotated={onRotated} onLeave={onLeave} onMedSaved={setFollow} />
       {follow && (
         <Sheet title="Como está a dor agora?" onClose={() => setFollow(null)}>
           <p>Deseja registrar como está a dor agora? Isso mostra a evolução depois do {follow.data.name}, sem concluir que um causou o outro.</p>
@@ -112,13 +112,12 @@ function SaveIndicator({ store }: { store: DorStore }) {
   return <span className="dor-save" />;
 }
 
-function SheetHost({ store, sheet, close, setSheet, secret, onRotated, onLeave, onMedSaved }: {
-  store: DorStore; sheet: SheetState; close: () => void; setSheet: (s: SheetState) => void; secret: string; onRotated: (s: string) => void; onLeave: () => void; onMedSaved: (r: Rec<MedAdmin>) => void;
+function SheetHost({ store, sheet, close, secret, onRotated, onLeave, onMedSaved }: {
+  store: DorStore; sheet: SheetState; close: () => void; secret: string; onRotated: (s: string) => void; onLeave: () => void; onMedSaved: (r: Rec<MedAdmin>) => void;
 }) {
   if (!sheet) return null;
   switch (sheet.t) {
-    case 'crisis': return <CrisisForm store={store} onClose={close} startAt={sheet.startAt} />;
-    case 'reopen': return <CrisisForm store={store} onClose={close} rec={sheet.rec} reopen />;
+    case 'pain': return <PainForm store={store} onClose={close} at={sheet.at} />;
     case 'end': return <EndForm store={store} onClose={close} crisis={sheet.rec} />;
     case 'intensity': return <IntensityForm store={store} onClose={close} crisisId={sheet.crisisId} afterAdminId={sheet.afterAdminId} heading={sheet.heading} />;
     case 'symptom': return <SymptomForm store={store} onClose={close} crisis={sheet.rec} />;
@@ -127,20 +126,5 @@ function SheetHost({ store, sheet, close, setSheet, secret, onRotated, onLeave, 
     case 'physio': return <PhysioForm store={store} onClose={close} />;
     case 'edit': return <EditRecord store={store} rec={sheet.rec} onClose={close} />;
     case 'settings': return <SettingsSheet store={store} secret={secret} onClose={close} onRotated={onRotated} onLeave={onLeave} />;
-    case 'choice': return <RecentChoice store={store} close={close} setSheet={setSheet} />;
   }
-}
-
-/** The pain came back soon after a crisis ended: the person decides, the system never does. */
-function RecentChoice({ store, close, setSheet }: { store: DorStore; close: () => void; setSheet: (s: SheetState) => void }) {
-  const last = [...store.ctx.crises].filter((c) => c.data.end).sort((a, b) => b.data.end!.localeCompare(a.data.end!))[0] as Rec<Crisis> | undefined;
-  return (
-    <Sheet title="A dor voltou?" onClose={close}>
-      <p>Uma crise terminou há pouco. Escolha como registrar:</p>
-      <div className="dor-stack">
-        {last && <button className="dor-btn" onClick={() => setSheet({ t: 'reopen', rec: last })}>Reabrir a crise anterior<small>continua a mesma crise; você pode corrigir os horários</small></button>}
-        <button className="dor-btn primary" onClick={() => setSheet({ t: 'crisis' })}>Iniciar nova crise<small>uma crise separada, com início próprio</small></button>
-      </div>
-    </Sheet>
-  );
 }

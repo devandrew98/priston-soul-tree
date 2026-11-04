@@ -10,6 +10,11 @@ export type TLFilter = 'all' | 'headache' | 'meds';
 const ms = (iso: string) => new Date(iso).getTime();
 export const medLabel = (a: Pick<MedAdmin, 'name' | 'dose' | 'unit' | 'quantity'>) => `${a.quantity > 1 || !a.dose ? `${a.quantity}× ` : ''}${a.name}${a.dose ? ` ${a.dose} ${a.unit}` : ''}`.trim();
 
+/** Location, type, symptoms and factors of a pain record, as chosen (nothing inferred). */
+export const painDetails = (i: Pick<Intensity, 'location' | 'character' | 'symptoms' | 'factors'>) =>
+  ([['Local', i.location], ['Tipo', i.character], ['Sintomas', i.symptoms], ['Fatores', i.factors]] as const)
+    .filter(([, v]) => v && v.length).map(([k, v]) => `${k}: ${v!.join(', ')}`).join(' · ') || undefined;
+
 export const physioLabel = (p: Pick<Physio, 'techniques'>) => p.techniques.join(' + ') || 'sessão';
 /** Pain before/after the session and the note, as the person typed them (no conclusion drawn). */
 export const physioDetail = (p: Physio) => [typeof p.painBefore === 'number' ? `dor antes ${p.painBefore}/10` : '', typeof p.painAfter === 'number' ? `dor depois ${p.painAfter}/10` : '', p.note].filter(Boolean).join(' — ') || undefined;
@@ -25,7 +30,7 @@ export function allEvents(ctx: Ctx, symptoms: Rec<SymptomUpdate>[]): TLEvent[] {
     const after = i.data.afterAdminId ? adminById.get(i.data.afterAdminId) : undefined;
     ev.push({
       key: i.id, at: ms(i.data.at), group: 'headache', icon: '📈', rec: i,
-      title: `Dor ${i.data.value}/10${after ? ` (após ${after.data.name})` : ''}`, detail: i.data.note,
+      title: `Dor ${i.data.value}/10${after ? ` (após ${after.data.name})` : ''}`, detail: [painDetails(i.data), i.data.note].filter(Boolean).join(' — ') || undefined,
     });
   }
   for (const s of symptoms) {
@@ -71,7 +76,7 @@ export function eventsCsv(ctx: Ctx, symptoms: Rec<SymptomUpdate>[]): string {
     rows.push(['inicio_crise', ...when(c.data.start), c.id, '', '', '', '', '', '', '', '', '', c.data.symptoms.join(', '), c.data.note ?? '', ...base(c)]);
     if (c.data.end) rows.push(['fim_crise', ...when(c.data.end), c.id, '', '', '', '', '', '', '', '', '', '', c.data.endNote ?? '', ...base(c)]);
   }
-  for (const i of ctx.intensities as Rec<Intensity>[]) rows.push(['intensidade', ...when(i.data.at), i.data.crisisId ?? '', i.data.value, '', '', '', '', '', i.data.afterAdminId ? 'reavaliacao_apos_medicamento' : '', '', '', '', i.data.note ?? '', ...base(i)]);
+  for (const i of ctx.intensities as Rec<Intensity>[]) rows.push(['intensidade', ...when(i.data.at), i.data.crisisId ?? '', i.data.value, '', '', '', '', '', i.data.afterAdminId ? 'reavaliacao_apos_medicamento' : '', '', '', (i.data.symptoms ?? []).join(', '), [painDetails({ location: i.data.location, character: i.data.character, factors: i.data.factors }), i.data.note].filter(Boolean).join(' — '), ...base(i)]);
   for (const s of symptoms) rows.push(['sintomas', ...when(s.data.at), s.data.crisisId, '', '', '', '', '', '', '', '', '', s.data.symptoms.join(', '), s.data.note ?? '', ...base(s)]);
   for (const a of ctx.admins as Rec<MedAdmin>[]) rows.push(['medicamento', ...when(a.data.at), a.data.crisisId ?? '', '', a.data.name, a.data.dose, a.data.unit, a.data.quantity, a.data.category === 'crisis' ? 'crise' : 'continuo', a.data.status === 'taken' ? 'administrado' : 'omitido', '', '', '', a.data.note ?? '', ...base(a)]);
   for (const s of ctx.sleeps as Rec<Sleep>[]) rows.push(['sono', s.data.date.split('-').reverse().join('/'), '', '', '', '', '', '', '', '', '', num(s.data.hours), s.data.quality ?? '', '', s.data.note ?? '', ...base(s)]);

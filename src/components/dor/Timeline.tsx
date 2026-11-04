@@ -30,6 +30,7 @@ export function Timeline({ store, day, onOpen }: { store: DorStore; day: string;
                 <span className="dor-tl-time">{e.rec.kind === 'sleep' || e.rec.kind === 'nopain' ? 'dia' : timeKey(e.at, store.settings.tz)}</span>
                 <span className="dor-tl-icon" aria-hidden>{e.icon}</span>
                 <span className="dor-tl-text"><strong>{e.title}</strong>{e.detail && <small>{e.detail}</small>}</span>
+                <span className="dor-tl-edit" aria-hidden>✏ editar</span>
               </button>
             </li>
           ))}

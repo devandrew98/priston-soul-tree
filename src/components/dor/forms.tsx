@@ -35,53 +35,118 @@ function Details({ v, set }: { v: Pick<Crisis, 'location' | 'character' | 'sympt
   );
 }
 
-// ---------- crisis: start, edit, reopen ----------
-export function CrisisForm({ store, onClose, rec, reopen, startAt }: Props & { rec?: Rec<Crisis>; reopen?: boolean; startAt?: string }) {
+// ---------- crisis: edit one that already exists (new records use PainForm; no crisis is left open) ----------
+export function CrisisForm({ store, onClose, rec }: Props & { rec: Rec<Crisis> }) {
   const tz = store.settings.tz;
-  const [start, setStart] = useState(rec?.data.start ?? startAt ?? nowIso());
-  const [end, setEnd] = useState(reopen ? '' : rec?.data.end ?? '');
-  const [value, setValue] = useState<number | null>(null);
-  const [note, setNote] = useState(rec?.data.note ?? '');
-  const [d, setD] = useState({ location: rec?.data.location ?? [], character: rec?.data.character ?? [], symptoms: rec?.data.symptoms ?? [], factors: rec?.data.factors ?? [] });
-  const [created, setCreated] = useState<Rec | null>(null);
+  const [start, setStart] = useState(rec.data.start);
+  const [end, setEnd] = useState(rec.data.end ?? '');
+  const [note, setNote] = useState(rec.data.note ?? '');
+  const [d, setD] = useState({ location: rec.data.location, character: rec.data.character, symptoms: rec.data.symptoms, factors: rec.data.factors });
   const [localErr, setLocalErr] = useState('');
-  const saver = useSaver(store, () => {});
+  const saver = useSaver(store, () => onClose());
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalErr('');
     if (!start) { setLocalErr('Informe a data e o horário de início.'); return; }
     if (end && new Date(end) <= new Date(start)) { setLocalErr('O término precisa ser depois do início.'); return; }
-    let crisis = created;
-    if (!crisis) {
-      const data: Crisis = { ...(rec?.data ?? {}), start, ...d, note: note.trim() || undefined };
-      if (end) data.end = end; else delete data.end;
-      if (reopen && rec?.data.end) data.reopened = [...(rec.data.reopened ?? []), { at: nowIso(), prevEnd: rec.data.end }];
-      crisis = await saver.submit('crisis', data, start, rec);
-      if (!crisis) return;
-      setCreated(crisis);
+    const data: Crisis = { ...rec.data, start, ...d, note: note.trim() || undefined };
+    if (end) data.end = end; else delete data.end;
+    await saver.submit('crisis', data, start, rec);
+  };
+
+  return (
+    <Sheet title="Editar crise" onClose={onClose}>
+      <form onSubmit={submit}>
+        <DateTimeField label="Início" iso={start} onChange={setStart} tz={tz} />
+        <DateTimeField label="Término" iso={end} onChange={setEnd} tz={tz} optional />
+        <Field label="Observação (opcional)"><textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} maxLength={1000} /></Field>
+        <Details v={d} set={(p) => setD({ ...d, ...p } as typeof d)} />
+        {localErr && <div className="dor-alert err" role="alert">{localErr}</div>}
+        {saver.node}
+        <Actions busy={saver.busy} onCancel={onClose} />
+      </form>
+    </Sheet>
+  );
+}
+
+// ---------- pain record: the pain of the moment (+ the medicine taken then). No crisis is opened. ----------
+export function PainForm({ store, onClose, rec, at: atProp }: Props & { rec?: Rec<Intensity>; at?: string }) {
+  const tz = store.settings.tz;
+  const [at, setAt] = useState(rec?.data.at ?? atProp ?? nowIso());
+  const [value, setValue] = useState<number | null>(rec ? rec.data.value : null);
+  const [note, setNote] = useState(rec?.data.note ?? '');
+  const [d, setD] = useState({ location: rec?.data.location ?? [], character: rec?.data.character ?? [], symptoms: rec?.data.symptoms ?? [], factors: rec?.data.factors ?? [] });
+  const crisisMeds = store.meds.filter((m) => m.data.active && m.data.category === 'crisis');
+  const [medId, setMedId] = useState('');
+  const [name, setName] = useState('');
+  const [dose, setDose] = useState('');
+  const [unit, setUnit] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  const [err, setErr] = useState('');
+  const [painSaved, setPainSaved] = useState(false);
+  const saver = useSaver(store, () => {});
+
+  const chooseMed = (id: string) => {
+    setMedId(id);
+    const m = store.meds.find((x) => x.id === id);
+    if (m) { setName(m.data.name); setDose(m.data.dose); setUnit(m.data.unit); }
+  };
+  const other = medId === 'other';
+  const gaveMed = !rec && medId !== '';
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault(); setErr('');
+    if (value === null) { setErr('Escolha a intensidade de 0 a 10.'); return; }
+    if (gaveMed && !name.trim()) { setErr('Informe o nome do medicamento.'); return; }
+    if (!painSaved) {
+      const data: Intensity = {
+        ...(rec?.data ?? {}), at, value, note: note.trim() || undefined,
+        location: d.location.length ? d.location : undefined, character: d.character.length ? d.character : undefined,
+        symptoms: d.symptoms.length ? d.symptoms : undefined, factors: d.factors.length ? d.factors : undefined,
+      };
+      if (!(await saver.submit('intensity', data, at, rec))) return;
+      setPainSaved(true);
     }
-    if (!rec && value !== null) {
-      const ok = await saver.submit('intensity', { crisisId: crisis.id, at: start, value } satisfies Intensity, start);
-      if (!ok) return;
+    if (gaveMed) {
+      const med: MedAdmin = { medId: other ? `manual:${name.trim().toLowerCase()}` : medId, name: name.trim(), dose: dose.trim(), unit: unit.trim(), category: 'crisis', quantity, at, status: 'taken' };
+      if (!(await saver.submit('med_admin', med, at))) return;
     }
     onClose();
   };
 
-  const title = reopen ? 'Reabrir crise' : rec ? 'Editar crise' : 'Iniciar crise';
   return (
-    <Sheet title={title} onClose={onClose}>
+    <Sheet title={rec ? 'Editar registro de dor' : 'Registrar dor agora'} onClose={onClose}>
       <form onSubmit={submit}>
-        {reopen && rec?.data.end && <p className="dor-muted">A crise terminava em {fmtDateTime(new Date(rec.data.end).getTime(), tz)}. Ao reabrir, ela volta a ficar em andamento; corrija o início se precisar. O histórico da reabertura fica guardado.</p>}
-        <DateTimeField label="Início" iso={start} onChange={setStart} tz={tz} />
-        {rec && !reopen && <DateTimeField label="Término" iso={end} onChange={setEnd} tz={tz} optional />}
-        {!rec && <IntensityPicker value={value} onChange={setValue} label="Intensidade inicial (0 a 10)" />}
-        <Field label="Observação (opcional)"><textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} maxLength={1000} /></Field>
+        <IntensityPicker value={value} onChange={setValue} />
+        <DateTimeField label="Data e horário" iso={at} onChange={setAt} tz={tz} />
+        {!rec && (
+          <>
+            <Field label="Medicamento que tomei agora (opcional)">
+              <select value={medId} onChange={(e) => (e.target.value === 'other' ? (setMedId('other'), setName(''), setDose(''), setUnit('')) : chooseMed(e.target.value))}>
+                <option value="">Nenhum</option>
+                {crisisMeds.map((m) => <option key={m.id} value={m.id}>{m.data.name}{m.data.dose ? ` ${m.data.dose} ${m.data.unit}` : ''}</option>)}
+                <option value="other">Outro medicamento (digitar)</option>
+              </select>
+            </Field>
+            {other && (
+              <>
+                <Field label="Nome"><input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} /></Field>
+                <div className="dor-row">
+                  <Field label="Dose"><input value={dose} onChange={(e) => setDose(e.target.value)} maxLength={20} inputMode="decimal" /></Field>
+                  <Field label="Unidade"><input value={unit} onChange={(e) => setUnit(e.target.value)} maxLength={20} /></Field>
+                </div>
+              </>
+            )}
+            {gaveMed && <Stepper label={`Quantidade${dose ? ` (cada uma: ${dose} ${unit})` : ''}`} value={quantity} onChange={setQuantity} />}
+          </>
+        )}
+        <Field label="Observação (opcional)"><textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} maxLength={500} /></Field>
         <Details v={d} set={(p) => setD({ ...d, ...p } as typeof d)} />
-        {localErr && <div className="dor-alert err" role="alert">{localErr}</div>}
-        {created && <div className="dor-alert warn">A crise foi registrada, mas a intensidade inicial ainda não. Toque em Salvar para tentar de novo.</div>}
+        {err && <div className="dor-alert err" role="alert">{err}</div>}
+        {painSaved && gaveMed && <div className="dor-alert warn">A dor foi registrada, mas o medicamento ainda não. Toque em Salvar para tentar de novo.</div>}
         {saver.node}
-        <Actions busy={saver.busy} label={reopen ? 'Reabrir' : rec ? 'Salvar' : 'Iniciar'} onCancel={onClose} />
+        <Actions busy={saver.busy} onCancel={onClose} />
       </form>
     </Sheet>
   );
@@ -376,7 +441,10 @@ export function EditRecord({ store, rec, onClose }: Props & { rec: Rec }) {
   if (tab === 'versions') {
     return <Sheet title="Versões do registro" onClose={onClose}><Versions store={store} rec={rec} onDone={onClose} /><div className="dor-actions"><button className="dor-btn" onClick={() => setTab('edit')}>Voltar</button></div></Sheet>;
   }
-  if (rec.kind === 'intensity') return <SheetExtra.Provider value={extras}><IntensityForm store={store} rec={rec as Rec<Intensity>} onClose={onClose} /></SheetExtra.Provider>;
+  if (rec.kind === 'intensity') {
+    const i = rec as Rec<Intensity>;
+    return <SheetExtra.Provider value={extras}>{i.data.crisisId || i.data.afterAdminId ? <IntensityForm store={store} rec={i} onClose={onClose} /> : <PainForm store={store} rec={i} onClose={onClose} />}</SheetExtra.Provider>;
+  }
   if (rec.kind === 'med_admin') return <SheetExtra.Provider value={extras}><MedAdminForm store={store} rec={rec as Rec<MedAdmin>} onClose={onClose} /></SheetExtra.Provider>;
   if (rec.kind === 'sleep') return <SheetExtra.Provider value={extras}><SleepForm store={store} rec={rec as Rec<Sleep>} onClose={onClose} /></SheetExtra.Provider>;
   if (rec.kind === 'physio') return <SheetExtra.Provider value={extras}><PhysioForm store={store} rec={rec as Rec<Physio>} onClose={onClose} /></SheetExtra.Provider>;

@@ -125,12 +125,13 @@ function DayView({ store, day, open, onOpenRec }: { store: DorStore; day: string
           <div><dt>Sono</dt><dd>{sleep ? [typeof sleep.data.hours === 'number' ? `${String(sleep.data.hours).replace('.', ',')} h` : '', sleep.data.quality].filter(Boolean).join(' · ') || 'registrado' : '—'}</dd></div>
         </dl>
         <div className="dor-quick">
-          <button className="dor-btn" onClick={() => open({ t: 'crisis', startAt: noon })}>+ Crise neste dia</button>
+          <button className="dor-btn" onClick={() => open({ t: 'pain', at: noon })}>+ Registrar dor neste dia</button>
           <button className="dor-btn" onClick={() => open({ t: 'med', pick: { at: noon } })}>+ Medicamento</button>
           <button className="dor-btn" onClick={() => open({ t: 'sleep', date: day })}>{sleep ? 'Editar sono' : '+ Sono'}</button>
           {state === 'unknown' && <button className="dor-btn" onClick={mark}>Marcar “sem cefaleia”</button>}
           {nopain && <button className="dor-btn" onClick={() => onOpenRec(nopain)}>Sem cefaleia confirmado: ver/desfazer</button>}
         </div>
+        <p className="dor-muted dor-small">Errou alguma informação? Toque no registro na linha do tempo abaixo para editar ou excluir.</p>
         {nopain && state === 'headache' && <p className="dor-muted dor-small">Este dia tinha a confirmação “sem cefaleia”, mas depois foi registrada uma crise; vale a crise. A confirmação continua no histórico.</p>}
         {msg && <div className="dor-alert err" role="alert">{msg}</div>}
       </section>

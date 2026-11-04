@@ -108,6 +108,7 @@
 .dor-tl li > button, .dor-tl-row { display: flex; align-items: flex-start; gap: 10px; width: 100%; text-align: left; background: none; border: 0; padding: 10px 6px; border-radius: 10px; min-height: 48px; }
 .dor-tl li > button:hover { background: #f1f5f9; }
 .dor-tl-time { width: 48px; flex: none; font-variant-numeric: tabular-nums; color: var(--dor-muted); font-size: .9rem; }
+.dor-tl-edit { flex: none; align-self: center; font-size: .8rem; color: var(--dor-blue); }
 .dor-tl-icon { flex: none; } .dor-tl-text { flex: 1; min-width: 0; } .dor-tl-text small { display: block; color: var(--dor-muted); word-break: break-word; }
 
 .dor-cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }

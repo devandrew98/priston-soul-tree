@@ -1,7 +1,8 @@
 // All numbers of the pain diary come from here, computed from the saved records only (never invented).
 // Rules:
-//  - a day is 'headache' if any crisis covers it (crises crossing midnight count in every day they touch), 'nopain' only if the
-//    person confirmed it, otherwise 'unknown'. An empty day is never "no pain".
+//  - a day is 'headache' if any crisis covers it (crises crossing midnight count in every day they touch) or if a pain of 1 or more
+//    was recorded in it (the "registrar dor" records have no crisis); 'nopain' only if the person confirmed it, otherwise
+//    'unknown'. An empty day is never "no pain". A recorded 0 does not make a headache day.
 //  - simple mean = sum of the recorded intensities / how many were recorded. Missing is never zero.
 //  - time-weighted mean = linear interpolation between consecutive recorded points, only between the first and last point
 //    (no extrapolation), and only when those points cover at least MIN_COVERAGE of the crisis. Otherwise null (not enough data).
@@ -44,6 +45,7 @@ export interface Ctx {
 export function dayStates(ctx: Ctx, days: string[]): Map<string, DayState> {
   const head = new Set<string>();
   for (const c of ctx.crises) for (const d of crisisDays(c.data, ctx.tz, ctx.now)) head.add(d);
+  for (const i of ctx.intensities) if (i.data.value >= 1) head.add(dayKey(ms(i.data.at), ctx.tz));
   const none = new Set(ctx.nopain.map((n) => n.data.date));
   return new Map(days.map((d) => [d, head.has(d) ? 'headache' : none.has(d) ? 'nopain' : 'unknown']));
 }

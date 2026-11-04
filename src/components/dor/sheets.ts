@@ -3,9 +3,7 @@ import type { Crisis, Rec } from '../../lib/dor/types';
 
 /** Which quick form is open on top of the screen. */
 export type SheetState =
-  | { t: 'crisis'; startAt?: string }
-  | { t: 'choice' }
-  | { t: 'reopen'; rec: Rec<Crisis> }
+  | { t: 'pain'; at?: string }
   | { t: 'end'; rec: Rec<Crisis> }
   | { t: 'intensity'; crisisId?: string; afterAdminId?: string; heading?: string }
   | { t: 'symptom'; rec: Rec<Crisis> }

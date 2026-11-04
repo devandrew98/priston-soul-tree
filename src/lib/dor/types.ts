@@ -15,7 +15,11 @@ export interface Crisis {
   /** Each time the crisis was reopened: when, and the end it had before. */
   reopened?: { at: string; prevEnd: string }[];
 }
-export interface Intensity { crisisId?: string; at: string; value: number; note?: string; /** reassessment after this medication administration */ afterAdminId?: string }
+export interface Intensity {
+  crisisId?: string; at: string; value: number; note?: string; /** reassessment after this medication administration */ afterAdminId?: string;
+  /** Details of a standalone pain record ("registrar dor agora"), the same ones a crisis has. All optional. */
+  location?: string[]; character?: string[]; symptoms?: string[]; factors?: string[];
+}
 export interface SymptomUpdate { crisisId: string; at: string; symptoms: string[]; note?: string }
 
 export type MedCategory = 'crisis' | 'continuous';

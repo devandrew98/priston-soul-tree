@@ -40,6 +40,14 @@ describe('days with headache', () => {
   });
 });
 
+describe('pain records without a crisis', () => {
+  it('a recorded pain of 1 or more makes a headache day; a recorded 0 does not', () => {
+    const standalone = (date: string, value: number) => rec<Intensity>('intensity', { at: at(date, '10:00'), value });
+    const st = dayStates(ctx({ intensities: [standalone('2026-10-26', 4), standalone('2026-10-25', 0)] }), ['2026-10-24', '2026-10-25', '2026-10-26']);
+    expect([...st.values()]).toEqual(['unknown', 'unknown', 'headache']);
+  });
+});
+
 describe('overlapping crises', () => {
   it('merge before summing the duration', () => {
     expect(unionMs([{ s: 0, e: 10 }, { s: 5, e: 20 }, { s: 30, e: 40 }])).toBe(30);

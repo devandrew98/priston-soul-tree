@@ -8,17 +8,6 @@ import { n1 } from './charts';
 import type { Open } from './sheets';
 import { Timeline } from './Timeline';
 
-const RECENT_MS = 24 * 3600000;
-
-/** "Iniciar crise": if one ended recently, the person decides between reopening it and starting a new one. */
-export function startCrisisFlow(store: DorStore, open: Open) {
-  const last = [...store.ctx.crises].filter((c) => c.data.end).sort((a, b) => b.data.end!.localeCompare(a.data.end!))[0];
-  if (last && store.ctx.now - new Date(last.data.end!).getTime() < RECENT_MS) open({ t: 'choice' }); else open({ t: 'crisis' });
-}
-export function intensityFlow(store: DorStore, open: Open) {
-  const cur = store.ctx.crises.filter((c) => !c.data.end).pop();
-  if (cur) open({ t: 'intensity', crisisId: cur.id }); else open({ t: 'crisis' });
-}
 export const todayOf = (store: DorStore) => dayKey(store.ctx.now, store.settings.tz);
 
 const weekday = (key: string) => new Intl.DateTimeFormat('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${key}T12:00:00Z`));
@@ -54,7 +43,7 @@ export function Home({ store, open, onOpenRec, goHistory }: { store: DorStore; o
     <div className="dor-stack">
       {openCrises.map((c) => (
         <section key={c.id} className="dor-card dor-live" aria-label="Crise em andamento">
-          <p className="dor-notice">Você possui uma crise em andamento.</p>
+          <p className="dor-notice">Há uma crise em andamento, aberta antes desta mudança. Encerre-a quando quiser; os novos registros de dor não abrem crise.</p>
           <p className="dor-small">Início às {timeKey(new Date(c.data.start).getTime(), ctx.tz)} · há {fmtDuration(ctx.now - new Date(c.data.start).getTime())}</p>
           <CrisisSummary store={store} id={c.id} />
           <div className="dor-grid2">
@@ -90,9 +79,8 @@ export function Home({ store, open, onOpenRec, goHistory }: { store: DorStore; o
       <section className="dor-card" aria-label="Ações rápidas">
         <h3>Ações rápidas</h3>
         <div className="dor-quick">
-          <button className="dor-btn primary" onClick={() => startCrisisFlow(store, open)}>🤕 Iniciar crise</button>
+          <button className="dor-btn primary" onClick={() => open({ t: 'pain' })}>🤕 Registrar dor agora</button>
           <button className="dor-btn" onClick={() => open({ t: 'med' })}>💊 Registrar medicamento</button>
-          <button className="dor-btn" onClick={() => intensityFlow(store, open)}>📈 Registrar intensidade</button>
           <button className="dor-btn" onClick={noPain}>🌤 Hoje não tive dor</button>
           <button className="dor-btn" onClick={() => open({ t: 'sleep' })}>😴 Registrar sono</button>
           <button className="dor-btn" onClick={() => open({ t: 'physio' })}>🙌 Fisioterapia</button>
