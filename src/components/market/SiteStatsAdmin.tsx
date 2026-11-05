@@ -60,6 +60,7 @@ const PAGE_NAMES: Record<string, { pt: string; en: string }> = {
   '/aging': { pt: 'Aging', en: 'Aging' },
   '/quests': { pt: 'Quest Tracker', en: 'Quest Tracker' },
   '/lista-souls': { pt: 'Souls (lista)', en: 'Souls (list)' },
+  '/season': { pt: 'Temporada (FAQ privado)', en: 'Season (private FAQ)' },
   '/overlay': { pt: 'Overlay PristonZONE', en: 'PristonZONE Overlay' },
   '/afixos': { pt: 'Guia de Afixos', en: 'Affix Guide' },
   '/cla': { pt: 'Formação do Clã', en: 'Clan Formation' },

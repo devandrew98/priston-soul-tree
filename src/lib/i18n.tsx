@@ -890,6 +890,7 @@ const DICT: Record<string, Entry> = {
   'mk.admin.global': { pt: 'Notificação global', en: 'Global notice' },
   'mk.admin.logs': { pt: 'Logs', en: 'Logs' },
   'mk.admin.sitestats': { pt: 'Estatísticas', en: 'Statistics' },
+  'mk.admin.season': { pt: 'Temporada (FAQ privado)', en: 'Season (private FAQ)' },
   'mk.admin.hometexts': { pt: 'Mensagens da Home', en: 'Home messages' },
   'mk.admin.news.showin': { pt: 'Aparece em:', en: 'Shown in:' },
   'mk.admin.news.needlang': { pt: 'Marque pelo menos um idioma e preencha o título dele.', en: 'Pick at least one language and fill in its title.' },

@@ -20,6 +20,15 @@
   ],
   "headers": [
     {
+      "source": "/season",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
       "source": "/dor",
       "headers": [
         {

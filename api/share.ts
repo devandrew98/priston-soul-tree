@@ -37,6 +37,7 @@ const PAGES: Record<string, { title: string; description: string }> = {
   '/leveling': { title: `Rota de leveling — ${SITE}`, description: 'Guia passo a passo com marcador de progresso para fazer as quests em grupo.' },
   '/quests': { title: `Quest Tracker — ${SITE}`, description: 'Acompanhe suas quests, calcule a EXP com os seus bônus e planeje as entregas para chegar ao level que você quer.' },
   '/lista-souls': { title: `Souls — ${SITE}`, description: 'Todas as souls do PristonTale EU: atributos de cada rank e onde cada uma cai. Busque por soul, atributo ou mapa.' },
+  '/season': { title: `Temporada — ${SITE}`, description: 'Perguntas e respostas sobre a temporada do PristonTale EU.' },
   '/overlay': { title: `Overlay PristonZONE — ${SITE}`, description: 'O overlay de timers para jogar: bosses, Fury e Vengeful na tela do jogo, com aviso por voz. Veja como funciona e baixe.' },
   '/afixos': { title: `Guia de Afixos — ${SITE}`, description: 'Ache o melhor afixo para o seu amuleto, bota, bracelete, luva ou anel: atributos, faixa de nível (Tier) e chance de sair.' },
   '/sharing': { title: `Compartilhamento de Tela — ${SITE}`, description: 'Mostre o seu jogo para os amigos, direto pelo navegador, de graça e sem instalar nada.' },

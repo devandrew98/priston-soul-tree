@@ -15,16 +15,18 @@ import { ExpBuffAdmin } from '../quest/ExpBuffAdmin';
 import { ImageOptimizer } from './ImageOptimizer';
 import { SiteStatsAdmin } from './SiteStatsAdmin';
 import { HomeTextsAdmin } from './HomeTextsAdmin';
+import { SeasonAdmin } from './SeasonAdmin';
 import { MarketplaceToggle } from './MarketplaceToggle';
 import type { ListingKind } from '../../lib/market/types';
 import { Avatar, KindTag, PriceTag, Since, StatusPill } from './parts';
 import { Loading } from '../Loading';
 
-type Section = 'listings' | 'users' | 'tiers' | 'itemcats' | 'reports' | 'streamers' | 'news' | 'guides' | 'download' | 'questmgr' | 'exptable' | 'expbuffs' | 'imgopt' | 'global' | 'logs' | 'sitestats' | 'hometexts';
+type Section = 'listings' | 'users' | 'tiers' | 'itemcats' | 'reports' | 'streamers' | 'news' | 'guides' | 'download' | 'questmgr' | 'exptable' | 'expbuffs' | 'imgopt' | 'global' | 'logs' | 'sitestats' | 'hometexts' | 'season';
 
 const SECTIONS: { id: Section; icon: string; key: string }[] = [
   { id: 'sitestats', icon: '📊', key: 'mk.admin.sitestats' },
   { id: 'hometexts', icon: '💬', key: 'mk.admin.hometexts' },
+  { id: 'season', icon: '🏆', key: 'mk.admin.season' },
   { id: 'listings', icon: '📦', key: 'mk.admin.listings' },
   { id: 'users', icon: '👤', key: 'mk.admin.users' },
   { id: 'tiers', icon: '🏅', key: 'mk.admin.tiers' },
@@ -46,7 +48,7 @@ const SECTIONS: { id: Section; icon: string; key: string }[] = [
 const GROUPS: { id: string; icon: string; key: string; sections: Section[] }[] = [
   { id: 'overview', icon: '📊', key: 'mk.admin.grp.overview', sections: ['sitestats'] },
   { id: 'market', icon: '🏰', key: 'mk.admin.grp.market', sections: ['listings', 'users', 'reports', 'tiers', 'itemcats', 'global', 'logs'] },
-  { id: 'site', icon: '🌐', key: 'mk.admin.grp.site', sections: ['hometexts', 'news', 'streamers', 'guides', 'download'] },
+  { id: 'site', icon: '🌐', key: 'mk.admin.grp.site', sections: ['hometexts', 'season', 'news', 'streamers', 'guides', 'download'] },
   { id: 'quests', icon: '📜', key: 'mk.admin.grp.quests', sections: ['questmgr', 'exptable', 'expbuffs'] },
   { id: 'tools', icon: '🧰', key: 'mk.admin.grp.tools', sections: ['imgopt'] },
 ];
@@ -244,6 +246,9 @@ export function Admin({ onOpen, onSeller, onBack }: { onOpen: (id: string) => vo
 
       {/* HOME MESSAGES */}
       {sec === 'hometexts' && <HomeTextsAdmin />}
+
+      {/* SEASON FAQ (private /season page) */}
+      {sec === 'season' && <SeasonAdmin />}
 
       {/* SITE STATISTICS */}
       {sec === 'sitestats' && <SiteStatsAdmin />}

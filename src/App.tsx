@@ -27,6 +27,7 @@ import { Tutorial } from './components/tutorial/Tutorial';
 import { LiveBadge } from './components/LiveBadge';
 import { OverlayFab } from './components/OverlayFab';
 import { SoulsCatalog } from './components/souls/SoulsCatalog';
+import { SeasonPage } from './components/season/SeasonPage';
 import { OverlayGuide } from './components/overlay/OverlayGuide';
 import { AffixGuide } from './components/affixes/AffixGuide';
 import { BrFlag, UkFlag } from './components/Flags';
@@ -394,6 +395,8 @@ export default function App() {
         <Guides />
       ) : section === 'tutorial' ? (
         <Tutorial onOpen={navigate} />
+      ) : section === 'season' ? (
+        <SeasonPage />
       ) : (
         toolTab === 'soultree' ? <SoulTree />
           : toolTab === 'skilltree' ? <SkillTreeTool />
@@ -410,8 +413,8 @@ export default function App() {
           : <Wardrobe onLogin={() => setShowAuth(true)} />
       )}
 
-      {section !== 'streamers' && <LiveBadge onSeeAll={() => go('streamers')} />}
-      {!(section === 'tools' && toolTab === 'overlay') && <OverlayFab onOpen={() => navigate({ section: 'tools', toolTab: 'overlay' })} />}
+      {section !== 'streamers' && section !== 'season' && <LiveBadge onSeeAll={() => go('streamers')} />}
+      {section !== 'season' && !(section === 'tools' && toolTab === 'overlay') && <OverlayFab onOpen={() => navigate({ section: 'tools', toolTab: 'overlay' })} />}
 
       <ResetPasswordModal />
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
