@@ -8,7 +8,7 @@ const SEEN_KEY = 'pz-home-popup-nova-temporada';
 const IMAGE = '/events/nova-temporada.webp';
 
 const TXT = {
-  alt: { pt: 'PristonTale EU Invasion: Nova Temporada, 27 de novembro, sexta-feira, às 15 horas', en: 'PristonTale EU Invasion: New Season, November 27th, Friday, 3 PM' },
+  alt: { pt: 'PristonTale EU Invasion: Nova Temporada, 27 de novembro, sexta-feira, às 15h', en: 'PristonTale EU Invasion: New Season, November 27th, Friday, 3 PM' },
   close: { pt: 'Fechar', en: 'Close' },
   title: { pt: 'Aviso', en: 'Notice' },
 } as const;
