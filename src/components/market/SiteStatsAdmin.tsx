@@ -82,6 +82,7 @@ const EVENT_NAMES: Record<string, { pt: string; en: string }> = {
   'home:download_overlay': { pt: 'Home: baixar o Overlay Timer Boss', en: 'Home: download the Overlay Timer Boss' },
   'overlay:fab': { pt: 'Botão flutuante do Overlay', en: 'Floating Overlay button' },
   'overlay:download': { pt: 'Página do Overlay: baixar', en: 'Overlay page: download' },
+  'home:popup_close': { pt: 'Home: fechou o aviso da Nova Temporada', en: 'Home: closed the New Season notice' },
   'live:open': { pt: 'Selo “Ao vivo”: abriu uma live', en: '“Live” badge: opened a stream' },
   'lang:en': { pt: 'Trocou o site para inglês', en: 'Switched the site to English' },
   'lang:pt': { pt: 'Trocou o site para português', en: 'Switched the site to Portuguese' },

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useI18n } from '../lib/i18n';
 import { BACKEND_ENABLED } from '../lib/market/supabase';
 import { OVERLAY_KEY, downloadUrl, fetchAppDownload } from '../lib/market/downloads';
+import { HomePopup } from './HomePopup';
 import { NewsFeed } from './NewsFeed';
 import { RichText } from './RichText';
 import { pixPayload } from '../lib/pix';
@@ -67,6 +68,7 @@ export function Home() {
 
   return (
     <div className="home">
+      <HomePopup />
       <header className="home-hero">
         <div className="home-hero-top">
           <div className="home-logo-frame">
