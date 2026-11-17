@@ -3,8 +3,8 @@
 // Follows the site language (the flags in the top bar): Portuguese or English.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, testRate,
-  type BalanceTest, type Filters,
+  MODES, NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, testRate,
+  type BalanceTest, type Filters, type Mode,
 } from '../../lib/balance';
 import { deleteBalance, fetchBalance, saveBalance } from '../../lib/balanceApi';
 import { useI18n } from '../../lib/i18n';
@@ -72,7 +72,15 @@ const TXT = {
   mobsKilled: { pt: 'Mobs mortos', en: 'Mobs killed' },
   time: { pt: 'Tempo (mm:ss)', en: 'Time (mm:ss)' },
   mapOpt: { pt: 'Mapa / mob (opcional)', en: 'Map / mob (optional)' },
-  levelOpt: { pt: 'Nível do personagem (opcional)', en: 'Character level (optional)' },
+  levelOpt: { pt: 'Nível (opcional)', en: 'Level (optional)' },
+  mode: { pt: 'Modo', en: 'Mode' },
+  modeAoe: { pt: 'AoE', en: 'AoE' },
+  modeSingle: { pt: '1v1', en: '1v1' },
+  modeHintAoe: { pt: 'vários mobs de uma vez', en: 'several mobs at once' },
+  modeHintSingle: { pt: 'um alvo só', en: 'a single target' },
+  mixedModes: { pt: 'modos diferentes (AoE e 1v1)', en: 'different modes (AoE and 1v1)' },
+  oneMode: { pt: 'um modo', en: 'one mode' },
+  vMode: { pt: 'Escolha o modo: AoE ou 1v1.', en: 'Pick the mode: AoE or 1v1.' },
   testDate: { pt: 'Data do teste', en: 'Test date' },
   notesOpt: { pt: 'Observações (opcional)', en: 'Notes (optional)' },
   notesPh: { pt: 'Build, buffs, equipamentos, party ou qualquer detalhe do teste', en: 'Build, buffs, equipment, party or any detail of the test' },
@@ -106,6 +114,7 @@ const DB_ERRORS: [RegExp, L][] = [
   [/tempo inválido/i, { pt: 'Tempo inválido.', en: 'Invalid time.' }],
   [/informe o nome de quem testou/i, { pt: 'Informe o nome de quem testou (até 40 letras).', en: 'Enter the name of who tested (up to 40 characters).' }],
   [/nível inválido/i, { pt: 'Nível inválido.', en: 'Invalid level.' }],
+  [/modo inválido/i, { pt: 'Modo inválido.', en: 'Invalid mode.' }],
   [/texto muito longo/i, { pt: 'Texto muito longo.', en: 'Text too long.' }],
   [/data inválida/i, { pt: 'Data inválida.', en: 'Invalid date.' }],
   [/muitos registros/i, { pt: 'Muitos registros ao mesmo tempo, tente de novo em instantes.', en: 'Too many records at once, try again in a moment.' }],
@@ -117,6 +126,7 @@ const POLL_MS = 25000;
 const className = (c: ClassSlug) => getSkillClass(c).name;
 const icon = (c: ClassSlug) => `/skilltree/classes/${c}.png`;
 const today = () => new Date().toISOString().slice(0, 10);
+const modeLabel = (m: Mode | null, lang: Lang) => (m === 'aoe' ? TXT.modeAoe[lang] : m === 'single' ? TXT.modeSingle[lang] : '—');
 const fill = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (_, k: string) => v[k] ?? '');
 
 const fmtDate = (iso: string, lang: Lang) => (lang === 'pt'
@@ -141,8 +151,8 @@ function useNoIndex() {
 const readName = () => { try { return localStorage.getItem(NAME_KEY) ?? ''; } catch { return ''; } };
 const saveName = (v: string) => { try { localStorage.setItem(NAME_KEY, v); } catch { /* ignore */ } };
 
-interface Form { tester: string; cls: ClassSlug | ''; mobs: string; time: string; place: string; level: string; on: string; notes: string }
-const emptyForm = (): Form => ({ tester: readName(), cls: '', mobs: '', time: '', place: '', level: '', on: today(), notes: '' });
+interface Form { tester: string; cls: ClassSlug | ''; mode: Mode | ''; mobs: string; time: string; place: string; level: string; on: string; notes: string }
+const emptyForm = (): Form => ({ tester: readName(), cls: '', mode: '', mobs: '', time: '', place: '', level: '', on: today(), notes: '' });
 
 function ClassTag({ cls }: { cls: ClassSlug }) {
   return <span className="bal-class"><img src={icon(cls)} alt="" width={22} height={22} /> {className(cls)}</span>;
@@ -155,7 +165,7 @@ function Report({ tests, all, filters, onFilters, lang }: { tests: BalanceTest[]
   const r = useMemo(() => buildReport(tests, CLASS_SLUGS), [tests]);
   const places = useMemo(() => distinct(all.map((t) => t.place)), [all]);
   const testers = useMemo(() => distinct(all.map((t) => t.tester)), [all]);
-  const dirty = filters.place || filters.tester || filters.minLevel !== null || filters.maxLevel !== null;
+  const dirty = filters.place || filters.tester || filters.mode || filters.minLevel !== null || filters.maxLevel !== null;
   const top = r.strongest?.rate ?? 1;
   const num = (v: string) => (v.trim() === '' ? null : Math.max(0, Math.floor(Number(v))) || null);
 
@@ -170,6 +180,10 @@ function Report({ tests, all, filters, onFilters, lang }: { tests: BalanceTest[]
         <label className="af-field"><span className="af-label">{T('testedBy')}</span>
           <select value={filters.tester} onChange={(e) => onFilters({ ...filters, tester: e.target.value })}>
             <option value="">{T('all')}</option>{testers.map((p) => <option key={p} value={p}>{p}</option>)}
+          </select></label>
+        <label className="af-field"><span className="af-label">{T('mode')}</span>
+          <select value={filters.mode} onChange={(e) => onFilters({ ...filters, mode: e.target.value as Mode | '' })}>
+            <option value="">{T('all')}</option>{MODES.map((m) => <option key={m} value={m}>{modeLabel(m, lang)}</option>)}
           </select></label>
         <label className="af-field bal-narrow"><span className="af-label">{T('levelFrom')}</span>
           <input inputMode="numeric" value={filters.minLevel ?? ''} placeholder={T('min')} onChange={(e) => onFilters({ ...filters, minLevel: num(e.target.value) })} /></label>
@@ -193,8 +207,8 @@ function Report({ tests, all, filters, onFilters, lang }: { tests: BalanceTest[]
               </>
             )}
           </p>
-          {(r.mixedPlaces || r.mixedLevels) && (
-            <p className="mk-note">{fill(T('mixedWarn'), { x: r.mixedPlaces ? T('mixedPlaces') : T('mixedLevels'), y: r.mixedPlaces ? T('oneMap') : T('oneLevelRange') })}</p>
+          {(r.mixedPlaces || r.mixedLevels || r.mixedModes) && (
+            <p className="mk-note">{fill(T('mixedWarn'), r.mixedPlaces ? { x: T('mixedPlaces'), y: T('oneMap') } : r.mixedModes ? { x: T('mixedModes'), y: T('oneMode') } : { x: T('mixedLevels'), y: T('oneLevelRange') })}</p>
           )}
           <ol className="bal-rank">
             {r.ranking.map((c, i) => (
@@ -230,7 +244,7 @@ function TestForm({ editing, places, onSaved, onCancel, lang }: { editing: Balan
 
   useEffect(() => {
     if (editing) {
-      setF({ tester: editing.tester, cls: editing.cls, mobs: String(editing.mobs), time: formatDuration(editing.seconds), place: editing.place, level: editing.level === null ? '' : String(editing.level), on: editing.testedOn, notes: editing.notes });
+      setF({ tester: editing.tester, cls: editing.cls, mode: editing.mode ?? '', mobs: String(editing.mobs), time: formatDuration(editing.seconds), place: editing.place, level: editing.level === null ? '' : String(editing.level), on: editing.testedOn, notes: editing.notes });
       setErr(''); setOk('');
     }
   }, [editing]);
@@ -243,13 +257,14 @@ function TestForm({ editing, places, onSaved, onCancel, lang }: { editing: Balan
     const seconds = parseDuration(f.time);
     if (!f.tester.trim()) return setErr(T('vTester'));
     if (!f.cls) return setErr(T('vClass'));
+    if (!f.mode && !(editing && editing.mode === null)) return setErr(T('vMode'));
     if (!Number.isInteger(mobs) || mobs < 1) return setErr(T('vMobs'));
     if (seconds === null) return setErr(T('vTime'));
     const level = f.level.trim() === '' ? null : Number(f.level);
     if (level !== null && (!Number.isInteger(level) || level < 1 || level > 300)) return setErr(T('vLevel'));
     setBusy(true);
     try {
-      await saveBalance(editing?.id ?? null, { cls: f.cls, mobs, seconds, tester: f.tester.trim(), level, place: f.place.trim(), notes: f.notes.trim(), testedOn: f.on || today() });
+      await saveBalance(editing?.id ?? null, { cls: f.cls, mode: f.mode || null, mobs, seconds, tester: f.tester.trim(), level, place: f.place.trim(), notes: f.notes.trim(), testedOn: f.on || today() });
       saveName(f.tester.trim());
       if (editing) { onSaved(); setF(emptyForm()); onCancel(); setOk(T('savedOk')); }
       else { setOk(T('added')); set({ mobs: '', time: '', notes: '' }); onSaved(); }
@@ -268,6 +283,16 @@ function TestForm({ editing, places, onSaved, onCancel, lang }: { editing: Balan
             {CLASS_SLUGS.map((c) => (
               <button key={c} type="button" className={`af-chip${f.cls === c ? ' on' : ''}`} aria-pressed={f.cls === c} onClick={() => set({ cls: c })}>
                 <img src={icon(c)} alt="" width={20} height={20} /> {className(c)}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="af-field">
+          <span className="af-label">{T('mode')}</span>
+          <div className="af-chips" role="group" aria-label={T('mode')}>
+            {MODES.map((m) => (
+              <button key={m} type="button" className={`af-chip${f.mode === m ? ' on' : ''}`} aria-pressed={f.mode === m} onClick={() => set({ mode: m })}>
+                {modeLabel(m, lang)} <small>{m === 'aoe' ? T('modeHintAoe') : T('modeHintSingle')}</small>
               </button>
             ))}
           </div>
@@ -324,12 +349,13 @@ function TestList({ tests, onEdit, onChanged, lang }: { tests: BalanceTest[]; on
       {shown.length === 0 ? <p className="mk-muted">{T('noneHere')}</p> : (
         <div className="bal-table-wrap">
           <table className="af-table bal-table">
-            <thead><tr><th>{T('thDate')}</th><th>{T('cls')}</th><th>{T('thMobs')}</th><th>{T('thTime')}</th><th>{T('mobsMin')}</th><th>{T('testedBy')}</th><th>{T('map')}</th><th>{T('thLevel')}</th><th /></tr></thead>
+            <thead><tr><th>{T('thDate')}</th><th>{T('cls')}</th><th>{T('mode')}</th><th>{T('thMobs')}</th><th>{T('thTime')}</th><th>{T('mobsMin')}</th><th>{T('testedBy')}</th><th>{T('map')}</th><th>{T('thLevel')}</th><th /></tr></thead>
             <tbody>
               {shown.map((t) => (
                 <tr key={t.id}>
                   <td>{fmtDate(t.testedOn, lang)}</td>
                   <td><ClassTag cls={t.cls} /></td>
+                  <td>{modeLabel(t.mode, lang)}</td>
                   <td>{t.mobs.toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US')}</td>
                   <td>{formatDuration(t.seconds)}</td>
                   <td><b>{fmtRate(testRate(t), lang)}</b></td>

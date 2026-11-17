@@ -13,11 +13,16 @@ export interface BalanceTest {
   place: string;
   notes: string;
   testedOn: string; // YYYY-MM-DD
+  /** aoe = several mobs at once, single = one target (1v1); null for tests written before the mode existed. */
+  mode: Mode | null;
   createdAt: string;
 }
 
-export interface Filters { place: string; tester: string; minLevel: number | null; maxLevel: number | null }
-export const NO_FILTERS: Filters = { place: '', tester: '', minLevel: null, maxLevel: null };
+export type Mode = 'aoe' | 'single';
+export const MODES: Mode[] = ['aoe', 'single'];
+
+export interface Filters { place: string; tester: string; minLevel: number | null; maxLevel: number | null; mode: Mode | '' }
+export const NO_FILTERS: Filters = { place: '', tester: '', minLevel: null, maxLevel: null, mode: '' };
 
 /** Mobs killed per minute in one test. */
 export const testRate = (t: Pick<BalanceTest, 'mobs' | 'seconds'>): number => (t.mobs / t.seconds) * 60;
@@ -42,6 +47,7 @@ export function filterTests(tests: BalanceTest[], f: Filters): BalanceTest[] {
   return tests.filter((t) =>
     (!place || t.place.trim().toLowerCase() === place) &&
     (!tester || t.tester.trim().toLowerCase() === tester) &&
+    (!f.mode || t.mode === f.mode) &&
     (f.minLevel === null || (t.level !== null && t.level >= f.minLevel)) &&
     (f.maxLevel === null || (t.level !== null && t.level <= f.maxLevel)));
 }
@@ -60,6 +66,8 @@ export interface Report {
   /** Several different places in the selection: the comparison may be unfair. */
   mixedPlaces: boolean;
   mixedLevels: boolean;
+  /** AoE and 1v1 tests together (or tests with no mode next to tests with one): not a fair comparison. */
+  mixedModes: boolean;
 }
 
 export function buildReport(tests: BalanceTest[], allClasses: ClassSlug[]): Report {
@@ -89,6 +97,7 @@ export function buildReport(tests: BalanceTest[], allClasses: ClassSlug[]): Repo
     totalTests: tests.length,
     mixedPlaces: places.size > 1,
     mixedLevels: levels.size > 1,
+    mixedModes: new Set(tests.map((t) => t.mode)).size > 1,
   };
 }
 

@@ -4,7 +4,7 @@ import { NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, format
 
 let n = 0;
 const t = (cls: BalanceTest['cls'], mobs: number, seconds: number, extra: Partial<BalanceTest> = {}): BalanceTest =>
-  ({ id: `t${++n}`, cls, mobs, seconds, tester: 'Ana', level: 100, place: 'Oasis', notes: '', testedOn: '2026-11-17', createdAt: '', ...extra });
+  ({ id: `t${++n}`, cls, mobs, seconds, tester: 'Ana', level: 100, place: 'Oasis', notes: '', testedOn: '2026-11-17', createdAt: '', mode: 'aoe', ...extra });
 
 describe('speed', () => {
   it('is mobs per minute', () => {
@@ -54,6 +54,11 @@ describe('report', () => {
     expect(buildReport([t('fighter', 1, 1), t('knight', 1, 1)], CLASS_SLUGS).mixedPlaces).toBe(false);
     expect(buildReport([t('fighter', 1, 1, { level: 90 }), t('knight', 1, 1, { level: 100 })], CLASS_SLUGS).mixedLevels).toBe(true);
   });
+  it('warns when AoE and 1v1 (or a test with no mode) are mixed', () => {
+    expect(buildReport([t('fighter', 1, 1, { mode: 'aoe' }), t('knight', 1, 1, { mode: 'single' })], CLASS_SLUGS).mixedModes).toBe(true);
+    expect(buildReport([t('fighter', 1, 1, { mode: 'aoe' }), t('knight', 1, 1, { mode: null })], CLASS_SLUGS).mixedModes).toBe(true);
+    expect(buildReport([t('fighter', 1, 1, { mode: 'aoe' }), t('knight', 1, 1, { mode: 'aoe' })], CLASS_SLUGS).mixedModes).toBe(false);
+  });
   it('is empty without tests', () => {
     const r = buildReport([], CLASS_SLUGS);
     expect(r.ranking).toEqual([]);
@@ -67,6 +72,12 @@ describe('filters', () => {
   it('by place and tester, ignoring case', () => {
     expect(filterTests(all, { ...NO_FILTERS, place: 'OASIS' })).toHaveLength(2);
     expect(filterTests(all, { ...NO_FILTERS, tester: 'beto' })).toHaveLength(1);
+  });
+  it('by mode (AoE or 1v1)', () => {
+    const m = [t('fighter', 1, 1, { mode: 'aoe' }), t('archer', 1, 1, { mode: 'single' }), t('knight', 1, 1, { mode: null })];
+    expect(filterTests(m, { ...NO_FILTERS, mode: 'aoe' }).map((x) => x.cls)).toEqual(['fighter']);
+    expect(filterTests(m, { ...NO_FILTERS, mode: 'single' }).map((x) => x.cls)).toEqual(['archer']);
+    expect(filterTests(m, NO_FILTERS)).toHaveLength(3);
   });
   it('by level range (tests with no level are left out when a range is set)', () => {
     expect(filterTests(all, { ...NO_FILTERS, minLevel: 90 })).toHaveLength(1);
