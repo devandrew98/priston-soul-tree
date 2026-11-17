@@ -97,6 +97,7 @@ describe('time and number formatting', () => {
     expect(formatDuration(750)).toBe('12:30');
     expect(formatDuration(3723)).toBe('1:02:03');
     expect(fmtRate(12.34)).toBe('12,3');
+    expect(fmtRate(12.34, 'en')).toBe('12.3');
     expect(fmtPct(35.4)).toBe('+35%');
     expect(fmtPct(-47.6)).toBe('−48%');
   });

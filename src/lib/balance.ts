@@ -123,6 +123,6 @@ export function formatDuration(seconds: number): string {
   return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
 }
 
-/** 12.345 -> "12,3" (Brazilian decimal comma). */
-export const fmtRate = (n: number): string => n.toFixed(1).replace('.', ',');
+/** 12.345 -> "12,3" in Portuguese (decimal comma) and "12.3" in English. */
+export const fmtRate = (n: number, lang: 'pt' | 'en' = 'pt'): string => (lang === 'en' ? n.toFixed(1) : n.toFixed(1).replace('.', ','));
 export const fmtPct = (n: number): string => `${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(0)}%`;
