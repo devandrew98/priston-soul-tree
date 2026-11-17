@@ -135,3 +135,20 @@ export function formatDuration(seconds: number): string {
 /** 12.345 -> "12,3" in Portuguese (decimal comma) and "12.3" in English. */
 export const fmtRate = (n: number, lang: 'pt' | 'en' = 'pt'): string => (lang === 'en' ? n.toFixed(1) : n.toFixed(1).replace('.', ','));
 export const fmtPct = (n: number): string => `${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(0)}%`;
+
+export interface TestRank {
+  test: BalanceTest;
+  /** Mobs per minute of this one test. */
+  rate: number;
+  /** % above (+) or below (-) the average speed of all the tests in the selection; 0 with a single test. */
+  vsAverage: number;
+}
+
+/** Every test is its own entry (two tests of the same class on the same map stay two rows, never added up), fastest first; ties: the newer test first. */
+export function rankTests(tests: BalanceTest[]): TestRank[] {
+  const rates = tests.map(testRate);
+  const average = rates.length ? rates.reduce((a, r) => a + r, 0) / rates.length : 0;
+  return tests
+    .map((test, i) => ({ test, rate: rates[i], vsAverage: tests.length > 1 && average > 0 ? (rates[i] / average - 1) * 100 : 0 }))
+    .sort((a, b) => b.rate - a.rate || b.test.testedOn.localeCompare(a.test.testedOn) || b.test.createdAt.localeCompare(a.test.createdAt));
+}

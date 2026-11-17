@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CLASS_SLUGS } from './skilltree/types';
-import { NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, testRate, type BalanceTest } from './balance';
+import { NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, testRate, type BalanceTest } from './balance';
 
 let n = 0;
 const t = (cls: BalanceTest['cls'], mobs: number, seconds: number, extra: Partial<BalanceTest> = {}): BalanceTest =>
@@ -111,5 +111,23 @@ describe('time and number formatting', () => {
     expect(fmtRate(12.34, 'en')).toBe('12.3');
     expect(fmtPct(35.4)).toBe('+35%');
     expect(fmtPct(-47.6)).toBe('−48%');
+  });
+});
+
+describe('ranking of single tests (never added up)', () => {
+  it('keeps two tests of the same class and map as two rows, fastest first', () => {
+    const r = rankTests([t('magician', 60, 240, { tester: 'Beto' }), t('magician', 120, 300, { tester: 'Ana' }), t('fighter', 30, 60)]);
+    expect(r.map((x) => [x.test.cls, x.test.tester, x.rate])).toEqual([['fighter', 'Ana', 30], ['magician', 'Ana', 24], ['magician', 'Beto', 15]]);
+  });
+  it('compares each test with the average of the tests', () => {
+    const r = rankTests([t('archer', 30, 60), t('knight', 10, 60)]);
+    expect(r[0].vsAverage).toBeCloseTo(50, 6);
+    expect(r[1].vsAverage).toBeCloseTo(-50, 6);
+    expect(rankTests([t('archer', 30, 60)])[0].vsAverage).toBe(0);
+  });
+  it('a tie shows the newer test first, and no tests gives no rows', () => {
+    const r = rankTests([t('archer', 30, 60, { testedOn: '2026-11-10' }), t('knight', 30, 60, { testedOn: '2026-11-15' })]);
+    expect(r.map((x) => x.test.cls)).toEqual(['knight', 'archer']);
+    expect(rankTests([])).toEqual([]);
   });
 });

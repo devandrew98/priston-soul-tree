@@ -3,8 +3,8 @@
 // Follows the site language (the flags in the top bar): Portuguese or English.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  MODES, NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, testRate,
-  type BalanceTest, type Filters, type Mode,
+  MODES, NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, testRate,
+  type BalanceTest, type Filters, type Mode, type TestRank,
 } from '../../lib/balance';
 import { deleteBalance, fetchBalance, saveBalance } from '../../lib/balanceApi';
 import { useI18n } from '../../lib/i18n';
@@ -78,6 +78,21 @@ const TXT = {
   modeSingle: { pt: '1v1', en: '1v1' },
   modeHintAoe: { pt: 'vários mobs de uma vez', en: 'several mobs at once' },
   modeHintSingle: { pt: 'um alvo só', en: 'a single target' },
+  noMap: { pt: 'Sem mapa', en: 'No map' },
+  moreDetails: { pt: 'Mostrar mais detalhes', en: 'Show more details' },
+  lessDetails: { pt: 'Mostrar menos detalhes', en: 'Show fewer details' },
+  overallPos: { pt: 'Posição entre todos os testes', en: 'Position among all the tests' },
+  fastestTest: { pt: 'Teste mais rápido:', en: 'Fastest test:' },
+  slowestTest: { pt: 'Teste mais lento:', en: 'Slowest test:' },
+  ofAverageTests: { pt: 'da média dos testes', en: 'vs the average of the tests' },
+  avgOfTests: { pt: 'Média dos testes:', en: 'Average of the tests:' },
+  oneTest: { pt: 'Só há um teste:', en: 'There is only one test:' },
+  addMoreTests: { pt: 'Adicione mais testes para comparar.', en: 'Add more tests to compare.' },
+  mixedWarnTests: { pt: '⚠ Há testes de {x} misturados. Veja o modo e o mapa em cada linha, ou filtre por {y}.', en: '⚠ The selection mixes tests from {x}. Check the mode and the map on each row, or filter by {y}.' },
+  methodTests: {
+    pt: 'Cada teste é calculado sozinho (mobs ÷ minutos) e nunca é somado a outro, mesmo da mesma classe e do mesmo mapa. As classes aparecem na ordem do teste mais rápido de cada uma, e o número ao lado de cada teste é a posição dele entre todos.',
+    en: 'Each test is calculated on its own (mobs ÷ minutes) and is never added to another one, even for the same class on the same map. The classes appear in the order of their fastest test, and the number next to each test is its position among all of them.',
+  },
   mixedModes: { pt: 'modos diferentes (AoE e 1v1)', en: 'different modes (AoE and 1v1)' },
   oneMode: { pt: 'um modo', en: 'one mode' },
   vMode: { pt: 'Escolha o modo: AoE ou 1v1.', en: 'Pick the mode: AoE or 1v1.' },
@@ -159,14 +174,91 @@ function ClassTag({ cls }: { cls: ClassSlug }) {
 }
 
 // ---------- report ----------
-function Report({ tests, all, filters, onFilters, lang }: { tests: BalanceTest[]; all: BalanceTest[]; filters: Filters; onFilters: (f: Filters) => void; lang: Lang }) {
+/**
+ * The tests grouped by class. Nothing is ever added up: every test keeps its own speed (mobs / minutes), its own bar and its own row,
+ * even two tests of the same class on the same map. The classes are ordered by their fastest single test.
+ */
+function Ranking({ tests, lang }: { tests: BalanceTest[]; lang: Lang }) {
   const T = (k: keyof typeof TXT) => TXT[k][lang];
   const rate = (n: number) => fmtRate(n, lang);
+  const ranks = useMemo(() => rankTests(tests), [tests]);
   const r = useMemo(() => buildReport(tests, CLASS_SLUGS), [tests]);
+  const [more, setMore] = useState(false);
+  const top = ranks[0]?.rate ?? 1;
+  const avg = ranks.length ? ranks.reduce((a, x) => a + x.rate, 0) / ranks.length : 0;
+  const best = ranks[0];
+  const worst = ranks.length > 1 ? ranks[ranks.length - 1] : null;
+  const label = (x: TestRank) => `${className(x.test.cls)} (${x.test.tester})`;
+  const num = lang === 'pt' ? 'pt-BR' : 'en-US';
+  const position = useMemo(() => new Map(ranks.map((x, i) => [x.test.id, i + 1])), [ranks]);
+  // classes ordered by their fastest test; inside a class the tests keep the global order (fastest first)
+  const groups = useMemo(() => {
+    const m = new Map<ClassSlug, TestRank[]>();
+    for (const x of ranks) (m.get(x.test.cls) ?? m.set(x.test.cls, []).get(x.test.cls)!).push(x);
+    return [...m.entries()].map(([cls, list]) => ({ cls, list }));
+  }, [ranks]);
+
+  return (
+    <>
+      <p className="bal-summary">
+        {!worst ? (
+          <>{T('oneTest')} <b>{label(best)}</b> ({rate(best.rate)} {T('mobsMin')}). {T('addMoreTests')}</>
+        ) : (
+          <>
+            🏆 <b>{T('fastestTest')}</b> {label(best)} ({rate(best.rate)} {T('mobsMin')}, {fmtPct(best.vsAverage)} {T('ofAverageTests')}).{' '}
+            🐢 <b>{T('slowestTest')}</b> {label(worst)} ({rate(worst.rate)} {T('mobsMin')}, {fmtPct(worst.vsAverage)} {T('ofAverageTests')}).{' '}
+            {T('avgOfTests')} {rate(avg)} {T('mobsMin')} ({ranks.length} {T('tests')}).
+          </>
+        )}
+      </p>
+      {(r.mixedPlaces || r.mixedLevels || r.mixedModes) && (
+        <p className="mk-note">{fill(T('mixedWarnTests'), r.mixedPlaces ? { x: T('mixedPlaces'), y: T('oneMap') } : r.mixedModes ? { x: T('mixedModes'), y: T('oneMode') } : { x: T('mixedLevels'), y: T('oneLevelRange') })}</p>
+      )}
+      <div className="bal-toolbar">
+        <button type="button" className="mk-btn sm" aria-pressed={more} onClick={() => setMore(!more)}>{more ? T('lessDetails') : T('moreDetails')}</button>
+      </div>
+
+      {groups.map(({ cls, list }) => (
+        <section key={cls} className="bal-class-group">
+          <h3 className="bal-class-h"><ClassTag cls={cls} /> <small>{list.length} {list.length === 1 ? T('test1') : T('tests')}</small></h3>
+          <ol className="bal-rank">
+            {list.map((x) => {
+              const p = position.get(x.test.id) ?? 0;
+              return (
+                <li key={x.test.id} className={p === 1 && ranks.length > 1 ? 'top' : p === ranks.length && ranks.length > 1 ? 'low' : ''} title={x.test.notes || undefined}>
+                  <span className="bal-pos" title={T('overallPos')}>{lang === 'pt' ? `${p}º` : `#${p}`}</span>
+                  <span className="bal-mode">{modeLabel(x.test.mode, lang)}</span>
+                  <span className="bal-bar" aria-hidden="true"><i style={{ width: `${Math.max(3, (x.rate / top) * 100)}%` }} /></span>
+                  <b className="bal-rate">{rate(x.rate)}<small> {T('mobsMin')}</small></b>
+                  <span className={`bal-vs ${x.vsAverage >= 0 ? 'up' : 'down'}`}>{ranks.length > 1 ? fmtPct(x.vsAverage) : '—'}</span>
+                  <small className="bal-meta">
+                    {x.test.place || T('noMap')} · {x.test.tester}
+                    {more && (
+                      <>
+                        {x.test.level !== null && <> · {T('thLevel')} {x.test.level}</>}
+                        {' · '}{fmtDate(x.test.testedOn, lang)}
+                        {' · '}{x.test.mobs.toLocaleString(num)} {T('mobsIn')} {formatDuration(x.test.seconds)}
+                        {x.test.notes && <> · 📝 {x.test.notes}</>}
+                      </>
+                    )}
+                  </small>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      ))}
+      {r.untested.length > 0 && <p className="mk-muted bal-untested">{T('noTests')} {r.untested.map(className).join(', ')}.</p>}
+      <p className="mk-muted bal-note">{T('methodTests')}</p>
+    </>
+  );
+}
+
+function Report({ tests, all, filters, onFilters, lang }: { tests: BalanceTest[]; all: BalanceTest[]; filters: Filters; onFilters: (f: Filters) => void; lang: Lang }) {
+  const T = (k: keyof typeof TXT) => TXT[k][lang];
   const places = useMemo(() => distinct(all.map((t) => t.place)), [all]);
   const testers = useMemo(() => distinct(all.map((t) => t.tester)), [all]);
   const dirty = filters.place || filters.tester || filters.mode || filters.minLevel !== null || filters.maxLevel !== null;
-  const top = r.strongest?.rate ?? 1;
   const num = (v: string) => (v.trim() === '' ? null : Math.max(0, Math.floor(Number(v))) || null);
 
   return (
@@ -192,43 +284,10 @@ function Report({ tests, all, filters, onFilters, lang }: { tests: BalanceTest[]
         {dirty && <button type="button" className="mk-btn sm" onClick={() => onFilters(NO_FILTERS)}>{T('clearFilters')}</button>}
       </div>
 
-      {r.ranking.length === 0 ? (
+      {tests.length === 0 ? (
         <p className="mk-muted">{all.length === 0 ? T('noTestsYet') : T('noMatch')}</p>
       ) : (
-        <>
-          <p className="bal-summary">
-            {r.ranking.length === 1 ? (
-              <>{T('onlyOne1')} <b>{className(r.ranking[0].cls)}</b> {T('onlyOne2')} ({rate(r.ranking[0].rate)} {T('mobsMin')}). {T('onlyOne3')}</>
-            ) : (
-              <>
-                🏆 <b>{T('strongest')}</b> {className(r.strongest!.cls)} ({rate(r.strongest!.rate)} {T('mobsMin')}, {fmtPct(r.strongest!.vsAverage)} {T('ofAverage')}).{' '}
-                🐢 <b>{T('weakest')}</b> {className(r.weakest!.cls)} ({rate(r.weakest!.rate)} {T('mobsMin')}, {fmtPct(r.weakest!.vsAverage)} {T('ofAverage')}).{' '}
-                {T('fasterPre')} <b>{rate(r.spread!)}×</b> {T('fasterPost')} {T('avgOfClasses')} {rate(r.average)} {T('mobsMin')}.
-              </>
-            )}
-          </p>
-          {(r.mixedPlaces || r.mixedLevels || r.mixedModes) && (
-            <p className="mk-note">{fill(T('mixedWarn'), r.mixedPlaces ? { x: T('mixedPlaces'), y: T('oneMap') } : r.mixedModes ? { x: T('mixedModes'), y: T('oneMode') } : { x: T('mixedLevels'), y: T('oneLevelRange') })}</p>
-          )}
-          <ol className="bal-rank">
-            {r.ranking.map((c, i) => (
-              <li key={c.cls} className={i === 0 && r.ranking.length > 1 ? 'top' : i === r.ranking.length - 1 && r.ranking.length > 1 ? 'low' : ''}>
-                <span className="bal-pos">{lang === 'pt' ? `${i + 1}º` : `#${i + 1}`}</span>
-                <ClassTag cls={c.cls} />
-                <span className="bal-bar" aria-hidden="true"><i style={{ width: `${Math.max(3, (c.rate / top) * 100)}%` }} /></span>
-                <b className="bal-rate">{rate(c.rate)}<small> {T('mobsMin')}</small></b>
-                <span className={`bal-vs ${c.vsAverage >= 0 ? 'up' : 'down'}`}>{r.ranking.length > 1 ? fmtPct(c.vsAverage) : '—'}</span>
-                <small className="bal-meta">
-                  {c.tests} {c.tests === 1 ? T('test1') : T('tests')} · {c.testers} {c.testers === 1 ? T('tester1') : T('testers')} · {c.mobs.toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US')} {T('mobsIn')} {formatDuration(c.seconds)}
-                  {c.tests > 1 && <> · {T('best')} {rate(c.best)} / {T('worst')} {rate(c.worst)}</>}
-                  {c.tests < 3 && <span className="bal-few"> · {T('few')}</span>}
-                </small>
-              </li>
-            ))}
-          </ol>
-          {r.untested.length > 0 && <p className="mk-muted bal-untested">{T('noTests')} {r.untested.map(className).join(', ')}.</p>}
-          <p className="mk-muted bal-note">{T('method')}</p>
-        </>
+        <Ranking tests={tests} lang={lang} />
       )}
     </section>
   );
