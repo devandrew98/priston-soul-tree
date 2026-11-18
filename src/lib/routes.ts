@@ -2,7 +2,7 @@
 // single-page app: Vercel sends any path to index.html (vercel.json), and this module
 // maps path <-> which page to show, so F5, the Back button and shared links all work.
 
-export type Section = 'home' | 'timers' | 'market' | 'streamers' | 'guides' | 'tools' | 'tutorial' | 'season' | 'balance';
+export type Section = 'home' | 'timers' | 'market' | 'streamers' | 'guides' | 'tools' | 'tutorial' | 'season' | 'balance' | 'raffle';
 export type TimerTab = 'boss' | 'fury';
 export type ToolTab = 'soultree' | 'mixing' | 'sod' | 'wardrobe' | 'skilltree' | 'screenshare' | 'builds' | 'aging' | 'clan' | 'quests' | 'affixes' | 'overlay' | 'soulslist';
 
@@ -28,7 +28,7 @@ export const TOOL_PATHS: Record<ToolTab, string> = {
   soulslist: '/lista-souls',
 };
 
-const SECTION_PATHS: Record<'home' | 'market' | 'guides' | 'streamers' | 'tutorial' | 'season' | 'balance', string> = {
+const SECTION_PATHS: Record<'home' | 'market' | 'guides' | 'streamers' | 'tutorial' | 'season' | 'balance' | 'raffle', string> = {
   home: '/',
   market: '/marketplace',
   guides: '/guides',
@@ -36,6 +36,7 @@ const SECTION_PATHS: Record<'home' | 'market' | 'guides' | 'streamers' | 'tutori
   tutorial: '/tutorial',
   season: '/season', // private page: no link anywhere on the site
   balance: '/balance', // private page: no link anywhere on the site
+  raffle: '/rifa',
 };
 
 /** The URL path that shows this page. */
@@ -70,7 +71,7 @@ export function routeFromPath(pathname: string): Route | null {
   for (const [toolTab, p] of Object.entries(TOOL_PATHS)) {
     if (path === p) return { ...DEFAULT_ROUTE, section: 'tools', toolTab: toolTab as ToolTab };
   }
-  for (const section of ['market', 'guides', 'streamers', 'tutorial', 'season', 'balance'] as const) {
+  for (const section of ['market', 'guides', 'streamers', 'tutorial', 'season', 'balance', 'raffle'] as const) {
     if (path === SECTION_PATHS[section]) return { ...DEFAULT_ROUTE, section };
   }
   return null;

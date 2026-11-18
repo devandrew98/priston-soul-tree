@@ -29,6 +29,7 @@ import { OverlayFab } from './components/OverlayFab';
 import { SoulsCatalog } from './components/souls/SoulsCatalog';
 import { SeasonPage } from './components/season/SeasonPage';
 import { BalancePage } from './components/balance/BalancePage';
+import { RafflePage } from './components/raffle/RafflePage';
 import { OverlayGuide } from './components/overlay/OverlayGuide';
 import { AffixGuide } from './components/affixes/AffixGuide';
 import { BrFlag, UkFlag } from './components/Flags';
@@ -81,6 +82,7 @@ const NAV: NavItem[] = [
   { id: 'timers', icon: '⏱', key: 'nav.timers', tabs: TIMER_TABS },
   { id: 'tools', icon: '🧰', key: 'nav.tools', tabs: TOOL_TABS },
   { id: 'market', icon: '🏰', key: 'nav.market' },
+  { id: 'raffle', icon: '🎁', key: 'nav.raffle' },
   { id: 'guides', icon: '🎬', key: 'nav.guides' },
   { id: 'streamers', icon: '📺', key: 'nav.streamers' },
 ];
@@ -400,6 +402,8 @@ export default function App() {
         <SeasonPage />
       ) : section === 'balance' ? (
         <BalancePage />
+      ) : section === 'raffle' ? (
+        <RafflePage />
       ) : (
         toolTab === 'soultree' ? <SoulTree />
           : toolTab === 'skilltree' ? <SkillTreeTool />

@@ -61,6 +61,7 @@ const PAGE_NAMES: Record<string, { pt: string; en: string }> = {
   '/quests': { pt: 'Quest Tracker', en: 'Quest Tracker' },
   '/lista-souls': { pt: 'Souls (lista)', en: 'Souls (list)' },
   '/balance': { pt: 'Balanceamento (privado)', en: 'Balance (private)' },
+  '/rifa': { pt: 'Rifa', en: 'Raffle' },
   '/season': { pt: 'Temporada (FAQ privado)', en: 'Season (private FAQ)' },
   '/overlay': { pt: 'Overlay PristonZONE', en: 'PristonZONE Overlay' },
   '/afixos': { pt: 'Guia de Afixos', en: 'Affix Guide' },
