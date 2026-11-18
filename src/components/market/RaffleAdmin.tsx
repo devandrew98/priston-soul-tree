@@ -2,6 +2,7 @@
 // made in the game, and draw the winner. The draw is made by the database at random among the PAID numbers: nobody picks it.
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { uploadToBucket } from '../../lib/market/auth';
+import { RAFFLE_MENU_EVENT, RAFFLE_MENU_FLAG, fetchSiteFlag, setSiteFlag } from '../../lib/market/siteSettings';
 import { fmtGold, soldCount, type HistoryItem, type Raffle, type TakenNumber } from '../../lib/raffle';
 import {
   cancelRaffle, createRaffle, drawRaffle, fetchAdminNumbers, fetchRaffle, fetchRaffleHistory, markPaid, releaseNumber,
@@ -16,6 +17,43 @@ import { RichTextEditor } from './RichTextEditor';
 
 const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '—');
 const toInt = (s: string): number | null => { const n = Number(s.replace(/\D/g, '')); return Number.isInteger(n) && n > 0 ? n : null; };
+
+// ---------- menu link on/off ----------
+function MenuSwitch() {
+  const [on, setOn] = useState<boolean | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+
+  useEffect(() => { fetchSiteFlag(RAFFLE_MENU_FLAG).then(setOn).catch(() => setOn(true)); }, []);
+
+  const flip = async () => {
+    if (on === null) return;
+    const next = !on;
+    setBusy(true); setErr('');
+    try {
+      await setSiteFlag(RAFFLE_MENU_FLAG, next);
+      setOn(next);
+      window.dispatchEvent(new CustomEvent(RAFFLE_MENU_EVENT, { detail: next }));
+    } catch (e) { setErr(e instanceof Error ? e.message : String((e as { message?: string })?.message ?? e)); }
+    finally { setBusy(false); }
+  };
+
+  return (
+    <section className="sr-card ht-card">
+      <h3 className="mk-h2">🔗 Link “Rifa” no menu</h3>
+      <p className="mk-muted">Escolha se o link da rifa aparece no menu principal do site. Escondendo o link, a página <b>/rifa</b> continua funcionando para quem receber o endereço, e você pode mostrar o link de novo quando quiser.</p>
+      <div className="ht-actions">
+        {on === null ? <Loading inline /> : (
+          <>
+            <span className={`mk-mktoggle-status ${on ? 'on' : 'off'}`}>{on ? '✅ O link está aparecendo no menu' : '🙈 O link está escondido do menu'}</span>
+            <button type="button" className={`mk-btn ${on ? 'danger' : 'primary'}`} disabled={busy} onClick={flip}>{on ? 'Esconder o link do menu' : 'Mostrar o link no menu'}</button>
+          </>
+        )}
+      </div>
+      {err && <p className="mk-warn" role="alert">{err}</p>}
+    </section>
+  );
+}
 
 // ---------- item image: upload from the computer ----------
 const MAX_FILE_MB = 8;
@@ -286,6 +324,7 @@ export function RaffleAdmin() {
   return (
     <div className="ht">
       <p className="mk-muted">A rifa aparece para todos em <b>/rifa</b> (com link no menu). O jogador reserva o número no site e paga no jogo; você confirma o pagamento aqui e faz o sorteio quando quiser.</p>
+      <MenuSwitch />
       {err && <p className="mk-warn">{err}</p>}
       {!state && !err && <Loading />}
       {state && (state.raffle ? <OpenRaffle key={state.raffle.id} raffle={state.raffle} taken={state.taken} onChanged={reload} /> : <CreateForm onCreated={reload} />)}

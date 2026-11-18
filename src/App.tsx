@@ -45,7 +45,7 @@ import { AuthModal } from './components/market/AuthModal';
 import { useAuth } from './components/market/store';
 import { setAnalyticsMuted, trackEvent } from './lib/analytics';
 import { BACKEND_ENABLED } from './lib/market/supabase';
-import { fetchSiteFlag } from './lib/market/siteSettings';
+import { RAFFLE_MENU_EVENT, RAFFLE_MENU_FLAG, fetchSiteFlag } from './lib/market/siteSettings';
 import { useI18n } from './lib/i18n';
 import { initVisits } from './lib/visits';
 import { DEFAULT_ROUTE, pathFor, routeFromPath, type Route, type Section, type TimerTab, type ToolTab } from './lib/routes';
@@ -145,6 +145,7 @@ export default function App() {
   const [accountOpen, setAccountOpen] = useState(false); // the signed-in user's little menu
   const [openAdminAt, setOpenAdminAt] = useState(0);
   const [marketplaceEnabled, setMarketplaceEnabled] = useState(true);
+  const [raffleInMenu, setRaffleInMenu] = useState(true); // admin switch (Site > Rifa): show the "Rifa" link in the menu
   const [showAuth, setShowAuth] = useState(false);
   const [visits, setVisits] = useState<number | null>(null); // null = counter unavailable -> hidden
   useEffect(() => {
@@ -158,10 +159,15 @@ export default function App() {
   useEffect(() => {
     if (!BACKEND_ENABLED) return;
     fetchSiteFlag('marketplace').then(setMarketplaceEnabled).catch(() => {});
+    fetchSiteFlag(RAFFLE_MENU_FLAG).then(setRaffleInMenu).catch(() => {});
+    // the admin panel tells the menu right away when the switch is flipped
+    const onFlag = (e: Event) => setRaffleInMenu((e as CustomEvent<boolean>).detail !== false);
+    window.addEventListener(RAFFLE_MENU_EVENT, onFlag);
+    return () => window.removeEventListener(RAFFLE_MENU_EVENT, onFlag);
   }, []);
 
   const clanAccess = useClanAccess();
-  const nav = NAV.filter((n) => n.id !== 'market' || marketplaceEnabled)
+  const nav = NAV.filter((n) => (n.id !== 'market' || marketplaceEnabled) && (n.id !== 'raffle' || raffleInMenu))
     .map((n) => (n.id === 'tools' && n.tabs ? { ...n, tabs: n.tabs.filter((x) => !x.hidden && (x.id !== 'clan' || clanAccess.allowed)) } : n));
 
   // Every page change also changes the address bar (so F5 and Back stay on the page).
