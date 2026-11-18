@@ -47,6 +47,8 @@ const TXT = {
   fasterPost: { pt: 'mais rápido que a mais fraca.', en: 'faster than the weakest.' },
   avgOfClasses: { pt: 'Média das classes:', en: 'Average of the classes:' },
   mobsMin: { pt: 'mobs/min', en: 'mobs/min' },
+  mobsWord: { pt: 'mobs', en: 'mobs' },
+  totalMobs: { pt: 'Total de mobs mortos neste teste', en: 'Total mobs killed in this test' },
   mixedPlaces: { pt: 'mapas diferentes', en: 'different maps' },
   mixedLevels: { pt: 'níveis diferentes', en: 'different levels' },
   mixedWarn: { pt: '⚠ Há testes de {x} misturados. Para comparar de forma justa, filtre por {y}.', en: '⚠ The selection mixes tests from {x}. To compare fairly, filter by {y}.' },
@@ -229,6 +231,7 @@ function Ranking({ tests, lang }: { tests: BalanceTest[]; lang: Lang }) {
                   <span className="bal-pos" title={T('overallPos')}>{lang === 'pt' ? `${p}º` : `#${p}`}</span>
                   <span className="bal-mode">{modeLabel(x.test.mode, lang)}</span>
                   <span className="bal-bar" aria-hidden="true"><i style={{ width: `${Math.max(3, (x.rate / top) * 100)}%` }} /></span>
+                  <span className="bal-total" title={T('totalMobs')}><b>{x.test.mobs.toLocaleString(num)}</b><small> {T('mobsWord')}</small></span>
                   <b className="bal-rate">{rate(x.rate)}<small> {T('mobsMin')}</small></b>
                   <span className={`bal-vs ${x.vsAverage >= 0 ? 'up' : 'down'}`}>{ranks.length > 1 ? fmtPct(x.vsAverage) : '—'}</span>
                   <small className="bal-meta">
