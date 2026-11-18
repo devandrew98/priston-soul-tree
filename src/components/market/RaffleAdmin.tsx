@@ -1,6 +1,7 @@
 // Admin > Rifa: create the raffle (item, prices in coins and/or gold, how many numbers, limit per person), confirm the payments the players
 // made in the game, and draw the winner. The draw is made by the database at random among the PAID numbers: nobody picks it.
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { uploadToBucket } from '../../lib/market/auth';
 import { fmtGold, soldCount, type HistoryItem, type Raffle, type TakenNumber } from '../../lib/raffle';
 import {
   cancelRaffle, createRaffle, drawRaffle, fetchAdminNumbers, fetchRaffle, fetchRaffleHistory, markPaid, releaseNumber,
@@ -10,10 +11,65 @@ import { BACKEND_ENABLED, supabase } from '../../lib/market/supabase';
 import { SOULS } from '../../lib/souls';
 import { errText } from '../raffle/RafflePage';
 import { Loading } from '../Loading';
+import { useAuth } from './store';
 import { RichTextEditor } from './RichTextEditor';
 
 const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '—');
 const toInt = (s: string): number | null => { const n = Number(s.replace(/\D/g, '')); return Number.isInteger(n) && n > 0 ? n : null; };
+
+// ---------- item image: upload from the computer ----------
+const MAX_FILE_MB = 8;
+
+/** Scales the picture down (longest side 600 px, keeps transparency) so the raffle page stays light. */
+async function shrink(file: File, max = 600): Promise<File> {
+  const bmp = await createImageBitmap(file);
+  const scale = Math.min(1, max / Math.max(bmp.width, bmp.height));
+  const w = Math.max(1, Math.round(bmp.width * scale)), h = Math.max(1, Math.round(bmp.height * scale));
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  c.getContext('2d')!.drawImage(bmp, 0, 0, w, h);
+  const blob = await new Promise<Blob | null>((r) => c.toBlob(r, 'image/webp', 0.92));
+  return blob ? new File([blob], 'item.webp', { type: 'image/webp' }) : file;
+}
+
+/** Picture of the item: send a file from the computer (goes to the site's image storage) or type a path/link. */
+function ImageUploader({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+  const auth = useAuth();
+  const input = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const [bad, setBad] = useState(false);
+
+  const pick = async (file: File | undefined) => {
+    if (!file) return;
+    setErr('');
+    if (!file.type.startsWith('image/')) return setErr('Escolha um arquivo de imagem (png, jpg, webp...).');
+    if (file.size > MAX_FILE_MB * 1024 * 1024) return setErr(`A imagem passa de ${MAX_FILE_MB} MB. Escolha uma menor.`);
+    if (!auth.userId) return setErr('Entre na sua conta de administrador para enviar imagens.');
+    setBusy(true);
+    try {
+      const url = await uploadToBucket('item-images', auth.userId, await shrink(file));
+      setBad(false); onChange(url);
+    } catch (e) { setErr(e instanceof Error ? e.message : String((e as { message?: string })?.message ?? e)); }
+    finally { setBusy(false); if (input.current) input.current.value = ''; }
+  };
+
+  return (
+    <div className="rf-upload">
+      <span className="rf-upload-label">Imagem do item (opcional)</span>
+      <div className="rf-upload-row">
+        {value && !bad ? <img className="rf-upload-prev" src={value} alt="" onError={() => setBad(true)} /> : <span className="rf-upload-prev rf-upload-empty" aria-hidden="true">🎁</span>}
+        <div className="rf-upload-ctl">
+          <input ref={input} type="file" accept="image/*" hidden onChange={(e) => void pick(e.target.files?.[0])} />
+          <button type="button" className="mk-btn sm" disabled={busy} onClick={() => input.current?.click()}>{busy ? '⏳ Enviando…' : '📁 Enviar do computador'}</button>
+          {value && <button type="button" className="mk-btn sm" disabled={busy} onClick={() => { onChange(''); setBad(false); }}>Remover</button>}
+          <input className="rf-upload-url" value={value} maxLength={300} onChange={(e) => { setBad(false); onChange(e.target.value); }} placeholder="ou cole um link / caminho (ex.: /fusion/LufiaSoul.png)" />
+        </div>
+      </div>
+      {err && <p className="mk-warn" role="alert">{err}</p>}
+    </div>
+  );
+}
 
 // ---------- create ----------
 function CreateForm({ onCreated }: { onCreated: () => void }) {
@@ -57,7 +113,7 @@ function CreateForm({ onCreated }: { onCreated: () => void }) {
         <div className="ht-col">
           <label className="mk-news-langfield"><span>Item</span><input value={f.itemName} maxLength={80} onChange={(e) => set({ itemName: e.target.value })} placeholder="Ex.: Lufia Soul" /></label>
           <label className="mk-news-langfield"><span>Observação do item (opcional)</span><input value={f.itemNote} maxLength={120} onChange={(e) => set({ itemNote: e.target.value })} /></label>
-          <label className="mk-news-langfield"><span>Imagem (caminho ou link, opcional)</span><input value={f.imageUrl} maxLength={300} onChange={(e) => set({ imageUrl: e.target.value })} placeholder="/fusion/LufiaSoul.png" /></label>
+          <ImageUploader value={f.imageUrl} onChange={(url) => set({ imageUrl: url })} />
         </div>
         <div className="ht-col">
           <label className="mk-news-langfield"><span>Preço por número em Coins (opcional)</span><input inputMode="numeric" value={f.coins} onChange={(e) => set({ coins: e.target.value.replace(/\D/g, '') })} placeholder="1000" /></label>
@@ -87,7 +143,7 @@ function OpenRaffle({ raffle, taken, onChanged }: { raffle: Raffle; taken: Taken
   const [busy, setBusy] = useState(false);
   const [ask, setAsk] = useState<'draw' | 'cancel' | null>(null);
   const [result, setResult] = useState<{ number: number; nick: string; paid: number } | null>(null);
-  const [info, setInfo] = useState({ payTo: raffle.payTo, payText: raffle.payText, rules: raffle.rules, endsAt: raffle.endsAt ? raffle.endsAt.slice(0, 10) : '' });
+  const [info, setInfo] = useState({ payTo: raffle.payTo, payText: raffle.payText, imageUrl: raffle.imageUrl, rules: raffle.rules, endsAt: raffle.endsAt ? raffle.endsAt.slice(0, 10) : '' });
 
   const load = useCallback(async () => { try { setNums(await fetchAdminNumbers()); setErr(''); } catch (e) { setErr(errText(e, 'pt')); } }, []);
   useEffect(() => { void load(); }, [load, taken]);
@@ -100,7 +156,7 @@ function OpenRaffle({ raffle, taken, onChanged }: { raffle: Raffle; taken: Taken
   const saveInfo = () => run(async () => {
     if (!supabase) throw new Error('backend_not_configured');
     const { error } = await supabase.from('raffles').update({
-      pay_to: info.payTo.trim(), rules: info.rules.trim(), ends_at: info.endsAt ? new Date(`${info.endsAt}T23:59:00`).toISOString() : null,
+      pay_to: info.payTo.trim(), image_url: info.imageUrl.trim(), rules: info.rules.trim(), ends_at: info.endsAt ? new Date(`${info.endsAt}T23:59:00`).toISOString() : null,
       ...(info.payText.trim() !== raffle.payText.trim() ? { pay_text: info.payText.trim() } : {}), // only when changed (needs supabase/50)
     }).eq('id', raffle.id);
     if (error) throw error;
@@ -168,6 +224,7 @@ function OpenRaffle({ raffle, taken, onChanged }: { raffle: Raffle; taken: Taken
       <section className="sr-card ht-card">
         <h3 className="mk-h2">✏️ Informações da rifa</h3>
         <div className="ht-col">
+          <ImageUploader value={info.imageUrl} onChange={(url) => setInfo({ ...info, imageUrl: url })} />
           <label className="mk-news-langfield"><span>Personagem que recebe (opcional, só para a frase padrão)</span><input value={info.payTo} maxLength={40} onChange={(e) => setInfo({ ...info, payTo: e.target.value })} /></label>
           <label className="mk-news-langfield"><span>Data prevista do fim (só informativa)</span><input type="date" value={info.endsAt} onChange={(e) => setInfo({ ...info, endsAt: e.target.value })} /></label>
         </div>

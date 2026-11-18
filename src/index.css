@@ -2954,3 +2954,12 @@ input[type="checkbox"], input[type="radio"], input[type="range"], progress { acc
 
 /* Reserved by someone else = dark orange */
 .rf-cell.reserved { border: 1px dashed #b45309; color: #f0a35e; background: rgba(180,83,9,0.28); text-decoration: none; cursor: not-allowed; }
+
+/* Raffle admin: item image upload */
+.rf-upload { display: grid; gap: 6px; }
+.rf-upload-label { font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.4px; }
+.rf-upload-row { display: flex; gap: 12px; align-items: center; }
+.rf-upload-prev { flex: none; width: 84px; height: 84px; object-fit: contain; background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 10px; }
+.rf-upload-empty { display: grid; place-items: center; font-size: 34px; }
+.rf-upload-ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-width: 0; flex: 1; }
+.rf-upload-url { flex: 1 1 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 10px; font-size: 13px; font-family: inherit; min-width: 0; }
