@@ -95,6 +95,7 @@ const TXT = {
     pt: 'Cada teste é calculado sozinho (mobs ÷ minutos) e nunca é somado a outro, mesmo da mesma classe e do mesmo mapa. As classes aparecem na ordem do teste mais rápido de cada uma, e o número ao lado de cada teste é a posição dele entre todos.',
     en: 'Each test is calculated on its own (mobs ÷ minutes) and is never added to another one, even for the same class on the same map. The classes appear in the order of their fastest test, and the number next to each test is its position among all of them.',
   },
+  noModeSection: { pt: 'Sem modo (testes antigos)', en: 'No mode (older tests)' },
   mixedModes: { pt: 'modos diferentes (AoE e 1v1)', en: 'different modes (AoE and 1v1)' },
   oneMode: { pt: 'um modo', en: 'one mode' },
   vMode: { pt: 'Escolha o modo: AoE ou 1v1.', en: 'Pick the mode: AoE or 1v1.' },
@@ -180,12 +181,11 @@ function ClassTag({ cls }: { cls: ClassSlug }) {
  * The tests grouped by class. Nothing is ever added up: every test keeps its own speed (mobs / minutes), its own bar and its own row,
  * even two tests of the same class on the same map. The classes are ordered by their fastest single test.
  */
-function Ranking({ tests, lang }: { tests: BalanceTest[]; lang: Lang }) {
+function Ranking({ tests, lang, more }: { tests: BalanceTest[]; lang: Lang; more: boolean }) {
   const T = (k: keyof typeof TXT) => TXT[k][lang];
   const rate = (n: number) => fmtRate(n, lang);
   const ranks = useMemo(() => rankTests(tests), [tests]);
   const r = useMemo(() => buildReport(tests, CLASS_SLUGS), [tests]);
-  const [more, setMore] = useState(false);
   const top = ranks[0]?.rate ?? 1;
   const avg = ranks.length ? ranks.reduce((a, x) => a + x.rate, 0) / ranks.length : 0;
   const best = ranks[0];
@@ -216,10 +216,6 @@ function Ranking({ tests, lang }: { tests: BalanceTest[]; lang: Lang }) {
       {(r.mixedPlaces || r.mixedLevels || r.mixedModes) && (
         <p className="mk-note">{fill(T('mixedWarnTests'), r.mixedPlaces ? { x: T('mixedPlaces'), y: T('oneMap') } : r.mixedModes ? { x: T('mixedModes'), y: T('oneMode') } : { x: T('mixedLevels'), y: T('oneLevelRange') })}</p>
       )}
-      <div className="bal-toolbar">
-        <button type="button" className="mk-btn sm" aria-pressed={more} onClick={() => setMore(!more)}>{more ? T('lessDetails') : T('moreDetails')}</button>
-      </div>
-
       {groups.map(({ cls, list }) => (
         <section key={cls} className="bal-class-group">
           <h3 className="bal-class-h"><ClassTag cls={cls} /> <small>{list.length} {list.length === 1 ? T('test1') : T('tests')}</small></h3>
@@ -252,7 +248,6 @@ function Ranking({ tests, lang }: { tests: BalanceTest[]; lang: Lang }) {
         </section>
       ))}
       {r.untested.length > 0 && <p className="mk-muted bal-untested">{T('noTests')} {r.untested.map(className).join(', ')}.</p>}
-      <p className="mk-muted bal-note">{T('methodTests')}</p>
     </>
   );
 }
@@ -263,6 +258,13 @@ function Report({ tests, all, filters, onFilters, lang }: { tests: BalanceTest[]
   const testers = useMemo(() => distinct(all.map((t) => t.tester)), [all]);
   const dirty = filters.place || filters.tester || filters.mode || filters.minLevel !== null || filters.maxLevel !== null;
   const num = (v: string) => (v.trim() === '' ? null : Math.max(0, Math.floor(Number(v))) || null);
+  const [more, setMore] = useState(false);
+  // AoE and 1v1 are different kinds of test, so each one gets its own statistics (summary + ranking); older tests with no mode go last.
+  const sections = useMemo(() => ([
+    { key: 'aoe', mode: 'aoe' as Mode | null, tests: tests.filter((t) => t.mode === 'aoe') },
+    { key: 'single', mode: 'single' as Mode | null, tests: tests.filter((t) => t.mode === 'single') },
+    { key: 'none', mode: null as Mode | null, tests: tests.filter((t) => t.mode === null) },
+  ].filter((s) => s.tests.length > 0)), [tests]);
 
   return (
     <section className="sr-card bal-report">
@@ -290,7 +292,22 @@ function Report({ tests, all, filters, onFilters, lang }: { tests: BalanceTest[]
       {tests.length === 0 ? (
         <p className="mk-muted">{all.length === 0 ? T('noTestsYet') : T('noMatch')}</p>
       ) : (
-        <Ranking tests={tests} lang={lang} />
+        <>
+          <div className="bal-toolbar">
+            <button type="button" className="mk-btn sm" aria-pressed={more} onClick={() => setMore(!more)}>{more ? T('lessDetails') : T('moreDetails')}</button>
+          </div>
+          {sections.map((s) => (
+            <section key={s.key} className={`bal-mode-section ${s.key}`}>
+              <h3 className="bal-mode-h">
+                <span className="bal-mode-name">{s.mode === 'aoe' ? '⚔️' : s.mode === 'single' ? '🎯' : '📋'} {s.mode ? modeLabel(s.mode, lang) : T('noModeSection')}</span>
+                {s.mode && <small>{s.mode === 'aoe' ? T('modeHintAoe') : T('modeHintSingle')}</small>}
+                <small className="bal-mode-count">{s.tests.length} {s.tests.length === 1 ? T('test1') : T('tests')}</small>
+              </h3>
+              <Ranking tests={s.tests} lang={lang} more={more} />
+            </section>
+          ))}
+          <p className="mk-muted bal-note">{T('methodTests')}</p>
+        </>
       )}
     </section>
   );

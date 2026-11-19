@@ -2963,3 +2963,12 @@ input[type="checkbox"], input[type="radio"], input[type="range"], progress { acc
 .rf-upload-empty { display: grid; place-items: center; font-size: 34px; }
 .rf-upload-ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-width: 0; flex: 1; }
 .rf-upload-url { flex: 1 1 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 10px; font-size: 13px; font-family: inherit; min-width: 0; }
+
+/* Balance: one block of statistics per mode (AoE / 1v1) */
+.bal-mode-section { margin-top: 18px; padding: 14px 16px 16px; border: 1px solid var(--border); border-radius: 14px; background: rgba(0,0,0,0.2); }
+.bal-mode-section.aoe { border-color: rgba(212,175,106,0.55); }
+.bal-mode-section.single { border-color: rgba(143,208,255,0.45); }
+.bal-mode-h { margin: 0 0 10px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); font-size: 20px; color: var(--gold-bright); }
+.bal-mode-section.single .bal-mode-h { color: #b9ddff; }
+.bal-mode-h small { color: var(--text-dim); font-weight: 400; font-size: 13px; }
+.bal-mode-count { margin-left: auto; }
