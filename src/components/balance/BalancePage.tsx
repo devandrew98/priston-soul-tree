@@ -3,7 +3,7 @@
 // Follows the site language (the flags in the top bar): Portuguese or English.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  BULK_FIELDS, MODES, NO_FILTERS, bestPerClassMode, buildReport, changedInPatch, latestPatch, distinct, filterTests, fmtPct, fmtRate, formatDuration, isStale, needRetest, parseDuration, rankTests, sortPatches, testRate, toggleValue, withField,
+  BULK_FIELDS, MODES, NO_FILTERS, topPerClass, bestPerClassMode, buildReport, changedInPatch, latestPatch, distinct, filterTests, fmtPct, fmtRate, formatDuration, isStale, needRetest, parseDuration, rankTests, sortPatches, testRate, toggleValue, withField,
   type BalanceChange, type BulkField, type BalanceTest, type Filters, type Mode, type TestRank,
 } from '../../lib/balance';
 import { DEMO_CHANGES, DEMO_TESTS } from '../../lib/balanceDemo';
@@ -41,6 +41,7 @@ const TXT = {
   patchUnchanged: { pt: 'As outras {n} não foram alteradas e entram com o melhor teste dos patches anteriores.', en: 'The other {n} were not changed and appear with their best test from earlier patches.' },
   originChanged: { pt: '🆕 alterada no {p}', en: '🆕 changed in {p}' },
   originUnchanged: { pt: '📌 não alterada no {p}', en: '📌 not changed in {p}' },
+  topHidden: { pt: 'Mostrando os {n} melhores testes de cada classe ({h} teste(s) mais lento(s) não aparece(m) aqui; continuam em “Testes registrados”).', en: 'Showing the {n} best tests of each class ({h} slower test(s) not listed here; still in “Recorded tests”).' },
   viewCurrent: { pt: 'Só os atuais', en: 'Only up-to-date' },
   viewAll: { pt: 'Todos (com os desatualizados)', en: 'All (with out-of-date ones)' },
   needRetest: { pt: 'Precisam de novo teste:', en: 'Need a new test:' },
@@ -234,9 +235,13 @@ function ClassTag({ cls }: { cls: ClassSlug }) {
  * The tests grouped by class. Nothing is ever added up: every test keeps its own speed (mobs / minutes), its own bar and its own row,
  * even two tests of the same class on the same map. The classes are ordered by their fastest single test.
  */
-function Ranking({ tests, lang, more, staleIds, origins, patch }: { tests: BalanceTest[]; lang: Lang; more: boolean; staleIds: Set<string>; origins: Map<string, 'changed' | 'unchanged'>; patch: string | null }) {
+const TOP_PER_CLASS = 10; // the ranking lists only the 10 best tests of each class
+
+function Ranking({ tests: allTests, lang, more, staleIds, origins, patch }: { tests: BalanceTest[]; lang: Lang; more: boolean; staleIds: Set<string>; origins: Map<string, 'changed' | 'unchanged'>; patch: string | null }) {
   const T = (k: keyof typeof TXT) => TXT[k][lang];
   const rate = (n: number) => fmtRate(n, lang);
+  const tests = useMemo(() => topPerClass(allTests, TOP_PER_CLASS), [allTests]);
+  const hidden = allTests.length - tests.length;
   const ranks = useMemo(() => rankTests(tests), [tests]);
   const r = useMemo(() => buildReport(tests, CLASS_SLUGS), [tests]);
   const top = ranks[0]?.rate ?? 1;
@@ -315,6 +320,7 @@ function Ranking({ tests, lang, more, staleIds, origins, patch }: { tests: Balan
           </ol>
         </section>
       ))}
+      {hidden > 0 && <p className="mk-muted bal-untested">{fill(T('topHidden'), { n: String(TOP_PER_CLASS), h: String(hidden) })}</p>}
       {r.untested.length > 0 && <p className="mk-muted bal-untested">{T('noTests')} {r.untested.map(className).join(', ')}.</p>}
     </>
   );

@@ -120,6 +120,17 @@ export function bestPerClassMode(tests: BalanceTest[]): BalanceTest[] {
   return tests.filter((t) => best.get(`${t.cls}|${t.mode ?? ''}`) === t);
 }
 
+/** At most `n` tests of each class (the fastest ones; ties: the newer). Order of the input is kept. */
+export function topPerClass(tests: BalanceTest[], n: number): BalanceTest[] {
+  const byClass = new Map<ClassSlug, BalanceTest[]>();
+  for (const t of tests) (byClass.get(t.cls) ?? byClass.set(t.cls, []).get(t.cls)!).push(t);
+  const keep = new Set<string>();
+  for (const list of byClass.values()) {
+    [...list].sort((a, b) => testRate(b) - testRate(a) || b.testedOn.localeCompare(a.testedOn) || b.createdAt.localeCompare(a.createdAt)).slice(0, n).forEach((t) => keep.add(t.id));
+  }
+  return tests.filter((t) => keep.has(t.id));
+}
+
 /** What the bulk edit can change on several tests at once. */
 export type BulkField = 'patch' | 'mode' | 'place' | 'level' | 'tester';
 export const BULK_FIELDS: BulkField[] = ['patch', 'mode', 'place', 'level', 'tester'];

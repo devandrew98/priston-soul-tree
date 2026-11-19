@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CLASS_SLUGS, type ClassSlug } from './skilltree/types';
-import { NO_FILTERS, bestPerClassMode, buildReport, changedInPatch, isStale, latestPatch, needRetest, type BalanceChange, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, sortPatches, testRate, toggleValue, withField, type BalanceTest } from './balance';
+import { NO_FILTERS, bestPerClassMode, buildReport, changedInPatch, isStale, latestPatch, needRetest, type BalanceChange, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, sortPatches, testRate, toggleValue, topPerClass, withField, type BalanceTest } from './balance';
 
 let n = 0;
 const t = (cls: BalanceTest['cls'], mobs: number, seconds: number, extra: Partial<BalanceTest> = {}): BalanceTest =>
@@ -105,6 +105,15 @@ describe('current patch view', () => {
   it('keeps the best test of each class and mode', () => {
     const a = t('fighter', 10, 1, { mode: 'aoe' }), b = t('fighter', 30, 1, { mode: 'aoe' }), c = t('fighter', 5, 1, { mode: 'single' }), d = t('knight', 7, 1, { mode: 'aoe' });
     expect(bestPerClassMode([a, b, c, d])).toEqual([b, c, d]);
+  });
+});
+
+describe('top tests per class', () => {
+  it('keeps the n fastest tests of each class', () => {
+    const f = [1, 2, 3, 4].map((m) => t('fighter', m * 10, 1)), k = [t('knight', 5, 1)];
+    const top = topPerClass([...f, ...k], 2);
+    expect(top.map((x) => x.mobs)).toEqual([30, 40, 5]);
+    expect(topPerClass([...f, ...k], 10)).toHaveLength(5);
   });
 });
 
