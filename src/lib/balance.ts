@@ -60,6 +60,37 @@ export function filterTests(tests: BalanceTest[], f: Filters): BalanceTest[] {
     (!f.mode || t.mode === f.mode));
 }
 
+/** Something changed in the game: one class (`cls`) or everything (`cls` null = general change, e.g. monsters/maps/items). */
+export interface BalanceChange {
+  id: string;
+  cls: ClassSlug | null;
+  on: string; // YYYY-MM-DD
+  patch: string;
+  note: string;
+}
+
+/** A test is out of date when a change that touches its class (or a general one) happened AFTER the day it was made. Same day counts as still valid. */
+export function isStale(t: Pick<BalanceTest, 'cls' | 'testedOn'>, changes: BalanceChange[]): boolean {
+  return changes.some((c) => c.on > t.testedOn && (c.cls === null || c.cls === t.cls));
+}
+
+/** Date of the latest change that touches this class (its own or a general one), or null. */
+export function lastChange(cls: ClassSlug, changes: BalanceChange[]): BalanceChange | null {
+  let best: BalanceChange | null = null;
+  for (const c of changes) if ((c.cls === null || c.cls === cls) && (!best || c.on > best.on)) best = c;
+  return best;
+}
+
+/** Classes that were changed but have no up-to-date test in `tests` — they need to be tested again, oldest change first. */
+export function needRetest(tests: BalanceTest[], changes: BalanceChange[], allClasses: ClassSlug[]): { cls: ClassSlug; change: BalanceChange }[] {
+  const out: { cls: ClassSlug; change: BalanceChange }[] = [];
+  for (const cls of allClasses) {
+    const ch = lastChange(cls, changes);
+    if (ch && !tests.some((t) => t.cls === cls && !isStale(t, changes))) out.push({ cls, change: ch });
+  }
+  return out.sort((a, b) => a.change.on.localeCompare(b.change.on));
+}
+
 /** Patch versions for the filter, newest first ("1.10" comes after "1.9"). */
 export const sortPatches = (patches: string[]): string[] => [...patches].sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
 

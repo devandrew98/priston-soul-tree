@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { CLASS_SLUGS } from './skilltree/types';
-import { NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, sortPatches, testRate, toggleValue, type BalanceTest } from './balance';
+import { CLASS_SLUGS, type ClassSlug } from './skilltree/types';
+import { NO_FILTERS, buildReport, isStale, needRetest, type BalanceChange, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, sortPatches, testRate, toggleValue, type BalanceTest } from './balance';
 
 let n = 0;
 const t = (cls: BalanceTest['cls'], mobs: number, seconds: number, extra: Partial<BalanceTest> = {}): BalanceTest =>
@@ -64,6 +64,29 @@ describe('report', () => {
     expect(r.ranking).toEqual([]);
     expect(r.strongest).toBeNull();
     expect(r.untested).toHaveLength(10);
+  });
+});
+
+describe('changes make tests out of date', () => {
+  const ch = (cls: ClassSlug | null, on: string): BalanceChange => ({ id: `${cls}${on}`, cls, on, patch: '', note: '' });
+  const old = t('fighter', 1, 1, { testedOn: '2026-10-20' });
+  it('a change of the class after the test makes it stale; other classes are untouched', () => {
+    expect(isStale(old, [ch('fighter', '2026-11-05')])).toBe(true);
+    expect(isStale(old, [ch('archer', '2026-11-05')])).toBe(false);
+  });
+  it('a general change makes every class stale', () => {
+    expect(isStale(old, [ch(null, '2026-11-05')])).toBe(true);
+    expect(isStale(t('knight', 1, 1, { testedOn: '2026-10-20' }), [ch(null, '2026-11-05')])).toBe(true);
+  });
+  it('a change before or on the day of the test does not matter', () => {
+    expect(isStale(old, [ch('fighter', '2026-10-20'), ch('fighter', '2026-10-01')])).toBe(false);
+  });
+  it('lists classes changed with no up-to-date test, oldest change first', () => {
+    const tests = [t('fighter', 1, 1, { testedOn: '2026-10-20' }), t('fighter', 1, 1, { testedOn: '2026-11-08' }), t('archer', 1, 1, { testedOn: '2026-10-20' })];
+    const changes = [ch('fighter', '2026-11-05'), ch('archer', '2026-11-02')];
+    expect(needRetest(tests, changes, CLASS_SLUGS).map((x) => x.cls)).toEqual(['archer']);
+    expect(needRetest(tests, [...changes, ch(null, '2026-11-20')], CLASS_SLUGS).map((x) => x.cls)).toHaveLength(CLASS_SLUGS.length);
+    expect(needRetest(tests, [], CLASS_SLUGS)).toEqual([]);
   });
 });
 

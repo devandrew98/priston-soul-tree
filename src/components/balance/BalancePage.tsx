@@ -3,10 +3,11 @@
 // Follows the site language (the flags in the top bar): Portuguese or English.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  MODES, NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, sortPatches, testRate, toggleValue,
-  type BalanceTest, type Filters, type Mode, type TestRank,
+  MODES, NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, isStale, needRetest, parseDuration, rankTests, sortPatches, testRate, toggleValue,
+  type BalanceChange, type BalanceTest, type Filters, type Mode, type TestRank,
 } from '../../lib/balance';
-import { deleteBalance, fetchBalance, saveBalance } from '../../lib/balanceApi';
+import { DEMO_CHANGES, DEMO_TESTS } from '../../lib/balanceDemo';
+import { addChange, deleteBalance, deleteChange, fetchBalance, fetchChanges, saveBalance } from '../../lib/balanceApi';
 import { useI18n } from '../../lib/i18n';
 import { BACKEND_ENABLED } from '../../lib/market/supabase';
 import { getSkillClass } from '../../lib/skilltree/classes';
@@ -30,6 +31,22 @@ const TXT = {
   testedBy: { pt: 'Quem testou', en: 'Tested by' },
   patch: { pt: 'Versão do patch', en: 'Patch version' },
   noPatchesYet: { pt: 'Nenhum teste com patch ainda. Informe o patch ao adicionar um teste e ele aparece aqui.', en: 'No test has a patch yet. Enter the patch when adding a test and it shows up here.' },
+  stale: { pt: 'desatualizado', en: 'out of date' },
+  staleHint: { pt: 'A classe foi alterada depois deste teste', en: 'The class was changed after this test' },
+  staleCount: { pt: 'desatualizados', en: 'out of date' },
+  viewTests: { pt: 'Quais testes mostrar', en: 'Which tests to show' },
+  viewCurrent: { pt: 'Só os atuais', en: 'Only up-to-date' },
+  viewAll: { pt: 'Todos (com os desatualizados)', en: 'All (with out-of-date ones)' },
+  needRetest: { pt: 'Precisam de novo teste:', en: 'Need a new test:' },
+  changedOn: { pt: 'alterada em {d}', en: 'changed on {d}' },
+  allStale: { pt: 'Todos os testes dessa seleção estão desatualizados. Refaça os testes ou escolha “Todos”.', en: 'Every test in this selection is out of date. Test again or pick “All”.' },
+  changesTitle: { pt: 'Alterações no jogo', en: 'Game changes' },
+  changesHint: { pt: 'Anote quando uma classe (ou o jogo todo) foi alterada. Os testes feitos antes da alteração ficam “desatualizados” e saem do ranking; os das outras classes continuam valendo.', en: 'Note when a class (or the whole game) was changed. Tests made before the change become “out of date” and leave the ranking; the other classes’ tests stay valid.' },
+  generalChange: { pt: 'Alteração geral (todas as classes)', en: 'General change (all classes)' },
+  changeDate: { pt: 'Data da alteração', en: 'Change date' },
+  changeNote: { pt: 'O que mudou (opcional)', en: 'What changed (optional)' },
+  changesNotReady: { pt: 'As alterações no jogo ainda não estão ativas: falta rodar o arquivo supabase/52_balance_changes.sql no Supabase.', en: 'Game changes are not active yet: supabase/52_balance_changes.sql still has to be run in Supabase.' },
+  addChange: { pt: 'Registrar alteração', en: 'Add change' },
   pickMany: { pt: 'escolha quantos quiser', en: 'pick as many as you like' },
   patchOpt: { pt: 'Versão do patch (opcional)', en: 'Patch version (optional)' },
   mixedPatches: { pt: 'patches diferentes', en: 'different patches' },
@@ -198,7 +215,7 @@ function ClassTag({ cls }: { cls: ClassSlug }) {
  * The tests grouped by class. Nothing is ever added up: every test keeps its own speed (mobs / minutes), its own bar and its own row,
  * even two tests of the same class on the same map. The classes are ordered by their fastest single test.
  */
-function Ranking({ tests, lang, more }: { tests: BalanceTest[]; lang: Lang; more: boolean }) {
+function Ranking({ tests, lang, more, staleIds }: { tests: BalanceTest[]; lang: Lang; more: boolean; staleIds: Set<string> }) {
   const T = (k: keyof typeof TXT) => TXT[k][lang];
   const rate = (n: number) => fmtRate(n, lang);
   const ranks = useMemo(() => rankTests(tests), [tests]);
@@ -252,7 +269,7 @@ function Ranking({ tests, lang, more }: { tests: BalanceTest[]; lang: Lang; more
               const p = list.indexOf(x) + 1; // position inside this table (1..number of classes)
               const overall = position.get(x.test.id) ?? 0;
               return (
-                <li key={x.test.id} className={overall === 1 && ranks.length > 1 ? 'top' : overall === ranks.length && ranks.length > 1 ? 'low' : ''} title={x.test.notes || undefined}>
+                <li key={x.test.id} className={`${overall === 1 && ranks.length > 1 ? 'top' : overall === ranks.length && ranks.length > 1 ? 'low' : ''}${staleIds.has(x.test.id) ? ' stale' : ''}`} title={x.test.notes || undefined}>
                   <span className="bal-pos">{lang === 'pt' ? `${p}º` : `#${p}`}</span>
                   <span className="bal-cls"><ClassTag cls={x.test.cls} /></span>
                   <span className="bal-mode">{modeLabel(x.test.mode, lang)}</span>
@@ -261,11 +278,11 @@ function Ranking({ tests, lang, more }: { tests: BalanceTest[]; lang: Lang; more
                   <b className="bal-rate">{rate(x.rate)}<small> {T('mobsMin')}</small></b>
                   <span className={`bal-vs ${x.vsAverage >= 0 ? 'up' : 'down'}`}>{ranks.length > 1 ? fmtPct(x.vsAverage) : '—'}</span>
                   <small className="bal-meta">
-                    {x.test.place || T('noMap')} · {x.test.tester}{x.test.patch && <> · {T('patch')} {x.test.patch}</>}
+                    {staleIds.has(x.test.id) && <b className="bal-stale-tag" title={T('staleHint')}>{T('stale')} </b>}
+                    {fmtDate(x.test.testedOn, lang)} · {x.test.place || T('noMap')} · {x.test.tester}{x.test.patch && <> · {T('patch')} {x.test.patch}</>}
                     {more && (
                       <>
                         {x.test.level !== null && <> · {T('thLevel')} {x.test.level}</>}
-                        {' · '}{fmtDate(x.test.testedOn, lang)}
                         {' · '}{x.test.mobs.toLocaleString(num)} {T('mobsIn')} {formatDuration(x.test.seconds)}
                         {x.test.notes && <> · 📝 {x.test.notes}</>}
                       </>
@@ -282,8 +299,72 @@ function Ranking({ tests, lang, more }: { tests: BalanceTest[]; lang: Lang; more
   );
 }
 
-function Report({ tests, all, filters, onFilters, lang }: { tests: BalanceTest[]; all: BalanceTest[]; filters: Filters; onFilters: (f: Filters) => void; lang: Lang }) {
+/** Changes made to the game (one class or everything): tests older than a change that touches their class count as out of date. */
+interface ChangesApi { add: (c: Omit<BalanceChange, 'id'>) => Promise<void>; remove: (id: string) => Promise<void> }
+
+function ChangesPanel({ changes, api, lang }: { changes: BalanceChange[]; api: ChangesApi; lang: Lang }) {
   const T = (k: keyof typeof TXT) => TXT[k][lang];
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const [target, setTarget] = useState<ClassSlug | ''>(''); // '' = nothing picked yet; 'all' handled by `general`
+  const [general, setGeneral] = useState(false);
+  const [on, setOn] = useState(today());
+  const [patch, setPatch] = useState('');
+  const [note, setNote] = useState('');
+  const sorted = [...changes].sort((a, b) => b.on.localeCompare(a.on));
+  const run = async (fn: () => Promise<void>) => {
+    setErr(''); setBusy(true);
+    try { await fn(); } catch (x) { setErr(errText(x, lang)); } finally { setBusy(false); }
+  };
+  const add = () => {
+    if (!general && !target) return;
+    void run(async () => { await api.add({ cls: general ? null : (target as ClassSlug), on, patch: patch.trim(), note: note.trim() }); setNote(''); });
+  };
+  return (
+    <div className="bal-changes">
+      <h3 className="bal-sub"><Fold open={open} onClick={() => setOpen(!open)}>🛠️ {T('changesTitle')} <small className="mk-muted">({changes.length})</small></Fold></h3>
+      {open && (
+        <>
+          <p className="mk-muted bal-note">{T('changesHint')}</p>
+          <div className="af-chips" role="group" aria-label={T('changesTitle')}>
+            <button type="button" className={`af-chip${general ? ' on' : ''}`} aria-pressed={general} onClick={() => setGeneral(!general)}>🌍 {T('generalChange')}</button>
+            {CLASS_SLUGS.map((c) => (
+              <button key={c} type="button" disabled={general} className={`af-chip${!general && target === c ? ' on' : ''}`} aria-pressed={!general && target === c} onClick={() => setTarget(c)}>
+                <img src={icon(c)} alt="" width={18} height={18} /> {className(c)}
+              </button>
+            ))}
+          </div>
+          <div className="bal-grid">
+            <label className="af-field"><span className="af-label">{T('changeDate')}</span><input type="date" value={on} onChange={(e) => setOn(e.target.value)} /></label>
+            <label className="af-field"><span className="af-label">{T('patch')}</span><input value={patch} maxLength={30} onChange={(e) => setPatch(e.target.value)} placeholder="1.2.3" /></label>
+            <label className="af-field"><span className="af-label">{T('changeNote')}</span><input value={note} maxLength={200} onChange={(e) => setNote(e.target.value)} /></label>
+          </div>
+          <div className="bal-actions"><button type="button" className="mk-btn primary" disabled={busy || (!general && !target)} onClick={add}>{busy ? '⏳' : T('addChange')}</button></div>
+          {err && <p className="mk-warn" role="alert">{err}</p>}
+          <ul className="bal-change-list">
+            {sorted.map((c) => (
+              <li key={c.id}>
+                <span>{fmtDate(c.on, lang)}</span>
+                <b>{c.cls ? <ClassTag cls={c.cls} /> : <>🌍 {T('generalChange')}</>}</b>
+                <small>{c.patch && <>{T('patch')} {c.patch} · </>}{c.note}</small>
+                <button type="button" className="mk-btn sm danger" disabled={busy} onClick={() => void run(() => api.remove(c.id))}>{T('del')}</button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  );
+}
+
+function Report({ tests: filteredTests, all, filters, onFilters, lang, changes, changesApi }: { tests: BalanceTest[]; all: BalanceTest[]; filters: Filters; onFilters: (f: Filters) => void; lang: Lang; changes: BalanceChange[]; changesApi: ChangesApi | null }) {
+  const T = (k: keyof typeof TXT) => TXT[k][lang];
+  const [view, setView] = useState<'current' | 'all'>('current');
+  const staleIds = useMemo(() => new Set(filteredTests.filter((t) => isStale(t, changes)).map((t) => t.id)), [filteredTests, changes]);
+  // "current" leaves out the tests a later change made out of date; "all" keeps them (marked)
+  const tests = useMemo(() => (view === 'current' ? filteredTests.filter((t) => !staleIds.has(t.id)) : filteredTests), [view, filteredTests, staleIds]);
+  const retest = useMemo(() => needRetest(filteredTests, changes, CLASS_SLUGS), [filteredTests, changes]);
   const testers = useMemo(() => distinct(all.map((t) => t.tester)), [all]);
   const patches = useMemo(() => sortPatches(distinct(all.map((t) => t.patch))), [all]);
   const dirty = filters.testers.length > 0 || filters.patches.length > 0 || filters.mode;
@@ -335,9 +416,22 @@ function Report({ tests, all, filters, onFilters, lang }: { tests: BalanceTest[]
           </div>
         )}
       </div>
+      {changesApi ? <ChangesPanel changes={changes} api={changesApi} lang={lang} /> : <p className="mk-muted bal-note">{T('changesNotReady')}</p>}
+      {changes.length > 0 && (
+        <div className="af-field bal-pick">
+          <span className="af-label">{T('viewTests')}</span>
+          <div className="af-chips" role="group" aria-label={T('viewTests')}>
+            <button type="button" className={`af-chip${view === 'current' ? ' on' : ''}`} aria-pressed={view === 'current'} onClick={() => setView('current')}>{T('viewCurrent')}</button>
+            <button type="button" className={`af-chip${view === 'all' ? ' on' : ''}`} aria-pressed={view === 'all'} onClick={() => setView('all')}>{T('viewAll')} {staleIds.size > 0 && <small>({staleIds.size} {T('staleCount')})</small>}</button>
+          </div>
+        </div>
+      )}
+      {retest.length > 0 && (
+        <p className="mk-note bal-retest">🔁 <b>{T('needRetest')}</b> {retest.map((x) => `${className(x.cls)} (${fill(T('changedOn'), { d: fmtDate(x.change.on, lang) })})`).join(', ')}</p>
+      )}
 
       {tests.length === 0 ? (
-        <p className="mk-muted">{all.length === 0 ? T('noTestsYet') : T('noMatch')}</p>
+        <p className="mk-muted">{all.length === 0 ? T('noTestsYet') : filteredTests.length > 0 ? T('allStale') : T('noMatch')}</p>
       ) : (
         <>
           <div className="bal-toolbar">
@@ -352,7 +446,7 @@ function Report({ tests, all, filters, onFilters, lang }: { tests: BalanceTest[]
                   <small className="bal-mode-count">{s.tests.length} {s.tests.length === 1 ? T('test1') : T('tests')}</small>
                 </Fold>
               </h3>
-              {!closedSections.includes(s.key) && <Ranking tests={s.tests} lang={lang} more={more} />}
+              {!closedSections.includes(s.key) && <Ranking tests={s.tests} lang={lang} more={more} staleIds={staleIds} />}
             </section>
           ))}
           <p className="mk-muted bal-note">{T('methodTests')}</p>
@@ -537,15 +631,23 @@ export function BalancePage() {
   const langRef = useRef(lang);
   langRef.current = lang;
 
+  // /balance?demo (local dev only): example tests + game changes kept in memory, to try the "out of date" rules without the database.
+  const demo = import.meta.env.DEV && new URLSearchParams(window.location.search).has('demo');
+  const [changes, setChanges] = useState<BalanceChange[]>(demo ? DEMO_CHANGES : []);
+  const [changesReady, setChangesReady] = useState(demo); // false while supabase/52 has not been run
+
   const load = useCallback(async () => {
+    if (demo) { setTests(DEMO_TESTS); return; }
     if (!BACKEND_ENABLED) { setErr(TXT.noBackend[langRef.current]); return; }
+    // the game changes are optional: without the table the page still works, with every test counted as up to date
+    fetchChanges().then((c) => { if (alive.current) { setChanges(c); setChangesReady(true); } }).catch(() => { if (alive.current) setChangesReady(false); });
     try { const r = await fetchBalance(); if (alive.current) { setTests(r); setErr(''); } }
     catch (e) {
       if (!alive.current) return;
       const m = e instanceof Error ? e.message : String((e as { message?: string })?.message ?? e);
       setErr(/balance_|schema cache|function/i.test(m) ? TXT.notReady[langRef.current] : m);
     }
-  }, []);
+  }, [demo]);
 
   useEffect(() => {
     alive.current = true;
@@ -565,6 +667,20 @@ export function BalancePage() {
   const places = useMemo(() => distinct(all.map((t) => t.place)), [all]);
   const patches = useMemo(() => sortPatches(distinct(all.map((t) => t.patch))), [all]);
 
+  const changesApi = useMemo<ChangesApi | null>(() => {
+    if (demo) {
+      return {
+        add: async (c) => { setChanges((cur) => [...cur, { ...c, id: `c${Date.now()}` }]); },
+        remove: async (id) => { setChanges((cur) => cur.filter((x) => x.id !== id)); },
+      };
+    }
+    if (!changesReady) return null;
+    return {
+      add: async (c) => { await addChange(c); setChanges(await fetchChanges()); },
+      remove: async (id) => { await deleteChange(id); setChanges(await fetchChanges()); },
+    };
+  }, [demo, changesReady]);
+
   const edit = (t: BalanceTest) => { setEditing(t); window.setTimeout(() => document.getElementById('bal-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50); };
 
   return (
@@ -576,7 +692,7 @@ export function BalancePage() {
       {!tests && !err && <Loading />}
       {tests && (
         <>
-          <Report tests={filtered} all={all} filters={filters} onFilters={setFilters} lang={lang} />
+          <Report tests={filtered} all={all} filters={filters} onFilters={setFilters} lang={lang} changes={changes} changesApi={changesApi} />
           <TestForm editing={editing} places={places} patches={patches} onSaved={() => void load()} onCancel={() => setEditing(null)} lang={lang} />
           <TestList tests={filtered} onEdit={edit} onChanged={() => void load()} lang={lang} />
         </>

@@ -1,7 +1,8 @@
 // Talks to the database for /balance. The table is closed: everything goes through the functions of supabase/46_balance.sql.
 import { supabase } from './market/supabase';
-import type { BalanceTest } from './balance';
+import type { BalanceChange, BalanceTest } from './balance';
 import { isClassSlug } from './skilltree/classes';
+import type { ClassSlug } from './skilltree/types';
 
 interface Row {
   id: string; class: string; mobs: number; seconds: number; tester: string; level: number | null;
@@ -28,6 +29,27 @@ export async function saveBalance(id: string | null, t: BalanceInput): Promise<v
     p_id: id, p_class: t.cls, p_mobs: t.mobs, p_seconds: t.seconds, p_tester: t.tester,
     p_level: t.level, p_place: t.place, p_notes: t.notes, p_on: t.testedOn, p_mode: t.mode, p_patch: t.patch,
   });
+  if (error) throw error;
+}
+
+interface ChangeRow { id: string; class: string | null; changed_on: string; patch: string; note: string }
+
+/** Game changes (supabase/52_balance_changes.sql): one class, or everything when `cls` is null. */
+export async function fetchChanges(): Promise<BalanceChange[]> {
+  const { data, error } = await sb().rpc('balance_changes_list');
+  if (error) throw error;
+  return (data as ChangeRow[])
+    .filter((r) => r.class === null || isClassSlug(r.class))
+    .map((r) => ({ id: r.id, cls: r.class === null ? null : (r.class as ClassSlug), on: r.changed_on, patch: r.patch, note: r.note }));
+}
+
+export async function addChange(c: Omit<BalanceChange, 'id'>): Promise<void> {
+  const { error } = await sb().rpc('balance_change_add', { p_class: c.cls, p_on: c.on, p_patch: c.patch, p_note: c.note });
+  if (error) throw error;
+}
+
+export async function deleteChange(id: string): Promise<void> {
+  const { error } = await sb().rpc('balance_change_delete', { p_id: id });
   if (error) throw error;
 }
 
