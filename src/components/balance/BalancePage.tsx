@@ -55,6 +55,8 @@ const TXT = {
   oneMap: { pt: 'um mapa', en: 'one map' },
   oneLevelRange: { pt: 'uma faixa de nível', en: 'a level range' },
   test1: { pt: 'teste', en: 'test' },
+  roundFirst: { pt: '🥇 Melhor teste de cada classe', en: '🥇 Best test of each class' },
+  roundN: { pt: '{n}º melhor teste de cada classe', en: '#{n} best test of each class' },
   tests: { pt: 'testes', en: 'tests' },
   tester1: { pt: 'testador', en: 'tester' },
   testers: { pt: 'testadores', en: 'testers' },
@@ -193,11 +195,17 @@ function Ranking({ tests, lang, more }: { tests: BalanceTest[]; lang: Lang; more
   const label = (x: TestRank) => `${className(x.test.cls)} (${x.test.tester})`;
   const num = lang === 'pt' ? 'pt-BR' : 'en-US';
   const position = useMemo(() => new Map(ranks.map((x, i) => [x.test.id, i + 1])), [ranks]);
-  // classes ordered by their fastest test; inside a class the tests keep the global order (fastest first)
+  // Round 1 = the best test of every class (fastest first), round 2 = the second best of every class, and so on —
+  // so a class with several tests never crowds out the other classes.
   const groups = useMemo(() => {
-    const m = new Map<ClassSlug, TestRank[]>();
-    for (const x of ranks) (m.get(x.test.cls) ?? m.set(x.test.cls, []).get(x.test.cls)!).push(x);
-    return [...m.entries()].map(([cls, list]) => ({ cls, list }));
+    const seen = new Map<ClassSlug, number>();
+    const rounds: TestRank[][] = [];
+    for (const x of ranks) {
+      const n = seen.get(x.test.cls) ?? 0;
+      seen.set(x.test.cls, n + 1);
+      (rounds[n] ??= []).push(x);
+    }
+    return rounds.map((list, i) => ({ round: i + 1, list }));
   }, [ranks]);
 
   return (
@@ -216,15 +224,22 @@ function Ranking({ tests, lang, more }: { tests: BalanceTest[]; lang: Lang; more
       {(r.mixedPlaces || r.mixedLevels || r.mixedModes) && (
         <p className="mk-note">{fill(T('mixedWarnTests'), r.mixedPlaces ? { x: T('mixedPlaces'), y: T('oneMap') } : r.mixedModes ? { x: T('mixedModes'), y: T('oneMode') } : { x: T('mixedLevels'), y: T('oneLevelRange') })}</p>
       )}
-      {groups.map(({ cls, list }) => (
-        <section key={cls} className="bal-class-group">
-          <h3 className="bal-class-h"><ClassTag cls={cls} /> <small>{list.length} {list.length === 1 ? T('test1') : T('tests')}</small></h3>
+      {groups.map(({ round, list }) => (
+        <section key={round} className="bal-class-group">
+          {groups.length > 1 && (
+            <h3 className="bal-class-h">
+              {round === 1 ? T('roundFirst') : fill(T('roundN'), { n: String(round) })}
+              <small>{list.length} {list.length === 1 ? T('test1') : T('tests')}</small>
+            </h3>
+          )}
           <ol className="bal-rank">
             {list.map((x) => {
-              const p = position.get(x.test.id) ?? 0;
+              const p = list.indexOf(x) + 1; // position inside this table (1..number of classes)
+              const overall = position.get(x.test.id) ?? 0;
               return (
-                <li key={x.test.id} className={p === 1 && ranks.length > 1 ? 'top' : p === ranks.length && ranks.length > 1 ? 'low' : ''} title={x.test.notes || undefined}>
-                  <span className="bal-pos" title={T('overallPos')}>{lang === 'pt' ? `${p}º` : `#${p}`}</span>
+                <li key={x.test.id} className={overall === 1 && ranks.length > 1 ? 'top' : overall === ranks.length && ranks.length > 1 ? 'low' : ''} title={x.test.notes || undefined}>
+                  <span className="bal-pos">{lang === 'pt' ? `${p}º` : `#${p}`}</span>
+                  <span className="bal-cls"><ClassTag cls={x.test.cls} /></span>
                   <span className="bal-mode">{modeLabel(x.test.mode, lang)}</span>
                   <span className="bal-bar" aria-hidden="true"><i style={{ width: `${Math.max(3, (x.rate / top) * 100)}%` }} /></span>
                   <span className="bal-total" title={T('totalMobs')}><b>{x.test.mobs.toLocaleString(num)}</b><small> {T('mobsWord')}</small></span>
