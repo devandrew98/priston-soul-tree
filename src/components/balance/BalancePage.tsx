@@ -41,7 +41,7 @@ const TXT = {
   patchUnchanged: { pt: 'As outras {n} não foram alteradas e entram com o melhor teste dos patches anteriores.', en: 'The other {n} were not changed and appear with their best test from earlier patches.' },
   originChanged: { pt: '🆕 alterada no {p}', en: '🆕 changed in {p}' },
   originUnchanged: { pt: '📌 não alterada no {p}', en: '📌 not changed in {p}' },
-  topHidden: { pt: 'Mostrando os {n} melhores testes de cada classe ({h} teste(s) mais lento(s) não aparece(m) aqui; continuam em “Testes registrados”).', en: 'Showing the {n} best tests of each class ({h} slower test(s) not listed here; still in “Recorded tests”).' },
+  topHidden: { pt: 'Mostrando só o melhor teste de cada classe. Os outros {h} teste(s) não aparece(m) aqui e continuam em “Testes registrados”.', en: 'Showing only the best test of each class. The other {h} test(s) are not listed here and stay in “Recorded tests”.' },
   viewCurrent: { pt: 'Só os atuais', en: 'Only up-to-date' },
   viewAll: { pt: 'Todos (com os desatualizados)', en: 'All (with out-of-date ones)' },
   needRetest: { pt: 'Precisam de novo teste:', en: 'Need a new test:' },
@@ -235,7 +235,7 @@ function ClassTag({ cls }: { cls: ClassSlug }) {
  * The tests grouped by class. Nothing is ever added up: every test keeps its own speed (mobs / minutes), its own bar and its own row,
  * even two tests of the same class on the same map. The classes are ordered by their fastest single test.
  */
-const TOP_PER_CLASS = 10; // the ranking lists only the 10 best tests of each class
+const TOP_PER_CLASS = 1; // the ranking lists only the best test of each class (10 classes = 10 rows); the other tests stay in "Recorded tests"
 
 function Ranking({ tests: allTests, lang, more, staleIds, origins, patch }: { tests: BalanceTest[]; lang: Lang; more: boolean; staleIds: Set<string>; origins: Map<string, 'changed' | 'unchanged'>; patch: string | null }) {
   const T = (k: keyof typeof TXT) => TXT[k][lang];
@@ -496,7 +496,7 @@ function Report({ tests: filteredTests, all, filters, onFilters, lang, changes, 
                 <Fold open={!closedSections.includes(s.key)} onClick={() => setClosedSections((c) => (c.includes(s.key) ? c.filter((k) => k !== s.key) : [...c, s.key]))}>
                   <span className="bal-mode-name">{s.mode === 'aoe' ? '⚔️' : s.mode === 'single' ? '🎯' : '📋'} {s.mode ? modeLabel(s.mode, lang) : T('noModeSection')}</span>
                   {s.mode && <small>{s.mode === 'aoe' ? T('modeHintAoe') : T('modeHintSingle')}</small>}
-                  <small className="bal-mode-count">{s.tests.length} {s.tests.length === 1 ? T('test1') : T('tests')}</small>
+                  <small className="bal-mode-count">{topPerClass(s.tests, TOP_PER_CLASS).length} {topPerClass(s.tests, TOP_PER_CLASS).length === 1 ? T('test1') : T('tests')}</small>
                 </Fold>
               </h3>
               {!closedSections.includes(s.key) && <Ranking tests={s.tests} lang={lang} more={more} staleIds={staleIds} origins={origins} patch={lastPatch} />}
