@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { CLASS_SLUGS } from './skilltree/types';
-import { NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, testRate, type BalanceTest } from './balance';
+import { NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, sortPatches, testRate, toggleValue, type BalanceTest } from './balance';
 
 let n = 0;
 const t = (cls: BalanceTest['cls'], mobs: number, seconds: number, extra: Partial<BalanceTest> = {}): BalanceTest =>
-  ({ id: `t${++n}`, cls, mobs, seconds, tester: 'Ana', level: 100, place: 'Oasis', notes: '', testedOn: '2026-11-17', createdAt: '', mode: 'aoe', ...extra });
+  ({ id: `t${++n}`, cls, mobs, seconds, tester: 'Ana', level: 100, place: 'Oasis', notes: '', patch: '', testedOn: '2026-11-17', createdAt: '', mode: 'aoe', ...extra });
 
 describe('speed', () => {
   it('is mobs per minute', () => {
@@ -68,10 +68,22 @@ describe('report', () => {
 });
 
 describe('filters', () => {
-  const all = [t('fighter', 1, 1, { place: 'Oasis', tester: 'Ana', level: 100 }), t('archer', 1, 1, { place: 'Ice Mine', tester: 'Beto', level: 80 }), t('knight', 1, 1, { place: 'oasis', tester: 'ana', level: null })];
-  it('by place and tester, ignoring case', () => {
-    expect(filterTests(all, { ...NO_FILTERS, place: 'OASIS' })).toHaveLength(2);
-    expect(filterTests(all, { ...NO_FILTERS, tester: 'beto' })).toHaveLength(1);
+  const all = [t('fighter', 1, 1, { patch: '1.0', tester: 'Ana' }), t('archer', 1, 1, { patch: '1.1', tester: 'Beto' }), t('knight', 1, 1, { patch: '1.1', tester: 'ana' })];
+  it('by tester and patch, ignoring case', () => {
+    expect(filterTests(all, { ...NO_FILTERS, testers: ['beto'] })).toHaveLength(1);
+    expect(filterTests(all, { ...NO_FILTERS, patches: ['1.1'] })).toHaveLength(2);
+  });
+  it('several testers / patches can be picked at once', () => {
+    expect(filterTests(all, { ...NO_FILTERS, testers: ['Ana', 'Beto'] })).toHaveLength(3);
+    expect(filterTests(all, { ...NO_FILTERS, patches: ['1.0', '1.1'] })).toHaveLength(3);
+    expect(filterTests(all, { ...NO_FILTERS, testers: ['Ana', 'Beto'], patches: ['1.1'] }).map((x) => x.cls)).toEqual(['archer', 'knight']);
+  });
+  it('tester and patch together cross the two', () => {
+    expect(filterTests(all, { ...NO_FILTERS, testers: ['ANA'], patches: ['1.1'] }).map((x) => x.cls)).toEqual(['knight']);
+  });
+  it('toggleValue adds and removes', () => {
+    expect(toggleValue([], 'Ana')).toEqual(['Ana']);
+    expect(toggleValue(['Ana', 'Beto'], 'ana')).toEqual(['Beto']);
   });
   it('by mode (AoE or 1v1)', () => {
     const m = [t('fighter', 1, 1, { mode: 'aoe' }), t('archer', 1, 1, { mode: 'single' }), t('knight', 1, 1, { mode: null })];
@@ -79,11 +91,11 @@ describe('filters', () => {
     expect(filterTests(m, { ...NO_FILTERS, mode: 'single' }).map((x) => x.cls)).toEqual(['archer']);
     expect(filterTests(m, NO_FILTERS)).toHaveLength(3);
   });
-  it('by level range (tests with no level are left out when a range is set)', () => {
-    expect(filterTests(all, { ...NO_FILTERS, minLevel: 90 })).toHaveLength(1);
-    expect(filterTests(all, { ...NO_FILTERS, maxLevel: 90 })).toHaveLength(1);
-    expect(filterTests(all, { ...NO_FILTERS, minLevel: 1, maxLevel: 200 })).toHaveLength(2);
+  it('no filters keeps everything', () => {
     expect(filterTests(all, NO_FILTERS)).toHaveLength(3);
+  });
+  it('sorts patch versions numerically, newest first', () => {
+    expect(sortPatches(['1.9', '1.10', '1.2', '2.0'])).toEqual(['2.0', '1.10', '1.9', '1.2']);
   });
   it('distinct keeps one spelling per name, sorted', () => {
     expect(distinct(['Oasis', 'oasis ', 'Ice Mine', ''])).toEqual(['Ice Mine', 'Oasis']);

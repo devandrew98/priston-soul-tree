@@ -5,13 +5,13 @@ import { isClassSlug } from './skilltree/classes';
 
 interface Row {
   id: string; class: string; mobs: number; seconds: number; tester: string; level: number | null;
-  place: string; notes: string; tested_on: string; created_at: string; mode: string | null;
+  place: string; notes: string; tested_on: string; created_at: string; mode: string | null; patch: string | null;
 }
 
 function sb() { if (!supabase) throw new Error('backend_not_configured'); return supabase; }
 
 const toTest = (r: Row): BalanceTest | null => isClassSlug(r.class)
-  ? { id: r.id, cls: r.class, mobs: r.mobs, seconds: r.seconds, tester: r.tester, level: r.level, place: r.place, notes: r.notes, testedOn: r.tested_on, createdAt: r.created_at, mode: r.mode === 'aoe' || r.mode === 'single' ? r.mode : null }
+  ? { id: r.id, cls: r.class, mobs: r.mobs, seconds: r.seconds, tester: r.tester, level: r.level, place: r.place, notes: r.notes, patch: r.patch ?? '', testedOn: r.tested_on, createdAt: r.created_at, mode: r.mode === 'aoe' || r.mode === 'single' ? r.mode : null }
   : null;
 
 export async function fetchBalance(): Promise<BalanceTest[]> {
@@ -26,7 +26,7 @@ export type BalanceInput = Omit<BalanceTest, 'id' | 'createdAt'>;
 export async function saveBalance(id: string | null, t: BalanceInput): Promise<void> {
   const { error } = await sb().rpc('balance_save', {
     p_id: id, p_class: t.cls, p_mobs: t.mobs, p_seconds: t.seconds, p_tester: t.tester,
-    p_level: t.level, p_place: t.place, p_notes: t.notes, p_on: t.testedOn, p_mode: t.mode,
+    p_level: t.level, p_place: t.place, p_notes: t.notes, p_on: t.testedOn, p_mode: t.mode, p_patch: t.patch,
   });
   if (error) throw error;
 }

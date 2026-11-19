@@ -12,6 +12,8 @@ export interface BalanceTest {
   level: number | null;
   place: string;
   notes: string;
+  /** Game patch/version the test was done on (free text, e.g. "1.2.3"); '' for tests written before this existed. */
+  patch: string;
   testedOn: string; // YYYY-MM-DD
   /** aoe = several mobs at once, single = one target (1v1); null for tests written before the mode existed. */
   mode: Mode | null;
@@ -21,8 +23,15 @@ export interface BalanceTest {
 export type Mode = 'aoe' | 'single';
 export const MODES: Mode[] = ['aoe', 'single'];
 
-export interface Filters { place: string; tester: string; minLevel: number | null; maxLevel: number | null; mode: Mode | '' }
-export const NO_FILTERS: Filters = { place: '', tester: '', minLevel: null, maxLevel: null, mode: '' };
+/** testers / patches: several can be picked at once (empty = everyone / every patch). */
+export interface Filters { testers: string[]; patches: string[]; mode: Mode | '' }
+export const NO_FILTERS: Filters = { testers: [], patches: [], mode: '' };
+
+/** Adds the value to the picked ones, or removes it when it is already there (case-insensitive). */
+export function toggleValue(list: string[], v: string): string[] {
+  const k = v.trim().toLowerCase();
+  return list.some((x) => x.trim().toLowerCase() === k) ? list.filter((x) => x.trim().toLowerCase() !== k) : [...list, v];
+}
 
 /** Mobs killed per minute in one test. */
 export const testRate = (t: Pick<BalanceTest, 'mobs' | 'seconds'>): number => (t.mobs / t.seconds) * 60;
@@ -42,15 +51,17 @@ export interface ClassStat {
 }
 
 export function filterTests(tests: BalanceTest[], f: Filters): BalanceTest[] {
-  const place = f.place.trim().toLowerCase();
-  const tester = f.tester.trim().toLowerCase();
+  const testers = new Set(f.testers.map((x) => x.trim().toLowerCase()));
+  const patches = new Set(f.patches.map((x) => x.trim().toLowerCase()));
+  // within a filter any picked value matches; the filters together must all match, so testers × patches × mode cross each other
   return tests.filter((t) =>
-    (!place || t.place.trim().toLowerCase() === place) &&
-    (!tester || t.tester.trim().toLowerCase() === tester) &&
-    (!f.mode || t.mode === f.mode) &&
-    (f.minLevel === null || (t.level !== null && t.level >= f.minLevel)) &&
-    (f.maxLevel === null || (t.level !== null && t.level <= f.maxLevel)));
+    (testers.size === 0 || testers.has(t.tester.trim().toLowerCase())) &&
+    (patches.size === 0 || patches.has(t.patch.trim().toLowerCase())) &&
+    (!f.mode || t.mode === f.mode));
 }
+
+/** Patch versions for the filter, newest first ("1.10" comes after "1.9"). */
+export const sortPatches = (patches: string[]): string[] => [...patches].sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
 
 export interface Report {
   /** Classes that have at least one test, fastest first. */
@@ -66,6 +77,8 @@ export interface Report {
   /** Several different places in the selection: the comparison may be unfair. */
   mixedPlaces: boolean;
   mixedLevels: boolean;
+  /** Tests from different patches (or with and without a patch) together. */
+  mixedPatches: boolean;
   /** AoE and 1v1 tests together (or tests with no mode next to tests with one): not a fair comparison. */
   mixedModes: boolean;
 }
@@ -97,6 +110,7 @@ export function buildReport(tests: BalanceTest[], allClasses: ClassSlug[]): Repo
     totalTests: tests.length,
     mixedPlaces: places.size > 1,
     mixedLevels: levels.size > 1,
+    mixedPatches: new Set(tests.map((t) => t.patch.trim().toLowerCase())).size > 1,
     mixedModes: new Set(tests.map((t) => t.mode)).size > 1,
   };
 }

@@ -3,7 +3,7 @@
 // Follows the site language (the flags in the top bar): Portuguese or English.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  MODES, NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, testRate,
+  MODES, NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, sortPatches, testRate, toggleValue,
   type BalanceTest, type Filters, type Mode, type TestRank,
 } from '../../lib/balance';
 import { deleteBalance, fetchBalance, saveBalance } from '../../lib/balanceApi';
@@ -28,10 +28,12 @@ const TXT = {
   report: { pt: 'Relatório', en: 'Report' },
   map: { pt: 'Mapa', en: 'Map' },
   testedBy: { pt: 'Quem testou', en: 'Tested by' },
-  levelFrom: { pt: 'Nível de', en: 'Level from' },
-  levelTo: { pt: 'até', en: 'to' },
-  min: { pt: 'mín.', en: 'min.' },
-  max: { pt: 'máx.', en: 'max.' },
+  patch: { pt: 'Versão do patch', en: 'Patch version' },
+  noPatchesYet: { pt: 'Nenhum teste com patch ainda. Informe o patch ao adicionar um teste e ele aparece aqui.', en: 'No test has a patch yet. Enter the patch when adding a test and it shows up here.' },
+  pickMany: { pt: 'escolha quantos quiser', en: 'pick as many as you like' },
+  patchOpt: { pt: 'Versão do patch (opcional)', en: 'Patch version (optional)' },
+  mixedPatches: { pt: 'patches diferentes', en: 'different patches' },
+  onePatch: { pt: 'um patch', en: 'one patch' },
   all: { pt: 'Todos', en: 'All' },
   allF: { pt: 'Todas', en: 'All' },
   clearFilters: { pt: 'Limpar filtros', en: 'Clear filters' },
@@ -92,7 +94,7 @@ const TXT = {
   avgOfTests: { pt: 'Média dos testes:', en: 'Average of the tests:' },
   oneTest: { pt: 'Só há um teste:', en: 'There is only one test:' },
   addMoreTests: { pt: 'Adicione mais testes para comparar.', en: 'Add more tests to compare.' },
-  mixedWarnTests: { pt: '⚠ Há testes de {x} misturados. Veja o modo e o mapa em cada linha, ou filtre por {y}.', en: '⚠ The selection mixes tests from {x}. Check the mode and the map on each row, or filter by {y}.' },
+  mixedWarnTests: { pt: '⚠ Há testes de {x} misturados. Veja o modo e o patch em cada linha, ou filtre por {y}.', en: '⚠ The selection mixes tests from {x}. Check the mode and the patch on each row, or filter by {y}.' },
   methodTests: {
     pt: 'Cada teste é calculado sozinho (mobs ÷ minutos) e nunca é somado a outro, mesmo da mesma classe e do mesmo mapa. As classes aparecem na ordem do teste mais rápido de cada uma, e o número ao lado de cada teste é a posição dele entre todos.',
     en: 'Each test is calculated on its own (mobs ÷ minutes) and is never added to another one, even for the same class on the same map. The classes appear in the order of their fastest test, and the number next to each test is its position among all of them.',
@@ -135,6 +137,7 @@ const DB_ERRORS: [RegExp, L][] = [
   [/informe o nome de quem testou/i, { pt: 'Informe o nome de quem testou (até 40 letras).', en: 'Enter the name of who tested (up to 40 characters).' }],
   [/nível inválido/i, { pt: 'Nível inválido.', en: 'Invalid level.' }],
   [/modo inválido/i, { pt: 'Modo inválido.', en: 'Invalid mode.' }],
+  [/patch inválido/i, { pt: 'Patch inválido (até 30 caracteres).', en: 'Invalid patch (up to 30 characters).' }],
   [/texto muito longo/i, { pt: 'Texto muito longo.', en: 'Text too long.' }],
   [/data inválida/i, { pt: 'Data inválida.', en: 'Invalid date.' }],
   [/muitos registros/i, { pt: 'Muitos registros ao mesmo tempo, tente de novo em instantes.', en: 'Too many records at once, try again in a moment.' }],
@@ -171,8 +174,20 @@ function useNoIndex() {
 const readName = () => { try { return localStorage.getItem(NAME_KEY) ?? ''; } catch { return ''; } };
 const saveName = (v: string) => { try { localStorage.setItem(NAME_KEY, v); } catch { /* ignore */ } };
 
-interface Form { tester: string; cls: ClassSlug | ''; mode: Mode | ''; mobs: string; time: string; place: string; level: string; on: string; notes: string }
-const emptyForm = (): Form => ({ tester: readName(), cls: '', mode: '', mobs: '', time: '', place: '', level: '', on: today(), notes: '' });
+interface Form { tester: string; cls: ClassSlug | ''; mode: Mode | ''; mobs: string; time: string; place: string; level: string; on: string; notes: string; patch: string }
+const PATCH_KEY = 'pz-balance-patch';
+const readPatch = () => { try { return localStorage.getItem(PATCH_KEY) ?? ''; } catch { return ''; } };
+const savePatch = (v: string) => { try { localStorage.setItem(PATCH_KEY, v); } catch { /* ignore */ } };
+const emptyForm = (): Form => ({ tester: readName(), cls: '', mode: '', mobs: '', time: '', place: '', level: '', on: today(), notes: '', patch: readPatch() });
+
+/** A heading that folds/unfolds its block when clicked. */
+function Fold({ open, onClick, children }: { open: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button type="button" className="bal-fold" aria-expanded={open} onClick={onClick}>
+      <span className="bal-chev" aria-hidden="true">{open ? '▾' : '▸'}</span>{children}
+    </button>
+  );
+}
 
 function ClassTag({ cls }: { cls: ClassSlug }) {
   return <span className="bal-class"><img src={icon(cls)} alt="" width={22} height={22} /> {className(cls)}</span>;
@@ -221,8 +236,8 @@ function Ranking({ tests, lang, more }: { tests: BalanceTest[]; lang: Lang; more
           </>
         )}
       </p>
-      {(r.mixedPlaces || r.mixedLevels || r.mixedModes) && (
-        <p className="mk-note">{fill(T('mixedWarnTests'), r.mixedPlaces ? { x: T('mixedPlaces'), y: T('oneMap') } : r.mixedModes ? { x: T('mixedModes'), y: T('oneMode') } : { x: T('mixedLevels'), y: T('oneLevelRange') })}</p>
+      {(r.mixedPatches || r.mixedModes) && (
+        <p className="mk-note">{fill(T('mixedWarnTests'), r.mixedModes ? { x: T('mixedModes'), y: T('oneMode') } : { x: T('mixedPatches'), y: T('onePatch') })}</p>
       )}
       {groups.map(({ round, list }) => (
         <section key={round} className="bal-class-group">
@@ -246,7 +261,7 @@ function Ranking({ tests, lang, more }: { tests: BalanceTest[]; lang: Lang; more
                   <b className="bal-rate">{rate(x.rate)}<small> {T('mobsMin')}</small></b>
                   <span className={`bal-vs ${x.vsAverage >= 0 ? 'up' : 'down'}`}>{ranks.length > 1 ? fmtPct(x.vsAverage) : '—'}</span>
                   <small className="bal-meta">
-                    {x.test.place || T('noMap')} · {x.test.tester}
+                    {x.test.place || T('noMap')} · {x.test.tester}{x.test.patch && <> · {T('patch')} {x.test.patch}</>}
                     {more && (
                       <>
                         {x.test.level !== null && <> · {T('thLevel')} {x.test.level}</>}
@@ -269,10 +284,10 @@ function Ranking({ tests, lang, more }: { tests: BalanceTest[]; lang: Lang; more
 
 function Report({ tests, all, filters, onFilters, lang }: { tests: BalanceTest[]; all: BalanceTest[]; filters: Filters; onFilters: (f: Filters) => void; lang: Lang }) {
   const T = (k: keyof typeof TXT) => TXT[k][lang];
-  const places = useMemo(() => distinct(all.map((t) => t.place)), [all]);
   const testers = useMemo(() => distinct(all.map((t) => t.tester)), [all]);
-  const dirty = filters.place || filters.tester || filters.mode || filters.minLevel !== null || filters.maxLevel !== null;
-  const num = (v: string) => (v.trim() === '' ? null : Math.max(0, Math.floor(Number(v))) || null);
+  const patches = useMemo(() => sortPatches(distinct(all.map((t) => t.patch))), [all]);
+  const dirty = filters.testers.length > 0 || filters.patches.length > 0 || filters.mode;
+  const picked = (list: string[], v: string) => list.some((x) => x.trim().toLowerCase() === v.toLowerCase());
   const [more, setMore] = useState(false);
   // AoE and 1v1 are different kinds of test, so each one gets its own statistics (summary + ranking); older tests with no mode go last.
   const sections = useMemo(() => ([
@@ -281,27 +296,44 @@ function Report({ tests, all, filters, onFilters, lang }: { tests: BalanceTest[]
     { key: 'none', mode: null as Mode | null, tests: tests.filter((t) => t.mode === null) },
   ].filter((s) => s.tests.length > 0)), [tests]);
 
+  const [open, setOpen] = useState(true);
+  const [closedSections, setClosedSections] = useState<string[]>([]);
+
   return (
     <section className="sr-card bal-report">
-      <h2 className="mk-h2">📊 {T('report')}</h2>
+      <h2 className="mk-h2"><Fold open={open} onClick={() => setOpen(!open)}>📊 {T('report')}</Fold></h2>
+      {open && (<>
       <div className="bal-filters">
-        <label className="af-field"><span className="af-label">{T('map')}</span>
-          <select value={filters.place} onChange={(e) => onFilters({ ...filters, place: e.target.value })}>
-            <option value="">{T('all')}</option>{places.map((p) => <option key={p} value={p}>{p}</option>)}
-          </select></label>
-        <label className="af-field"><span className="af-label">{T('testedBy')}</span>
-          <select value={filters.tester} onChange={(e) => onFilters({ ...filters, tester: e.target.value })}>
-            <option value="">{T('all')}</option>{testers.map((p) => <option key={p} value={p}>{p}</option>)}
-          </select></label>
         <label className="af-field"><span className="af-label">{T('mode')}</span>
           <select value={filters.mode} onChange={(e) => onFilters({ ...filters, mode: e.target.value as Mode | '' })}>
             <option value="">{T('all')}</option>{MODES.map((m) => <option key={m} value={m}>{modeLabel(m, lang)}</option>)}
           </select></label>
-        <label className="af-field bal-narrow"><span className="af-label">{T('levelFrom')}</span>
-          <input inputMode="numeric" value={filters.minLevel ?? ''} placeholder={T('min')} onChange={(e) => onFilters({ ...filters, minLevel: num(e.target.value) })} /></label>
-        <label className="af-field bal-narrow"><span className="af-label">{T('levelTo')}</span>
-          <input inputMode="numeric" value={filters.maxLevel ?? ''} placeholder={T('max')} onChange={(e) => onFilters({ ...filters, maxLevel: num(e.target.value) })} /></label>
         {dirty && <button type="button" className="mk-btn sm" onClick={() => onFilters(NO_FILTERS)}>{T('clearFilters')}</button>}
+      </div>
+      {/* pick as many as you want: the report shows only the tests that match a picked person AND a picked patch */}
+      {testers.length > 0 && (
+        <div className="af-field bal-pick">
+          <span className="af-label">{T('testedBy')} <small>({T('pickMany')})</small></span>
+          <div className="af-chips" role="group" aria-label={T('testedBy')}>
+            <button type="button" className={`af-chip${filters.testers.length === 0 ? ' on' : ''}`} onClick={() => onFilters({ ...filters, testers: [] })}>{T('allF')}</button>
+            {testers.map((p) => (
+              <button key={p} type="button" className={`af-chip${picked(filters.testers, p) ? ' on' : ''}`} aria-pressed={picked(filters.testers, p)} onClick={() => onFilters({ ...filters, testers: toggleValue(filters.testers, p) })}>{p}</button>
+            ))}
+          </div>
+        </div>
+      )}
+      <div className="af-field bal-pick">
+        <span className="af-label">{T('patch')} <small>({T('pickMany')})</small></span>
+        {patches.length === 0 ? (
+          <p className="mk-muted bal-note">{T('noPatchesYet')}</p>
+        ) : (
+          <div className="af-chips" role="group" aria-label={T('patch')}>
+            <button type="button" className={`af-chip${filters.patches.length === 0 ? ' on' : ''}`} onClick={() => onFilters({ ...filters, patches: [] })}>{T('all')}</button>
+            {patches.map((p) => (
+              <button key={p} type="button" className={`af-chip${picked(filters.patches, p) ? ' on' : ''}`} aria-pressed={picked(filters.patches, p)} onClick={() => onFilters({ ...filters, patches: toggleValue(filters.patches, p) })}>{p}</button>
+            ))}
+          </div>
+        )}
       </div>
 
       {tests.length === 0 ? (
@@ -314,31 +346,36 @@ function Report({ tests, all, filters, onFilters, lang }: { tests: BalanceTest[]
           {sections.map((s) => (
             <section key={s.key} className={`bal-mode-section ${s.key}`}>
               <h3 className="bal-mode-h">
-                <span className="bal-mode-name">{s.mode === 'aoe' ? '⚔️' : s.mode === 'single' ? '🎯' : '📋'} {s.mode ? modeLabel(s.mode, lang) : T('noModeSection')}</span>
-                {s.mode && <small>{s.mode === 'aoe' ? T('modeHintAoe') : T('modeHintSingle')}</small>}
-                <small className="bal-mode-count">{s.tests.length} {s.tests.length === 1 ? T('test1') : T('tests')}</small>
+                <Fold open={!closedSections.includes(s.key)} onClick={() => setClosedSections((c) => (c.includes(s.key) ? c.filter((k) => k !== s.key) : [...c, s.key]))}>
+                  <span className="bal-mode-name">{s.mode === 'aoe' ? '⚔️' : s.mode === 'single' ? '🎯' : '📋'} {s.mode ? modeLabel(s.mode, lang) : T('noModeSection')}</span>
+                  {s.mode && <small>{s.mode === 'aoe' ? T('modeHintAoe') : T('modeHintSingle')}</small>}
+                  <small className="bal-mode-count">{s.tests.length} {s.tests.length === 1 ? T('test1') : T('tests')}</small>
+                </Fold>
               </h3>
-              <Ranking tests={s.tests} lang={lang} more={more} />
+              {!closedSections.includes(s.key) && <Ranking tests={s.tests} lang={lang} more={more} />}
             </section>
           ))}
           <p className="mk-muted bal-note">{T('methodTests')}</p>
         </>
       )}
+      </>)}
     </section>
   );
 }
 
 // ---------- form ----------
-function TestForm({ editing, places, onSaved, onCancel, lang }: { editing: BalanceTest | null; places: string[]; onSaved: () => void; onCancel: () => void; lang: Lang }) {
+function TestForm({ editing, places, patches, onSaved, onCancel, lang }: { editing: BalanceTest | null; places: string[]; patches: string[]; onSaved: () => void; onCancel: () => void; lang: Lang }) {
   const T = (k: keyof typeof TXT) => TXT[k][lang];
   const [f, setF] = useState<Form>(emptyForm);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [ok, setOk] = useState('');
+  const [open, setOpen] = useState(false); // folded until the visitor opens it (or starts editing a test)
 
   useEffect(() => {
     if (editing) {
-      setF({ tester: editing.tester, cls: editing.cls, mode: editing.mode ?? '', mobs: String(editing.mobs), time: formatDuration(editing.seconds), place: editing.place, level: editing.level === null ? '' : String(editing.level), on: editing.testedOn, notes: editing.notes });
+      setOpen(true);
+      setF({ tester: editing.tester, cls: editing.cls, mode: editing.mode ?? '', mobs: String(editing.mobs), time: formatDuration(editing.seconds), place: editing.place, level: editing.level === null ? '' : String(editing.level), on: editing.testedOn, notes: editing.notes, patch: editing.patch });
       setErr(''); setOk('');
     }
   }, [editing]);
@@ -358,8 +395,9 @@ function TestForm({ editing, places, onSaved, onCancel, lang }: { editing: Balan
     if (level !== null && (!Number.isInteger(level) || level < 1 || level > 300)) return setErr(T('vLevel'));
     setBusy(true);
     try {
-      await saveBalance(editing?.id ?? null, { cls: f.cls, mode: f.mode || null, mobs, seconds, tester: f.tester.trim(), level, place: f.place.trim(), notes: f.notes.trim(), testedOn: f.on || today() });
+      await saveBalance(editing?.id ?? null, { cls: f.cls, mode: f.mode || null, mobs, seconds, tester: f.tester.trim(), level, place: f.place.trim(), notes: f.notes.trim(), patch: f.patch.trim(), testedOn: f.on || today() });
       saveName(f.tester.trim());
+      savePatch(f.patch.trim());
       if (editing) { onSaved(); setF(emptyForm()); onCancel(); setOk(T('savedOk')); }
       else { setOk(T('added')); set({ mobs: '', time: '', notes: '' }); onSaved(); }
     } catch (x) {
@@ -369,8 +407,8 @@ function TestForm({ editing, places, onSaved, onCancel, lang }: { editing: Balan
 
   return (
     <section className="sr-card bal-form" id="bal-form">
-      <h2 className="mk-h2">{editing ? `✏️ ${T('editTest')}` : `➕ ${T('addTest')}`}</h2>
-      <form onSubmit={submit}>
+      <h2 className="mk-h2"><Fold open={open} onClick={() => setOpen(!open)}>{editing ? `✏️ ${T('editTest')}` : `➕ ${T('addTest')}`}</Fold></h2>
+      {open && <form onSubmit={submit}>
         <div className="af-field">
           <span className="af-label">{T('cls')}</span>
           <div className="af-chips" role="group" aria-label={T('cls')}>
@@ -403,6 +441,9 @@ function TestForm({ editing, places, onSaved, onCancel, lang }: { editing: Balan
             <datalist id="bal-places">{places.map((p) => <option key={p} value={p} />)}</datalist></label>
           <label className="af-field"><span className="af-label">{T('levelOpt')}</span>
             <input inputMode="numeric" value={f.level} onChange={(e) => set({ level: e.target.value.replace(/\D/g, '') })} placeholder="120" /></label>
+          <label className="af-field"><span className="af-label">{T('patchOpt')}</span>
+            <input list="bal-patches" value={f.patch} maxLength={30} onChange={(e) => set({ patch: e.target.value })} placeholder="1.2.3" />
+            <datalist id="bal-patches">{patches.map((p) => <option key={p} value={p} />)}</datalist></label>
           <label className="af-field"><span className="af-label">{T('testDate')}</span>
             <input type="date" value={f.on} onChange={(e) => set({ on: e.target.value })} /></label>
         </div>
@@ -414,7 +455,7 @@ function TestForm({ editing, places, onSaved, onCancel, lang }: { editing: Balan
           <button type="submit" className="mk-btn primary" disabled={busy}>{busy ? '⏳' : editing ? T('saveChanges') : T('addTest')}</button>
           {editing && <button type="button" className="mk-btn" onClick={() => { onCancel(); setF(emptyForm()); }}>{T('cancel')}</button>}
         </div>
-      </form>
+      </form>}
     </section>
   );
 }
@@ -425,6 +466,7 @@ function TestList({ tests, onEdit, onChanged, lang }: { tests: BalanceTest[]; on
   const [cls, setCls] = useState<ClassSlug | ''>('');
   const [ask, setAsk] = useState<string | null>(null);
   const [err, setErr] = useState('');
+  const [open, setOpen] = useState(false);
   const shown = cls ? tests.filter((t) => t.cls === cls) : tests;
 
   const remove = async (id: string) => {
@@ -434,7 +476,8 @@ function TestList({ tests, onEdit, onChanged, lang }: { tests: BalanceTest[]; on
 
   return (
     <section className="sr-card bal-list">
-      <h2 className="mk-h2">🗒️ {T('recorded')} <small className="mk-muted">({shown.length})</small></h2>
+      <h2 className="mk-h2"><Fold open={open} onClick={() => setOpen(!open)}>🗒️ {T('recorded')} <small className="mk-muted">({shown.length})</small></Fold></h2>
+      {open && (<>
       <div className="af-chips" role="group" aria-label={T('filterByClass')}>
         <button type="button" className={`af-chip${cls === '' ? ' on' : ''}`} onClick={() => setCls('')}>{T('allF')}</button>
         {CLASS_SLUGS.map((c) => <button key={c} type="button" className={`af-chip${cls === c ? ' on' : ''}`} onClick={() => setCls(c)}><img src={icon(c)} alt="" width={18} height={18} /> {className(c)}</button>)}
@@ -443,7 +486,7 @@ function TestList({ tests, onEdit, onChanged, lang }: { tests: BalanceTest[]; on
       {shown.length === 0 ? <p className="mk-muted">{T('noneHere')}</p> : (
         <div className="bal-table-wrap">
           <table className="af-table bal-table">
-            <thead><tr><th>{T('thDate')}</th><th>{T('cls')}</th><th>{T('mode')}</th><th>{T('thMobs')}</th><th>{T('thTime')}</th><th>{T('mobsMin')}</th><th>{T('testedBy')}</th><th>{T('map')}</th><th>{T('thLevel')}</th><th /></tr></thead>
+            <thead><tr><th>{T('thDate')}</th><th>{T('cls')}</th><th>{T('mode')}</th><th>{T('thMobs')}</th><th>{T('thTime')}</th><th>{T('mobsMin')}</th><th>{T('testedBy')}</th><th>{T('patch')}</th><th>{T('map')}</th><th>{T('thLevel')}</th><th /></tr></thead>
             <tbody>
               {shown.map((t) => (
                 <tr key={t.id}>
@@ -454,6 +497,7 @@ function TestList({ tests, onEdit, onChanged, lang }: { tests: BalanceTest[]; on
                   <td>{formatDuration(t.seconds)}</td>
                   <td><b>{fmtRate(testRate(t), lang)}</b></td>
                   <td>{t.tester}</td>
+                  <td>{t.patch || '—'}</td>
                   <td>{t.place || '—'}{t.notes && <small className="bal-notes" title={t.notes}>📝 {t.notes}</small>}</td>
                   <td>{t.level ?? '—'}</td>
                   <td className="bal-row-actions">
@@ -476,6 +520,7 @@ function TestList({ tests, onEdit, onChanged, lang }: { tests: BalanceTest[]; on
           </table>
         </div>
       )}
+      </>)}
     </section>
   );
 }
@@ -518,6 +563,7 @@ export function BalancePage() {
   const all = tests ?? [];
   const filtered = useMemo(() => filterTests(all, filters), [all, filters]);
   const places = useMemo(() => distinct(all.map((t) => t.place)), [all]);
+  const patches = useMemo(() => sortPatches(distinct(all.map((t) => t.patch))), [all]);
 
   const edit = (t: BalanceTest) => { setEditing(t); window.setTimeout(() => document.getElementById('bal-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50); };
 
@@ -531,7 +577,7 @@ export function BalancePage() {
       {tests && (
         <>
           <Report tests={filtered} all={all} filters={filters} onFilters={setFilters} lang={lang} />
-          <TestForm editing={editing} places={places} onSaved={() => void load()} onCancel={() => setEditing(null)} lang={lang} />
+          <TestForm editing={editing} places={places} patches={patches} onSaved={() => void load()} onCancel={() => setEditing(null)} lang={lang} />
           <TestList tests={filtered} onEdit={edit} onChanged={() => void load()} lang={lang} />
         </>
       )}
