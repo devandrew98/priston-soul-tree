@@ -3,8 +3,8 @@
 // Follows the site language (the flags in the top bar): Portuguese or English.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  MODES, NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, isStale, needRetest, parseDuration, rankTests, sortPatches, testRate, toggleValue,
-  type BalanceChange, type BalanceTest, type Filters, type Mode, type TestRank,
+  BULK_FIELDS, MODES, NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, isStale, needRetest, parseDuration, rankTests, sortPatches, testRate, toggleValue, withField,
+  type BalanceChange, type BulkField, type BalanceTest, type Filters, type Mode, type TestRank,
 } from '../../lib/balance';
 import { DEMO_CHANGES, DEMO_TESTS } from '../../lib/balanceDemo';
 import { addChange, deleteBalance, deleteChange, fetchBalance, fetchChanges, saveBalance } from '../../lib/balanceApi';
@@ -47,6 +47,19 @@ const TXT = {
   changeNote: { pt: 'O que mudou (opcional)', en: 'What changed (optional)' },
   changesNotReady: { pt: 'As alterações no jogo ainda não estão ativas: falta rodar o arquivo supabase/52_balance_changes.sql no Supabase.', en: 'Game changes are not active yet: supabase/52_balance_changes.sql still has to be run in Supabase.' },
   addChange: { pt: 'Registrar alteração', en: 'Add change' },
+  noPatch: { pt: 'sem patch', en: 'no patch' },
+  vLong: { pt: 'Texto muito longo.', en: 'Text too long.' },
+  selectAll: { pt: 'Selecionar todos', en: 'Select all' },
+  selected1: { pt: 'teste selecionado', en: 'test selected' },
+  selectedN: { pt: 'testes selecionados', en: 'tests selected' },
+  bulkTitle: { pt: 'Alterar vários testes', en: 'Change several tests' },
+  bulkWhat: { pt: 'O que alterar', en: 'What to change' },
+  bulkNew: { pt: 'Novo valor', en: 'New value' },
+  bulkApply: { pt: 'Aplicar aos selecionados', en: 'Apply to the selected' },
+  clearSel: { pt: 'Limpar seleção', en: 'Clear selection' },
+  bulkEmptyHint: { pt: 'Deixando o valor vazio, esse campo é limpo nos testes selecionados.', en: 'Leaving the value empty clears that field on the selected tests.' },
+  bulkDone: { pt: '{n} teste(s) alterado(s).', en: '{n} test(s) changed.' },
+  bulkPartial: { pt: '{n} já alterado(s)', en: '{n} already changed' },
   pickMany: { pt: 'escolha quantos quiser', en: 'pick as many as you like' },
   patchOpt: { pt: 'Versão do patch (opcional)', en: 'Patch version (optional)' },
   mixedPatches: { pt: 'patches diferentes', en: 'different patches' },
@@ -458,7 +471,7 @@ function Report({ tests: filteredTests, all, filters, onFilters, lang, changes, 
 }
 
 // ---------- form ----------
-function TestForm({ editing, places, patches, onSaved, onCancel, lang }: { editing: BalanceTest | null; places: string[]; patches: string[]; onSaved: () => void; onCancel: () => void; lang: Lang }) {
+function TestForm({ editing, editSeq, places, patches, onSaved, onCancel, lang }: { editing: BalanceTest | null; editSeq: number; places: string[]; patches: string[]; onSaved: () => void; onCancel: () => void; lang: Lang }) {
   const T = (k: keyof typeof TXT) => TXT[k][lang];
   const [f, setF] = useState<Form>(emptyForm);
   const [busy, setBusy] = useState(false);
@@ -472,7 +485,7 @@ function TestForm({ editing, places, patches, onSaved, onCancel, lang }: { editi
       setF({ tester: editing.tester, cls: editing.cls, mode: editing.mode ?? '', mobs: String(editing.mobs), time: formatDuration(editing.seconds), place: editing.place, level: editing.level === null ? '' : String(editing.level), on: editing.testedOn, notes: editing.notes, patch: editing.patch });
       setErr(''); setOk('');
     }
-  }, [editing]);
+  }, [editing, editSeq]);
 
   const set = (p: Partial<Form>) => setF((cur) => ({ ...cur, ...p }));
 
@@ -555,65 +568,140 @@ function TestForm({ editing, places, patches, onSaved, onCancel, lang }: { editi
 }
 
 // ---------- list ----------
-function TestList({ tests, onEdit, onChanged, lang }: { tests: BalanceTest[]; onEdit: (t: BalanceTest) => void; onChanged: () => void; lang: Lang }) {
+/** The recorded tests, grouped by day. Tick several to change one field of all of them at once (e.g. set the patch of ten tests to 1.0). */
+function TestList({ tests, patches, places, onEdit, onChanged, lang }: { tests: BalanceTest[]; patches: string[]; places: string[]; onEdit: (t: BalanceTest) => void; onChanged: () => void; lang: Lang }) {
   const T = (k: keyof typeof TXT) => TXT[k][lang];
   const [cls, setCls] = useState<ClassSlug | ''>('');
   const [ask, setAsk] = useState<string | null>(null);
   const [err, setErr] = useState('');
+  const [msg, setMsg] = useState('');
   const [open, setOpen] = useState(false);
+  const [sel, setSel] = useState<string[]>([]);
+  const [field, setField] = useState<BulkField>('patch');
+  const [value, setValue] = useState('');
+  const [busy, setBusy] = useState(false);
   const shown = cls ? tests.filter((t) => t.cls === cls) : tests;
+  const num = lang === 'pt' ? 'pt-BR' : 'en-US';
+  const picked = useMemo(() => new Set(sel), [sel]);
+  const days = useMemo(() => {
+    const m = new Map<string, BalanceTest[]>();
+    for (const t of shown) (m.get(t.testedOn) ?? m.set(t.testedOn, []).get(t.testedOn)!).push(t);
+    return [...m.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+  }, [shown]);
+  const allShownPicked = shown.length > 0 && shown.every((t) => picked.has(t.id));
+
+  // ticks of tests that no longer exist (deleted by someone else) are dropped
+  useEffect(() => { setSel((cur) => cur.filter((id) => tests.some((t) => t.id === id))); }, [tests]);
+
+  const toggle = (id: string) => setSel((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
+  const toggleDay = (list: BalanceTest[]) => setSel((cur) => (list.every((t) => cur.includes(t.id)) ? cur.filter((id) => !list.some((t) => t.id === id)) : [...new Set([...cur, ...list.map((t) => t.id)])]));
+  const toggleAll = () => setSel(allShownPicked ? [] : shown.map((t) => t.id));
 
   const remove = async (id: string) => {
-    setErr('');
+    setErr(''); setMsg('');
     try { await deleteBalance(id); setAsk(null); onChanged(); } catch (x) { setErr(errText(x, lang)); }
   };
+
+  const apply = async () => {
+    setErr(''); setMsg('');
+    const chosen = tests.filter((t) => picked.has(t.id));
+    const next: BalanceTest[] = [];
+    for (const t of chosen) {
+      const r = withField(t, field, value);
+      if (!r.ok) return setErr(r.error === 'mode' ? T('vMode') : r.error === 'tester' ? T('vTester') : r.error === 'level' ? T('vLevel') : T('vLong'));
+      next.push(r.test);
+    }
+    setBusy(true);
+    let done = 0;
+    try {
+      for (const t of next) { await saveBalance(t.id, { cls: t.cls, mode: t.mode, mobs: t.mobs, seconds: t.seconds, tester: t.tester, level: t.level, place: t.place, notes: t.notes, patch: t.patch, testedOn: t.testedOn }); done++; }
+      setMsg(fill(T('bulkDone'), { n: String(done) }));
+      setSel([]); setValue('');
+    } catch (x) {
+      setErr(`${errText(x, lang)}${done > 0 ? ` (${fill(T('bulkPartial'), { n: String(done) })})` : ''}`);
+    } finally { setBusy(false); onChanged(); }
+  };
+
+  const fieldLabel: Record<BulkField, string> = { patch: T('patch'), mode: T('mode'), place: T('map'), level: T('thLevel'), tester: T('testedBy') };
 
   return (
     <section className="sr-card bal-list">
       <h2 className="mk-h2"><Fold open={open} onClick={() => setOpen(!open)}>🗒️ {T('recorded')} <small className="mk-muted">({shown.length})</small></Fold></h2>
       {open && (<>
-      <div className="af-chips" role="group" aria-label={T('filterByClass')}>
-        <button type="button" className={`af-chip${cls === '' ? ' on' : ''}`} onClick={() => setCls('')}>{T('allF')}</button>
-        {CLASS_SLUGS.map((c) => <button key={c} type="button" className={`af-chip${cls === c ? ' on' : ''}`} onClick={() => setCls(c)}><img src={icon(c)} alt="" width={18} height={18} /> {className(c)}</button>)}
-      </div>
-      {err && <p className="mk-warn" role="alert">{err}</p>}
-      {shown.length === 0 ? <p className="mk-muted">{T('noneHere')}</p> : (
-        <div className="bal-table-wrap">
-          <table className="af-table bal-table">
-            <thead><tr><th>{T('thDate')}</th><th>{T('cls')}</th><th>{T('mode')}</th><th>{T('thMobs')}</th><th>{T('thTime')}</th><th>{T('mobsMin')}</th><th>{T('testedBy')}</th><th>{T('patch')}</th><th>{T('map')}</th><th>{T('thLevel')}</th><th /></tr></thead>
-            <tbody>
-              {shown.map((t) => (
-                <tr key={t.id}>
-                  <td>{fmtDate(t.testedOn, lang)}</td>
-                  <td><ClassTag cls={t.cls} /></td>
-                  <td>{modeLabel(t.mode, lang)}</td>
-                  <td>{t.mobs.toLocaleString(lang === 'pt' ? 'pt-BR' : 'en-US')}</td>
-                  <td>{formatDuration(t.seconds)}</td>
-                  <td><b>{fmtRate(testRate(t), lang)}</b></td>
-                  <td>{t.tester}</td>
-                  <td>{t.patch || '—'}</td>
-                  <td>{t.place || '—'}{t.notes && <small className="bal-notes" title={t.notes}>📝 {t.notes}</small>}</td>
-                  <td>{t.level ?? '—'}</td>
-                  <td className="bal-row-actions">
-                    {ask === t.id ? (
-                      <>
-                        <span className="mk-warn">{T('delAsk')}</span>{' '}
-                        <button type="button" className="mk-btn sm danger" onClick={() => remove(t.id)}>{T('yes')}</button>{' '}
-                        <button type="button" className="mk-btn sm" onClick={() => setAsk(null)}>{T('no')}</button>
-                      </>
-                    ) : (
-                      <>
-                        <button type="button" className="mk-btn sm" onClick={() => onEdit(t)}>{T('edit')}</button>{' '}
-                        <button type="button" className="mk-btn sm danger" onClick={() => setAsk(t.id)}>{T('del')}</button>
-                      </>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="af-chips" role="group" aria-label={T('filterByClass')}>
+          <button type="button" className={`af-chip${cls === '' ? ' on' : ''}`} onClick={() => setCls('')}>{T('allF')}</button>
+          {CLASS_SLUGS.map((c) => <button key={c} type="button" className={`af-chip${cls === c ? ' on' : ''}`} onClick={() => setCls(c)}><img src={icon(c)} alt="" width={18} height={18} /> {className(c)}</button>)}
         </div>
-      )}
+        {shown.length > 0 && (
+          <label className="bal-selall"><input type="checkbox" checked={allShownPicked} onChange={toggleAll} /> {T('selectAll')}</label>
+        )}
+        {sel.length > 0 && (
+          <div className="bal-bulk" role="group" aria-label={T('bulkTitle')}>
+            <b>{sel.length} {sel.length === 1 ? T('selected1') : T('selectedN')}</b>
+            <label className="af-field"><span className="af-label">{T('bulkWhat')}</span>
+              <select value={field} onChange={(e) => { setField(e.target.value as BulkField); setValue(''); }}>
+                {BULK_FIELDS.map((f) => <option key={f} value={f}>{fieldLabel[f]}</option>)}
+              </select></label>
+            <label className="af-field"><span className="af-label">{T('bulkNew')}</span>
+              {field === 'mode' ? (
+                <select value={value} onChange={(e) => setValue(e.target.value)}>
+                  <option value="">—</option>{MODES.map((m) => <option key={m} value={m}>{modeLabel(m, lang)}</option>)}
+                </select>
+              ) : (
+                <>
+                  <input value={value} list={field === 'patch' ? 'bal-bulk-patches' : field === 'place' ? 'bal-bulk-places' : undefined}
+                    inputMode={field === 'level' ? 'numeric' : undefined} maxLength={field === 'tester' ? 40 : field === 'place' ? 80 : field === 'patch' ? 30 : 3}
+                    placeholder={field === 'patch' ? '1.0' : ''} onChange={(e) => setValue(field === 'level' ? e.target.value.replace(/\D/g, '') : e.target.value)} />
+                  <datalist id="bal-bulk-patches">{patches.map((p) => <option key={p} value={p} />)}</datalist>
+                  <datalist id="bal-bulk-places">{places.map((p) => <option key={p} value={p} />)}</datalist>
+                </>
+              )}</label>
+            <div className="bal-bulk-actions">
+              <button type="button" className="mk-btn primary" disabled={busy} onClick={() => void apply()}>{busy ? '⏳' : T('bulkApply')}</button>
+              <button type="button" className="mk-btn" disabled={busy} onClick={() => { setSel([]); setErr(''); }}>{T('clearSel')}</button>
+            </div>
+            {(field === 'patch' || field === 'place' || field === 'level') && <small className="bal-bulk-hint">{T('bulkEmptyHint')}</small>}
+          </div>
+        )}
+        {err && <p className="mk-warn" role="alert">{err}</p>}
+        {msg && <p className="bal-ok" role="status">{msg}</p>}
+        {shown.length === 0 ? <p className="mk-muted">{T('noneHere')}</p> : (
+          <div className="bal-days">
+            {days.map(([day, list]) => (
+              <section key={day} className="bal-day">
+                <h3 className="bal-day-h">
+                  <label><input type="checkbox" checked={list.every((t) => picked.has(t.id))} onChange={() => toggleDay(list)} aria-label={`${T('selectAll')} ${fmtDate(day, lang)}`} /> <b>{fmtDate(day, lang)}</b></label>
+                  <small>{list.length} {list.length === 1 ? T('test1') : T('tests')}</small>
+                </h3>
+                <ul className="bal-tl">
+                  {list.map((t) => (
+                    <li key={t.id} className={picked.has(t.id) ? 'sel' : ''}>
+                      <input type="checkbox" checked={picked.has(t.id)} onChange={() => toggle(t.id)} aria-label={`${className(t.cls)} ${fmtDate(t.testedOn, lang)}`} />
+                      <span className="bal-tl-cls"><ClassTag cls={t.cls} /><span className="bal-mode">{modeLabel(t.mode, lang)}</span></span>
+                      <span className="bal-tl-num"><b>{fmtRate(testRate(t), lang)}</b><small> {T('mobsMin')}</small><em>{t.mobs.toLocaleString(num)} {T('mobsIn')} {formatDuration(t.seconds)}</em></span>
+                      <span className="bal-tl-who">{t.tester}{t.patch ? <span className="bal-patch">{T('patch')} {t.patch}</span> : <span className="bal-patch none">{T('noPatch')}</span>}</span>
+                      <span className="bal-tl-where">{t.place || T('noMap')}{t.level !== null && <> · {T('thLevel')} {t.level}</>}{t.notes && <small title={t.notes}>📝 {t.notes}</small>}</span>
+                      <span className="bal-tl-act">
+                        {ask === t.id ? (
+                          <>
+                            <span className="mk-warn">{T('delAsk')}</span>
+                            <button type="button" className="mk-btn sm danger" onClick={() => void remove(t.id)}>{T('yes')}</button>
+                            <button type="button" className="mk-btn sm" onClick={() => setAsk(null)}>{T('no')}</button>
+                          </>
+                        ) : (
+                          <>
+                            <button type="button" className="mk-btn sm" onClick={() => onEdit(t)} title={T('edit')} aria-label={`${T('edit')} ${className(t.cls)}`}>✏️ {T('edit')}</button>
+                            <button type="button" className="mk-btn sm danger" onClick={() => setAsk(t.id)} title={T('del')} aria-label={`${T('del')} ${className(t.cls)}`}>🗑️</button>
+                          </>
+                        )}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+        )}
       </>)}
     </section>
   );
@@ -681,7 +769,8 @@ export function BalancePage() {
     };
   }, [demo, changesReady]);
 
-  const edit = (t: BalanceTest) => { setEditing(t); window.setTimeout(() => document.getElementById('bal-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50); };
+  const [editSeq, setEditSeq] = useState(0); // bumps on every click on "Edit", so the form re-opens and re-fills even for the same test
+  const edit = (t: BalanceTest) => { setEditing(t); setEditSeq((n) => n + 1); window.setTimeout(() => document.getElementById('bal-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50); };
 
   return (
     <div className="mk bal">
@@ -693,8 +782,8 @@ export function BalancePage() {
       {tests && (
         <>
           <Report tests={filtered} all={all} filters={filters} onFilters={setFilters} lang={lang} changes={changes} changesApi={changesApi} />
-          <TestForm editing={editing} places={places} patches={patches} onSaved={() => void load()} onCancel={() => setEditing(null)} lang={lang} />
-          <TestList tests={filtered} onEdit={edit} onChanged={() => void load()} lang={lang} />
+          <TestForm editing={editing} editSeq={editSeq} places={places} patches={patches} onSaved={() => void load()} onCancel={() => setEditing(null)} lang={lang} />
+          <TestList tests={filtered} patches={patches} places={places} onEdit={edit} onChanged={() => void load()} lang={lang} />
         </>
       )}
     </div>

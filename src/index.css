@@ -2825,6 +2825,43 @@ input[type="checkbox"], input[type="radio"], input[type="range"], progress { acc
 .bal-filters select:focus, .bal-filters input:focus, .bal-form input:focus, .bal-form select:focus, .bal-form textarea:focus { outline: none; border-color: var(--gold); }
 .bal-filters .af-field { min-width: 150px; }
 .bal-filters .bal-narrow { min-width: 90px; width: 100px; }
+/* recorded tests: grouped by day, one card-row per test */
+.bal-selall { display: inline-flex; align-items: center; gap: 8px; margin: 12px 0 4px; color: var(--text-dim); font-size: 13px; cursor: pointer; }
+.bal-list input[type=checkbox] { width: 17px; height: 17px; accent-color: var(--gold); cursor: pointer; flex: none; }
+.bal-bulk { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; margin: 10px 0; padding: 12px 14px; background: rgba(212,175,106,0.08); border: 1px solid var(--gold); border-radius: 10px; position: sticky; top: 64px; z-index: 4; backdrop-filter: blur(6px); }
+.bal-bulk > b { align-self: center; color: var(--gold-bright); }
+.bal-bulk .af-field { min-width: 160px; margin: 0; }
+.bal-bulk select, .bal-bulk input { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 10px; font: inherit; width: 100%; box-sizing: border-box; }
+.bal-bulk-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.bal-bulk-hint { flex-basis: 100%; color: var(--text-dim); font-size: 12px; }
+.bal-days { display: grid; gap: 18px; margin-top: 12px; }
+.bal-day-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); font-size: 15px; }
+.bal-day-h label { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; }
+.bal-day-h small { color: var(--text-dim); font-weight: 400; }
+.bal-tl { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.bal-tl li { display: grid; grid-template-columns: 22px minmax(170px, 1.3fr) minmax(120px, 1fr) minmax(130px, 1fr) minmax(150px, 1.3fr) auto; align-items: center; gap: 6px 14px; background: rgba(0,0,0,0.28); border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; }
+.bal-tl li:hover { border-color: rgba(212,175,106,0.45); }
+.bal-tl li.sel { border-color: var(--gold); background: rgba(212,175,106,0.1); }
+.bal-tl-cls { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.bal-tl-num { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 4px; }
+.bal-tl-num b { color: var(--gold-bright); font-size: 16px; }
+.bal-tl-num small { color: var(--text-dim); font-size: 11px; }
+.bal-tl-num em { flex-basis: 100%; font-style: normal; color: var(--text-dim); font-size: 12px; }
+.bal-tl-who, .bal-tl-where { display: flex; flex-direction: column; gap: 3px; min-width: 0; font-size: 13.5px; }
+.bal-tl-where small { color: var(--text-dim); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bal-patch { display: inline-block; align-self: flex-start; padding: 0 8px; border: 1px solid var(--border); border-radius: 999px; font-size: 11px; color: var(--gold-bright); }
+.bal-patch.none { color: var(--text-dim); border-style: dashed; }
+.bal-tl-act .mk-btn { display: inline-flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; flex: none; width: auto; min-width: 0; height: 32px; box-sizing: border-box; margin: 0; padding: 0 12px; line-height: 1; }
+.bal-tl-act .mk-btn.danger { width: 36px; padding: 0; }
+.bal-tl-act { display: flex; align-items: center; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+@media (max-width: 860px) {
+  .bal-tl li { grid-template-columns: 22px 1fr auto; }
+  .bal-tl-cls { grid-column: 2; }
+  .bal-tl-num { grid-column: 3; justify-content: flex-end; text-align: right; }
+  .bal-tl-who, .bal-tl-where { grid-column: 2 / -1; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+  .bal-tl-act { grid-column: 1 / -1; justify-content: flex-start; }
+  .bal-bulk { top: 56px; }
+}
 .bal-fold { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px; background: none; border: 0; padding: 0; margin: 0; color: inherit; font: inherit; cursor: pointer; text-align: left; }
 .bal-fold:hover .bal-chev, .bal-fold:focus-visible .bal-chev { color: var(--gold-bright); }
 .bal-fold:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }

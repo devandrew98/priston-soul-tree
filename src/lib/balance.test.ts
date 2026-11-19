@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CLASS_SLUGS, type ClassSlug } from './skilltree/types';
-import { NO_FILTERS, buildReport, isStale, needRetest, type BalanceChange, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, sortPatches, testRate, toggleValue, type BalanceTest } from './balance';
+import { NO_FILTERS, buildReport, isStale, needRetest, type BalanceChange, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, sortPatches, testRate, toggleValue, withField, type BalanceTest } from './balance';
 
 let n = 0;
 const t = (cls: BalanceTest['cls'], mobs: number, seconds: number, extra: Partial<BalanceTest> = {}): BalanceTest =>
@@ -87,6 +87,28 @@ describe('changes make tests out of date', () => {
     expect(needRetest(tests, changes, CLASS_SLUGS).map((x) => x.cls)).toEqual(['archer']);
     expect(needRetest(tests, [...changes, ch(null, '2026-11-20')], CLASS_SLUGS).map((x) => x.cls)).toHaveLength(CLASS_SLUGS.length);
     expect(needRetest(tests, [], CLASS_SLUGS)).toEqual([]);
+  });
+});
+
+describe('bulk edit of one field', () => {
+  const base = t('fighter', 10, 1, { patch: '1.1', place: 'Oasis', level: 100, tester: 'Ana', mode: 'aoe' });
+  const ok = (field: Parameters<typeof withField>[1], v: string) => { const r = withField(base, field, v); return r.ok ? r.test : null; };
+  it('changes only that field', () => {
+    expect(ok('patch', ' 1.0 ')).toEqual({ ...base, patch: '1.0' });
+    expect(ok('mode', 'single')).toEqual({ ...base, mode: 'single' });
+    expect(ok('tester', 'Beto')).toEqual({ ...base, tester: 'Beto' });
+  });
+  it('patch, map and level can be cleared', () => {
+    expect(ok('patch', '')?.patch).toBe('');
+    expect(ok('place', '')?.place).toBe('');
+    expect(ok('level', '')?.level).toBeNull();
+  });
+  it('refuses values the database would refuse', () => {
+    expect(withField(base, 'mode', '')).toEqual({ ok: false, error: 'mode' });
+    expect(withField(base, 'tester', ' ')).toEqual({ ok: false, error: 'tester' });
+    expect(withField(base, 'level', '301')).toEqual({ ok: false, error: 'level' });
+    expect(withField(base, 'level', '1.5')).toEqual({ ok: false, error: 'level' });
+    expect(withField(base, 'patch', 'x'.repeat(31))).toEqual({ ok: false, error: 'long' });
   });
 });
 

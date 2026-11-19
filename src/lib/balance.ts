@@ -91,6 +91,26 @@ export function needRetest(tests: BalanceTest[], changes: BalanceChange[], allCl
   return out.sort((a, b) => a.change.on.localeCompare(b.change.on));
 }
 
+/** What the bulk edit can change on several tests at once. */
+export type BulkField = 'patch' | 'mode' | 'place' | 'level' | 'tester';
+export const BULK_FIELDS: BulkField[] = ['patch', 'mode', 'place', 'level', 'tester'];
+
+/** The test with one field replaced by `raw` (what was typed/picked), or the reason it cannot be used. Patch, map and level may be left empty to clear them. */
+export function withField(t: BalanceTest, field: BulkField, raw: string): { ok: true; test: BalanceTest } | { ok: false; error: 'mode' | 'tester' | 'level' | 'long' } {
+  const v = raw.trim();
+  switch (field) {
+    case 'patch': return v.length > 30 ? { ok: false, error: 'long' } : { ok: true, test: { ...t, patch: v } };
+    case 'place': return v.length > 80 ? { ok: false, error: 'long' } : { ok: true, test: { ...t, place: v } };
+    case 'tester': return v.length < 1 || v.length > 40 ? { ok: false, error: 'tester' } : { ok: true, test: { ...t, tester: v } };
+    case 'mode': return v === 'aoe' || v === 'single' ? { ok: true, test: { ...t, mode: v } } : { ok: false, error: 'mode' };
+    case 'level': {
+      if (v === '') return { ok: true, test: { ...t, level: null } };
+      const n = Number(v);
+      return Number.isInteger(n) && n >= 1 && n <= 300 ? { ok: true, test: { ...t, level: n } } : { ok: false, error: 'level' };
+    }
+  }
+}
+
 /** Patch versions for the filter, newest first ("1.10" comes after "1.9"). */
 export const sortPatches = (patches: string[]): string[] => [...patches].sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
 
