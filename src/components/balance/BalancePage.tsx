@@ -3,7 +3,7 @@
 // Follows the site language (the flags in the top bar): Portuguese or English.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  BULK_FIELDS, MODES, NO_FILTERS, buildReport, distinct, filterTests, fmtPct, fmtRate, formatDuration, isStale, needRetest, parseDuration, rankTests, sortPatches, testRate, toggleValue, withField,
+  BULK_FIELDS, MODES, NO_FILTERS, bestPerClassMode, buildReport, changedInPatch, latestPatch, distinct, filterTests, fmtPct, fmtRate, formatDuration, isStale, needRetest, parseDuration, rankTests, sortPatches, testRate, toggleValue, withField,
   type BalanceChange, type BulkField, type BalanceTest, type Filters, type Mode, type TestRank,
 } from '../../lib/balance';
 import { DEMO_CHANGES, DEMO_TESTS } from '../../lib/balanceDemo';
@@ -35,6 +35,12 @@ const TXT = {
   staleHint: { pt: 'A classe foi alterada depois deste teste', en: 'The class was changed after this test' },
   staleCount: { pt: 'desatualizados', en: 'out of date' },
   viewTests: { pt: 'Quais testes mostrar', en: 'Which tests to show' },
+  viewPatch: { pt: 'Patch {p}: melhor teste de cada classe', en: 'Patch {p}: best test of each class' },
+  patchBoxTitle: { pt: 'Patch {p}.', en: 'Patch {p}.' },
+  patchChanged: { pt: 'Classes alteradas:', en: 'Changed classes:' },
+  patchUnchanged: { pt: 'As outras {n} não foram alteradas e entram com o melhor teste dos patches anteriores.', en: 'The other {n} were not changed and appear with their best test from earlier patches.' },
+  originChanged: { pt: '🆕 alterada no {p}', en: '🆕 changed in {p}' },
+  originUnchanged: { pt: '📌 não alterada no {p}', en: '📌 not changed in {p}' },
   viewCurrent: { pt: 'Só os atuais', en: 'Only up-to-date' },
   viewAll: { pt: 'Todos (com os desatualizados)', en: 'All (with out-of-date ones)' },
   needRetest: { pt: 'Precisam de novo teste:', en: 'Need a new test:' },
@@ -228,7 +234,7 @@ function ClassTag({ cls }: { cls: ClassSlug }) {
  * The tests grouped by class. Nothing is ever added up: every test keeps its own speed (mobs / minutes), its own bar and its own row,
  * even two tests of the same class on the same map. The classes are ordered by their fastest single test.
  */
-function Ranking({ tests, lang, more, staleIds }: { tests: BalanceTest[]; lang: Lang; more: boolean; staleIds: Set<string> }) {
+function Ranking({ tests, lang, more, staleIds, origins, patch }: { tests: BalanceTest[]; lang: Lang; more: boolean; staleIds: Set<string>; origins: Map<string, 'changed' | 'unchanged'>; patch: string | null }) {
   const T = (k: keyof typeof TXT) => TXT[k][lang];
   const rate = (n: number) => fmtRate(n, lang);
   const ranks = useMemo(() => rankTests(tests), [tests]);
@@ -292,6 +298,8 @@ function Ranking({ tests, lang, more, staleIds }: { tests: BalanceTest[]; lang: 
                   <span className={`bal-vs ${x.vsAverage >= 0 ? 'up' : 'down'}`}>{ranks.length > 1 ? fmtPct(x.vsAverage) : '—'}</span>
                   <small className="bal-meta">
                     {staleIds.has(x.test.id) && <b className="bal-stale-tag" title={T('staleHint')}>{T('stale')} </b>}
+                    {origins.get(x.test.id) === 'changed' && <b className="bal-origin new">{fill(T('originChanged'), { p: patch ?? '' })} </b>}
+                    {origins.get(x.test.id) === 'unchanged' && <b className="bal-origin">{fill(T('originUnchanged'), { p: patch ?? '' })} </b>}
                     {fmtDate(x.test.testedOn, lang)} · {x.test.place || T('noMap')} · {x.test.tester}{x.test.patch && <> · {T('patch')} {x.test.patch}</>}
                     {more && (
                       <>
@@ -320,7 +328,7 @@ function ChangesPanel({ changes, api, lang }: { changes: BalanceChange[]; api: C
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
-  const [target, setTarget] = useState<ClassSlug | ''>(''); // '' = nothing picked yet; 'all' handled by `general`
+  const [targets, setTargets] = useState<ClassSlug[]>([]);
   const [general, setGeneral] = useState(false);
   const [on, setOn] = useState(today());
   const [patch, setPatch] = useState('');
@@ -330,9 +338,14 @@ function ChangesPanel({ changes, api, lang }: { changes: BalanceChange[]; api: C
     setErr(''); setBusy(true);
     try { await fn(); } catch (x) { setErr(errText(x, lang)); } finally { setBusy(false); }
   };
+  // several classes can be ticked at once: one change is saved for each of them (same date, patch and note)
   const add = () => {
-    if (!general && !target) return;
-    void run(async () => { await api.add({ cls: general ? null : (target as ClassSlug), on, patch: patch.trim(), note: note.trim() }); setNote(''); });
+    if (!general && targets.length === 0) return;
+    const list: (ClassSlug | null)[] = general ? [null] : targets;
+    void run(async () => {
+      for (const cls of list) await api.add({ cls, on, patch: patch.trim(), note: note.trim() });
+      setNote(''); setTargets([]);
+    });
   };
   return (
     <div className="bal-changes">
@@ -343,7 +356,7 @@ function ChangesPanel({ changes, api, lang }: { changes: BalanceChange[]; api: C
           <div className="af-chips" role="group" aria-label={T('changesTitle')}>
             <button type="button" className={`af-chip${general ? ' on' : ''}`} aria-pressed={general} onClick={() => setGeneral(!general)}>🌍 {T('generalChange')}</button>
             {CLASS_SLUGS.map((c) => (
-              <button key={c} type="button" disabled={general} className={`af-chip${!general && target === c ? ' on' : ''}`} aria-pressed={!general && target === c} onClick={() => setTarget(c)}>
+              <button key={c} type="button" disabled={general} className={`af-chip${!general && targets.includes(c) ? ' on' : ''}`} aria-pressed={!general && targets.includes(c)} onClick={() => setTargets((cur) => (cur.includes(c) ? cur.filter((x) => x !== c) : [...cur, c]))}>
                 <img src={icon(c)} alt="" width={18} height={18} /> {className(c)}
               </button>
             ))}
@@ -353,7 +366,7 @@ function ChangesPanel({ changes, api, lang }: { changes: BalanceChange[]; api: C
             <label className="af-field"><span className="af-label">{T('patch')}</span><input value={patch} maxLength={30} onChange={(e) => setPatch(e.target.value)} placeholder="1.2.3" /></label>
             <label className="af-field"><span className="af-label">{T('changeNote')}</span><input value={note} maxLength={200} onChange={(e) => setNote(e.target.value)} /></label>
           </div>
-          <div className="bal-actions"><button type="button" className="mk-btn primary" disabled={busy || (!general && !target)} onClick={add}>{busy ? '⏳' : T('addChange')}</button></div>
+          <div className="bal-actions"><button type="button" className="mk-btn primary" disabled={busy || (!general && targets.length === 0)} onClick={add}>{busy ? '⏳' : T('addChange')}</button></div>
           {err && <p className="mk-warn" role="alert">{err}</p>}
           <ul className="bal-change-list">
             {sorted.map((c) => (
@@ -373,10 +386,23 @@ function ChangesPanel({ changes, api, lang }: { changes: BalanceChange[]; api: C
 
 function Report({ tests: filteredTests, all, filters, onFilters, lang, changes, changesApi }: { tests: BalanceTest[]; all: BalanceTest[]; filters: Filters; onFilters: (f: Filters) => void; lang: Lang; changes: BalanceChange[]; changesApi: ChangesApi | null }) {
   const T = (k: keyof typeof TXT) => TXT[k][lang];
-  const [view, setView] = useState<'current' | 'all'>('current');
+  const [pickedView, setView] = useState<'patch' | 'current' | 'all' | null>(null);
   const staleIds = useMemo(() => new Set(filteredTests.filter((t) => isStale(t, changes)).map((t) => t.id)), [filteredTests, changes]);
-  // "current" leaves out the tests a later change made out of date; "all" keeps them (marked)
-  const tests = useMemo(() => (view === 'current' ? filteredTests.filter((t) => !staleIds.has(t.id)) : filteredTests), [view, filteredTests, staleIds]);
+  const lastPatch = useMemo(() => latestPatch(changes), [changes]);
+  const changedNow = useMemo(() => (lastPatch ? changedInPatch(changes, lastPatch, CLASS_SLUGS) : new Set<ClassSlug>()), [changes, lastPatch]);
+  // by default: the picture of the latest patch when there is one, otherwise the up-to-date tests
+  const view = pickedView ?? (lastPatch ? 'patch' : 'current');
+  // "patch": the best up-to-date test of every class (classes changed in the latest patch + the unchanged ones with their best test from earlier patches);
+  // "current": every up-to-date test; "all": also the ones a later change made out of date (marked)
+  const tests = useMemo(() => {
+    const valid = filteredTests.filter((t) => !staleIds.has(t.id));
+    return view === 'all' ? filteredTests : view === 'patch' ? bestPerClassMode(valid) : valid;
+  }, [view, filteredTests, staleIds]);
+  const origins = useMemo(() => {
+    const m = new Map<string, 'changed' | 'unchanged'>();
+    if (view === 'patch' && lastPatch) for (const t of tests) m.set(t.id, changedNow.has(t.cls) ? 'changed' : 'unchanged');
+    return m;
+  }, [view, lastPatch, tests, changedNow]);
   const retest = useMemo(() => needRetest(filteredTests, changes, CLASS_SLUGS), [filteredTests, changes]);
   const testers = useMemo(() => distinct(all.map((t) => t.tester)), [all]);
   const patches = useMemo(() => sortPatches(distinct(all.map((t) => t.patch))), [all]);
@@ -434,10 +460,18 @@ function Report({ tests: filteredTests, all, filters, onFilters, lang, changes, 
         <div className="af-field bal-pick">
           <span className="af-label">{T('viewTests')}</span>
           <div className="af-chips" role="group" aria-label={T('viewTests')}>
+            {lastPatch && <button type="button" className={`af-chip${view === 'patch' ? ' on' : ''}`} aria-pressed={view === 'patch'} onClick={() => setView('patch')}>{fill(T('viewPatch'), { p: lastPatch })}</button>}
             <button type="button" className={`af-chip${view === 'current' ? ' on' : ''}`} aria-pressed={view === 'current'} onClick={() => setView('current')}>{T('viewCurrent')}</button>
             <button type="button" className={`af-chip${view === 'all' ? ' on' : ''}`} aria-pressed={view === 'all'} onClick={() => setView('all')}>{T('viewAll')} {staleIds.size > 0 && <small>({staleIds.size} {T('staleCount')})</small>}</button>
           </div>
         </div>
+      )}
+      {view === 'patch' && lastPatch && (
+        <p className="mk-note bal-patchbox">
+          🧩 <b>{fill(T('patchBoxTitle'), { p: lastPatch })}</b>{' '}
+          {changedNow.size > 0 && <>{T('patchChanged')} {CLASS_SLUGS.filter((c) => changedNow.has(c)).map(className).join(', ')}. </>}
+          {CLASS_SLUGS.length - changedNow.size > 0 && <>{fill(T('patchUnchanged'), { n: String(CLASS_SLUGS.length - changedNow.size) })}</>}
+        </p>
       )}
       {retest.length > 0 && (
         <p className="mk-note bal-retest">🔁 <b>{T('needRetest')}</b> {retest.map((x) => `${className(x.cls)} (${fill(T('changedOn'), { d: fmtDate(x.change.on, lang) })})`).join(', ')}</p>
@@ -459,7 +493,7 @@ function Report({ tests: filteredTests, all, filters, onFilters, lang, changes, 
                   <small className="bal-mode-count">{s.tests.length} {s.tests.length === 1 ? T('test1') : T('tests')}</small>
                 </Fold>
               </h3>
-              {!closedSections.includes(s.key) && <Ranking tests={s.tests} lang={lang} more={more} staleIds={staleIds} />}
+              {!closedSections.includes(s.key) && <Ranking tests={s.tests} lang={lang} more={more} staleIds={staleIds} origins={origins} patch={lastPatch} />}
             </section>
           ))}
           <p className="mk-muted bal-note">{T('methodTests')}</p>

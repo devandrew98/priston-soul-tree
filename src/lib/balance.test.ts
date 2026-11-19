@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CLASS_SLUGS, type ClassSlug } from './skilltree/types';
-import { NO_FILTERS, buildReport, isStale, needRetest, type BalanceChange, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, sortPatches, testRate, toggleValue, withField, type BalanceTest } from './balance';
+import { NO_FILTERS, bestPerClassMode, buildReport, changedInPatch, isStale, latestPatch, needRetest, type BalanceChange, distinct, filterTests, fmtPct, fmtRate, formatDuration, parseDuration, rankTests, sortPatches, testRate, toggleValue, withField, type BalanceTest } from './balance';
 
 let n = 0;
 const t = (cls: BalanceTest['cls'], mobs: number, seconds: number, extra: Partial<BalanceTest> = {}): BalanceTest =>
@@ -87,6 +87,24 @@ describe('changes make tests out of date', () => {
     expect(needRetest(tests, changes, CLASS_SLUGS).map((x) => x.cls)).toEqual(['archer']);
     expect(needRetest(tests, [...changes, ch(null, '2026-11-20')], CLASS_SLUGS).map((x) => x.cls)).toHaveLength(CLASS_SLUGS.length);
     expect(needRetest(tests, [], CLASS_SLUGS)).toEqual([]);
+  });
+});
+
+describe('current patch view', () => {
+  const ch = (cls: ClassSlug | null, on: string, patch: string): BalanceChange => ({ id: `${cls}${on}`, cls, on, patch, note: '' });
+  it('latest patch = the one of the most recent change that has a patch', () => {
+    expect(latestPatch([ch('fighter', '2026-11-05', '1.1'), ch('knight', '2026-11-12', '2.0'), ch('archer', '2026-11-20', '')])).toBe('2.0');
+    expect(latestPatch([ch('fighter', '2026-11-05', '')])).toBeNull();
+    expect(latestPatch([])).toBeNull();
+  });
+  it('classes changed by a patch; a general change counts for all', () => {
+    const c = [ch('fighter', '2026-11-12', '2.0'), ch('knight', '2026-11-12', '2.0'), ch('archer', '2026-11-05', '1.1')];
+    expect([...changedInPatch(c, '2.0', CLASS_SLUGS)].sort()).toEqual(['fighter', 'knight']);
+    expect(changedInPatch([...c, ch(null, '2026-11-13', '2.0')], '2.0', CLASS_SLUGS).size).toBe(CLASS_SLUGS.length);
+  });
+  it('keeps the best test of each class and mode', () => {
+    const a = t('fighter', 10, 1, { mode: 'aoe' }), b = t('fighter', 30, 1, { mode: 'aoe' }), c = t('fighter', 5, 1, { mode: 'single' }), d = t('knight', 7, 1, { mode: 'aoe' });
+    expect(bestPerClassMode([a, b, c, d])).toEqual([b, c, d]);
   });
 });
 

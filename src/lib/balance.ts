@@ -91,6 +91,35 @@ export function needRetest(tests: BalanceTest[], changes: BalanceChange[], allCl
   return out.sort((a, b) => a.change.on.localeCompare(b.change.on));
 }
 
+/** Patch of the most recent change that names a patch (e.g. "2.0"), or null. */
+export function latestPatch(changes: BalanceChange[]): string | null {
+  let best: BalanceChange | null = null;
+  for (const c of changes) if (c.patch.trim() && (!best || c.on > best.on)) best = c;
+  return best ? best.patch.trim() : null;
+}
+
+/** Classes changed by `patch` (case-insensitive). A general change of that patch counts for every class. */
+export function changedInPatch(changes: BalanceChange[], patch: string, allClasses: ClassSlug[]): Set<ClassSlug> {
+  const p = patch.trim().toLowerCase();
+  const out = new Set<ClassSlug>();
+  for (const c of changes) {
+    if (c.patch.trim().toLowerCase() !== p) continue;
+    if (c.cls === null) allClasses.forEach((x) => out.add(x)); else out.add(c.cls);
+  }
+  return out;
+}
+
+/** One test per class and mode: the fastest one (ties: the newer). Order of the input is kept. */
+export function bestPerClassMode(tests: BalanceTest[]): BalanceTest[] {
+  const best = new Map<string, BalanceTest>();
+  for (const t of tests) {
+    const k = `${t.cls}|${t.mode ?? ''}`;
+    const cur = best.get(k);
+    if (!cur || testRate(t) > testRate(cur) || (testRate(t) === testRate(cur) && t.testedOn > cur.testedOn)) best.set(k, t);
+  }
+  return tests.filter((t) => best.get(`${t.cls}|${t.mode ?? ''}`) === t);
+}
+
 /** What the bulk edit can change on several tests at once. */
 export type BulkField = 'patch' | 'mode' | 'place' | 'level' | 'tester';
 export const BULK_FIELDS: BulkField[] = ['patch', 'mode', 'place', 'level', 'tester'];

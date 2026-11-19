@@ -2870,6 +2870,9 @@ input[type="checkbox"], input[type="radio"], input[type="range"], progress { acc
 .bal-badge { display: inline-block; min-width: 18px; padding: 0 6px; border-radius: 999px; background: var(--gold); color: #1b140a; font-weight: 800; font-size: 11px; text-align: center; }
 .bal-rank li.stale { opacity: 0.55; border-style: dashed; }
 .bal-stale-tag { color: #e0b46b; font-weight: 700; }
+.bal-origin { color: var(--text-dim); font-weight: 600; }
+.bal-origin.new { color: #7fcf8a; }
+.bal-patchbox { margin: 10px 0 0; line-height: 1.6; }
 .bal-retest { margin: 10px 0 0; line-height: 1.6; }
 .bal-changes { margin-top: 6px; }
 .bal-change-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
