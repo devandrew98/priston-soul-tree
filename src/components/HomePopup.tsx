@@ -4,15 +4,19 @@ import { useEffect, useRef, useState } from 'react';
 import { trackEvent } from '../lib/analytics';
 import { remaining } from '../lib/countdown';
 import { useI18n } from '../lib/i18n';
+import { BACKEND_ENABLED } from '../lib/market/supabase';
+import { pollShares, type PollRow } from '../lib/poll';
+import { fetchPoll, hasVoted, sendVote } from '../lib/pollApi';
+import { getSkillClass } from '../lib/skilltree/classes';
+import { CLASS_SLUGS, type ClassSlug } from '../lib/skilltree/types';
 
 const SEEN_KEY = 'pz-home-popup-nova-temporada';
-const IMAGE = '/events/nova-temporada.webp';
 
 const TXT = {
-  alt: { pt: 'PristonTale EU Invasion: Nova Temporada, 27 de novembro, sexta-feira, às 15h', en: 'PristonTale EU Invasion: New Season, November 27th, Friday, 3 PM' },
   close: { pt: 'Fechar', en: 'Close' },
   title: { pt: 'Aviso', en: 'Notice' },
   left: { pt: 'Faltam', en: 'Time left' },
+  until: { pt: 'para a temporada!', en: 'until the season!' },
   started: { pt: 'A nova temporada começou!', en: 'The new season has started!' },
   unit: {
     days: { pt: ['dia', 'dias'], en: ['day', 'days'] },
@@ -44,7 +48,77 @@ function Countdown({ lang }: { lang: 'pt' | 'en' }) {
           <small>{TXT.unit[k][lang][v === 1 ? 0 : 1]}</small>
         </span>
       ))}
+      <span className="hp-count-label hp-count-until">{TXT.until[lang]}</span>
     </div>
+  );
+}
+
+const POLL_TXT = {
+  question: { pt: 'Com qual classe você vai jogar a temporada 13?', en: 'Which class will you play in season 13?' },
+  thanks: { pt: 'Obrigado pelo voto!', en: 'Thanks for voting!' },
+  votes: { pt: ['voto', 'votos'], en: ['vote', 'votes'] },
+  error: { pt: 'Não foi possível votar agora. Tente de novo.', en: 'Could not vote right now. Try again.' },
+  limit: { pt: 'Já há votos demais vindos desta rede.', en: 'Too many votes already came from this network.' },
+  mine: { pt: 'seu voto', en: 'your vote' },
+} as const;
+
+/** One vote per browser; the bars show up as soon as the visitor has voted. */
+function SeasonPoll({ lang }: { lang: 'pt' | 'en' }) {
+  const [rows, setRows] = useState<PollRow[] | null>(null); // null = not voted yet
+  const [busy, setBusy] = useState<ClassSlug | null>(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!BACKEND_ENABLED || !hasVoted()) return;
+    let cancelled = false;
+    fetchPoll().then((r) => { if (!cancelled) setRows(r); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  if (!BACKEND_ENABLED) return null;
+
+  const vote = async (cls: ClassSlug) => {
+    if (busy) return;
+    setBusy(cls); setError('');
+    try {
+      setRows(await sendVote(cls));
+      trackEvent('home:poll_vote');
+    } catch (e) {
+      setError(/limite/i.test((e as { message?: string })?.message ?? '') ? POLL_TXT.limit[lang] : POLL_TXT.error[lang]);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  if (!rows) {
+    return (
+      <section className="hp-poll" aria-label={POLL_TXT.question[lang]}>
+        <h3 className="hp-poll-q">{POLL_TXT.question[lang]}</h3>
+        <div className="hp-poll-opts">
+          {CLASS_SLUGS.map((c) => (
+            <button key={c} type="button" className="hp-poll-opt" disabled={!!busy} onClick={() => void vote(c)}>{getSkillClass(c).name}</button>
+          ))}
+        </div>
+        {error && <p className="hp-poll-err" role="alert">{error}</p>}
+      </section>
+    );
+  }
+
+  const { total, shares } = pollShares(rows);
+  return (
+    <section className="hp-poll" aria-label={POLL_TXT.question[lang]}>
+      <h3 className="hp-poll-q">{POLL_TXT.question[lang]} <small>· {POLL_TXT.thanks[lang]}</small></h3>
+      <ol className="hp-poll-res">
+        {shares.map((s) => (
+          <li key={s.cls} className={`${s.mine ? 'mine' : ''} ${s.leader ? 'lead' : ''}`}>
+            <span className="hp-poll-name">{getSkillClass(s.cls).name}{s.mine && <i title={POLL_TXT.mine[lang]}> ✓</i>}</span>
+            <span className="hp-poll-bar"><span style={{ width: `${s.pct}%` }} /></span>
+            <span className="hp-poll-pct">{s.pct}%</span>
+          </li>
+        ))}
+      </ol>
+      <p className="hp-poll-total">{total} {POLL_TXT.votes[lang][total === 1 ? 0 : 1]}</p>
+    </section>
   );
 }
 
@@ -76,7 +150,7 @@ export function HomePopup() {
     <div className="hp-back" onMouseDown={(e) => { if (e.target === e.currentTarget) close(); }}>
       <div className="hp-win" role="dialog" aria-modal="true" aria-label={TXT.title[lang]}>
         <button type="button" ref={closeBtn} className="hp-x" onClick={close} aria-label={TXT.close[lang]} title={TXT.close[lang]}>✕</button>
-        <img className="hp-img" src={IMAGE} alt={TXT.alt[lang]} decoding="async" />
+        <SeasonPoll lang={lang} />
         <Countdown lang={lang} />
       </div>
     </div>
