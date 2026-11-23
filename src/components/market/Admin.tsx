@@ -18,6 +18,7 @@ import { HomeTextsAdmin } from './HomeTextsAdmin';
 import { SeasonAdmin } from './SeasonAdmin';
 import { RaffleAdmin } from './RaffleAdmin';
 import { MarketplaceToggle } from './MarketplaceToggle';
+import { ChristmasToggle } from './ChristmasToggle';
 import type { ListingKind } from '../../lib/market/types';
 import { Avatar, KindTag, PriceTag, Since, StatusPill } from './parts';
 import { Loading } from '../Loading';
@@ -276,6 +277,7 @@ export function Admin({ onOpen, onSeller, onBack }: { onOpen: (id: string) => vo
       {sec === 'global' && (
         <div className="mk-admin-global">
           <MarketplaceToggle />
+          <ChristmasToggle />
           <p className="mk-muted">{t('mk.admin.globalhint')}</p>
           <textarea value={globalText} onChange={(e) => setGlobalText(e.target.value)} rows={3} placeholder={t('mk.admin.globalph')} />
           <button className="mk-btn primary" disabled={!globalText.trim()} onClick={() => { m.sendGlobal(globalText.trim()); setGlobalText(''); }}>📢 {t('mk.admin.send')}</button>

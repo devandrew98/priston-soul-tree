@@ -72,8 +72,7 @@ export function Home() {
       <header className="home-hero">
         <div className="home-hero-top">
           <div className="home-logo-frame">
-            <img src="/pristonzone-logo.png" alt="PristonZONE" className="home-logo" />
-          </div>
+            <img src="/pristonzone-logo.png" alt="PristonZONE" className="home-logo" />          </div>
           {ht.shown('pix') && <aside className="home-pix">
             <img className="home-priestess" src="/classes/priestess.webp" alt="" aria-hidden="true" decoding="async" />
             <div className="home-pix-head">
@@ -121,6 +120,7 @@ export function Home() {
 
       <footer className="home-credits">
         {t('home.credits', { a: 'HaDDeR', b: 'CommitaoDourado' })}
+        <span className="xmas-greet">{t('home.xmas')}</span>
       </footer>
     </div>
   );

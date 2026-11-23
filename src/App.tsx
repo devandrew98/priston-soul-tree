@@ -26,6 +26,7 @@ import { PersonalPage } from './components/personal/PersonalPage';
 import { Tutorial } from './components/tutorial/Tutorial';
 import { LiveBadge } from './components/LiveBadge';
 import { OverlayFab } from './components/OverlayFab';
+import { ChristmasTheme } from './components/ChristmasTheme';
 import { SoulsCatalog } from './components/souls/SoulsCatalog';
 import { SeasonPage } from './components/season/SeasonPage';
 import { BalancePage } from './components/balance/BalancePage';
@@ -429,6 +430,7 @@ export default function App() {
       {section !== 'streamers' && section !== 'season' && section !== 'balance' && <LiveBadge onSeeAll={() => go('streamers')} />}
       {section !== 'season' && section !== 'balance' && !(section === 'tools' && toolTab === 'overlay') && <OverlayFab onOpen={() => navigate({ section: 'tools', toolTab: 'overlay' })} />}
 
+      <ChristmasTheme />
       <ResetPasswordModal />
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
     </div>

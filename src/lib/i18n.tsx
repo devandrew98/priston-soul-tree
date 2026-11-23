@@ -482,6 +482,7 @@ const DICT: Record<string, Entry> = {
   'home.card.market': { pt: 'Compre e venda itens do servidor com pesquisa rápida e preços transparentes.', en: 'Buy and sell server items with fast search and transparent prices.' },
   'home.card.soultree': { pt: 'Planejador de builds da Fusion Tier e gerador inteligente.', en: 'Fusion Tier build planner and smart generator.' },
   'home.open': { pt: 'Abrir', en: 'Open' },
+  'home.xmas': { pt: '🎄 Boas festas e bons drops! 🎁', en: '🎄 Happy holidays and good drops! 🎁' },
   'home.credits': { pt: 'Desenvolvido por {a} e {b}', en: 'Developed by {a} and {b}' },
   'home.download.alt': { pt: 'Baixar o Overlay Timer Boss', en: 'Download the Overlay Timer Boss' },
   'home.download.hint': { pt: 'Clique para baixar o Overlay Timer Boss (Windows)', en: 'Click to download the Overlay Timer Boss (Windows)' },
