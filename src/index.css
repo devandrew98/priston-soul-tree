@@ -2779,7 +2779,7 @@ input[type="checkbox"], input[type="radio"], input[type="range"], progress { acc
 
 /* ===== The Priestess standing on the Pix card (Home only) ===== */
 .home-pix { position: relative; }
-.home-pix > .home-priestess { position: absolute; right: -120px; bottom: -20px; height: 62%; width: auto; z-index: 6; pointer-events: none; filter: drop-shadow(0 8px 14px rgba(0,0,0,0.55)); }
+.home-pix > .home-priestess { position: absolute; right: -120px; bottom: -20px; height: 58%; width: auto; z-index: 6; pointer-events: none; filter: drop-shadow(0 8px 14px rgba(0,0,0,0.55)); }
 @media (max-width: 1299px) { .home-pix > .home-priestess { display: none; } }
 
 /* ===== Private season FAQ (/season) and its admin ===== */

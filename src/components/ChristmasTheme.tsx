@@ -68,12 +68,10 @@ function Snow() {
   return <canvas ref={ref} className="xmas-snow" aria-hidden="true" />;
 }
 
-export function ChristmasTheme() {
+/** Whether the Christmas decoration is on right now: inside the season and not switched off by the administrator. */
+export function useChristmasActive(): boolean {
   const [flag, setFlag] = useState(true); // the administrator's switch (on unless turned off)
   const season = isChristmasSeason();
-  const active = season && flag;
-  // people who ask their system for less motion get the garland and the hat, but no snow
-  const [still, setStill] = useState(() => typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   useEffect(() => {
     if (!season) return;
@@ -82,6 +80,14 @@ export function ChristmasTheme() {
     window.addEventListener(CHRISTMAS_EVENT, onFlag);
     return () => window.removeEventListener(CHRISTMAS_EVENT, onFlag);
   }, [season]);
+
+  return season && flag;
+}
+
+export function ChristmasTheme() {
+  const active = useChristmasActive();
+  // people who ask their system for less motion get the garland and the hat, but no snow
+  const [still, setStill] = useState(() => typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   useEffect(() => {
     if (typeof window.matchMedia !== 'function') return;

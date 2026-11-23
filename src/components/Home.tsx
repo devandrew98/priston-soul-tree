@@ -3,6 +3,7 @@ import { useI18n } from '../lib/i18n';
 import { BACKEND_ENABLED } from '../lib/market/supabase';
 import { OVERLAY_KEY, downloadUrl, fetchAppDownload } from '../lib/market/downloads';
 import { HomePopup } from './HomePopup';
+import { useChristmasActive } from './ChristmasTheme';
 import { NewsFeed } from './NewsFeed';
 import { RichText } from './RichText';
 import { pixPayload } from '../lib/pix';
@@ -44,6 +45,7 @@ function PixMark() {
 export function Home() {
   const { t } = useI18n();
   const ht = useHomeTexts();
+  const xmas = useChristmasActive(); // the priestess wears her Christmas outfit while the decoration is on
   const [copied, setCopied] = useState<'' | 'key' | 'code'>('');
   const copy = (what: 'key' | 'code') => {
     navigator.clipboard?.writeText(what === 'key' ? PIX_KEY : PIX_CODE);
@@ -74,7 +76,7 @@ export function Home() {
           <div className="home-logo-frame">
             <img src="/pristonzone-logo.png" alt="PristonZONE" className="home-logo" />          </div>
           {ht.shown('pix') && <aside className="home-pix">
-            <img className="home-priestess" src="/classes/priestess.webp" alt="" aria-hidden="true" decoding="async" />
+            <img className="home-priestess" src={xmas ? '/classes/priestess-natal.webp' : '/classes/priestess.webp'} alt="" aria-hidden="true" decoding="async" />
             <div className="home-pix-head">
               <PixMark />
               <b>{ht.text('pix', 'title', t('home.pix.title'))}</b>
