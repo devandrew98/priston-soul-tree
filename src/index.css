@@ -2822,8 +2822,8 @@ input[type="checkbox"], input[type="radio"], input[type="range"], progress { acc
 .hp-poll-opt:hover:not(:disabled), .hp-poll-opt:focus-visible { border-color: var(--gold); background: rgba(212,175,106,0.14); color: var(--gold-bright); outline: none; }
 .hp-poll-opt:disabled { opacity: 0.55; cursor: progress; }
 .hp-poll-err { margin: 8px 0 0; text-align: center; font-size: 13px; color: #f08a7a; }
-.hp-poll-res { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 5px 22px; }
-.hp-poll-res li { display: grid; grid-template-columns: 92px 1fr 38px; align-items: center; gap: 8px; font-size: 13px; }
+.hp-poll-res { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+.hp-poll-res li { display: grid; grid-template-columns: 100px 1fr 40px; align-items: center; gap: 8px; font-size: 13px; }
 .hp-poll-name { font-weight: 700; color: var(--text); white-space: nowrap; }
 .hp-poll-name i { font-style: normal; color: var(--gold-bright); }
 .hp-poll-bar { height: 9px; border-radius: 6px; background: rgba(0,0,0,0.45); border: 1px solid var(--border); overflow: hidden; }
@@ -2832,7 +2832,7 @@ input[type="checkbox"], input[type="radio"], input[type="range"], progress { acc
 .hp-poll-res li.mine .hp-poll-name { color: var(--gold-bright); }
 .hp-poll-pct { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-dim); }
 .hp-poll-total { margin: 8px 0 0; text-align: center; font-size: 12px; color: var(--text-dim); }
-@media (max-width: 700px) { .hp-poll-opts { grid-template-columns: repeat(2, 1fr); } .hp-poll-res { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .hp-poll-opts { grid-template-columns: repeat(2, 1fr); } }
 @keyframes hp-fade { from { opacity: 0; } }
 @keyframes hp-rise { from { opacity: 0; transform: translateY(14px) scale(0.98); } }
 @media (max-width: 560px) { .hp-x { top: 6px; right: 6px; } .hp-count { gap: 6px; padding: 8px; } .hp-count-label { flex-basis: 100%; text-align: center; margin: 0; } .hp-count-cell { min-width: 58px; padding: 3px 6px 4px; } .hp-count-cell b { font-size: 20px; } }
